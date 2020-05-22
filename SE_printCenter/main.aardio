@@ -1,12 +1,16 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="Printing Center";right=502;bottom=278;border="thin")
+var winform = win.form(text="Printing Center";right=502;bottom=278;border="thin";max=false;min=false;sysmenu=1)
 winform.add(
-button={cls="button";text="Print Active";left=250;top=84;right=366;bottom=129;z=2};
-button2={cls="button";text="Print All";left=250;top=154;right=363;bottom=195;z=3};
-listbox={cls="listbox";left=92;top=84;right=225;bottom=196;border=1;font=LOGFONT(h=-16;name='微软雅黑');items={"pdf";"dwg";"dxf";"stp"};z=1}
+button={cls="button";text="Print Active";left=260;top=94;right=376;bottom=139;tabstop=1;z=3};
+button2={cls="button";text="Print All";left=260;top=164;right=373;bottom=205;tabstop=1;z=4};
+groupbox={cls="groupbox";text="Actions";left=71;top=23;right=400;bottom=242;edge=1;z=1};
+listbox={cls="listbox";left=102;top=94;right=235;bottom=206;border=1;cp=1;font=LOGFONT(h=-16;name='微软雅黑');items={"pdf";"dwg";"dxf";"stp"};z=2}
 )
 /*}}*/
+
+var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
 
 import com;
 import string;
@@ -168,9 +172,34 @@ winform.button2.oncommand = function(id,event){
 	winform.close();
 }
 
-winform.show();
-
+winform.isDialogMessage = function(hwnd,msg){
+	if( msg.message == 0x100/*_WM_KEYDOWN*/){
+		
+/**
+		if(  msg.wParam == 0xD/*_VK_RETURN*/ ){ 
+			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
+		}
+**/
+		
+		if( msg.wParam == 0x1B/*_VK_ESC*/ ){
+			winform.close();
+			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
+		} 
+	}
+	
+	//检测并响应默认快捷键
+	return win.isDialogMessage(hwnd,msg);
+}
+if (ctrl) {
+	startPrint(true, "pdf")
+	return ; 
+}
+if (ctrl && shift) {
+	startPrint(false, "pdf")
+	return ; 
+}
+winform.show();	
 winform.listbox.selIndex=1
-
 win.loopMessage();
 return winform;
+
