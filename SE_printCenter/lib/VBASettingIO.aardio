@@ -1,0 +1,22 @@
+namespace VBASettingIO { 
+	import win.reg;
+	//创建新的注册表路径
+	vbaLoc="HKEY_CURRENT_USER\Software\VB and VBA Program Settings\"
+	GetSetting = function(app, section, key, default){
+		var reg = win.reg(..string.join({vbaLoc;app;section} ,"\")) 
+		var value=reg.queryValue(key)
+		reg.close();
+		return (value ? value : default)	
+	}
+	SaveSetting = function(app, section, key, value){
+		var reg = win.reg(..string.join({vbaLoc;app;section} ,"\")) 
+		reg.setSzValue(key,value)
+		reg.close();	
+	}
+	DeleteSetting = function(app, section, key){
+		var reg = win.reg(..string.join({vbaLoc;app;section} ,"\")) 
+		reg.delKey(key)
+		reg.close()
+	}
+	
+}
