@@ -1,6 +1,5 @@
 ﻿
 namespace SolidEdgeConstants{
-    ApplicationName="SolidEdge.Application";
 	namespace DraftSaveAsPDFSheetOptionsConstants {
 		seDraftSaveAsPDFSheetOptionsConstantsActiveSheet=0;
 		seDraftSaveAsPDFSheetOptionsConstantsAllSheets=1;

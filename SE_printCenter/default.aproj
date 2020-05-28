@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="SE_PrintCenter" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\legacy\TBM\Deleted\tbm.ico" ui="win" output="SE_Printing_Center.exe" CompanyName="Carrier" FileDescription="批量转PDF, DXF, DWG" LegalCopyright="Copyright (C) domisoft 2020" ProductName="SE_PrintCenter" InternalName="SE_PrintCenter" FileVersion="0.0.0.10" ProductVersion="0.0.0.10" publishDir="D:\users\CCL100100\workspaces" dstrip="false" local="false">
-	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+<project ver="10" name="SE_PrintCenter" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\legacy\TBM\Deleted\tbm.ico" ui="win" output="SE_Printing_Center.exe" CompanyName="Carrier" FileDescription="批量转PDF, DXF, DWG" LegalCopyright="Copyright (C) domisoft 2020" ProductName="SE_PrintCenter" InternalName="SE_PrintCenter" FileVersion="0.0.0.16" ProductVersion="0.0.0.16" publishDir="D:\users\CCL100100\workspaces" dstrip="false" local="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio">
+		<file name="test.aardio" path="test.aardio" comment="test.aardio"/>
+	</file>
 	<folder name="资源文件" path="res" embed="true" local="false"/>
 	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false"/>
 </project>

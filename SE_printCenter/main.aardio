@@ -1,6 +1,6 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="Printing Center";right=502;bottom=278;border="thin";max=false;min=false;sysmenu=1)
+var winform = win.form(text="Printing Center";right=502;bottom=278;border="thin";max=false;min=false;topmost=1)
 winform.add(
 button={cls="button";text="Print Active";left=260;top=94;right=376;bottom=139;tabstop=1;z=3};
 button2={cls="button";text="Print All";left=260;top=164;right=373;bottom=205;tabstop=1;z=4};
@@ -9,17 +9,15 @@ listbox={cls="listbox";left=102;top=94;right=235;bottom=206;border=1;cp=1;font=L
 )
 /*}}*/
 
-var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
+import key;
+_ctrl = key.getState(key.VK.CTRL)
+_shift =  key.getState(key.VK.SHIFT)
 
-import com;
-import string;
-import VBASettingIO;
-import SolidEdgeConstants;
 //import console;
-var seApp = com.GetObject(SolidEdgeConstants.ApplicationName);
 
+/*formatWindowsFileName{{*/
 var  formatWindowsFileName = function (nameStr) {
+    import string;
     //替换Windows文件名非法字符为全角＼／，．＜＞｜＊
     nameStr = string.replace(nameStr, "\\", "＼")
     nameStr = string.replace(nameStr, "/", "／")
@@ -33,133 +31,90 @@ var  formatWindowsFileName = function (nameStr) {
     nameStr = string.replace(nameStr, "\r\n", " ")  //替换回车符
     return string.trim(nameStr)
 }
+/*}}*/
 var startPrint=function(activeOnly, fileExt){
+    import seconn;
+	var seApp = seconn.seApp;
+	
+    import SolidEdgeConstants;
 	var Docs=seApp.Documents;
+	
+	import VBASettingIO;
 	var toFolder = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces");
 	var nameRule = tonumber(VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0))
-	var tRule;
-	fileExt="." + fileExt
+	
+	import string;
+
+	fileExt := "pdf"
+	if (!string.startWith(".",fileExt)) fileExt="." ++ fileExt
 	if (fileExt==".pdf"){
     	//打印所有页
     	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSheetOptions, SolidEdgeConstants.DraftSaveAsPDFSheetOptionsConstants.seDraftSaveAsPDFSheetOptionsConstantsAllSheets)
     	//允许每页不同大小
     	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFUseIndividualSheetSizes, true)
-    	//允许彩色
+    	//使用彩色
     	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSaveAllColorsBlack, false)
 	}
 	seApp.Application.DisplayAlerts = false;
 	var totalDoc = (activeOnly ? 1: Docs.Count);
-	var x,y,z,a,b,c
-    var qhc_ver="" ,name_cn=""
-    var seBlk,seLbs
-    var txts, txtbox
-    var seDoc,seDFT
+
 	for (j = 1; totalDoc){
-    	seDoc = (activeOnly ? seApp.ActiveDocument : Docs.Item(j)) //如果指定了onlyActive参数, 则仅打印当前文档    	
+    	var qhc_ver="" ,name_cn=""
+    	var seDoc,seDFT
+    	var tRule;
+    	seDoc = (activeOnly ? seApp.ActiveDocument : Docs.Item(j)) //如果指定了onlyActive参数, 则仅打印当前文档
     	if (seDoc.Type == SolidEdgeConstants.DocumentTypeConstants.igDraftDocument) {    //仅处理DFT格式
         	seDFT = seDoc
         	if (nameRule > 0) {   //用户规则为0时不检查titleblock
-            	for (i = 1;  seDFT.ActiveSheet.BlockOccurrences.Count ) { //获取Titleblock
-                	select  (seDFT.ActiveSheet.BlockOccurrences.Item(i).Block.Name){
-                    	case "Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC" {
-                        	seBlk = seDFT.ActiveSheet.BlockOccurrences.Item(i)
-                        	seLbs = seBlk.BlockLabelOccurrences
-
-                        	break 1;
-                    	}
-                	}
-            	}
+        		import SolidEdgeDraft;
+				var seBlk = SolidEdgeDraft.getTitleBlock(seDFT.ActiveSheet)
         	}
+        	
+        	if (seBlk) {
+        		var t=SolidEdgeDraft.getLabelTable(seBlk)
+        		name_cn = t["零件名称"] 
+        		qhc_ver = t["版本"]
+				qhc_ver := SolidEdgeDraft.getVerFromShtCorner(seDFT.ActiveSheet) //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
+				qhc_ver := SolidEdgeDraft.getVerFromBlkCorner(seBlk) //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
 
-        	if (seBlk && seLbs) {
-            	for (i = 1 ; seLbs.Count) {    //在Titleblock里查找版本和名称
-                	select  (seLbs.Item(i).Name){
-                    	case "零件名称", "名称(中文)" {                        	
-							name_cn = string.trim(seLbs.Item(i).Value)
-                    	}
-                    	case "版本" {
-							qhc_ver = string.trim(seLbs.Item(i).Value)
-                    	}
-                	}
-                	if (name_cn && qhc_ver) {
-                		if (string.len(name_cn) > 0 && string.len(qhc_ver) > 0) {
-                    		break 1;
-                		}
-                	}
-            	}
-	
-           	
-            	if (string.len(qhc_ver) == 0) {    //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
-                	txts = seDFT.ActiveSheet.TextBoxes
-                	for (i = 1 ; txts.Count){
-                    	x,y,z=txts.Item(i).GetOrigin( )
-                    	//Debug.Print txts.Item(i).Text, x * 1000, y * 1000, z * 1000
-                    	if (string.len(string.trim(txts.Item(i).Text)) == 2) {
-                        	if (x * 1000 > 395 && y * 1000 > 10) {
-                            	qhc_ver = string.trim(txts.Item(i).Text)
-                        	}
-                    	}
-                	}
-            	}
-            	
-            	if (string.len(qhc_ver) == 0) {    //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
-                	txts = seBlk.Block.Views.Item(1).TextBoxes
-                	txtbox = txts.Item(1)
-                	if (txts && txtbox) {
-                		a,b,c=txtbox.GetOrigin ( )
-                		for (i = 2 ; txts.Count){
-                    		x,y,z=txts.Item(i).GetOrigin ()
-                    		if (x > a || y < b) {
-                        		txtbox = txts.Item(i)
-                        		a,b,c=txtbox.GetOrigin ()
-                    		}
-                		}
-                	}
-                	qhc_ver = string.trim(txtbox.Text)
-            	}
-            	
             	if (string.len(qhc_ver) == 0) {
-               	// Debug.Print "获取不到版本号!", seDFT.FullName
-            	}
-            	if (string.len(name_cn) == 0 && nameRule == 2) {
-                	tRule = 1   //如果名称为空时使用规则1
-            	} else {
-                	tRule = nameRule    //使用用户设定的规则
+               		tRule=0	//如果无法获取版本号
+            	}else{
+            		if (string.len(name_cn) == 0 && nameRule == 2) {
+                		tRule = 1   //如果名称为空时使用规则1
+            		} else {
+                		tRule = nameRule    //使用用户设定的规则
+            		}
             	}
         	}else{
             	tRule = 0   //如果无法获取titleblock, 使用规则0
         	}
-	
         	select  (tRule)    {//命名规则
             	case 0 {
-                	fname = toFolder + "\" + string.split(seDFT.Name, ".")[1] + fileExt
+                	fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ fileExt
             	}
             	case 1 {
-                	fname = toFolder + "\" + string.split(seDFT.Name, ".")[1] + "-" + qhc_ver & "版" + fileExt
+                	fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ "-" ++ qhc_ver ++ "版" ++ fileExt
             	}
             	case 2 {
                 	name_cn = formatWindowsFileName(name_cn)
-                	fname = toFolder + "\" + string.split(seDFT.Name, ".")[1] + "-" + qhc_ver + "版" + "-" + name_cn + fileExt
+                	fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ "-" ++ qhc_ver ++ "版" ++ "-" ++ name_cn ++ fileExt
             	}
         	}
-        	
         	seDFT.Activate() //如果不Activate,只会重复保存当前文件
         	seDFT.SaveCopyAs(fname)  //savecopyas 和 saveas 效果一样
         	//console.log(fname)
     	}
 	}
 	//console.pause(true)
-	seApp.Application.DisplayAlerts = True
-	
-	
-	
-	/*
-	if onlyActive {
-    	//shell "explorer.exe " & fname   //如果onlyActive则打开结果文件
-	Else
+	seApp.Application.DisplayAlerts = true	
+
+	if (activeOnly) {
+		import process;
+		process.execute(fname)	//如果onlyActive则打开结果文件
+	} else { 
     	seApp.StatusBar = "Print Done"
 	}
-	*/
 }
 
 winform.button.oncommand = function(id,event){
@@ -172,7 +127,8 @@ winform.button2.oncommand = function(id,event){
 	winform.close();
 }
 
-winform.isDialogMessage = function(hwnd,msg){
+/*closeOnEscPress{{*/
+winform.isDialogMessage = function(hwnd,msg){ 
 	if( msg.message == 0x100/*_WM_KEYDOWN*/){
 		
 /**
@@ -181,7 +137,7 @@ winform.isDialogMessage = function(hwnd,msg){
 		}
 **/
 		
-		if( msg.wParam == 0x1B/*_VK_ESC*/ ){
+		if( msg.wParam == 0x1B/*_VK_ESC*/ ){	//按Esc退出窗口
 			winform.close();
 			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
 		} 
@@ -190,11 +146,12 @@ winform.isDialogMessage = function(hwnd,msg){
 	//检测并响应默认快捷键
 	return win.isDialogMessage(hwnd,msg);
 }
-if (ctrl) {
+/*}}*/
+if (_ctrl) {
 	startPrint(true, "pdf")
 	return ; 
 }
-if (ctrl && shift) {
+if (_ctrl && _shift) {
 	startPrint(false, "pdf")
 	return ; 
 }
