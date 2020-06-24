@@ -1,0 +1,162 @@
+import win.ui;
+import win.ui.menu;
+/*DSG{{*/
+mainForm = win.form(text="QHC物料查询";right=638;bottom=714)
+mainForm.add(
+button={cls="button";text="查询";left=521;top=7;right=620;bottom=42;dr=1;dt=1;tabstop=1;z=2};
+editUser={cls="edit";left=244;top=11;right=512;bottom=40;aw=1;dr=1;dt=1;edge=1;tabstop=1;z=1};
+listview={cls="listview";left=14;top=56;right=621;bottom=682;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
+static={cls="static";text="Static";left=18;top=686;right=620;bottom=714;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=3}
+)
+/*}}*/
+
+/*只允许一个实例{{*/
+import win.ui.atom;
+var atom,hwnd = mainForm.atom("domisoft.aardio.qtip");
+if(!atom){ 
+	win.showForeground(hwnd);
+	win.quitMessage();	
+	return;
+}
+/*}}*/
+import win.util.tray;
+import win.ui.grid;
+import win.ui.accelerator;
+import access;
+import fsys;
+import win.clip;
+
+var grid = win.ui.grid(mainForm.listview);//创建数据视图
+var dbpath;
+var xlsxlist=fsys.list("\",,"系统所有物料*.xlsx")
+if (#xlsxlist>=1) {
+	dbpath=xlsxlist[xlsxlist[#xlsxlist]] 
+}else{
+    win.msgbox("没找到物料数据文件:系统所有物料*.xlsx")
+    return;
+}
+
+var db,err = access(dbpath,//也可以省略后面的参数
+	{  
+        ["Driver"] = "{Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)}"; 
+        ["DBQ"] = dbpath; 
+        ["Extended Properties"] = "HDR=yes;Format=xlsx;ReadOnly=1"; 
+    }  
+)
+
+//注册系统热键;
+var hkId = mainForm.reghotkey(
+	function(id,mod,vk){
+		mainForm.show()
+	}, 2/*_MOD_CONTROL*/, 'Q'#);
+
+mainForm.button.oncommand = function(id,event){   
+    grid.clear()
+    var userinput=string.trim(mainForm.editUser.text)
+    if string.len(userinput)==0 return false
+    if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput
+    userinput=string.replace(userinput,"@%","\%")
+    userinput=string.replace(userinput,"@_","\_")
+    userinput=string.replace(userinput,"@*","%")
+    userinput=string.replace(userinput,"@?","_")
+    
+    var searchField;	
+    if (string.startWith(userinput,"H008",true) || string.startWith(userinput,"BG",true)) {
+    	searchField="物料";
+	}else{
+    	searchField="物料描述";
+	}
+	sqlstr="SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+	var tab = db.getTable(sqlstr);
+	grid.setTable( tab )
+	
+//调整列宽		
+	mainForm.listview.setColumn({cx=100},1)
+	mainForm.listview.setColumn({cx=380},2)
+	mainForm.listview.setColumn({cx=70},3)
+	mainForm.listview.setColumn({cx=50},4)
+}
+/*onminimize{{*/
+mainForm.onMinimize = function(lParam){
+	var tray = win.util.tray(mainForm) //创建托盘图标 
+	//tray.pop("我最小化并跑到托盘来了" )
+	mainForm.show(false); //隐藏窗口
+	return true;//阻击默认消息传递,取消最小化过程
+}
+/*}}*/
+/*onclose{{*/
+mainForm.onClose = function(hwnd,message,wParam,lParam){
+    if (!_STUDIO_INVOKED){
+		mainForm.onMinimize();
+		return true;
+	}else{
+		db.close();	
+	}
+}
+/*}}*/
+
+/*deletetray{{*/
+mainForm.onDestroy = function(){
+	if(mainForm.tray){
+		mainForm.tray.delete()
+	}
+}
+/*}}*/
+
+/*wndproc{{*/
+mainForm.wndproc = {
+	[0xACCF/*_WM_TRAYMESSAGE*/ ] = function(hwnd,message,wParam,lParam){
+		select(lParam) {
+			case 0x205/*_WM_RBUTTONUP*/ {
+	    		var pt = ::POINT();
+				::User32.GetCursorPos(pt);    		
+	    		
+	    		//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	    		win.setForeground(mainForm.hwnd)
+	    		mainForm.popmenu.popup(pt.x,pt.y,true )
+			}
+			case 0x202/*_WM_LBUTTONUP*/; 0x0203 /*_WM_LBUTTONDBLCLK*/ {
+				mainForm.show();
+			}
+		}
+	}
+
+}
+/*}}*/
+
+mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
+mainForm.popmenu.add('&open',function(id){
+	mainForm.show()
+	
+});
+mainForm.popmenu.add();//分隔线
+mainForm.popmenu.add('&exit',function(id){    
+    db.close();
+	win.quitMessage();
+})
+
+/*CTRLC复制模块{{*/
+var accelerator = win.ui.accelerator({
+    { 
+        ctrl = true; vkey = 'C'#; 
+        oncommand = function() {
+            if (grid.editBox.hide==1){
+            	var tab=table.array();
+            	for (i=1;#mainForm.listview.selected;1){
+                	table.push(tab,string.join(mainForm.listview.items[mainForm.listview.selected[i]],'\t'))
+            	}           
+				win.clip.write(string.join(tab,'\n'))
+			}else {	//编辑状态直接调用copy
+				grid.editBox.copy()
+			}
+			
+			
+        }; 
+    };//  {more}
+    
+},mainForm );
+/*}}*/
+
+mainForm.static.text=dbpath;
+mainForm.show();
+win.loopMessage();
