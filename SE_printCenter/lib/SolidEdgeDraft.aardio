@@ -1,11 +1,12 @@
 ﻿//SolidEdgeDraft 常用函数
+
 namespace SolidEdgeDraft{
 	getTitleBlock=function(seSht){
         for (i = 1;  seSht.BlockOccurrences.Count ) { //获取Titleblock
             select  (seSht.BlockOccurrences.Item(i).Block.Name){
                 case "Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC" {
-                    seBlk = seSht.BlockOccurrences.Item(i)
-                    return seBlk ;
+                    var titleblk = seSht.BlockOccurrences.Item(i);
+                    return titleblk ;
                 }
             }
         }
