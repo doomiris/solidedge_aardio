@@ -1,9 +1,18 @@
 import win.ui;
+import win.ui.grid;
+import win.ui.accelerator;
+import win.ui.listPopup;
+import access;
+import fsys;
+import fsys.table;
+import win.clip;
 import win.ui.menu;
+//import win.util.tray;
 /*DSG{{*/
 mainForm = win.form(text="QHC物料查询";right=638;bottom=714)
 mainForm.add(
 button={cls="button";text="查询";left=521;top=7;right=620;bottom=42;dr=1;dt=1;tabstop=1;z=2};
+button2={cls="button";text="安装驱动";left=14;top=687;right=100;bottom=709;db=1;dl=1;hide=1;z=5};
 editUser={cls="edit";left=244;top=11;right=512;bottom=40;aw=1;dr=1;dt=1;edge=1;tabstop=1;z=1};
 listview={cls="listview";left=14;top=56;right=621;bottom=682;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
 static={cls="static";text="Static";left=18;top=686;right=620;bottom=714;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=3}
@@ -19,47 +28,73 @@ if(!atom){
 	return;
 }
 /*}}*/
-import win.util.tray;
-import win.ui.grid;
-import win.ui.accelerator;
-import access;
-import fsys;
-import win.clip;
+
+mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
+mainForm.popmenu.add('查找图纸...',function(id){
+	//在下面输入菜单响应代码
+	
+	var frmChild = mainForm.loadForm("\dlg\findRelatedDoc.aardio");
+	frmChild.show();
+	//winform.listview.delItem( mainForm.listview.selIndex )
+});
 
 var grid = win.ui.grid(mainForm.listview);//创建数据视图
-var dbpath;
-var xlsxlist=fsys.list("\",,"系统所有物料*.xlsx")
-if (#xlsxlist>=1) {
-	dbpath=xlsxlist[xlsxlist[#xlsxlist]] 
-}else{
-    win.msgbox("没找到物料数据文件:系统所有物料*.xlsx")
-    return;
-}
+var logInput=table.array()
+var dbpath = (function(){
+		var xlsxlist=fsys.list("\",,"系统所有物料*.xlsx")
+		if (#xlsxlist>=1) {
+			return xlsxlist[xlsxlist[#xlsxlist]] 
+		}else{
+	    	win.msgbox("没找到物料数据文件:系统所有物料*.xlsx")
+	    	return null;
+		}
+	})()
 
-var db,err = access(dbpath,//也可以省略后面的参数
+
+var db,err = access(dbpath,
+/*
 	{  
         ["Driver"] = "{Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)}"; 
         ["DBQ"] = dbpath; 
         ["Extended Properties"] = "HDR=yes;Format=xlsx;ReadOnly=1"; 
-    }  
+    }
+*/  
 )
 
-//注册系统热键;
+if (err){
+	win.msgbox(err)
+	mainForm.button2.hide=0;
+}
+
+var setting = fsys.table(fsys.getTempDir()++"/domisoft.qtip.setting.table") 
+setting.load(); //从文件载入表
+if !(setting.inputlog) setting.inputlog=table.array()
+
+/*注册系统热键{{*/
 var hkId = mainForm.reghotkey(
 	function(id,mod,vk){
 		mainForm.show()
 	}, 2/*_MOD_CONTROL*/, 'Q'#);
+/*}}*/
 
-mainForm.button.oncommand = function(id,event){   
+mainForm.button.oncommand = function(id,event){
+    if !(dbpath) return false; 
     grid.clear()
     var userinput=string.trim(mainForm.editUser.text)
+    try{
+        if !(table.find(setting.inputlog,userinput)){
+    		table.unshift(setting.inputlog,userinput)
+    		if table.len(setting.inputlog>15) table.pop(setting.inputlog)
+    		setting.save()
+        }
+    }
     if string.len(userinput)==0 return false
+    table.push(logInput,userinput)
     if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput
     userinput=string.replace(userinput,"@%","\%")
     userinput=string.replace(userinput,"@_","\_")
     userinput=string.replace(userinput,"@*","%")
-    userinput=string.replace(userinput,"@?","_")
-    
+    userinput=string.replace(userinput,"@?","_")    
     var searchField;	
     if (string.startWith(userinput,"H008",true) || string.startWith(userinput,"BG",true)) {
     	searchField="物料";
@@ -67,6 +102,7 @@ mainForm.button.oncommand = function(id,event){
     	searchField="物料描述";
 	}
 	sqlstr="SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+
 	var tab = db.getTable(sqlstr);
 	grid.setTable( tab )
 	
@@ -75,35 +111,47 @@ mainForm.button.oncommand = function(id,event){
 	mainForm.listview.setColumn({cx=380},2)
 	mainForm.listview.setColumn({cx=70},3)
 	mainForm.listview.setColumn({cx=50},4)
+	
 }
 /*onminimize{{*/
+/*
 mainForm.onMinimize = function(lParam){
 	var tray = win.util.tray(mainForm) //创建托盘图标 
 	//tray.pop("我最小化并跑到托盘来了" )
 	mainForm.show(false); //隐藏窗口
 	return true;//阻击默认消息传递,取消最小化过程
 }
+*/
 /*}}*/
 /*onclose{{*/
+
 mainForm.onClose = function(hwnd,message,wParam,lParam){
+/*
     if (!_STUDIO_INVOKED){
 		mainForm.onMinimize();
 		return true;
 	}else{
-		db.close();	
+*/
+	if (db) db.close();	
+/*
 	}
+*/
 }
+
 /*}}*/
 
 /*deletetray{{*/
+/*
 mainForm.onDestroy = function(){
 	if(mainForm.tray){
 		mainForm.tray.delete()
 	}
 }
+*/
 /*}}*/
 
 /*wndproc{{*/
+/**
 mainForm.wndproc = {
 	[0xACCF/*_WM_TRAYMESSAGE*/ ] = function(hwnd,message,wParam,lParam){
 		select(lParam) {
@@ -122,8 +170,12 @@ mainForm.wndproc = {
 	}
 
 }
+**/
 /*}}*/
 
+
+/*创建弹出菜单{{*/
+/*
 mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
 mainForm.popmenu.add('&open',function(id){
 	mainForm.show()
@@ -134,6 +186,9 @@ mainForm.popmenu.add('&exit',function(id){
     db.close();
 	win.quitMessage();
 })
+*/
+/*}}*/
+
 
 /*CTRLC复制模块{{*/
 var accelerator = win.ui.accelerator({
@@ -156,6 +211,48 @@ var accelerator = win.ui.accelerator({
     
 },mainForm );
 /*}}*/
+
+mainForm.button2.oncommand = function(id,event){
+	import access.oleDb12;
+	access.oleDb12.install();//检测并安装Microsoft.Ace.OLEDB.12驱动
+}
+
+
+
+
+
+var listPopup = win.ui.listPopup(mainForm.editUser);
+listPopup.onGetItems = function(){
+	var items = setting.inputlog;
+	if(!#items) return;
+	var selIndex = 1;
+	reduce(items,function(prev,next,index){ 
+		if( #next < #prev ) { selIndex = index; return next };
+		return prev
+	})
+	return items,selIndex;
+}
+
+mainForm.listview.onnotify = function(id,code,ptr){
+    select(code) {
+    	case  0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
+
+    	}
+    	case 0xFFFFFF94/*_LVN_COLUMNCLICK*/ {
+
+    	}
+    	case 0xFFFFFFFB/*_NM_RCLICK*/  {
+    		//var x,y = win.getCursorPos();
+    		//mainForm.popmenu.popup(x,y,true);//弹出菜单
+    		//mainForm.static.text=mainForm.listview.items[mainForm.listview.getSelection()][[1]]
+    	}
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+			var frmChild = mainForm.loadForm("\dlg\findRelatedDoc.aardio");
+			frmChild.show();
+			return false; 
+    	}
+    }
+}
 
 mainForm.static.text=dbpath;
 mainForm.show();

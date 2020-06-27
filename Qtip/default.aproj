@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="aardio工程" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\legacy\TBM\SourceCode\20080220\tbm3\tbm.ico" ui="win" output="QHC物料查询.exe" CompanyName="Carrier" FileDescription="QHC 物料描述查询" LegalCopyright="Copyright (C) Carrier 2020" ProductName="qtip" InternalName="qtip" FileVersion="0.1.0.07" ProductVersion="0.1.0.07" publishDir="/dist/" dstrip="false" local="false">
+<project ver="10" name="aardio工程" libEmbed="true" icon="E:\Downloads\work\Inventor2016\Inventor_2016_Simplified_Chinese_Win_64bit_dlm\x64\Inventor\PF\CF\Autodesk Shared\Shell\BuildingComponent.ico" ui="win" output="QHC物料查询.exe" CompanyName="Carrier" FileDescription="QHC 物料描述查询" LegalCopyright="Copyright (C) Carrier 2020" ProductName="qtip" InternalName="qtip" FileVersion="0.1.0.11" ProductVersion="0.1.0.11" publishDir="/dist/" dstrip="false" local="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="资源文件" path="res" embed="true" local="false"/>
-	<folder name="窗体文件" path="dlg" comment="目录" embed="true"/>
+	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false">
+		<file name="findRelatedDoc.aardio" path="dlg\findRelatedDoc.aardio" comment="dlg\findRelatedDoc.aardio"/>
+	</folder>
 </project>

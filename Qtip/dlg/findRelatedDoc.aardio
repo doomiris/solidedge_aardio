@@ -1,0 +1,51 @@
+import win.ui;
+import win.ui.grid;
+import fsys;
+import fsys.file;
+import fsys.table;
+import win.clip;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469;mode="popup")
+winform.add(
+listview={cls="listview";left=13;top=52;right=741;bottom=431;edge=1;z=1}
+)
+/*}}*/
+
+import console;
+var grid = win.ui.grid(winform.listview);//创建数据视图
+var searchLoc=table.array()
+table.push(searchLoc,"E:\Users\work_dominic\CCR\Cabinets\PDF图纸库")
+table.push(searchLoc,"E:\Users\work_dominic\CCR\Cabinets\QHC图纸库")
+if (mainForm){
+	var searchFor=mainForm.listview.items[mainForm.listview.getSelection()][[1]]
+	searchFor=string.trimleft(searchFor,"H")
+	var p=fsys.list(searchLoc[2],,"*" ++ searchFor ++ "*.*")
+	
+	
+	var tab=table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}})
+	for (i=1;#p;1){
+		table.push(tab,{
+			文件名=p[i];
+			位置=p[p[i]];
+			日期=fsys.file(p[p[i]]).getFileTime().write;
+			版本=""
+		})
+	}
+	
+	grid.setTable(tab)
+}
+
+winform.listview.onnotify = function(id,code,ptr){
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+			import process;
+			process.execute(winform.listview.items[winform.listview.getSelection()][[2]])
+			return false; 
+    	}
+    }
+}
+
+winform.show();
+//grid.setTable( p )
+win.loopMessage();
+return winform;
