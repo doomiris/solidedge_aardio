@@ -1,12 +1,13 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="Printing Center";right=502;bottom=278;border="thin";max=false;min=false;topmost=1)
+var winform = win.form(text="Printing Center";right=449;bottom=305;border="thin";max=false;min=false;topmost=1)
 winform.add(
 button={cls="button";text="Print Active";left=260;top=94;right=376;bottom=139;tabstop=1;z=3};
 button2={cls="button";text="Print All";left=260;top=164;right=373;bottom=205;tabstop=1;z=4};
 groupbox={cls="groupbox";text="Actions";left=71;top=23;right=400;bottom=242;edge=1;z=1};
 listbox={cls="listbox";left=102;top=94;right=235;bottom=206;border=1;cp=1;font=LOGFONT(h=-16;name='微软雅黑');items={"pdf";"dwg";"dxf";"stp"};z=2};
 outpath={cls="static";text="d:\workspaces";left=79;top=211;right=393;bottom=236;center=1;color=8421504;notify=1;transparent=1;z=8};
+progress={cls="progress";left=1;top=279;right=450;bottom=306;aw=1;color=32768;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=13};
 radCloseNothing={cls="radiobutton";text="Keep Open";left=87;top=249;right=173;bottom=269;checked=1;group=1;z=9};
 radCloseSaved={cls="radiobutton";text="Save && Close";left=311;top=249;right=407;bottom=271;z=11};
 radCloseWOsave={cls="radiobutton";text="Close Ruthlessly";left=185;top=249;right=292;bottom=271;z=10};
@@ -16,20 +17,26 @@ radNameRule2={cls="radiobutton";text="+版本+名称";left=306;top=45;right=389;
 static={cls="static";text="CLOSE? ";left=21;top=249;right=94;bottom=265;color=255;transparent=1;z=12}
 )
 /*}}*/
-
+import console;
+import process;
 import key;
+import string;
+import seconn;
+import SolidEdgeConstants;
+import SolidEdgeDraft;
+import VBASettingIO;
+
+
 _ctrl = key.getState(key.VK.CTRL)
 _shift =  key.getState(key.VK.SHIFT)
 
-import VBASettingIO;
+
 var toFolder = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces");
 var nameRule = tonumber(VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0))
 
-//import console;
-
 /*formatWindowsFileName{{*/
 var  formatWindowsFileName = function (nameStr) {
-    import string;
+
     //替换Windows文件名非法字符为全角＼／，．＜＞｜＊
     nameStr = string.replace(nameStr, "\\", "＼")
     nameStr = string.replace(nameStr, "/", "／")
@@ -45,16 +52,9 @@ var  formatWindowsFileName = function (nameStr) {
 }
 /*}}*/
 var startPrint=function(activeOnly, fileExt){
-    import seconn;
+
 	var seApp = seconn.seApp;
-	
-    import SolidEdgeConstants;
 	var Docs=seApp.Documents;
-	
-
-
-	
-	import string;
 
 	fileExt := "pdf"
 	if (!string.startWith(".",fileExt)) fileExt="." ++ fileExt
@@ -67,17 +67,20 @@ var startPrint=function(activeOnly, fileExt){
     	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSaveAllColorsBlack, false)
 	}
 	seApp.Application.DisplayAlerts = false;
-	var totalDoc = (activeOnly ? 1: Docs.Count);
-
-	for (j = totalDoc; 1;-1){
+	var totalDoc = activeOnly ? 1: Docs.Count;
+	winform.progress.min=0
+	winform.progress.pos=0
+	winform.progress.max=totalDoc
+	for (j = totalDoc; 1 ; -1){
+		
     	var qhc_ver="" ,name_cn=""
     	var seDoc,seDFT,seBlk
     	var tRule;
-    	seDoc = (activeOnly ? seApp.ActiveDocument : Docs.Item(j)) //如果指定了onlyActive参数, 则仅打印当前文档
+    	seDoc = activeOnly ? seApp.ActiveDocument : Docs.Item(j) //如果指定了onlyActive参数, 则仅打印当前文档
     	if (seDoc.Type == SolidEdgeConstants.DocumentTypeConstants.igDraftDocument) {    //仅处理DFT格式
         	seDFT = seDoc
         	if (nameRule > 0) {   //用户规则为0时不检查titleblock
-        		import SolidEdgeDraft;
+
 				seBlk = SolidEdgeDraft.getTitleBlock(seDFT.ActiveSheet);
         	}
         	if (seBlk) {
@@ -122,16 +125,24 @@ var startPrint=function(activeOnly, fileExt){
         			case ".stp"{
         				seDFT.ModelLinks.item(1).ModelDocument.SaveCopyAs(fname)
         			} 
-        			case ".dxf"{
-        				seDFT.ModelLinks.item(1).ModelDocument.SaveAsFlatDXFEx(fname, Nothing, Nothing, Nothing, True)
+        			case ".dxf"{        				
+        				var smDoc=seDFT.ModelLinks.item(1).ModelDocument;
+        				import web.script;
+        				var vm=web.script("VBScript")
+        				vm.external ={
+        					smDoc = function(){return smDoc}; 
+        					fname = function(){return fname}        					
+        				}
+        				vm.addCode("Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)")
         			} 
         		}
         	}
         	catch(e){
-        		import console;
-        		console.log(e.description,seDFT.Name)
+				console.log(e)
+				console.pause(false)
         	}
-
+			winform.progress.pos=totalDoc - j + 1
+			
         	if (winform.radCloseNothing.checked!==1) seDFT.close((winform.radCloseSaved.checked==1))
         	//console.log(fname)
 
@@ -139,10 +150,10 @@ var startPrint=function(activeOnly, fileExt){
 	}
 	
 	seApp.Application.DisplayAlerts = true	
-	if (console) console.pause(true)
+	
 	if (activeOnly) {
-		import process;
-		process.execute(fname)	//如果onlyActive则打开结果文件
+		if (fileExt==".pdf") process.execute(fname)	//如果onlyActive则打开结果文件
+		winform.close();
 	} else { 
     	seApp.StatusBar = "Print Done"
 	}
@@ -202,10 +213,5 @@ select(nameRule) {
 }
 winform.outpath.text=toFolder
 /*}}*/
-
-winform.outpath.oncommand = function(id,event){
-	
-}
-
 win.loopMessage();
 return winform;
