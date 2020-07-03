@@ -1,21 +1,28 @@
+import fonts.fontAwesome;
 import win.ui;
 import win.ui.grid;
 import win.ui.accelerator;
-import win.ui.listPopup;
+//import win.ui.listPopup;
+import win.clip;
+import win.clip.file;
 import access;
 import fsys;
+import fsys.file;
 import fsys.table;
-import win.clip;
+import console;
 //import win.ui.menu;
 //import win.util.tray;
 /*DSG{{*/
 mainForm = win.form(text="QHC物料查询";right=638;bottom=714)
 mainForm.add(
-button={cls="button";text="查询";left=521;top=7;right=620;bottom=42;default=1;dr=1;dt=1;tabstop=1;z=2};
-button2={cls="button";text="安装驱动";left=14;top=687;right=100;bottom=709;db=1;dl=1;hide=1;z=5};
-editUser={cls="edit";left=244;top=11;right=512;bottom=40;aw=1;dr=1;dt=1;edge=1;tabstop=1;z=1};
-listview={cls="listview";left=14;top=56;right=621;bottom=682;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
-static={cls="static";text="Static";left=18;top=686;right=620;bottom=714;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=3}
+button={cls="button";text='\uF002  查询';left=521;top=7;right=620;bottom=42;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
+button2={cls="button";text="安装驱动";left=90;top=687;right=176;bottom=710;db=1;dl=1;hide=1;z=3};
+button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=5};
+button4={cls="button";text="更新搜索库";left=7;top=687;right=83;bottom=710;color=10789024;flat=1;z=6};
+button5={cls="button";text='\uF078 ';left=477;top=39;right=515;bottom=55;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
+editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=1;aw=1;border=1;dr=1;dt=1;hidesel=false;multiline=1;tabstop=1;z=8};
+listview={cls="listview";left=1;top=53;right=638;bottom=680;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
+static={cls="static";text="Static";left=182;top=679;right=634;bottom=714;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2}
 )
 /*}}*/
 
@@ -30,69 +37,149 @@ if(!atom){
 /*}}*/
 
 var grid = win.ui.grid(mainForm.listview);//创建数据视图
-var logInput=table.array()
+var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="物料类型";[4]="禁用"}})	;
+
+/*dbpath{{*/
 var dbpath = (function(){
-		var xlsxlist=fsys.list("\",,"系统所有物料*.xlsx")
+		var xlsxlist=fsys.list("S:\Admin\SAP\",,"*所有*.xlsx")
 		if (#xlsxlist>=1) {
 			return xlsxlist[xlsxlist[#xlsxlist]] 
 		}else{
 	    	win.msgbox("没找到物料数据文件:系统所有物料*.xlsx")
 	    	return null;
 		}
-	})()
+})()
+/*}}*/
 
-
+/*accessDB{{*/
 var db,err = access(dbpath)
-
 if (err){
 	win.msgbox(err)
 	mainForm.button2.hide=0;
 }
+/*}}*/
 
+/*读取设置{{*/
+/*
+var logInput=table.array()
 var setting = fsys.table(fsys.getTempDir()++"/domisoft.qtip.setting.table") 
 setting.load(); //从文件载入表
 if !(setting.inputlog) setting.inputlog=table.array()
-
+*/
+/*}}*/
+/*搜索按钮事件{{*/
 mainForm.button.oncommand = function(id,event){
+    mainForm.button3.hide=true;
+    mainForm.listview.tag=1
+    mainForm.listview.clear(true)
+    mainForm.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
     if !(dbpath) return false; 
-    grid.clear()
-    var userinput=string.trim(mainForm.editUser.text)
-    try{	//保存进历史清单
-        if !(table.find(setting.inputlog,userinput)){
-    		table.unshift(setting.inputlog,userinput)
-    		if table.len(setting.inputlog>15) table.pop(setting.inputlog)
-    		setting.save()
-        }
-    }
-    if string.len(userinput)==0 return false
-    table.push(logInput,userinput)
-    if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput
-    userinput=string.replace(userinput,"@%","\%")
-    userinput=string.replace(userinput,"@_","\_")
-    userinput=string.replace(userinput,"@*","%")
-    userinput=string.replace(userinput,"@?","_")    
-    var searchField;	
-    if (string.startWith(userinput,"H008",true) || string.startWith(userinput,"BG",true)) {
-    	searchField="物料";
-	}else{
-    	searchField="物料描述";
+	/*
+    	thread.invoke( 
+    		function(setting,userinput){
+        		if !(table.find(setting.inputlog,userinput)){
+    				table.unshift(setting.inputlog,userinput)
+    				if table.len(setting.inputlog>15) table.pop(setting.inputlog)
+    				setting.save()
+        		}
+    		},setting,userinput
+    		table.push(logInput,userinput)
+    	)
+ 	*/   
+ 	table.clear(sapTab)
+    var userinputArr=string.split(mainForm.editUser.text,'\r\n')
+    
+    for (i=1;#userinputArr;1){
+		var userinput = userinputArr[i]
+		if (string.len(userinput)==0 ) continue;
+    	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput
+    	userinput=string.replace(userinput,"@%","\%")
+    	userinput=string.replace(userinput,"@_","\_")
+    	userinput=string.replace(userinput,"@*","%")
+    	userinput=string.replace(userinput,"@?","_")    
+    	var searchField;	
+    	if (string.startWith(userinput,"H008",true) || string.startWith(userinput,"BG",true)) {
+    		searchField="物料";
+		}else{
+    		searchField="物料描述";
+		}
+		var sqlstr="SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+		var t=db.getTable(sqlstr)
+		//console.dumpTable(t)
+		sapTab = table.concat(sapTab,t);
 	}
-	sqlstr="SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
-
-	var tab = db.getTable(sqlstr);
-	grid.setTable( tab )
-	
+	mainForm.listview.clear(true)
+	grid.setTable( sapTab )
+	grid.readonlyColums = {
+    	[1] = true;[2] = true;[3] = true;[4] = true;
+    }
 //调整列宽		
 	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1)
 	mainForm.listview.setColumn({cx=380;fmt=0x0/*_LVCFMT_LEFT*/},  2)
 	mainForm.listview.setColumn({cx=70 ;fmt=0x2/*_LVCFMT_CENTER*/},3)
 	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
-	
 }
+/*}}*/
 
-/*onclose{{*/
-mainForm.onClose = function(hwnd,message,wParam,lParam){
-	if (db) db.close();	
+
+/*查找图纸{{*/
+var searchDocument = function (filenumber){
+    if !(filenumber) return
+    mainForm.listview.tag=2
+    mainForm.listview.clear(true)
+    mainForm.listview.insertColumn("正在查找图纸, 请稍等...",300,1)
+	var searchFor=string.trimleft(filenumber,"H")
+	var fileTab=table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}})	
+	var flistTab=fsys.table("S:\temp\addon\qtip\drawing_lists.table")
+		flistTab.load()
+	var flist=table.array()
+		table.push(flist,flistTab.a)
+		table.push(flist,flistTab.b)
+		table.push(flist,flistTab.c)
+
+	for (j=1; #flist;1){
+		var myfind=table.filter(flist[j],function(v,index){
+			if (string.indexOf(v,searchFor)) return true; 
+		})
+		if (#myfind>0){
+			for(k=1;#myfind;1){
+				table.push(fileTab,{
+					文件名	=myfind[k];
+					位置	=flist[j][myfind[k]];
+					日期	=fsys.file(flist[j][myfind[k]]).getFileTime().write;
+					版本	=""
+				})			
+			}		
+		}
+	}
+	mainForm.listview.clear(true)
+	grid.setTable(fileTab)
+	grid.readonlyColums = {
+    	[1] = true;[2] = true;[3] = true;[4] = true;
+    }
+//调整列宽		
+	mainForm.listview.setColumn({cx=150;fmt=0x2/*_LVCFMT_CENTER*/},1)
+	mainForm.listview.setColumn({cx=400;fmt=0x0/*_LVCFMT_LEFT*/},  2)
+	mainForm.listview.setColumn({cx=150;fmt=0x2/*_LVCFMT_CENTER*/},3)
+	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
+}
+/*}}*/
+
+/*双击打开事件{{*/
+mainForm.listview.onnotify = function(id,code,ptr){
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+    		if (mainForm.listview.tag==1) {
+    			mainForm.button3.hide=false;
+    			mainForm.button3.tag  =mainForm.listview.getSelection();
+				searchDocument(mainForm.listview.items[mainForm.listview.getSelection()][[1]]);
+			}else{
+				if io.exist(mainForm.listview.items[mainForm.listview.getSelection()][[2]]) {
+					process.execute(mainForm.listview.items[mainForm.listview.getSelection()][[2]]);
+				}
+			}
+    	}
+    }
 }
 /*}}*/
 
@@ -102,20 +189,23 @@ var accelerator = win.ui.accelerator({
         ctrl = true; vkey = 'C'#; 
         oncommand = function() {
             if (grid.editBox.hide==1){
-            	var tab=table.array();
-            	for (i=1;#mainForm.listview.selected;1){
-                	table.push(tab,string.join(mainForm.listview.items[mainForm.listview.selected[i]],'\t'))
-            	}           
-				win.clip.write(string.join(tab,'\n'))
+                if (mainForm.listview.tag==1) {
+            		var tab=table.array();
+            		for (i=1;#mainForm.listview.selected;1){
+                		table.push(tab,string.join(mainForm.listview.items[mainForm.listview.selected[i]],'\t'))
+            		}           
+					win.clip.write(string.join(tab,'\n'))
+				}else{
+					win.clip.file.write(mainForm.listview.items[mainForm.listview.getSelection()][[2]])
+				}
 			}else {	//编辑状态直接调用copy
 				grid.editBox.copy()
 			}
-			
-			
         }; 
     };//  {more}
     
 },mainForm );
+
 /*}}*/
 
 /*检测并安装驱动{{*/
@@ -124,11 +214,14 @@ mainForm.button2.oncommand = function(id,event){
 	access.oleDb12.install();//检测并安装Microsoft.Ace.OLEDB.12驱动
 }
 /*}}*/
+/*
 mainForm.editUser.onOk = function(id,event){ 
 	mainForm.button.oncommand();
     return true;	
 }
+*/
 /*editUser弹出提示{{*/
+/*
 var listPopup = win.ui.listPopup(mainForm.editUser);
 
 listPopup.onGetItems = function(){
@@ -142,24 +235,75 @@ listPopup.onGetItems = function(){
 	return items,selIndex;
 }
 
+*/
 /*}}*/
 
-/*listview事件{{*/
-mainForm.listview.onnotify = function(id,code,ptr){
-    select(code) {
-    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-			var frmChild = mainForm.loadForm("\dlg\findRelatedDoc.aardio");
-			frmChild.show();
-			return false; 
-    	}
-    }
+
+/*onclose{{*/
+mainForm.onClose = function(hwnd,message,wParam,lParam){
+	if (db) db.close();	
 }
 /*}}*/
 
+/*后退返回搜索结果{{*/
+mainForm.button3.oncommand = function(id,event){
+	grid.setTable( sapTab );
+	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1)
+	mainForm.listview.setColumn({cx=380;fmt=0x0/*_LVCFMT_LEFT*/},  2)
+	mainForm.listview.setColumn({cx=70 ;fmt=0x2/*_LVCFMT_CENTER*/},3)
+	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
+	
+	mainForm.listview.setSelected(mainForm.button3.tag)
+	mainForm.listview.tag=1;
+	
+	mainForm.button3.hide=true;	
+}
+/*}}*/
+
+/*生成文件清单{{*/
+mainForm.button4.oncommand = function(id,event){
+    import key;
+    if !(key.getState(key.VK.CTRL)) return;
+	var saveFolderTable=function(folder){
+		var searchLoc=table.array()
+			table.push(searchLoc,"\\ccnsia1a\separts\Cabinet\PDF图纸库")
+			table.push(searchLoc,"\\ccnsia1a\separts\Cabinet\QHC图纸库2020")
+			table.push(searchLoc,"\\ccnsia1a\separts\Cabinet\QHC图纸库")
+		var dlist=fsys.table("S:\temp\addon\qtip\drawing_lists.table") 
+			dlist.load();
+			dlist.mixin(
+		   	a = fsys.list(searchLoc[1],,"*.*");
+		   	b = fsys.list(searchLoc[2],,"*.*");
+		   	c = fsys.list(searchLoc[3],,"*.*")
+			);
+			dlist.save()
+	}
+    saveFolderTable();
+}
+/*}}*/
+
+mainForm.button5.oncommand = function(id,event){
+
+	if (mainForm.button5.tag==1){	//恢复搜索框
+		mainForm.button5.tag = 0;
+		mainForm.editUser.height = 30;
+		mainForm.listview.top -= 60;
+		mainForm.button5.top -= 60;
+		mainForm.button5.height = 16;
+		mainForm.button5.text = '\uF078'; //向下	
+	}else{	//放大搜索框
+		mainForm.button5.tag=1;
+		mainForm.editUser.height += 60;
+		mainForm.listview.top += 60
+		mainForm.button5.top += 60
+		mainForm.button5.height = 16
+		mainForm.button5.text = '\uF077'; //向上
+	}
+	mainForm.editUser.setFocus()
+}
 
 
-
-mainForm.static.text=dbpath;
 mainForm.show();
+mainForm.static.text=dbpath;
 mainForm.editUser.setFocus()
 win.loopMessage();
