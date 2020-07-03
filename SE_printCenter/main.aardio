@@ -17,6 +17,7 @@ radNameRule2={cls="radiobutton";text="+版本+名称";left=306;top=45;right=389;
 static={cls="static";text="CLOSE? ";left=21;top=249;right=94;bottom=265;color=255;transparent=1;z=12}
 )
 /*}}*/
+
 import console;
 import process;
 import key;
@@ -80,15 +81,15 @@ var startPrint=function(activeOnly, fileExt){
     	if (seDoc.Type == SolidEdgeConstants.DocumentTypeConstants.igDraftDocument) {    //仅处理DFT格式
         	seDFT = seDoc
         	if (nameRule > 0) {   //用户规则为0时不检查titleblock
-
-				seBlk = SolidEdgeDraft.getTitleBlock(seDFT.ActiveSheet);
+				var baseSht = seDFT.Sheets(1)	//总是从首页获取titleblock
+				seBlk = SolidEdgeDraft.getTitleBlock(baseSht);
         	}
         	if (seBlk) {
         		var t=SolidEdgeDraft.getLabelTable(seBlk)
         		name_cn = t["零件名称"] 
         		qhc_ver = t["版本"]
-
-				qhc_ver := SolidEdgeDraft.getVerFromShtCorner(seDFT.ActiveSheet) //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
+				
+				qhc_ver := SolidEdgeDraft.getVerFromShtCorner(baseSht) //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
 				qhc_ver := SolidEdgeDraft.getVerFromBlkCorner(seBlk) //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
 
             	if (string.len(qhc_ver) == 0) {
@@ -128,7 +129,7 @@ var startPrint=function(activeOnly, fileExt){
         			case ".dxf"{        				
         				var smDoc=seDFT.ModelLinks.item(1).ModelDocument;
         				import web.script;
-        				var vm=web.script("VBScript")
+        				var vm=web.script("VBScript") 
         				vm.external ={
         					smDoc = function(){return smDoc}; 
         					fname = function(){return fname}        					
