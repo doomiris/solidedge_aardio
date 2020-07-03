@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="SE_PrintCenter" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\legacy\TBM\Deleted\tbm.ico" ui="win" output="SE_Printing_Center.exe" CompanyName="Carrier" FileDescription="批量转PDF, DXF, DWG" LegalCopyright="Copyright (C) domisoft 2020" ProductName="SE_PrintCenter" InternalName="SE_PrintCenter" FileVersion="0.0.0.32" ProductVersion="0.0.0.32" publishDir="D:\users\CCL100100\workspaces" dstrip="false" local="false">
+<project ver="10" name="SE_PrintCenter" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\legacy\TBM\Deleted\tbm.ico" ui="win" output="SE_Printing_Center.exe" CompanyName="Carrier" FileDescription="批量转PDF, DXF, DWG" LegalCopyright="Copyright (C) domisoft 2020" ProductName="SE_PrintCenter" InternalName="SE_PrintCenter" FileVersion="0.0.0.34" ProductVersion="0.0.0.34" publishDir="D:\users\CCL100100\workspaces" dstrip="false" local="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio">
 		<file name="test.aardio" path="test.aardio" comment="test.aardio"/>
 	</file>

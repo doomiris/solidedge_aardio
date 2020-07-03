@@ -17,5 +17,5 @@ namespace SolidEdgeConstants{
 		igSheetMetalDocument = 4;
 		igUnknownDocument = 5;
 		igWeldmentDocument = 6;
-	}	
+	}
 }

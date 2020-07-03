@@ -1,4 +1,5 @@
 ﻿//SolidEdgeDraft 常用函数
+import SolidEdgeConstants
 
 namespace SolidEdgeDraft{
 	getTitleBlock=function(seSht){
@@ -54,7 +55,14 @@ namespace SolidEdgeDraft{
         }
         return ..string.trim(txtbox.Text)
 	}
-		
+	setPdfOptions=function(seApp){
+    	//打印所有页
+    	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSheetOptions, SolidEdgeConstants.DraftSaveAsPDFSheetOptionsConstants.seDraftSaveAsPDFSheetOptionsConstantsAllSheets)
+    	//允许每页不同大小
+    	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFUseIndividualSheetSizes, true)
+    	//使用彩色
+    	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSaveAllColorsBlack, false)
+	}
 }
 /**intellisense(VBASettingIO)
 getTitleBlock(sht) = @1 图纸工作表\r\n 返回值: block实例
