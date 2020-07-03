@@ -27,20 +27,21 @@ namespace SolidEdgeDraft{
 		}
 	}
 	getVerFromShtCorner=function(seSht){
-        txts = seSht.TextBoxes        
+		var	width = seSht.SheetSetup.SheetWidth * 1000;
+        var txts = seSht.TextBoxes        
         for (i = 1 ; txts.Count){
             var x,y,z=txts.Item(i).GetOrigin( )
             //Debug.Print txts.Item(i).Text, x * 1000, y * 1000, z * 1000
             if (..string.len(..string.trim(txts.Item(i).Text)) == 2) {
-                if (x * 1000 > 395 && y * 1000 > 10) {
+                if (x * 1000 > width * 0.94 && y * 1000 > 10) {
                     return ..string.trim(txts.Item(i).Text)
                 }
             }
         }
 	}
 	getVerFromBlkCorner=function(blk){
-        txts = blk.Block.Views.Item(1).TextBoxes
-        txtbox = txts.Item(1)
+        var txts = blk.Block.Views.Item(1).TextBoxes
+        var txtbox = txts.Item(1)
         if (txts && txtbox) {
             var a,b,c=txtbox.GetOrigin ( )
             for (i = 2 ; txts.Count){
