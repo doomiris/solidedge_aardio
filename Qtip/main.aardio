@@ -1,6 +1,7 @@
 import fonts.fontAwesome;
 import win.ui;
 import win.ui.grid;
+import win.ui.menu;
 import win.ui.accelerator;
 //import win.ui.listPopup;
 import win.clip;
@@ -12,15 +13,23 @@ import fsys.table;
 import console;
 //import win.ui.menu;
 //import win.util.tray;
+/*
+BG*** -U   期初数据上传时用，后续不用操作也不用管理
+BG*** -X           虚拟物料，主要是费用类
+BG*** -F    用于 成品预测分解成长周期物料需求，会新增或不用
+H008*** -SF       社返件，与废品同类别
+BG*** -T     用于销售报价，会增加或不用 
+*/
 /*DSG{{*/
 mainForm = win.form(text="QHC物料查询";right=638;bottom=714)
 mainForm.add(
-button={cls="button";text='\uF002  查询';left=521;top=7;right=620;bottom=42;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
+button={cls="button";text='\uF002  查询';left=521;top=10;right=620;bottom=40;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
 button2={cls="button";text="安装驱动";left=90;top=687;right=176;bottom=710;db=1;dl=1;hide=1;z=3};
 button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=5};
-button4={cls="button";text="更新搜索库";left=7;top=687;right=83;bottom=710;color=10789024;flat=1;z=6};
-button5={cls="button";text='\uF078 ';left=477;top=39;right=515;bottom=55;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
-editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=1;aw=1;border=1;dr=1;dt=1;hidesel=false;multiline=1;tabstop=1;z=8};
+button4={cls="button";text="更新搜索库";left=7;top=687;right=83;bottom=710;color=10789024;db=1;dl=1;flat=1;z=6};
+button5={cls="button";text='\uF103 ';left=477;top=39;right=515;bottom=54;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
+buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=9};
+editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=8};
 listview={cls="listview";left=1;top=53;right=638;bottom=680;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
 static={cls="static";text="Static";left=182;top=679;right=634;bottom=714;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2}
 )
@@ -60,12 +69,10 @@ if (err){
 /*}}*/
 
 /*读取设置{{*/
-/*
 var logInput=table.array()
 var setting = fsys.table(fsys.getTempDir()++"/domisoft.qtip.setting.table") 
 setting.load(); //从文件载入表
 if !(setting.inputlog) setting.inputlog=table.array()
-*/
 /*}}*/
 /*搜索按钮事件{{*/
 mainForm.button.oncommand = function(id,event){
@@ -214,28 +221,20 @@ mainForm.button2.oncommand = function(id,event){
 	access.oleDb12.install();//检测并安装Microsoft.Ace.OLEDB.12驱动
 }
 /*}}*/
-/*
-mainForm.editUser.onOk = function(id,event){ 
-	mainForm.button.oncommand();
-    return true;	
-}
-*/
+
 /*editUser弹出提示{{*/
-/*
-var listPopup = win.ui.listPopup(mainForm.editUser);
-
-listPopup.onGetItems = function(){
-	var items = setting.inputlog;
-	if(!#items) return;
-	var selIndex = 1;
-	reduce(items,function(prev,next,index){ 
-		if( #next < #prev ) { selIndex = index; return next };
-		return prev
-	})
-	return items,selIndex;
+mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
+mainForm.popmenu.add("输入历史:");
+mainForm.popmenu.add();//分隔线
+for (i=1; #setting.inputlog; 1){
+    mainForm.popmenu.add(
+    	text = setting.inputlog[i];
+    	proc = function(id){
+    		mainForm.editUser.text= setting.inputlog[i];
+    		mainForm.editUser.setFocus();
+    	}
+    );
 }
-
-*/
 /*}}*/
 
 
@@ -282,28 +281,73 @@ mainForm.button4.oncommand = function(id,event){
 }
 /*}}*/
 
+/*button5输入框多行功能切换{{*/
 mainForm.button5.oncommand = function(id,event){
-
+	var t=mainForm.editUser.text;
+	var a,b,c,d=mainForm.getScale();
 	if (mainForm.button5.tag==1){	//恢复搜索框
 		mainForm.button5.tag = 0;
-		mainForm.editUser.height = 30;
+		mainForm.add(
+			editUser={cls="edit";left=mainForm.editUser.left;top=10;right=mainForm.editUser.right;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;tabstop=1;font=LOGFONT(h=-13);z=8};
+		);
 		mainForm.listview.top -= 60;
 		mainForm.button5.top -= 60;
 		mainForm.button5.height = 16;
 		mainForm.button5.text = '\uF078'; //向下	
 	}else{	//放大搜索框
 		mainForm.button5.tag=1;
-		mainForm.editUser.height += 60;
+		mainForm.add(
+			editUser={cls="edit";left=mainForm.editUser.left;top=10;right=mainForm.editUser.right;bottom=100;autohscroll=false;autovscroll=true;aw=1;border=1;dl=1;dr=1;dt=1;multiline=1;tabstop=1;font=LOGFONT(h=-13);z=8};
+		);
 		mainForm.listview.top += 60
 		mainForm.button5.top += 60
 		mainForm.button5.height = 16
 		mainForm.button5.text = '\uF077'; //向上
 	}
-	mainForm.editUser.setFocus()
+	mainForm.editUser.text=string.split(t,'\n\r')[[1]];
+	mainForm.editUser.setFocus();
+}
+/*}}*/
+/*输入框重新定位{{*/
+var relocCtl = function(){
+   // var a,b,c,d=mainForm.getScale();
+   // mainForm.editUser.left = 250*a
+	mainForm.editUser.right=mainForm.button5.right;
+   //  mainForm.editUser.top=mainForm.button.top;
+}
+/*}}*/
+mainForm.onEnterSizeMove = function(){
+	relocCtl();
+}
+mainForm.onActivate = function(state,hwndOther,minimized){
+	if(state){
+		relocCtl();	
+	}
+}
+mainForm.wndproc = function(hwnd,message,wparam,lparam){
+    select(message) {//判断消息类型
+        case 0x112/*_WM_SYSCOMMAND*/ {
+            if(wparam=0xF120/*_SC_RESTORE*/){   
+                relocCtl();
+            } 
+            if(wparam=0xF030/*_SC_MAXIMIZE*/){   
+                relocCtl();
+            }
+        }
+    }
+    //无返回值则继续调用默认回调函数
 }
 
+mainForm.buttonD.oncommand = function(id,event){
+		    var pt = ::POINT();
+			::User32.GetCursorPos(pt);
+	    	
+	    	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	    	win.setForeground(mainForm.hwnd)
+	    	mainForm.popmenu.popup(pt.x,pt.y,true )
+}
 
 mainForm.show();
 mainForm.static.text=dbpath;
-mainForm.editUser.setFocus()
+mainForm.editUser.setFocus();
 win.loopMessage();
