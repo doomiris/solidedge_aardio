@@ -28,16 +28,11 @@ import SolidEdgeConstants;
 import SolidEdgeDraft;
 import VBASettingIO;
 
-
-_ctrl = key.getState(key.VK.CTRL)
-_shift =  key.getState(key.VK.SHIFT)
-
+_ctrl = key.getState(key.VK.CTRL);
+_shift =  key.getState(key.VK.SHIFT);
 
 var toFolder = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces");
-var nameRule = tonumber(VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0))
-
-//if (fileExt==".pdf") SolidEdgeDraft.setPdfOptions(seApp);
-	
+var nameRule = tonumber(VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0));
 	
 /*formatWindowsFileName{{*/
 var  formatWindowsFileName = function (nameStr) {
@@ -58,81 +53,85 @@ var  formatWindowsFileName = function (nameStr) {
 /*}}*/
 var startPrint=function(activeOnly, fileExt){
 	var seApp = seconn.seApp;
-	var Docs=seApp.Documents;
+	var Docs = seApp.Documents;
+	SolidEdgeDraft.setPdfOptions(seApp);
+
 	seApp.Application.DisplayAlerts = false;
 
 	var totalDoc = activeOnly ? 1: Docs.Count;
-	winform.progress.min=0
-	winform.progress.pos=0
+	winform.progress.min=0;
+	winform.progress.pos=0;
 	winform.progress.max=totalDoc * winform.listbox.count;
 	
-
 	for (j = totalDoc; 1 ; -1){
-		
     	var qhc_ver="" ,name_cn=""
-    	var seDoc,seDFT,seBlk
+    	var seDoc,seDFT,seBlk;
     	var tRule;
-    	seDoc = activeOnly ? seApp.ActiveDocument : Docs.Item(j) //如果指定了onlyActive参数, 则仅打印当前文档
+    	seDoc = activeOnly ? seApp.ActiveDocument : Docs.Item(j); //如果指定了onlyActive参数, 则仅打印当前文档
     	if (seDoc.Type == SolidEdgeConstants.DocumentTypeConstants.igDraftDocument) {    //仅处理DFT格式
-        	seDFT = seDoc
+        	seDFT = seDoc;
         	if (nameRule > 0) {   //用户规则为0时不检查titleblock
-				var baseSht = seDFT.Sheets(1)	//总是从首页获取titleblock
+				var baseSht = seDFT.Sheets(1);	//总是从首页获取titleblock
 				seBlk = SolidEdgeDraft.getTitleBlock(baseSht);
         	}
         	if (seBlk) {
         		var t=SolidEdgeDraft.getLabelTable(seBlk)
-        		name_cn = t["零件名称"] 
-        		qhc_ver = t["版本"]
+        		name_cn = t["零件名称"] ;
+        		qhc_ver = t["版本"];
 				
-				qhc_ver := SolidEdgeDraft.getVerFromShtCorner(baseSht) //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
-				qhc_ver := SolidEdgeDraft.getVerFromBlkCorner(seBlk) //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
+				qhc_ver := SolidEdgeDraft.getVerFromShtCorner(baseSht); //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
+				qhc_ver := SolidEdgeDraft.getVerFromBlkCorner(seBlk); //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
 
             	if (string.len(qhc_ver) == 0) {
-               		tRule=0	//如果无法获取版本号
+               		tRule=0;	//如果无法获取版本号
             	}else{
             		if (string.len(name_cn) == 0 && nameRule == 2) {
-                		tRule = 1   //如果名称为空时使用规则1
+                		tRule = 1;   //如果名称为空时使用规则1
             		} else {
-                		tRule = nameRule    //使用用户设定的规则
+                		tRule = nameRule;    //使用用户设定的规则
             		}
             	}
         	}else{
-            	tRule = 0   //如果无法获取titleblock, 使用规则0
+            	tRule = 0;   //如果无法获取titleblock, 使用规则0
         	}
 			seDFT.Activate() //如果不Activate,只会重复保存当前文件
 			for (k=1; winform.listbox.count; 1){
 				winform.progress.pos += 1 ;
-				if !(winform.listbox.getSelected(k)) continue 1;
-				fileExt=winform.listbox.getItemText(k);
+				
+				if !(activeOnly) {
+					if !(winform.listbox.getSelected(k)) continue 1;
+					fileExt = winform.listbox.getItemText(k);
+				}
+			
 				select  (tRule)    {//命名规则
     				case 0 {
-        				fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ fileExt
+        				fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ fileExt;
     				}
     				case 1 {
-        				fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ "-" ++ qhc_ver ++ "版" ++ fileExt
+        				fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ "-" ++ qhc_ver ++ "版" ++ fileExt;
     				}
     				case 2 {
-        				name_cn = formatWindowsFileName(name_cn)
-        				fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ "-" ++ qhc_ver ++ "版" ++ "-" ++ name_cn ++ fileExt
+        				name_cn = formatWindowsFileName(name_cn);
+        				fname = toFolder ++ "\" ++ string.split(seDFT.Name, ".")[1] ++ "-" ++ qhc_ver ++ "版" ++ "-" ++ name_cn ++ fileExt;
     				}
 				}
 				try{
     				select (fileExt){
         				case ".dwg",".pdf"{        		
-        					seDFT.SaveCopyAs(fname)  //savecopyas 和 saveas 效果一样
+        					seDFT.SaveCopyAs(fname);  //savecopyas 和 saveas 效果一样
         				}
         				case ".stp"{
-        					seDFT.ModelLinks.item(1).ModelDocument.SaveCopyAs(fname)
+        					seDFT.ModelLinks.item(1).ModelDocument.SaveCopyAs(fname);
         				} 
         				case ".dxf"{        				
         					var smDoc=seDFT.ModelLinks.item(1).ModelDocument;
         					import web.script;
-        					var vm=web.script("VBScript") 
+        					var vm=web.script("VBScript") ;
         					vm.external ={
         						smDoc = function(){return smDoc}; 
         						fname = function(){return fname}        					
         					}
-        					vm.addCode("Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)")
+        					vm.addCode("Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)");
         				} 
     				}
 				}
@@ -140,28 +139,32 @@ var startPrint=function(activeOnly, fileExt){
 					//console.log(e)
 					//console.pause(false)
 				}
+				if (activeOnly) break;
 			}	
 
-        	if (winform.radCloseNothing.checked!==1) seDFT.close((winform.radCloseSaved.checked==1))
+        	if (winform.radCloseNothing.checked!==1) seDFT.close((winform.radCloseSaved.checked==1));
         	//console.log(fname)
     	}
 	}
-	seApp.Application.DisplayAlerts = true	
+	seApp.Application.DisplayAlerts = true;
+	seApp.StatusBar = fname;	
 	if (activeOnly) {
-		if (fileExt==".pdf") process.execute(fname)	//如果onlyActive则打开结果文件
+		if (fileExt==".pdf")
+			if io.exist(fname) process.execute(fname);	//如果onlyActive则打开结果文件
 		winform.close();
 	} else { 
-    	seApp.StatusBar = "Print Done"
+    	seApp.StatusBar = "Print Done";
 	}
+	console.pause(true);
 }
 
 winform.button.oncommand = function(id,event){
-	startPrint(true, winform.listbox.selText)
+	startPrint(true, winform.listbox.selText);
 	winform.close();
 }
 
 winform.button2.oncommand = function(id,event){
-	startPrint(false, winform.listbox.selText)
+	startPrint(false, winform.listbox.selText);
 	winform.close();
 }
 
@@ -186,16 +189,18 @@ winform.isDialogMessage = function(hwnd,msg){
 }
 /*}}*/
 if (_ctrl) {
-	startPrint(true, "pdf")
+	startPrint(true, winform.listbox.getItemText(1));
 	return ; 
 }
 if (_ctrl && _shift) {
-	startPrint(false, "pdf")
+	startPrint(false, winform.listbox.getItemText(1));
 	return ; 
 }
 winform.show();	
 /*控件初始值{{*/
-winform.listbox.selIndex=1
+
+winform.listbox.setSelected(1);
+
 select(nameRule) {
 	case 0 {
 		winform.radNameRule0.checked = 1;
@@ -207,10 +212,9 @@ select(nameRule) {
 		winform.radNameRule2.checked = 1;
 	}
 }
-winform.outpath.text=toFolder
+winform.outpath.text = toFolder;
+
 /*}}*/
-
-
 
 win.loopMessage();
 return winform;

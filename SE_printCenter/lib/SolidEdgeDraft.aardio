@@ -57,11 +57,11 @@ namespace SolidEdgeDraft{
 	}
 	setPdfOptions=function(seApp){
     	//打印所有页
-    	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSheetOptions, SolidEdgeConstants.DraftSaveAsPDFSheetOptionsConstants.seDraftSaveAsPDFSheetOptionsConstantsAllSheets)
+    	seApp.SetGlobalParameter (..SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSheetOptions, ..SolidEdgeConstants.DraftSaveAsPDFSheetOptionsConstants.seDraftSaveAsPDFSheetOptionsConstantsAllSheets)
     	//允许每页不同大小
-    	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFUseIndividualSheetSizes, true)
+    	seApp.SetGlobalParameter (..SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFUseIndividualSheetSizes, true)
     	//使用彩色
-    	seApp.SetGlobalParameter (SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSaveAllColorsBlack, false)
+    	seApp.SetGlobalParameter (..SolidEdgeConstants.ApplicationGlobalConstants.seApplicationGlobalDraftSaveAsPDFSaveAllColorsBlack, false)
 	}
 }
 /**intellisense(VBASettingIO)
