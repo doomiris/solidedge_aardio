@@ -1,0 +1,90 @@
+//solidedge
+import com; 
+class solidedge{
+	ctor( ... ){
+		this = ..com.GetObject("SolidEdge.Application");
+	};
+}
+/**intellisense()
+solidedge = solidedge支持库
+solidedge() = !solidedge.
+_igAssemblyDocument = @3 /*Assembly Document Type*/
+_igAssemblyViewerDocument = @11 /*Assembly Viewer Document Type*/
+_igDraftDocument = @2 /*Draft Document Type*/
+_igPartDocument = @1 /*Part Document Type*/
+_igPartViewerDocument = @12 /*Part Viewer Document Type*/
+_igSheetMetalDocument = @4 /*SheetMetal Document Type*/
+_igSyncAssemblyDocument = @10 /*Synchronous Assembly Document Type*/
+_igSyncPartDocument = @8 /*Synchronous Part Document Type*/
+_igSyncSheetMetalDocument = @9 /*Synchronous Sheetmetal Document Type*/
+_igUnknownDocument = @5 /*Unknown Document Type*/
+_igWeldmentAssemblyDocument = @7 /*Weldment Assembly Document Type*/
+_igWeldmentDocument = @6 /*Weldment Document Type*/
+!solidedge.GetGlobalParameter(_ApplicationGlobalConstants) = Returns the setting of a specified global parameter for the referenced Application or document object.
+!solidedge.ActiveDocument = Returns the currently active document.
+!solidedge.ActiveDocumentType = Returns the type of the currently active document.
+!solidedge.ActiveEnvironment = Returns the environment that belongs to the current active window of the document.
+!solidedge.ActiveObject = Returns an Object from the active document. The type of object returned is specified by Type.
+!solidedge.ActivePrinter = Returns the name of the active printer.
+!solidedge.ActiveSelectSet = Returns the SelectSet object for the currently active window.
+!solidedge.ActiveStatusBarPart = Sets and returns the current active status bar part.
+!solidedge.ActiveWindow = Returns the active Window object.
+!solidedge.AddIns = Returns the AddIns object for the referenced Application object.
+!solidedge.AppDataFolder = Returns the path to the user's AppData folder for Solid Edge.
+!solidedge.Application = Returns the active application object.
+!solidedge.ApplicationEvents = Returns the ApplicationEvents object for the referenced Application object.
+!solidedge.ApplicationV8AfterDocumentOpenEvent = Returns the ApplicationV8DocumentOpenEvent object for the referenced Application object.
+!solidedge.ApplicationWindowEvents = Returns the ApplicationWindowEvents object for the referenced Application object.
+!solidedge.ApprenticeMode = 
+!solidedge.BeforeFileSaveAsEvents = Returns the BeforeFileSaveAsEvents object for the referenced Application object.
+!solidedge.BiDMEvents = 
+!solidedge.Caption = Sets and returns the caption of the referenced object.
+!solidedge.Customization = An object that is used to customize the user interface.
+!solidedge.DefaultFilePath = Sets and returns the default path used when files are opened.
+!solidedge.DelayCompute = Specifies whether or not to suspend the computing process.
+!solidedge.DisplayAlerts = Enables or disables the display of alerts and messages.
+!solidedge.DisplayFullScreen = Specifies whether or not the referenced Application object is maximized.
+!solidedge.DisplayRecentFiles = Specifies whether or not the used file list is appended to the File menu of the referenced Application object.
+!solidedge.DisplayRecentFilesCount = Sets and returns the number of files that are displayed in the most recently used (MRU) list.
+!solidedge.Documents = Returns the collection of documents that are owned by the referenced Application object.
+!solidedge.EdgeBarVisible = Specifies whether or not the Edge Bar is visible for the referenced Application object.
+!solidedge.EnableStereo = Specifies whether or not the referenced Application object will support the creation of stereoscopic displays.
+!solidedge.Environments = Returns a collection of Environment objects that are owned by the referenced Application object.
+!solidedge.FeatureLibraryEvents = Returns the FeatureLibraryEvents object for the referenced Application object.
+!solidedge.FeatureSelectedFromPFEvents = Returns an Object of feature selected from path finder
+!solidedge.FileUIEvents = Returns the FileUIEvents object for the referenced Application object.
+!solidedge.Height = Returns the height of the referenced object.
+!solidedge.hWnd = Returns the window handle for the referenced object.
+!solidedge.Interactive = Specifies whether or not the referenced Application object can be used interactively.
+!solidedge.IsIdling = 
+!solidedge.Left = Specifies the distance (in twips) between the internal left edge of an object and the left edge of its container.
+!solidedge.MailSession = Returns the MAPI mail session number.
+!solidedge.Name = Returns the name of the referenced object.
+!solidedge.NewFileUIEvents = Returns the NewFileUIEvents object for the referenced Application object.
+!solidedge.Parent = Returns the parent object for the referenced object.
+!solidedge.ProcessID = Returns the processID of the application.
+!solidedge.RegistryPath = Returns the path to the HKEY_CURRENT_USER registry hive for Solid Edge.
+!solidedge.ScreenUpdating = Determines if the screen updating is enabled or disabled.
+!solidedge.SEECEvents = 
+!solidedge.SESPEvents = 
+!solidedge.ShortcutMenuEvents = Returns the ShortcutMenuEvents object for the referenced Application object.
+!solidedge.ShowStartupScreen = 
+!solidedge.SolidEdgeInsightXT = 
+!solidedge.SolidEdgeTCE = 
+!solidedge.StatusBar = Sets and returns the caption text that is displayed in the referenced Application object.
+!solidedge.StatusBarDelayUpdate = Specifies whether to immediately update the status bar or to defer the update to the idle loop.
+!solidedge.StatusBarHeight = Returns the height of the status bar.
+!solidedge.StatusBarPartCount = Sets and returns the number of parts or sections into which the status bar is divided.
+!solidedge.StatusBarPartWidth = Returns the width of the current active part of the status bar.
+!solidedge.StatusBarVisible = Specifies whether or not the status bar is visible.
+!solidedge.Top = Sets and returns the distance from the top of the screen to the top of the referenced object or control.
+!solidedge.UsableHeight = Returns the height of the usable vertical space in the application window.
+!solidedge.UsableWidth = Returns the width of the usable horizontal space in the application window area.
+!solidedge.UserName = Returns the name of the current user.
+!solidedge.Value = Returns the name of the application, the value of a dimension, the value of a custom property, or the value of a variable.
+!solidedge.Version = Returns the version number of the referenced Application object.
+!solidedge.Visible = Specifies whether or not the referenced object is displayed to the screen.
+!solidedge.Width = Returns the width of the referenced object.
+!solidedge.Windows = Returns a collection of Window objects.
+!solidedge.WindowState = Returns or sets the state of the referenced window.
+end intellisense**/
