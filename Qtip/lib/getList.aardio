@@ -1,0 +1,84 @@
+﻿import fsys;
+import fsys.table;
+
+namespace getList{
+	saveFolderTable = function(){
+		_searchLoc = {
+			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
+			"\\ccnsia1a\separts\Cabinet\QHC图纸库2020";
+			"\\ccnsia1a\separts\Cabinet\QHC图纸库"
+		};
+		var dlist = ..fsys.table("S:\temp\addon\qtip\drawing_lists.table");
+		dlist.load();
+		dlist.mixin(
+			a = ..fsys.list(_searchLoc[1],,"*.*");
+			b = ..fsys.list(_searchLoc[2],,"*.*");
+			c = ..fsys.list(_searchLoc[3],,"*.*")
+		);
+		dlist.save();
+	};
+	appendDrawingMapFromExcel = function(eFileLoc, shtName){
+		import com.excel;
+		import console;
+		import console.progress;
+		console.open();
+/*codetrim{{*/
+		var codetrim =  function(str){
+			str = ..string.upper(str);
+			str = ..string.trim(str);
+			str = ..string.trimleft(str, "H");
+			return str; 
+		}
+/*}}*/
+		var xlApp = com.excel(true);
+		xlApp.Visible=false;
+
+		var xlWk = xlApp.Open(eFileLoc);
+		var xlSht = xlWk.Sheets(shtName);
+		xlSht.Activate();
+		console.log(xlSht.name)
+		var xlRng = xlSht.Range("1:1");
+		var _s = 2;
+		var _c = xlRng.find("专用号").column;
+		var _d = xlRng.find("图号").column;
+		console.log(_c, _d)
+		var dmap = ..fsys.table("S:\temp\addon\qtip\drawing_map.table");
+		dmap.load();
+		console.log("总数:", #dmap.dlist);
+		console.progress();
+		var mapping = ..table.create(,{fields={[1]="专用号";[2]="图号";}})
+		for (i=_s; xlSht.UsedRange.Rows.Count; 1){
+			var pcell = xlSht.Cells(i, _c);
+			if (pcell.Mergecells) pcell = pcell.MergeArea.Cells(1,1);
+			var dcell = xlSht.Cells(i, _d);
+			if (dcell.Mergecells) dcell = dcell.MergeArea.Cells(1,1);
+			
+			var pcode = codetrim(pcell.text);
+			var dcode = codetrim(dcell.text);
+			
+			if !..string.startWith(pcode,"008") || !..string.startWith(dcode,"008")
+				continue;
+			
+			var duptab = ..table.filter(dmap.dlist,function(v,index){
+				if (v.专用号==pcode && v.图号==dcode) return true; 
+			})
+			
+			if #duptab>0 continue;
+			
+			..table.push(mapping,{
+				专用号	= pcode;
+				图号	= dcode;
+			});
+		};
+		if (dmap.dlist)
+			dmap.dlist =  ..table.concat(dmap.dlist, mapping);
+		else 
+			dmap.dlist = mapping;
+			
+		console.log("总数:", #dmap.dlist)
+		dmap.save();
+		xlWk.close(false);
+		xlApp.Quit();		
+		console.pause(true);
+	};
+}

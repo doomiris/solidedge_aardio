@@ -21,17 +21,18 @@ H008*** -SF       社返件，与废品同类别
 BG*** -T     用于销售报价，会增加或不用 
 */
 /*DSG{{*/
-mainForm = win.form(text="QHC物料查询";right=638;bottom=714)
+mainForm = win.form(text="QHC物料查询";right=638;bottom=502)
 mainForm.add(
 button={cls="button";text='\uF002  查询';left=521;top=10;right=620;bottom=40;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
-button2={cls="button";text="安装驱动";left=90;top=687;right=176;bottom=710;db=1;dl=1;hide=1;z=3};
+button2={cls="button";text="安装驱动";left=184;top=472;right=270;bottom=495;db=1;dl=1;hide=1;z=3};
 button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=5};
-button4={cls="button";text="更新搜索库";left=7;top=687;right=83;bottom=710;color=10789024;db=1;dl=1;flat=1;z=6};
+button4={cls="button";text="更新图号库";left=5;top=472;right=81;bottom=495;color=10789024;db=1;dl=1;flat=1;z=6};
 button5={cls="button";text='\uF103 ';left=477;top=39;right=515;bottom=54;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
+button6={cls="button";text="更新目录库";left=95;top=472;right=171;bottom=495;color=10789024;db=1;dl=1;flat=1;z=10};
 buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=9};
 editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=8};
-listview={cls="listview";left=1;top=53;right=638;bottom=680;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
-static={cls="static";text="Static";left=182;top=679;right=634;bottom=714;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2}
+listview={cls="listview";left=1;top=53;right=638;bottom=463;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
+static={cls="static";text="Static";left=180;top=464;right=632;bottom=499;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2}
 )
 /*}}*/
 
@@ -69,85 +70,111 @@ if (err){
 /*}}*/
 
 /*读取设置{{*/
-var logInput=table.array()
-var setting = fsys.table(fsys.getTempDir()++"/domisoft.qtip.setting.table") 
-setting.load(); //从文件载入表
-if !(setting.inputlog) setting.inputlog=table.array()
+var logInput,setting;
+mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
+
+var readInputList = function(){
+	logInput = table.array()
+	setting = fsys.table(fsys.getTempDir()++"/domisoft.qtip.setting.table") 
+	setting.load(); //从文件载入表
+	if !(setting.inputlog) setting.inputlog = table.array()
+}
+var updatePopmenu = function(){
+    mainForm.popmenu = win.ui.popmenu(mainForm)
+	mainForm.popmenu.add("输入历史:");
+	mainForm.popmenu.add();//分隔线
+	for (i=1; #setting.inputlog; 1){
+    	mainForm.popmenu.add(
+    		text = setting.inputlog[i];
+    		proc = function(id){
+    			mainForm.editUser.text= setting.inputlog[i];
+    			mainForm.editUser.setFocus();
+    		}
+    	);
+	}
+}
+var saveInputList = function(str){
+    if !(table.find(setting.inputlog, str)){
+    	table.unshift(setting.inputlog,str);
+    	if (#setting.inputlog>15) table.pop(setting.inputlog);
+    	setting.save();
+    };
+    table.push(logInput, str);
+    updatePopmenu();
+};
+
+readInputList();
+updatePopmenu();
 /*}}*/
 /*搜索按钮事件{{*/
 mainForm.button.oncommand = function(id,event){
     mainForm.button3.hide=true;
-    mainForm.listview.tag=1
-    mainForm.listview.clear(true)
+    mainForm.listview.tag=1;
+    mainForm.listview.clear(true);
     mainForm.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
     if !(dbpath) return false; 
-	/*
-    	thread.invoke( 
-    		function(setting,userinput){
-        		if !(table.find(setting.inputlog,userinput)){
-    				table.unshift(setting.inputlog,userinput)
-    				if table.len(setting.inputlog>15) table.pop(setting.inputlog)
-    				setting.save()
-        		}
-    		},setting,userinput
-    		table.push(logInput,userinput)
-    	)
- 	*/   
- 	table.clear(sapTab)
-    var userinputArr=string.split(mainForm.editUser.text,'\r\n')
-    
-    for (i=1;#userinputArr;1){
-		var userinput = userinputArr[i]
+    if (mainForm.editUser.lineCount==1) saveInputList(mainForm.editUser.text);
+    var userinputArr = string.split(mainForm.editUser.text, '\r\n');
+ 	table.clear(sapTab);
+    for (i=1; #userinputArr; 1){
+		var userinput = userinputArr[i];
 		if (string.len(userinput)==0 ) continue;
-    	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput
-    	userinput=string.replace(userinput,"@%","\%")
-    	userinput=string.replace(userinput,"@_","\_")
-    	userinput=string.replace(userinput,"@*","%")
-    	userinput=string.replace(userinput,"@?","_")    
+    	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
+    	userinput=string.replace(userinput,"@%","\%");
+    	userinput=string.replace(userinput,"@_","\_");
+    	userinput=string.replace(userinput,"@*","%");
+    	userinput=string.replace(userinput,"@?","_");
     	var searchField;	
     	if (string.startWith(userinput,"H008",true) || string.startWith(userinput,"BG",true)) {
-    		searchField="物料";
+    		searchField = "物料";
 		}else{
-    		searchField="物料描述";
+    		searchField = "物料描述";
 		}
-		var sqlstr="SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
-		var t=db.getTable(sqlstr)
+		var sqlstr = "SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+		var t = db.getTable(sqlstr);
 		//console.dumpTable(t)
 		sapTab = table.concat(sapTab,t);
 	}
 	mainForm.listview.clear(true)
-	grid.setTable( sapTab )
+	grid.setTable( sapTab );
 	grid.readonlyColums = {
     	[1] = true;[2] = true;[3] = true;[4] = true;
     }
 //调整列宽		
-	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1)
-	mainForm.listview.setColumn({cx=380;fmt=0x0/*_LVCFMT_LEFT*/},  2)
-	mainForm.listview.setColumn({cx=70 ;fmt=0x2/*_LVCFMT_CENTER*/},3)
-	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
+	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1);
+	mainForm.listview.setColumn({cx=380;fmt=0x0/*_LVCFMT_LEFT*/},  2);
+	mainForm.listview.setColumn({cx=70 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
+	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
 }
 /*}}*/
 
-
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
-    if !(filenumber) return
-    mainForm.listview.tag=2
-    mainForm.listview.clear(true)
-    mainForm.listview.insertColumn("正在查找图纸, 请稍等...",300,1)
-	var searchFor=string.trimleft(filenumber,"H")
-	var fileTab=table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}})	
-	var flistTab=fsys.table("S:\temp\addon\qtip\drawing_lists.table")
-		flistTab.load()
-	var flist=table.array()
-		table.push(flist,flistTab.a)
-		table.push(flist,flistTab.b)
-		table.push(flist,flistTab.c)
+    if !(filenumber) return;
+    mainForm.listview.tag = 2;
+    mainForm.listview.clear(true);
+    mainForm.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
+	var searchFor = string.trimleft(filenumber,"H");
+	var fileTab = table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}})	;
+	var flistTab = fsys.table("S:\temp\addon\qtip\drawing_lists.table");
+		flistTab.load();
+	var flist = table.array();
+		table.push(flist,flistTab.a);
+		table.push(flist,flistTab.b);
+		table.push(flist,flistTab.c);
+	var dlistTab = fsys.table("S:\temp\addon\qtip\drawing_map.table");
+		dlistTab.load();
+	var mapping = dlistTab.dlist;
 
-	for (j=1; #flist;1){
-		var myfind=table.filter(flist[j],function(v,index){
-			if (string.indexOf(v,searchFor)) return true; 
-		})
+	var maptab = table.filter(mapping, function(v,index){
+		if (v.专用号==searchFor) return true; 
+	}); 
+	if #maptab>0 searchFor = maptab[1].图号; 
+
+	for (j=1; #flist; 1){
+		var myfind = table.filter(flist[j],function(v,index){
+			if (string.indexOf(v,searchFor)) return true;
+		});
 		if (#myfind>0){
 			for(k=1;#myfind;1){
 				table.push(fileTab,{
@@ -155,12 +182,13 @@ var searchDocument = function (filenumber){
 					位置	=flist[j][myfind[k]];
 					日期	=fsys.file(flist[j][myfind[k]]).getFileTime().write;
 					版本	=""
-				})			
-			}		
-		}
-	}
-	mainForm.listview.clear(true)
-	grid.setTable(fileTab)
+				});
+			};
+		};
+	};
+
+	mainForm.listview.clear(true);
+	grid.setTable(fileTab);
 	grid.readonlyColums = {
     	[1] = true;[2] = true;[3] = true;[4] = true;
     }
@@ -222,22 +250,6 @@ mainForm.button2.oncommand = function(id,event){
 }
 /*}}*/
 
-/*editUser弹出提示{{*/
-mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
-mainForm.popmenu.add("输入历史:");
-mainForm.popmenu.add();//分隔线
-for (i=1; #setting.inputlog; 1){
-    mainForm.popmenu.add(
-    	text = setting.inputlog[i];
-    	proc = function(id){
-    		mainForm.editUser.text= setting.inputlog[i];
-    		mainForm.editUser.setFocus();
-    	}
-    );
-}
-/*}}*/
-
-
 /*onclose{{*/
 mainForm.onClose = function(hwnd,message,wParam,lParam){
 	if (db) db.close();	
@@ -262,22 +274,26 @@ mainForm.button3.oncommand = function(id,event){
 /*生成文件清单{{*/
 mainForm.button4.oncommand = function(id,event){
     import key;
-    if !(key.getState(key.VK.CTRL)) return;
-	var saveFolderTable=function(folder){
-		var searchLoc=table.array()
-			table.push(searchLoc,"\\ccnsia1a\separts\Cabinet\PDF图纸库")
-			table.push(searchLoc,"\\ccnsia1a\separts\Cabinet\QHC图纸库2020")
-			table.push(searchLoc,"\\ccnsia1a\separts\Cabinet\QHC图纸库")
-		var dlist=fsys.table("S:\temp\addon\qtip\drawing_lists.table") 
-			dlist.load();
-			dlist.mixin(
-		   	a = fsys.list(searchLoc[1],,"*.*");
-		   	b = fsys.list(searchLoc[2],,"*.*");
-		   	c = fsys.list(searchLoc[3],,"*.*")
-			);
-			dlist.save()
-	}
-    saveFolderTable();
+    if !(key.getState(key.VK.CTRL)) return ; 
+    import fsys.dlg;
+    import win.inputBox;
+    
+	var path = fsys.dlg.open('Excel文件|*.xlsx',,,mainForm);
+	if !(path) return ;
+	var inputbox = win.inputBox(mainForm.hwnd,false);
+	inputbox.text = "输入"
+	inputbox.info.text = "表名"
+	inputbox.input.text = "part list"
+	var sht = inputbox.doModal();
+	if !(sht) return ;
+	import getList;
+    getList.appendDrawingMapFromExcel(path, sht);
+}
+mainForm.button6.oncommand = function(id,event){
+    import key;
+    if !(key.getState(key.VK.CTRL)) return ; 
+    import getList;
+    getList.saveFolderTable();
 }
 /*}}*/
 
