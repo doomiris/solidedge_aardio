@@ -1,17 +1,4 @@
-import com;
-var openDummy = function(){
-	var igAssemblyDocument = 3;
-	var igReference 	= -768828720;
-	//var igSubAssembly 	= -1879909116;	//子装配里的子装配	
-	var seApp = com.GetObject("SolidEdge.Application");
-	
-	if (seApp.ActiveDocumentType != igAssemblyDocument) return;
-	var pAsm = seApp.ActiveDocument;
-	
-	if (pAsm.SelectSet.Count != 1) return;
-	var pOc = pAsm.SelectSet.Item(1);
-	if (pOc.Type == igReference) pOc = pOc.Object;
-
-	seApp.Documents.Open(..string.split(pOc.OccurrenceFileName,"!")[1]);
-}
-openDummy();
+import solidedge.application;
+import solidedge.AssemblyDocument;
+var seApp = solidedge.application();
+solidedge.AssemblyDocument.openDummy(seApp.ActiveDocument);
