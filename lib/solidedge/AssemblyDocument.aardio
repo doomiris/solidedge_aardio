@@ -1,0 +1,16 @@
+﻿//AssemblyDocument 常用函数
+namespace solidedge;
+namespace AssemblyDocument{
+	openDummy = function(pAsm){
+		if (pAsm.Type != 3 /* igAssemblyDocument */) return;
+		if (pAsm.SelectSet.Count != 1) return;
+		var pOc = pAsm.SelectSet.Item(1);
+		if (pOc.Type == -768828720 /* igReference */) pOc = pOc.Object;
+		pAsm.Application.Documents.Open(..string.split(pOc.OccurrenceFileName,"!")[1]);
+	}
+}
+/**intellisense()
+solidedge.AssemblyDocument = AssemblyDocument 支持库
+solidedge.AssemblyDocument = !AssemblyDocument.
+!AssemblyDocument.openDummy(_pAsm) = open select asm's dummy file.
+end intellisense**/
