@@ -1,7 +1,7 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="Printing Center";right=365;bottom=305;border="dialog frame";exmode="none";max=false;min=false;mode="popup";sysmenu=1;title=1)
+var winform = win.form(text="Printing Center";right=365;bottom=305;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
 winform.add(
 button={cls="button";text='    \uF0F6  Print Active';left=210;top=90;right=325;bottom=135;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
 button2={cls="button";text='    \uF233  Print All';left=210;top=160;right=325;bottom=205;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
@@ -20,8 +20,8 @@ static={cls="static";text="CLOSE? ";left=8;top=249;right=58;bottom=265;color=255
 /*}}*/
 
 import key;
-import solidedge;
-import DraftDocument;
+import solidedge.application;
+import solidedge.DraftDocument;
 import VBASettingIO;
 
 _ctrl = key.getState(key.VK.CTRL);
@@ -47,10 +47,10 @@ var  formatWindowsFileName = function (nameStr) {
 }
 /*}}*/
 var startPrint=function(activeOnly, fileExt){
-	var seApp = solidedge();
+	var seApp = solidedge.application();
 	var Docs = seApp.Documents;
 	
-	DraftDocument.setPdfOptions(seApp);
+	solidedge.DraftDocument.setPdfOptions(seApp);
 	seApp.DisplayAlerts = false;
 
 	var totalDoc = activeOnly ? 1: Docs.Count;
@@ -67,16 +67,19 @@ var startPrint=function(activeOnly, fileExt){
         	seDFT = seDoc;
         	if (nameRule > 0) {   //用户规则为0时不检查titleblock
 				var baseSht = seDFT.Sheets(1);	//总是从首页获取titleblock
-				seBlk = DraftDocument.getTitleBlock(baseSht);
+				seBlk = solidedge.DraftDocument.getTitleBlock(baseSht);
         	}
         	if (seBlk) {
-        		var t = DraftDocument.getLabelTable(seBlk)
+        		var t = solidedge.DraftDocument.getLabelTable(seBlk)
         		name_cn = t["零件名称"];
         		qhc_ver = t["版本"];
-        		p_number = t["专用号"];	///get property text value
+        		
+        		p_number = ..string.upper(seDFT.Name);	
+				p_number = ..string.trimright(p_number, ".DFT");
+				p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H
 				
-				qhc_ver := DraftDocument.getVerFromShtCorner(baseSht); //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
-				qhc_ver := DraftDocument.getVerFromBlkCorner(seBlk); //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
+				qhc_ver := solidedge.DraftDocument.getVerFromShtCorner(baseSht); //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
+				qhc_ver := solidedge.DraftDocument.getVerFromBlkCorner(seBlk); //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
 
             	if (..string.len(qhc_ver) == 0) {
                		tRule=0;	//如果无法获取版本号
@@ -99,9 +102,7 @@ var startPrint=function(activeOnly, fileExt){
 					if !(winform.listbox.getSelected(k)) continue 1;
 					fileExt = winform.listbox.getItemText(k);
 				}
-				
-				p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H
-				
+
 				select  (tRule)    {//命名规则
     				case 0 {
         				fname = toFolder ++ "\" ++ p_number ++ fileExt;
