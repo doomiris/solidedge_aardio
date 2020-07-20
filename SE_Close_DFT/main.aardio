@@ -1,6 +1,6 @@
-import solidedge;
+import solidedge.application;
 import key;
-var seApp = solidedge();
+var seApp = solidedge.application();
 if ( !seApp ) error("需要打开SE2020");
 var Docs = seApp.Documents; 
 var SaveChanges  = !(key.getState(key.VK.CTRL))
