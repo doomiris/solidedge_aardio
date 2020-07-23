@@ -11,15 +11,9 @@ import fsys;
 import fsys.file;
 import fsys.table;
 import console;
+
 //import win.ui.menu;
 //import win.util.tray;
-/*
-BG*** -U   期初数据上传时用，后续不用操作也不用管理
-BG*** -X           虚拟物料，主要是费用类
-BG*** -F    用于 成品预测分解成长周期物料需求，会新增或不用
-H008*** -SF       社返件，与废品同类别
-BG*** -T     用于销售报价，会增加或不用 
-*/
 /*DSG{{*/
 mainForm = win.form(text="QHC物料查询";right=638;bottom=502)
 mainForm.add(
@@ -47,13 +41,13 @@ if(!atom){
 /*}}*/
 
 var grid = win.ui.grid(mainForm.listview);//创建数据视图
-var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="物料类型";[4]="禁用"}})	;
+var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="物料类型";[4]="禁用"}});
 
 /*dbpath{{*/
 var dbpath = (function(){
 		var xlsxlist=fsys.list("S:\Admin\SAP\",,"*所有*.xlsx")
 		if (#xlsxlist>=1) {
-			return xlsxlist[xlsxlist[#xlsxlist]] 
+			return xlsxlist[xlsxlist[#xlsxlist]];
 		}else{
 	    	win.msgbox("没找到物料数据文件:系统所有物料*.xlsx")
 	    	return null;
@@ -62,7 +56,9 @@ var dbpath = (function(){
 /*}}*/
 
 /*accessDB{{*/
-var db,err = access(dbpath)
+var db,err = access(dbpath,{
+    ["Mode"]="Read";
+});
 if (err){
 	win.msgbox(err)
 	mainForm.button2.hide=0;
@@ -134,6 +130,9 @@ mainForm.button.oncommand = function(id,event){
 		var t = db.getTable(sqlstr);
 		//console.dumpTable(t)
 		sapTab = table.concat(sapTab,t);
+	}
+	if (#sapTab==0) {
+		table.push(sapTab,{物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";禁用=""})
 	}
 	mainForm.listview.clear(true)
 	grid.setTable( sapTab );
@@ -328,19 +327,21 @@ mainForm.button5.oncommand = function(id,event){
 var relocCtl = function(){
    // var a,b,c,d=mainForm.getScale();
    // mainForm.editUser.left = 250*a
-	mainForm.editUser.right=mainForm.button5.right;
+
+   	//	mainForm.editUser.right = mainForm.button5.right;
+
+
    //  mainForm.editUser.top=mainForm.button.top;
 }
 /*}}*/
-mainForm.onEnterSizeMove = function(){
-	relocCtl();
-}
+
 mainForm.onActivate = function(state,hwndOther,minimized){
 	if(state){
 		relocCtl();	
 	}
 }
 mainForm.wndproc = function(hwnd,message,wparam,lparam){
+
     select(message) {//判断消息类型
         case 0x112/*_WM_SYSCOMMAND*/ {
             if(wparam=0xF120/*_SC_RESTORE*/){   
