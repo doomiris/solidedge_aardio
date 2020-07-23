@@ -1,7 +1,7 @@
 ﻿//DraftDocument 常用函数
 namespace solidedge;
 namespace DraftDocument{
-	getTitleBlock=function(seSht){
+	getTitleBlock = function(seSht){
         for (i = 1;  seSht.BlockOccurrences.Count ) { //获取Titleblock
             select  (seSht.BlockOccurrences.Item(i).Block.Name){
                 case "Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC" {
@@ -11,7 +11,15 @@ namespace DraftDocument{
             }
         }
 	}
-	getLabelTable=function(blk){
+	getFirstSheet = function(dft){
+		for (i=1; dft.Sheets.Count; 1){
+			if (dft.Sheets.item(i).SectionType == 0 /* igWorkingSection */)
+				if (dft.Sheets.item(i).Number==1)
+					return dft.Sheets.item(i);
+		}
+	}
+	
+	getLabelTable = function(blk){
 		var seLbs=blk.BlockLabelOccurrences		
 		var tar={}
 		for (i=1;seLbs.count){
@@ -20,13 +28,13 @@ namespace DraftDocument{
 		}		
 		return tar; 
 	}
-	getValueFromBlk=function(blk, lableName){
+	getValueFromBlk = function(blk, lableName){
 		var seLbs=blk.BlockLabelOccurrences		
 		for (i=1;seLbs.count){
     		if (seLbs.item(i).name==lableName) return seLbs.item(i).value
 		}
 	}
-	getVerFromShtCorner=function(seSht){
+	getVerFromShtCorner = function(seSht){
 		var	width = seSht.SheetSetup.SheetWidth * 1000;
         var txts = seSht.TextBoxes        
         for (i = 1 ; txts.Count){
@@ -39,7 +47,7 @@ namespace DraftDocument{
             }
         }
 	}
-	getVerFromBlkCorner=function(blk){
+	getVerFromBlkCorner = function(blk){
         var txts = blk.Block.Views.Item(1).TextBoxes
         var txtbox = txts.Item(1)
         if (txts && txtbox) {
@@ -54,7 +62,7 @@ namespace DraftDocument{
         }
         return ..string.trim(txtbox.Text)
 	}
-	setPdfOptions=function(seApp){
+	setPdfOptions = function(seApp){
     	seApp.SetGlobalParameter ( 172 /*Sheet options*/, 1 /*All sheets*/ )
     	seApp.SetGlobalParameter ( 174 /*Use individual sheet sizes*/, true)
     	seApp.SetGlobalParameter ( 168 /*Save all colors as black*/, false)
