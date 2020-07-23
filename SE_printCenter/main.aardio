@@ -1,3 +1,4 @@
+//printingCenter
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
@@ -23,7 +24,8 @@ import key;
 import solidedge.application;
 import solidedge.DraftDocument;
 import VBASettingIO;
-
+import process;
+import string;
 _ctrl = key.getState(key.VK.CTRL);
 _shift =  key.getState(key.VK.SHIFT);
 
@@ -60,24 +62,20 @@ var startPrint=function(activeOnly, fileExt){
 	
 	for (j = totalDoc; 1 ; -1){
     	var qhc_ver="" ,name_cn=""
-    	var seDoc,seDFT,seBlk;
-    	var tRule;
+    	var seDoc,seDFT,baseSht, seBlk;
+    	var tRule, p_number;
     	seDoc = activeOnly ? seApp.ActiveDocument : Docs.Item(j); //如果指定了onlyActive参数, 则仅打印当前文档
     	if (seDoc.Type == 2 /*Draft Document Type*/) {    //仅处理DFT格式
         	seDFT = seDoc;
         	if (nameRule > 0) {   //用户规则为0时不检查titleblock
-				var baseSht = seDFT.Sheets(1);	//总是从首页获取titleblock
+				baseSht = solidedge.DraftDocument.getFirstSheet(seDFT);	//总是从首页获取titleblock
 				seBlk = solidedge.DraftDocument.getTitleBlock(baseSht);
         	}
         	if (seBlk) {
         		var t = solidedge.DraftDocument.getLabelTable(seBlk)
         		name_cn = t["零件名称"];
         		qhc_ver = t["版本"];
-        		
-        		p_number = ..string.upper(seDFT.Name);	
-				p_number = ..string.trimright(p_number, ".DFT");
-				p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H
-				
+
 				qhc_ver := solidedge.DraftDocument.getVerFromShtCorner(baseSht); //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
 				qhc_ver := solidedge.DraftDocument.getVerFromBlkCorner(seBlk); //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
 
@@ -102,7 +100,11 @@ var startPrint=function(activeOnly, fileExt){
 					if !(winform.listbox.getSelected(k)) continue 1;
 					fileExt = winform.listbox.getItemText(k);
 				}
-
+				
+        		p_number = ..string.upper(seDFT.Name);	
+				p_number = ..string.trimright(p_number, ".DFT");
+				p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H
+				
 				select  (tRule)    {//命名规则
     				case 0 {
         				fname = toFolder ++ "\" ++ p_number ++ fileExt;
@@ -144,6 +146,7 @@ var startPrint=function(activeOnly, fileExt){
 			}	
 
         	if (winform.radCloseNothing.checked!==1) seDFT.close((winform.radCloseSaved.checked==1));
+        	baseSht=null;
         	seDFT=null;
         	//console.log(fname)
     	}
