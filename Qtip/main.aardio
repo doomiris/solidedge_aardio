@@ -3,16 +3,13 @@ import win.ui;
 import win.ui.grid;
 import win.ui.menu;
 import win.ui.accelerator;
-//import win.ui.listPopup;
 import win.clip;
 import win.clip.file;
-import access;
+import sqlite.aes256;
 import fsys;
 import fsys.file;
 import fsys.table;
-import console;
-
-//import win.ui.menu;
+//import console;
 //import win.util.tray;
 /*DSG{{*/
 mainForm = win.form(text="QHC物料查询";right=638;bottom=502)
@@ -43,28 +40,23 @@ if(!atom){
 var grid = win.ui.grid(mainForm.listview);//创建数据视图
 var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="物料类型";[4]="禁用"}});
 
-/*dbpath{{*/
-var dbpath = (function(){
-		var xlsxlist=fsys.list("S:\Admin\SAP\",,"*所有*.xlsx")
-		if (#xlsxlist>=1) {
-			return xlsxlist[xlsxlist[#xlsxlist]];
-		}else{
-	    	win.msgbox("没找到物料数据文件:系统所有物料*.xlsx")
-	    	return null;
-		}
+/*sqliteDB{{*/
+_dbpath = (function(){
+    _path="S:\Admin\SAP\QHCSAP.db"
+    if !io.exist(_path) win.msgbox("数据库不存在");
+    return _path; 
 })()
+var db = sqlite.aes256(_dbpath, "CCL100100");	//打开数据库连接
 /*}}*/
-
-/*accessDB{{*/
-var db,err = access(dbpath,{
-    ["Mode"]="Read";
-});
-if (err){
-	win.msgbox(err)
-	mainForm.button2.hide=0;
+/*加密{{*/
+var dbmm = function(pw){
+	var mm = sqlite.aes256(_dbpath)
+	mm.rekey(pw);
+	mm.close();
+	win.msgbox("加密成功, 即将退出")
+	win.quitMessage()
 }
 /*}}*/
-
 /*读取设置{{*/
 var logInput,setting;
 mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
@@ -108,7 +100,6 @@ mainForm.button.oncommand = function(id,event){
     mainForm.listview.tag=1;
     mainForm.listview.clear(true);
     mainForm.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
-    if !(dbpath) return false; 
     if (mainForm.editUser.lineCount==1) saveInputList(mainForm.editUser.text);
     var userinputArr = string.split(mainForm.editUser.text, '\r\n');
  	table.clear(sapTab);
@@ -126,7 +117,7 @@ mainForm.button.oncommand = function(id,event){
 		}else{
     		searchField = "物料描述";
 		}
-		var sqlstr = "SELECT [物料], [物料描述],[物料类型],[跨工厂物料状态] AS [禁用] FROM [Sheet1$] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+		var sqlstr = "SELECT [物料], [物料描述],[物料类型],IFNULL([跨工厂物料状态],'') AS [禁用] FROM [Sheet1] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
 		var t = db.getTable(sqlstr);
 		//console.dumpTable(t)
 		sapTab = table.concat(sapTab,t);
@@ -240,13 +231,6 @@ var accelerator = win.ui.accelerator({
     
 },mainForm );
 
-/*}}*/
-
-/*检测并安装驱动{{*/
-mainForm.button2.oncommand = function(id,event){
-	import access.oleDb12;
-	access.oleDb12.install();//检测并安装Microsoft.Ace.OLEDB.12驱动
-}
 /*}}*/
 
 /*onclose{{*/
@@ -365,6 +349,6 @@ mainForm.buttonD.oncommand = function(id,event){
 }
 
 mainForm.show();
-mainForm.static.text=dbpath;
+mainForm.static.text = _dbpath;
 mainForm.editUser.setFocus();
 win.loopMessage();
