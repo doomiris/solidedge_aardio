@@ -1,0 +1,178 @@
+import fonts.fontAwesome;
+import win.ui;
+import solidedge.application;
+import solidedge.DraftDocument;
+import VBASettingIO;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=501;bottom=476;bgcolor=16777215)
+winform.add(
+button={cls="button";text='\uF062';left=79;top=182;right=102;bottom=207;font=LOGFONT(name='FontAwesome');z=9};
+button2={cls="button";text="OK";left=359;top=425;right=460;bottom=464;default=1;z=16};
+button3={cls="button";text="Cancel";left=245;top=425;right=346;bottom=464;z=17};
+cb_approve_date={cls="edit";text="Edit";left=210;top=386;right=298;bottom=410;edge=1;z=15};
+cb_approver={cls="combobox";left=80;top=387;right=188;bottom=413;edge=1;items={};mode="dropdown";z=13};
+cb_design_date={cls="edit";text="Edit";left=210;top=293;right=298;bottom=317;edge=1;z=10};
+cb_designer={cls="combobox";left=82;top=293;right=190;bottom=319;edge=1;items={};mode="dropdown";z=11};
+cb_material={cls="combobox";left=32;top=103;right=228;bottom=129;edge=1;items={};mode="dropdown";z=3};
+cb_model_no={cls="combobox";left=274;top=57;right=470;bottom=83;edge=1;items={};mode="dropdown";z=2};
+cb_name_cn={cls="combobox";left=33;top=58;right=229;bottom=84;edge=1;items={};mode="dropdown";z=1};
+cb_review_date={cls="edit";text="Edit";left=210;top=345;right=298;bottom=369;edge=1;z=14};
+cb_reviewer={cls="combobox";left=81;top=342;right=189;bottom=368;edge=1;items={};mode="dropdown";z=12};
+cb_tol={cls="combobox";left=352;top=185;right=460;bottom=211;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18};
+cb_weight={cls="combobox";left=273;top=100;right=469;bottom=126;edge=1;items={};mode="dropdown";z=4};
+chkPaint={cls="checkbox";text="喷粉标准 Q/LD J52005";left=140;top=187;right=318;bottom=207;z=8};
+groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
+seDocPath={cls="static";text="Static";left=25;top=24;right=476;bottom=41;align="right";aw=1;transparent=1;z=6};
+static={cls="static";text="设计";left=31;top=294;right=67;bottom=313;transparent=1;z=19};
+static2={cls="static";text="审核";left=33;top=345;right=69;bottom=364;transparent=1;z=20};
+static3={cls="static";text="批准";left=32;top=391;right=68;bottom=410;transparent=1;z=21};
+version={cls="edit";text="Edit";left=33;top=185;right=66;bottom=207;edge=1;z=7}
+)
+/*}}*/
+
+/*initDeclare{{*/
+var seApp = solidedge.application();
+if (seApp.Documents.Count==0) return; 
+if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return; 
+var seDFT = seApp.ActiveDocument;
+if (seDFT.Sheets.Count == 0) return ; 
+var seSht = seDFT.ActiveSheet;
+if (seSht.BlockOccurrences.Count == 0) return;
+/*}}*/
+/*loadFromDrw{{*/
+var loadFromDrw = function(_blk){
+	winform.cb_name_cn.text = _blk["零件名称"];
+	winform.cb_model_no.text = _blk["型号/项目名称"];
+	winform.cb_material.text = _blk["材料"];
+	winform.cb_weight.text = _blk["质量/体积"];
+	_blk["版本"] := solidedge.DraftDocument.getVerFromBlkCorner(seBlk);
+	_blk["版本"] := solidedge.DraftDocument.getVerFromShtCorner(seSht);
+	winform.version.text = _blk["版本"];
+	winform.chkPaint.checked = (_blk["喷粉标准"]=="Q/LD J52005");
+	winform.cb_tol.text = _blk["公差等级"];
+	winform.cb_designer.text = _blk["设计"];
+	winform.cb_design_date.text = _blk["设计日期"];
+	winform.cb_reviewer.text = _blk["审核"];
+	winform.cb_review_date.text = _blk["审核日期"];
+	winform.cb_approver.text = _blk["批准"];
+	winform.cb_approve_date.text = _blk["批准日期"];
+
+}
+/*}}*/
+/*loadDefaults{{*/
+var loadDefaults = function(){
+	if (winform.cb_designer.text == "" or winform.cb_designer.text == "-")
+		winform.cb_designer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
+	if (winform.cb_reviewer.text == "" or winform.cb_reviewer.text == "-")
+		winform.cb_reviewer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "")
+	if (winform.cb_approver.text == "" or winform.cb_approver.text == "-")
+		winform.cb_approver.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "")
+	if (winform.cb_design_date.text == "YYYY.MM.DD" or winform.cb_design_date.text == "" or winform.cb_design_date.text == "2016.11.19")
+		winform.cb_design_date.text = time(,"%Y.%m.%d")
+	if (winform.cb_review_date.text == "YYYY.MM.DD" or winform.cb_review_date.text == "" or winform.cb_review_date.text == "2016.11.18")
+		winform.cb_review_date.text = time(,"%Y.%m.%d")
+	if (winform.cb_approve_date.text == "YYYY.MM.DD" or winform.cb_approve_date.text == "" or winform.cb_approve_date.text == "2016.11.18")
+		winform.cb_approve_date.text = time(,"%Y.%m.%d")
+	if (winform.version.text == "") winform.version.text = "00"
+}
+/*}}*/
+/*loadLists{{*/
+var loadPromptList = function(){
+	_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
+	import access;
+	var dbRs = access(_dbpath);
+	var tab = dbRs.getTable("select * from SE_TBM_Lists");
+	for (i=1; #tab; 1) {
+		select(tab[i].ListName) {
+			case "name_cn" {
+				winform.cb_name_cn.add(tab[i].Title)
+			}
+			case "model_no" {
+				winform.cb_model_no.add(tab[i].Title)
+			}
+			case "material" {
+				winform.cb_material.add(tab[i].Title)
+			}
+			case "weight" {
+				winform.cb_weight.add(tab[i].Title)
+			}
+			case "designer" {
+				winform.cb_designer.add(tab[i].Title)
+			}
+			case "reviewer" {
+				winform.cb_reviewer.add(tab[i].Title)
+			}
+			case "approver" {
+				winform.cb_approver.add(tab[i].Title)
+			}
+		}
+	}
+}
+/*}}*/
+
+var writeToDrw = function(_blk){
+	var tar = {};
+	var seLbs = _blk.BlockLabelOccurrences;
+	for (i=1; seLbs.Count; 1) {
+		select(seLbs.item(i).Name) {
+        	case "型号/项目名称" {
+            	seLbs.item(i).Value = winform.cb_model_no.text
+            }
+        	case "零件名称", "名称(中文)"{
+            	seLbs.item(i).Value = winform.cb_name_cn.text
+            }
+        	case "材料"{
+            	seLbs.item(i).Value = winform.cb_material.text
+            }
+        	case "质量/体积"{
+            	seLbs.item(i).Value = winform.cb_weight.text
+            }
+        	case "喷粉标准"{
+            	if (winform.chkPaint.checked) seLbs.item(i).Value = "Q/LD J52005"
+            }
+        	case "公差等级"{
+            	seLbs.item(i).Value = winform.cb_tol.text
+            }
+        	case "设计"{
+            	seLbs.item(i).Value = winform.cb_designer.text
+            }
+        	case "审核"{
+            	seLbs.item(i).Value = winform.cb_reviewer.text
+            }
+        	case "批准"{
+            	seLbs.item(i).Value = winform.cb_approver.text
+            }
+        	case "设计日期"{
+            	seLbs.item(i).Value = winform.cb_design_date.text
+            }
+        	case "审核日期"{
+            	seLbs.item(i).Value = winform.cb_review_date.text
+            }
+        	case "批准日期"{
+            	seLbs.item(i).Value = winform.cb_approve_date.text
+            }
+        	case "版本"{
+            	seLbs.item(i).Value = winform.version.text
+            }
+		}
+	}
+}
+
+winform.button3.oncommand = function(id,event){
+	win.quitMessage();
+}
+
+winform.button2.oncommand = function(id,event){
+    writeToDrw(solidedge.DraftDocument.getTitleBlock(seSht));
+	win.quitMessage();
+}
+
+winform.show();
+var seBlk = solidedge.DraftDocument.getTitleBlock(seSht)
+var seLbs = solidedge.DraftDocument.getLabelTable(seBlk)
+loadFromDrw(seLbs);
+loadDefaults();
+winform.seDocPath.text = seDFT.FullName;
+loadPromptList();
+win.loopMessage();
+return winform;

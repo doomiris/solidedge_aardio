@@ -1,0 +1,17 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469;bgcolor=16777215)
+winform.add(
+plus={cls="plus";left=15;top=215;right=34;bottom=234;foreRepeat="center";foreground="\res\ocon.png";z=2};
+static={cls="static";text="gongpeng.lan@carrier.com";left=41;top=215;right=273;bottom=230;color=16711680;notify=1;transparent=1;z=1}
+)
+/*}}*/
+
+import process;
+winform.static.oncommand = function(id,event){
+	..process.execute("sip:gongpeng.lan@carrier.com")
+}
+
+winform.show();
+win.loopMessage();
+return winform;
