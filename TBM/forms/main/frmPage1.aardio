@@ -167,6 +167,12 @@ winform.button2.oncommand = function(id,event){
 	win.quitMessage();
 }
 
+winform.button.oncommand = function(id,event){
+    var v = tonumber(winform.version.text);
+	v += 1;
+	winform.version.text =  (v >= 10) ? v : "0" ++ v;
+}
+
 winform.show();
 var seBlk = solidedge.DraftDocument.getTitleBlock(seSht)
 var seLbs = solidedge.DraftDocument.getLabelTable(seBlk)
