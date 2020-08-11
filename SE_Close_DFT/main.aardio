@@ -1,13 +1,5 @@
 import solidedge.application;
 import key;
 var seApp = solidedge.application();
-if ( !seApp ) error("需要打开SE2020");
-var Docs = seApp.Documents; 
-var SaveChanges  = !(key.getState(key.VK.CTRL))
-seApp.DisplayAlerts = true;
-for(i=Docs.Count; 1; -1){
-	if(Docs.item(i).Type == 2 /*Draft Document Type*/){
-		Docs.item(i).Close(SaveChanges);
-	}
-}
-seApp.DisplayAlerts = false;
+var saveChanges  = !(key.getState(key.VK.CTRL));	//按CTRL键放弃保存
+seApp.closeDft(saveChanges);	//关闭所有图纸文件

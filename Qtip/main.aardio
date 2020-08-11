@@ -17,9 +17,10 @@ mainForm.add(
 button={cls="button";text='\uF002  查询';left=521;top=10;right=620;bottom=40;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
 button2={cls="button";text="安装驱动";left=184;top=472;right=270;bottom=495;db=1;dl=1;hide=1;z=3};
 button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=5};
-button4={cls="button";text="更新图号库";left=5;top=472;right=81;bottom=495;color=10789024;db=1;dl=1;flat=1;z=6};
+button4={cls="button";text="更新图号库";left=5;top=472;right=81;bottom=495;color=10789024;db=1;dl=1;flat=1;hide=1;z=6};
 button5={cls="button";text='\uF103 ';left=477;top=39;right=515;bottom=54;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
-button6={cls="button";text="更新目录库";left=95;top=472;right=171;bottom=495;color=10789024;db=1;dl=1;flat=1;z=10};
+button6={cls="button";text="更新目录库";left=95;top=472;right=171;bottom=495;color=10789024;db=1;dl=1;flat=1;hide=1;z=10};
+button7={cls="button";text="加密";left=280;top=472;right=360;bottom=496;hide=1;z=11};
 buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=9};
 editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=8};
 listview={cls="listview";left=1;top=53;right=638;bottom=463;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
@@ -36,26 +37,21 @@ if(!atom){
 	return;
 }
 /*}}*/
-
 var grid = win.ui.grid(mainForm.listview);//创建数据视图
-var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="物料类型";[4]="禁用"}});
-
+var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="类型";[4]="价格";[5]="禁用"}});
 /*sqliteDB{{*/
 _dbpath = (function(){
-    _path="S:\Admin\SAP\QHCSAP.db"
-    if !io.exist(_path) win.msgbox("数据库不存在");
+    if io.exist("\qhcsap.db")
+    	_path=io.fullpath("\qhcsap.db");
+	else
+		if io.exist("\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db")
+			_path="\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db";
+    	else
+    		win.msgbox("无法访问数据库!");
     return _path; 
 })()
-var db = sqlite.aes256(_dbpath, "CCL100100");	//打开数据库连接
-/*}}*/
-/*加密{{*/
-var dbmm = function(pw){
-	var mm = sqlite.aes256(_dbpath)
-	mm.rekey(pw);
-	mm.close();
-	win.msgbox("加密成功, 即将退出")
-	win.quitMessage()
-}
+var db,err = sqlite.aes256(_dbpath, "CCL100100");	//打开数据库连接
+if (err) error(err)
 /*}}*/
 /*读取设置{{*/
 var logInput,setting;
@@ -94,6 +90,23 @@ var saveInputList = function(str){
 readInputList();
 updatePopmenu();
 /*}}*/
+/*调整列宽{{*/
+var formatListView = function(){
+	mainForm.listview.clear(true)
+	grid.setTable( sapTab );
+	grid.readonlyColums = {
+    	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
+    }
+	mainForm.listview.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
+	mainForm.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
+	mainForm.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
+	mainForm.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
+	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},5);
+	mainForm.listview.adjust = function(cx,cy){
+    	mainForm.listview.fillParent(2);
+	} 	
+}
+/*}}*/
 /*搜索按钮事件{{*/
 mainForm.button.oncommand = function(id,event){
     mainForm.button3.hide=true;
@@ -117,7 +130,7 @@ mainForm.button.oncommand = function(id,event){
 		}else{
     		searchField = "物料描述";
 		}
-		var sqlstr = "SELECT [物料], [物料描述],[物料类型],IFNULL([跨工厂物料状态],'') AS [禁用] FROM [Sheet1] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+		var sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[价格],[跨工厂物料状态] AS [禁用] FROM [Sheet1] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
 		var t = db.getTable(sqlstr);
 		//console.dumpTable(t)
 		sapTab = table.concat(sapTab,t);
@@ -125,19 +138,9 @@ mainForm.button.oncommand = function(id,event){
 	if (#sapTab==0) {
 		table.push(sapTab,{物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";禁用=""})
 	}
-	mainForm.listview.clear(true)
-	grid.setTable( sapTab );
-	grid.readonlyColums = {
-    	[1] = true;[2] = true;[3] = true;[4] = true;
-    }
-//调整列宽		
-	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1);
-	mainForm.listview.setColumn({cx=380;fmt=0x0/*_LVCFMT_LEFT*/},  2);
-	mainForm.listview.setColumn({cx=70 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
-	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
+	formatListView();
 }
 /*}}*/
-
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
     if !(filenumber) return;
@@ -145,7 +148,7 @@ var searchDocument = function (filenumber){
     mainForm.listview.clear(true);
     mainForm.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
-	var fileTab = table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}})	;
+	var fileTab = table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}});
 	var flistTab = fsys.table("S:\temp\addon\qtip\drawing_lists.table");
 		flistTab.load();
 	var flist = table.array();
@@ -155,7 +158,6 @@ var searchDocument = function (filenumber){
 	var dlistTab = fsys.table("S:\temp\addon\qtip\drawing_map.table");
 		dlistTab.load();
 	var mapping = dlistTab.dlist;
-
 	var maptab = table.filter(mapping, function(v,index){
 		if (v.专用号==searchFor) return true; 
 	}); 
@@ -183,13 +185,16 @@ var searchDocument = function (filenumber){
     	[1] = true;[2] = true;[3] = true;[4] = true;
     }
 //调整列宽		
-	mainForm.listview.setColumn({cx=150;fmt=0x2/*_LVCFMT_CENTER*/},1)
-	mainForm.listview.setColumn({cx=400;fmt=0x0/*_LVCFMT_LEFT*/},  2)
-	mainForm.listview.setColumn({cx=150;fmt=0x2/*_LVCFMT_CENTER*/},3)
+	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1)
+	mainForm.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2)
+	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},3)
 	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
+	mainForm.listview.adjust = function(cx,cy){
+    	mainForm.listview.fillParent(1);
+    	mainForm.listview.fillParent(3);
+	} 	
 }
 /*}}*/
-
 /*双击打开事件{{*/
 mainForm.listview.onnotify = function(id,code,ptr){
     select(code) {
@@ -207,7 +212,7 @@ mainForm.listview.onnotify = function(id,code,ptr){
     }
 }
 /*}}*/
-
+//todo: 搜索框Ctrl+C失效问题
 /*CTRLC复制模块{{*/
 var accelerator = win.ui.accelerator({
     { 
@@ -232,54 +237,19 @@ var accelerator = win.ui.accelerator({
 },mainForm );
 
 /*}}*/
-
 /*onclose{{*/
 mainForm.onClose = function(hwnd,message,wParam,lParam){
 	if (db) db.close();	
 }
 /*}}*/
-
 /*后退返回搜索结果{{*/
 mainForm.button3.oncommand = function(id,event){
-	grid.setTable( sapTab );
-	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1)
-	mainForm.listview.setColumn({cx=380;fmt=0x0/*_LVCFMT_LEFT*/},  2)
-	mainForm.listview.setColumn({cx=70 ;fmt=0x2/*_LVCFMT_CENTER*/},3)
-	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
-	
+    formatListView();
 	mainForm.listview.setSelected(mainForm.button3.tag)
 	mainForm.listview.tag=1;
-	
 	mainForm.button3.hide=true;	
 }
 /*}}*/
-
-/*生成文件清单{{*/
-mainForm.button4.oncommand = function(id,event){
-    import key;
-    if !(key.getState(key.VK.CTRL)) return ; 
-    import fsys.dlg;
-    import win.inputBox;
-    
-	var path = fsys.dlg.open('Excel文件|*.xlsx',,,mainForm);
-	if !(path) return ;
-	var inputbox = win.inputBox(mainForm.hwnd,false);
-	inputbox.text = "输入"
-	inputbox.info.text = "表名"
-	inputbox.input.text = "part list"
-	var sht = inputbox.doModal();
-	if !(sht) return ;
-	import getList;
-    getList.appendDrawingMapFromExcel(path, sht);
-}
-mainForm.button6.oncommand = function(id,event){
-    import key;
-    if !(key.getState(key.VK.CTRL)) return ; 
-    import getList;
-    getList.saveFolderTable();
-}
-/*}}*/
-
 /*button5输入框多行功能切换{{*/
 mainForm.button5.oncommand = function(id,event){
 	var t=mainForm.editUser.text;
@@ -309,23 +279,14 @@ mainForm.button5.oncommand = function(id,event){
 /*}}*/
 /*输入框重新定位{{*/
 var relocCtl = function(){
-   // var a,b,c,d=mainForm.getScale();
-   // mainForm.editUser.left = 250*a
-
-   	//	mainForm.editUser.right = mainForm.button5.right;
-
-
-   //  mainForm.editUser.top=mainForm.button.top;
+   	mainForm.editUser.right = mainForm.button5.right;
 }
-/*}}*/
-
 mainForm.onActivate = function(state,hwndOther,minimized){
 	if(state){
 		relocCtl();	
 	}
 }
 mainForm.wndproc = function(hwnd,message,wparam,lparam){
-
     select(message) {//判断消息类型
         case 0x112/*_WM_SYSCOMMAND*/ {
             if(wparam=0xF120/*_SC_RESTORE*/){   
@@ -338,16 +299,16 @@ mainForm.wndproc = function(hwnd,message,wparam,lparam){
     }
     //无返回值则继续调用默认回调函数
 }
-
+/*}}*/
+/*弹出历史记录菜单{{*/
 mainForm.buttonD.oncommand = function(id,event){
 		    var pt = ::POINT();
 			::User32.GetCursorPos(pt);
-	    	
 	    	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	    	win.setForeground(mainForm.hwnd)
 	    	mainForm.popmenu.popup(pt.x,pt.y,true )
 }
-
+/*}}*/
 mainForm.show();
 mainForm.static.text = _dbpath;
 mainForm.editUser.setFocus();

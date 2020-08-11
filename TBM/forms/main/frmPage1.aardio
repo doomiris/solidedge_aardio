@@ -4,29 +4,36 @@ import solidedge.application;
 import solidedge.DraftDocument;
 import VBASettingIO;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=501;bottom=476;bgcolor=16777215)
+var winform = win.form(text="aardio form";right=501;bottom=354;bgcolor=16777215)
 winform.add(
-button={cls="button";text='\uF062';left=79;top=182;right=102;bottom=207;font=LOGFONT(name='FontAwesome');z=9};
-button2={cls="button";text="OK";left=359;top=425;right=460;bottom=464;default=1;z=16};
-button3={cls="button";text="Cancel";left=245;top=425;right=346;bottom=464;z=17};
-cb_approve_date={cls="edit";text="Edit";left=210;top=386;right=298;bottom=410;edge=1;z=15};
-cb_approver={cls="combobox";left=80;top=387;right=188;bottom=413;edge=1;items={};mode="dropdown";z=13};
-cb_design_date={cls="edit";text="Edit";left=210;top=293;right=298;bottom=317;edge=1;z=10};
-cb_designer={cls="combobox";left=82;top=293;right=190;bottom=319;edge=1;items={};mode="dropdown";z=11};
-cb_material={cls="combobox";left=32;top=103;right=228;bottom=129;edge=1;items={};mode="dropdown";z=3};
-cb_model_no={cls="combobox";left=274;top=57;right=470;bottom=83;edge=1;items={};mode="dropdown";z=2};
-cb_name_cn={cls="combobox";left=33;top=58;right=229;bottom=84;edge=1;items={};mode="dropdown";z=1};
-cb_review_date={cls="edit";text="Edit";left=210;top=345;right=298;bottom=369;edge=1;z=14};
-cb_reviewer={cls="combobox";left=81;top=342;right=189;bottom=368;edge=1;items={};mode="dropdown";z=12};
-cb_tol={cls="combobox";left=352;top=185;right=460;bottom=211;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18};
-cb_weight={cls="combobox";left=273;top=100;right=469;bottom=126;edge=1;items={};mode="dropdown";z=4};
-chkPaint={cls="checkbox";text="喷粉标准 Q/LD J52005";left=140;top=187;right=318;bottom=207;z=8};
-groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
-seDocPath={cls="static";text="Static";left=25;top=24;right=476;bottom=41;align="right";aw=1;transparent=1;z=6};
-static={cls="static";text="设计";left=31;top=294;right=67;bottom=313;transparent=1;z=19};
-static2={cls="static";text="审核";left=33;top=345;right=69;bottom=364;transparent=1;z=20};
-static3={cls="static";text="批准";left=32;top=391;right=68;bottom=410;transparent=1;z=21};
-version={cls="edit";text="Edit";left=33;top=185;right=66;bottom=207;edge=1;z=7}
+bkplus={cls="bkplus";left=0;top=0;right=496;bottom=352;ah=1;aw=1;background="C:\Program Files\Siemens\Solid Edge 2020\Program\ResDLLs\0009\images\SE BG.png";db=1;dl=1;dr=1;dt=1;z=1};
+button={cls="button";text='\uF062';left=80;top=145;right=103;bottom=172;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=10};
+button2={cls="button";text='\uF00C  OK';left=387;top=306;right=488;bottom=345;db=1;default=1;dr=1;font=LOGFONT(name='FontAwesome');z=17};
+button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=345;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=18};
+button4={cls="button";text="更新日期";left=192;top=312;right=264;bottom=336;z=28};
+cb_approve_date={cls="edit";text="Edit";left=189;top=274;right=277;bottom=298;dl=1;dt=1;edge=1;z=16};
+cb_approver={cls="combobox";left=46;top=272;right=177;bottom=298;dl=1;dt=1;edge=1;items={};mode="dropdown";z=14};
+cb_design_date={cls="edit";text="Edit";left=188;top=185;right=276;bottom=209;dl=1;dt=1;edge=1;z=11};
+cb_designer={cls="combobox";left=47;top=185;right=177;bottom=211;dl=1;dt=1;edge=1;items={};mode="dropdown";z=12};
+cb_material={cls="combobox";left=47;top=103;right=235;bottom=129;dl=1;dt=1;edge=1;items={};mode="dropdown";z=4};
+cb_model_no={cls="combobox";left=300;top=58;right=488;bottom=84;dr=1;dt=1;edge=1;items={};mode="dropdown";z=3};
+cb_name_cn={cls="combobox";left=47;top=58;right=235;bottom=84;dl=1;dt=1;edge=1;items={};mode="dropdown";z=2};
+cb_review_date={cls="edit";text="Edit";left=189;top=227;right=277;bottom=251;dl=1;dt=1;edge=1;z=15};
+cb_reviewer={cls="combobox";left=47;top=227;right=177;bottom=253;dl=1;dt=1;edge=1;items={};mode="dropdown";z=13};
+cb_tol={cls="combobox";left=340;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=19};
+cb_weight={cls="combobox";left=300;top=103;right=488;bottom=129;dr=1;dt=1;edge=1;items={};mode="dropdown";z=5};
+chkPaint={cls="checkbox";text="喷粉标准 Q/LD J52005";left=118;top=148;right=296;bottom=168;dl=1;dt=1;z=9};
+groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=6};
+seDocPath={cls="static";text="Static";left=25;top=24;right=476;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;transparent=1;z=7};
+static={cls="static";text="设计";left=17;top=190;right=47;bottom=209;dl=1;dt=1;transparent=1;z=20};
+static2={cls="static";text="审核";left=18;top=231;right=48;bottom=250;dl=1;dt=1;transparent=1;z=21};
+static3={cls="static";text="批准";left=17;top=277;right=47;bottom=296;dl=1;dt=1;transparent=1;z=22};
+static4={cls="static";text="名称";left=17;top=63;right=47;bottom=82;dl=1;dt=1;transparent=1;z=23};
+static5={cls="static";text="材料";left=16;top=106;right=46;bottom=125;dl=1;dt=1;transparent=1;z=24};
+static6={cls="static";text="型号";left=269;top=63;right=299;bottom=82;dr=1;dt=1;transparent=1;z=25};
+static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;dt=1;transparent=1;z=26};
+static8={cls="static";text="版本";left=19;top=149;right=46;bottom=168;dl=1;dt=1;transparent=1;z=27};
+version={cls="edit";text="Edit";left=47;top=146;right=80;bottom=172;dl=1;dt=1;edge=1;font=LOGFONT(h=-13);z=8}
 )
 /*}}*/
 
@@ -34,13 +41,13 @@ version={cls="edit";text="Edit";left=33;top=185;right=66;bottom=207;edge=1;z=7}
 var seApp = solidedge.application();
 if (seApp.Documents.Count==0) return; 
 if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return; 
-var seDFT = seApp.ActiveDocument;
+var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
 if (seDFT.Sheets.Count == 0) return ; 
 var seSht = seDFT.ActiveSheet;
 if (seSht.BlockOccurrences.Count == 0) return;
 /*}}*/
-/*loadFromDrw{{*/
-var loadFromDrw = function(_blk){
+/*loadFromTab{{*/
+var loadFromTab = function(_blk){
 	winform.cb_name_cn.text = _blk["零件名称"];
 	winform.cb_model_no.text = _blk["型号/项目名称"];
 	winform.cb_material.text = _blk["材料"];
@@ -109,9 +116,13 @@ var loadPromptList = function(){
 	}
 }
 /*}}*/
+var updateDate =function(){
+    winform.cb_design_date.text = time(,"%Y.%m.%d");
+    winform.cb_review_date.text = time(,"%Y.%m.%d");
+	winform.cb_approve_date.text = time(,"%Y.%m.%d");
+}
 
 var writeToDrw = function(_blk){
-	var tar = {};
 	var seLbs = _blk.BlockLabelOccurrences;
 	for (i=1; seLbs.Count; 1) {
 		select(seLbs.item(i).Name) {
@@ -163,7 +174,7 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.button2.oncommand = function(id,event){
-    writeToDrw(solidedge.DraftDocument.getTitleBlock(seSht));
+    writeToDrw(seDFT.getTitleBlock(seSht));
 	win.quitMessage();
 }
 
@@ -172,11 +183,13 @@ winform.button.oncommand = function(id,event){
 	v += 1;
 	winform.version.text =  (v >= 10) ? v : "0" ++ v;
 }
-
+winform.button4.oncommand = function(id,event){
+	updateDate();
+}
 winform.show();
-var seBlk = solidedge.DraftDocument.getTitleBlock(seSht)
-var seLbs = solidedge.DraftDocument.getLabelTable(seBlk)
-loadFromDrw(seLbs);
+var seBlk = seDFT.getTitleBlock(seSht);
+var seLbs = seDFT.getLabelTable(seBlk);
+loadFromTab(seLbs);
 loadDefaults();
 winform.seDocPath.text = seDFT.FullName;
 loadPromptList();

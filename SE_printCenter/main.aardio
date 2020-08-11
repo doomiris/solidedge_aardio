@@ -2,177 +2,63 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="Printing Center";right=365;bottom=305;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
+var winform = win.form(text="Printing Center";right=365;bottom=275;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
 winform.add(
 button={cls="button";text='    \uF0F6  Print Active';left=210;top=90;right=325;bottom=135;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
 button2={cls="button";text='    \uF233  Print All';left=210;top=160;right=325;bottom=205;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
+button3={cls="button";text='\uF05E  Discard';left=5;top=241;right=87;bottom=271;font=LOGFONT(name='FontAwesome');z=10};
+button4={cls="button";text='\uF05B Save';left=86;top=241;right=168;bottom=271;font=LOGFONT(name='FontAwesome');z=11};
 groupbox={cls="groupbox";text='\uF097  Actions';left=5;top=5;right=360;bottom=240;edge=1;font=LOGFONT(h=-16;name='FontAwesome');z=1};
 listbox={cls="listbox";left=45;top=94;right=178;bottom=206;border=1;cp=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf";".dwg";".dxf";".stp"};msel=1;z=2};
 outpath={cls="static";text="d:\workspaces";left=29;top=211;right=343;bottom=236;center=1;color=8421504;notify=1;transparent=1;z=8};
-progress={cls="progress";left=1;top=280;right=365;bottom=305;color=32768;db=1;dl=1;dr=1;max=100;min=0;z=13};
-radCloseNothing={cls="radiobutton";text="Keep Still";left=59;top=250;right=132;bottom=270;checked=1;group=1;z=9};
-radCloseSaved={cls="radiobutton";text="Save && Close";left=254;top=250;right=350;bottom=270;z=11};
-radCloseWOsave={cls="radiobutton";text="Close Ruthlessly";left=140;top=250;right=247;bottom=270;z=10};
+progress={cls="progress";left=171;top=241;right=360;bottom=271;color=32768;db=1;dl=1;dr=1;max=100;min=0;z=9};
 radNameRule0={cls="radiobutton";text="文件名只用图号";left=34;top=45;right=142;bottom=65;group=1;z=5};
 radNameRule1={cls="radiobutton";text="+版本";left=165;top=45;right=226;bottom=65;z=6};
-radNameRule2={cls="radiobutton";text="+版本+名称";left=251;top=45;right=339;bottom=65;z=7};
-static={cls="static";text="CLOSE? ";left=8;top=249;right=58;bottom=265;color=255;transparent=1;z=12}
+radNameRule2={cls="radiobutton";text="+版本+名称";left=251;top=45;right=339;bottom=65;z=7}
 )
 /*}}*/
-
+import process;
 import key;
 import solidedge.application;
 import solidedge.DraftDocument;
-import VBASettingIO;
-import process;
-import string;
 _ctrl = key.getState(key.VK.CTRL);
-_shift =  key.getState(key.VK.SHIFT);
+_shift = key.getState(key.VK.CTRL);
+var seApp = solidedge.application();
+seApp.setPdfOptions();
 
-var toFolder = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces");
-var nameRule = tonumber(VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0));
-	
-/*formatWindowsFileName{{*/
-var  formatWindowsFileName = function (nameStr) {
-    //替换Windows文件名非法字符为全角＼／，．＜＞｜＊
-    nameStr = ..string.replace(nameStr, "\\", "＼");
-    nameStr = ..string.replace(nameStr, "/", "／");
-    nameStr = ..string.replace(nameStr, "\:", "：");
-    nameStr = ..string.replace(nameStr, "*", "x");
-    nameStr = ..string.replace(nameStr, "?", "？");
-    nameStr = ..string.replace(nameStr, '"', "“");   //替换双引号
-    nameStr = ..string.replace(nameStr, "\<", "＜");
-    nameStr = ..string.replace(nameStr, "\>", "＞");
-    nameStr = ..string.replace(nameStr, "|", "｜");
-    nameStr = ..string.replace(nameStr, "\r\n", " ");  //替换回车符
-    return ..string.trim(nameStr);
+/*pringSingleFile{{*/
+var startPrintActive = function(fileExt){
+    fileExt := ".pdf";
+    var seDFT, fname;
+	seApp.DisplayAlerts = false;
+     if (seApp.ActiveDocumentType == 2 /*Draft Document Type*/) {    //仅处理DFT格式
+    	seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+		fname = seDFT.getNameByExt(fileExt);
+		seDFT.saveToExt(fname);
+	}
+	seApp.DisplayAlerts = true;
+	return fname; 
 }
 /*}}*/
-var startPrint=function(activeOnly, fileExt){
-	var seApp = solidedge.application();
+/*printAllFiles{{*/
+var startPrintAll = function(){
 	var Docs = seApp.Documents;
-	
-	solidedge.DraftDocument.setPdfOptions(seApp);
 	seApp.DisplayAlerts = false;
-
-	var totalDoc = activeOnly ? 1: Docs.Count;
-	winform.progress.min = 0;
-	winform.progress.pos = 0;
-	winform.progress.max = totalDoc * winform.listbox.count;
-	
-	for (j = totalDoc; 1 ; -1){
-    	var qhc_ver="" ,name_cn=""
-    	var seDoc,seDFT,baseSht, seBlk;
-    	var tRule, p_number;
-    	seDoc = activeOnly ? seApp.ActiveDocument : Docs.Item(j); //如果指定了onlyActive参数, 则仅打印当前文档
-    	if (seDoc.Type == 2 /*Draft Document Type*/) {    //仅处理DFT格式
-        	seDFT = seDoc;
-        	if (nameRule > 0) {   //用户规则为0时不检查titleblock
-				baseSht = solidedge.DraftDocument.getFirstSheet(seDFT);	//总是从首页获取titleblock
-				seBlk = solidedge.DraftDocument.getTitleBlock(baseSht);
-        	}
-        	if (seBlk) {
-        		var t = solidedge.DraftDocument.getLabelTable(seBlk)
-        		name_cn = t["零件名称"];
-        		qhc_ver = t["版本"];
-
-				qhc_ver := solidedge.DraftDocument.getVerFromShtCorner(baseSht); //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
-				qhc_ver := solidedge.DraftDocument.getVerFromBlkCorner(seBlk); //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
-
-            	if (..string.len(qhc_ver) == 0) {
-               		tRule=0;	//如果无法获取版本号
-            	}else{
-            		if (..string.len(name_cn) == 0 && nameRule == 2) {
-                		tRule = 1;   //如果名称为空时使用规则1
-            		} else {
-                		tRule = nameRule;    //使用用户设定的规则
-            		}
-            	}
-        	}else{
-            	tRule = 0;   //如果无法获取titleblock, 使用规则0
-        	}
-			seDFT.Activate() //如果不Activate,只会重复保存当前文件
-			
+	for (j = Docs.Count; 1; -1){
+    	if (Docs.Item(j).Type == 2 /*Draft Document Type*/) {    //仅处理DFT格式
+        	var	seDFT = solidedge.DraftDocument(Docs.Item(j));
+			seDFT.Activate(); //如果不Activate,只会重复保存当前文件
 			for (k=1; winform.listbox.count; 1){
-				winform.progress.pos += 1 ;
-				
-				if !(activeOnly) {
-					if !(winform.listbox.getSelected(k)) continue 1;
-					fileExt = winform.listbox.getItemText(k);
-				}
-				
-        		p_number = ..string.upper(seDFT.Name);	
-				p_number = ..string.trimright(p_number, ".DFT");
-				p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H
-				
-				select  (tRule)    {//命名规则
-    				case 0 {
-        				fname = toFolder ++ "\" ++ p_number ++ fileExt;
-    				}
-    				case 1 {
-        				fname = toFolder ++ "\" ++ p_number ++ "-" ++ qhc_ver ++ "版" ++ fileExt;
-    				}
-    				case 2 {
-        				name_cn = formatWindowsFileName(name_cn);
-        				fname = toFolder ++ "\" ++ p_number ++ "-" ++ qhc_ver ++ "版" ++ "-" ++ name_cn ++ fileExt;
-    				}
-				}
-
-				try{
-    				select (fileExt){
-        				case ".dwg",".pdf"{        		
-        					seDFT.SaveCopyAs(fname);  //savecopyas 和 saveas 效果一样
-        				}
-        				case ".stp"{
-        					seDFT.ModelLinks.item(1).ModelDocument.SaveCopyAs(fname);
-        				} 
-        				case ".dxf"{        				
-        					var smDoc=seDFT.ModelLinks.item(1).ModelDocument;
-        					import web.script;
-        					var vm=web.script("VBScript") ;
-        					vm.external ={
-        						smDoc = function(){return smDoc}; 
-        						fname = function(){return fname}        					
-        					}
-        					vm.addCode("Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)");
-        				} 
-    				}
-				}
-				catch(e){
-					//console.log(e)
-					//console.pause(false)
-				}
-				if (activeOnly) break;
-			}	
-
-        	if (winform.radCloseNothing.checked!==1) seDFT.close((winform.radCloseSaved.checked==1));
-        	baseSht=null;
-        	seDFT=null;
-        	//console.log(fname)
+				winform.progress.pos += 1 ;				
+				if (!winform.listbox.getSelected(k)) continue 1;
+				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k));
+				seDFT.saveToExt(fname)
+			}
     	}
 	}
 	seApp.DisplayAlerts = true;
-	//seApp.StatusBar = fname;	
-	if (activeOnly) {
-		if (fileExt==".pdf")
-			if io.exist(fname) ..process.execute(fname);	//如果onlyActive则打开结果文件
-		winform.close();
-	} else { 
-    	//seApp.StatusBar = "Print Done";
-	}
-
 }
-
-winform.button.oncommand = function(id,event){
-	startPrint(true, winform.listbox.selText);
-	winform.close();
-}
-
-winform.button2.oncommand = function(id,event){
-	startPrint(false, winform.listbox.selText);
-	winform.close();
-}
-
+/*}}*/
 /*closeOnEscPress{{*/
 winform.isDialogMessage = function(hwnd,msg){ 
 	if( msg.message == 0x100/*_WM_KEYDOWN*/){
@@ -194,20 +80,16 @@ winform.isDialogMessage = function(hwnd,msg){
 }
 /*}}*/
 if (_ctrl) {
-	startPrint(true, winform.listbox.getItemText(1));
-	return ; 
+	var fname = startPrintActive();
+	if (!_shift)
+		if io.exist(fname)
+			process.execute(fname);	//如果onlyActive则打开结果文件
+	win.quitMessage(); 
 }
-if (_ctrl && _shift) {
-	startPrint(false, winform.listbox.getItemText(1));
-	return ; 
-}
-
 winform.show();	
 /*控件初始值{{*/
-
 winform.listbox.setSelected(1);
-
-select(nameRule) {
+select(seApp.nameRule) {
 	case 0 {
 		winform.radNameRule0.checked = 1;
 	}
@@ -218,21 +100,43 @@ select(nameRule) {
 		winform.radNameRule2.checked = 1;
 	}
 }
-winform.outpath.text = toFolder;
-
+winform.outpath.text = seApp.toFolder;
 /*}}*/
-
 /*选项保存{{*/
 winform.radNameRule2.oncommand = function(id,event){
-	VBASettingIO.SaveSetting("Domisoft", "Config", "pdfNameRule", 2)
+	seApp.nameRule=2
 }
-
 winform.radNameRule1.oncommand = function(id,event){
-	VBASettingIO.SaveSetting("Domisoft", "Config", "pdfNameRule", 1)
+	seApp.nameRule=1
 }
-
 winform.radNameRule0.oncommand = function(id,event){
-	VBASettingIO.SaveSetting("Domisoft", "Config", "pdfNameRule", 0)
+	seApp.nameRule=0
+}
+/*}}*/
+/*button事件{{*/
+winform.button.oncommand = function(id,event){
+    _c = key.getState(key.VK.CTRL);
+    _s = key.getState(key.VK.SHIFT);
+	var fname = startPrintActive();
+	if (!_c and !_s)
+		if io.exist(fname)
+			process.execute(fname);	//如果onlyActive则打开结果文件
+	winform.close();
+}
+winform.button2.oncommand = function(id,event){
+	winform.progress.min = 0;
+	winform.progress.pos = 0;
+	winform.progress.max = seApp.Documents.Count * winform.listbox.count;
+	startPrintAll();
+	winform.close();
+}
+winform.button3.oncommand = function(id,event){
+	seApp.closeDft(false);
+	winform.close();
+}
+winform.button4.oncommand = function(id,event){
+	seApp.closeDft(true);
+	winform.close();
 }
 /*}}*/
 

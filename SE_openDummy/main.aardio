@@ -1,4 +1,7 @@
 import solidedge.application;
 import solidedge.AssemblyDocument;
 var seApp = solidedge.application();
-solidedge.AssemblyDocument.openDummy(seApp.ActiveDocument);
+if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+if (seAsm.SelectSet.Count != 1) return;
+seAsm.openDummy(seAsm.SelectSet.Item(1));

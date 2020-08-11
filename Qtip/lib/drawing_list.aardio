@@ -1,7 +1,44 @@
-﻿import fsys;
+﻿﻿//obsolete
+import fsys;
 import fsys.table;
-
-namespace getList{
+import fsys.file;
+namespace drawing_lib{
+	searchDocument = function (filenumber){
+    	if !(filenumber) return null;
+		var searchFor = ..string.trimleft(filenumber,"H");
+		var fileTab = ..table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}})	;
+		var flistTab = ..fsys.table("S:\temp\addon\qtip\drawing_lists.table");
+			flistTab.load();
+		var flist = ..table.array();
+			..table.push(flist,flistTab.a);
+			..table.push(flist,flistTab.b);
+			..table.push(flist,flistTab.c);
+		var dlistTab = ..fsys.table("S:\temp\addon\qtip\drawing_map.table");
+			dlistTab.load();
+		var mapping = dlistTab.dlist;
+	
+		var maptab = ..table.filter(mapping, function(v,index){
+			if (v.专用号==searchFor) return true; 
+		}); 
+		if (#maptab>0) searchFor = maptab[1].图号; 
+	
+		for (j=1; #flist; 1){
+			var myfind = ..table.filter(flist[j],function(v,index){
+				if (..string.indexOf(v,searchFor)) return true;
+			});
+			if (#myfind>0){
+				for(k=1;#myfind;1){
+					..table.push(fileTab,{
+						文件名	=myfind[k];
+						位置	=flist[j][myfind[k]];
+						日期	=..fsys.file(flist[j][myfind[k]]).getFileTime().write;
+						版本	=""
+					});
+				};
+			};
+		};
+		return fileTab;
+	}
 	saveFolderTable = function(){
 		_searchLoc = {
 			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
@@ -83,5 +120,9 @@ namespace getList{
 		xlApp.Quit();		
 		console.pause(true);
 	};
-	
 }
+/**intellisense(drawing_lib)
+searchDocument(_filenumber) = return table [filename,fullpath,write_date,version]
+saveFolderTable()= enum all files and save to table.
+appendDrawingMapFromExcel(_xlFilePath, _sheetName) = add part_number .vs. drawing_number info.
+end intellisense**/
