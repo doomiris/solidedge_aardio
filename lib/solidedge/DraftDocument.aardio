@@ -1,6 +1,36 @@
 ﻿//DraftDocument 常用函数
 namespace solidedge;
+class DraftDocument{
+	ctor( seDFT ){
+		this.seDFT = seDFT;
+	};
+	@_metaProperty;
+}
 namespace DraftDocument{
+  import solidedge.application;
+  import util.metaProperty; 
+  _metaProperty = util.metaProperty( 
+	get = function(k){
+		return owner.seDFT[k];
+	};
+	set = function(k,v){
+		owner.seDFT[k] = v;
+	};
+	application = {
+		_get = function(){
+			return solidedge.application();
+		}
+		_set = function(){
+			//
+		}
+	} 
+	getFirstSheet = function(){
+		for (i=1; owner.Sheets.Count; 1){
+			if (owner.Sheets.item(i).SectionType == 0 /* igWorkingSection */)
+				if (owner.Sheets.item(i).Number == 1)
+					return owner.Sheets.item(i);
+		}
+	};
 	getTitleBlock = function(seSht){
         for (i = 1;  seSht.BlockOccurrences.Count ) { //获取Titleblock
             select  (seSht.BlockOccurrences.Item(i).Block.Name){
@@ -10,30 +40,87 @@ namespace DraftDocument{
                 }
             }
         }
-	}
-	getFirstSheet = function(dft){
-		for (i=1; dft.Sheets.Count; 1){
-			if (dft.Sheets.item(i).SectionType == 0 /* igWorkingSection */)
-				if (dft.Sheets.item(i).Number==1)
-					return dft.Sheets.item(i);
+	};
+	findTextFromBlkDef = function(_blk, str){
+		if !_blk return null; 
+        var txts = _blk.Block.Views.Item(1).TextBoxes;
+        if (txts) {
+            for (i = 1 ; txts.Count){
+                var txt = txts.Item(i).Text;
+                if (..string.trim(txt) == str) return ..string.replace(str,"J052005","J52005"); 
+            }
+        }
+        return null;
+	};
+	getLabelTable = function(seBlk){
+		var seLbs = seBlk.BlockLabelOccurrences;
+		var tar = {};
+		for (i=1; seLbs.Count; 1){
+    		tar[seLbs.item(i).Name] = ..string.trim(seLbs.item(i).Value);
+    		if (seLbs.item(i).Name == "日期") { //旧模板命名问题: 重复日期
+    			if (tar["日期"]){	
+    				if (!tar["设计日期"]){
+    					tar["设计日期"] = tar["日期"];
+    					continue;
+    				} else {
+    					if (!tar["审核日期"]){
+    						tar["审核日期"] = tar["日期"];
+    						continue;
+    					} else {
+    							tar["批准日期"] := tar["日期"];
+    					}
+    				}
+    			}
+    		}
 		}
-	}
-	
-	getLabelTable = function(blk){
-		var seLbs=blk.BlockLabelOccurrences		
-		var tar={}
-		for (i=1;seLbs.count){
-    		tar[seLbs.item(i).name]=..string.trim(seLbs.item(i).value)
-    		tar["零件名称"] := tar["名称(中文)"] 
-		}		
+		tar["专用号"] := tar["图号"];
+		tar["零件名称"] := tar["名称(中文)"];
+    	tar["型号/项目名称"] := tar["型  号"];	//旧模板命名问题
+    	tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
+    	tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
+    	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
+    	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-c");
+    	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
 		return tar; 
-	}
-	getValueFromBlk = function(blk, lableName){
-		var seLbs=blk.BlockLabelOccurrences		
-		for (i=1;seLbs.count){
-    		if (seLbs.item(i).name==lableName) return seLbs.item(i).value
+	};
+	getLabelObjectTable = function(seBlk){
+		var seLbs = seBlk.BlockLabelOccurrences;
+		var tar = {};
+		for (i=1; seLbs.Count; 1){
+    		tar[seLbs.item(i).Name] = seLbs.item(i);
+    		if (seLbs.item(i).Name == "日期") { //旧模板命名问题: 重复日期
+    			if (tar["日期"]){	
+    				if (!tar["设计日期"]){
+    					tar["设计日期"] = tar["日期"];
+    					continue;
+    				} else {
+    					if (!tar["审核日期"]){
+    						tar["审核日期"] = tar["日期"];
+    						continue;
+    					} else {
+    							tar["批准日期"] := tar["日期"];
+    					}
+    				}
+    			}
+    		}
 		}
-	}
+		tar["专用号"] := tar["图号"];
+		tar["零件名称"] := tar["名称(中文)"];
+    	tar["型号/项目名称"] := tar["型  号"];	//旧模板命名问题
+    	tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
+    	tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
+    	tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
+    	tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-c");
+    	tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
+		return tar; 
+	};
+	getValueFromBlk = function(blk, lableName){
+		var tar= owner.getLabelTable(blk);
+		return tar[lableName]; 
+	};
+	firstTitleBlock = function(){
+		return owner.getTitleBlock(owner.getFirstSheet());
+	};
 	getVerFromShtCorner = function(seSht){
 		var	width = seSht.SheetSetup.SheetWidth * 1000;
         var txts = seSht.TextBoxes        
@@ -46,9 +133,10 @@ namespace DraftDocument{
                 }
             }
         }
-	}
-	getVerFromBlkCorner = function(blk){
-        var txts = blk.Block.Views.Item(1).TextBoxes
+	};
+	getVerFromBlkCorner = function(_blk){
+		if !_blk return null; 
+        var txts = _blk.Block.Views.Item(1).TextBoxes
         var txtbox = txts.Item(1)
         if (txts && txtbox) {
             var a,b,c=txtbox.GetOrigin ( )
@@ -61,20 +149,165 @@ namespace DraftDocument{
             }
         }
         return ..string.trim(txtbox.Text)
+	};
+	getDftVer = function(){
+		var qhc_ver;
+        qhc_ver = owner.getValueFromBlk(owner.firstTitleBlock(),"版本");
+		qhc_ver := owner.getVerFromShtCorner(owner.getFirstSheet()); //考虑到有些图纸里版本是写在右下角文本框里的, 不在Titleblock里, 则尝试读取右下角是否有文本框
+		qhc_ver := owner.getVerFromBlkCorner(owner.firstTitleBlock()); //考虑到有些图纸里版本是写在Titleblock定义里, 则尝试读取Titleblock定义右下角是否有文本框
+		return qhc_ver;
+	};
+	getFileName = function(){
+		var p_number;
+        p_number = ..string.upper(owner.Name);	
+		p_number = ..string.trimright(p_number, ".DFT");
+		p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H
+		return p_number; 
+	};
+	
+	/* ====================== */
+	name_cn = {
+		_get = function(){
+			return
+				owner.formatWindowsFileName(
+					owner.getValueFromBlk(owner.firstTitleBlock(), "零件名称")
+				);
+		}
+		_set = function(){
+			//
+		}
+	};
+
+
+	/* ====================== */
+	
+	formatWindowsFileName = function (nameStr) {
+    	//替换Windows文件名非法字符为全角＼／，．＜＞｜＊
+    	nameStr = ..string.replace(nameStr, "\\", "＼");
+    	nameStr = ..string.replace(nameStr, "/", "／");
+    	nameStr = ..string.replace(nameStr, "\:", "：");
+    	nameStr = ..string.replace(nameStr, "*", "x");
+    	nameStr = ..string.replace(nameStr, "?", "？");
+    	nameStr = ..string.replace(nameStr, '"', "“");   //替换双引号
+    	nameStr = ..string.replace(nameStr, "\<", "＜");
+    	nameStr = ..string.replace(nameStr, "\>", "＞");
+    	nameStr = ..string.replace(nameStr, "|", "｜");
+    	nameStr = ..string.replace(nameStr, "\r\n", " ");  //替换回车符
+    	return ..string.trim(nameStr);
+	};
+	getRule = function(){
+		var tRule;
+    	if (owner.firstTitleBlock()) {
+        	if (!owner.getDftVer()) {
+            	tRule=0;	//如果无法获取版本号
+        	}else{
+            	if (..string.len(owner.name_cn) == 0 && owner.application.nameRule == 2) {
+                	tRule = 1;   //如果名称为空时使用规则1
+            	} else {
+                	tRule = owner.application.nameRule;    //使用用户设定的规则
+            	}
+        	}
+    	}else{
+        	tRule = 0;   //如果无法获取titleblock, 使用规则0
+    	}
+    	return  tRule; 
 	}
-	setPdfOptions = function(seApp){
-    	seApp.SetGlobalParameter ( 172 /*Sheet options*/, 1 /*All sheets*/ )
-    	seApp.SetGlobalParameter ( 174 /*Use individual sheet sizes*/, true)
-    	seApp.SetGlobalParameter ( 168 /*Save all colors as black*/, false)
+	getNameByExt = function(fileExt){
+		select  (owner.getRule())    {//命名规则
+    		case 0 {
+        		return
+					owner.application.toFolder
+					++ "\"
+					++ owner.getFileName()
+					++ fileExt;
+    		}
+    		case 1 {
+        		return
+        			owner.application.toFolder
+        			++ "\"
+        			++ owner.getFileName()
+        			++ "-"
+        			++ owner.getDftVer()
+        			++ "版"
+        			++ fileExt;
+    		}
+    		case 2 {
+        		return
+        			owner.application.toFolder
+        			++ "\"
+        			++ owner.getFileName()
+        			++ "-"
+        			++ owner.getDftVer()
+        			++ "版"
+        			++ "-"
+        			++ owner.name_cn
+        			++ fileExt;
+    		}
+		}
+	};
+	saveToExt = function (fname) {
+		var fileExt = ..string.lower(..table.pop(..string.split(fname,".")));
+		try{
+    		select (fileExt){
+        		case "dwg","pdf"{        		
+        			owner.SaveCopyAs(fname);  //savecopyas 和 saveas 效果一样
+        		}
+        		case "stp"{
+        			owner.ModelLinks.item(1).ModelDocument.SaveCopyAs(fname);
+        		} 
+        		case "dxf"{        				
+        			var smDoc = owner.ModelLinks.item(1).ModelDocument;
+        			import web.script;
+        			var vm=web.script("VBScript") ;
+        			vm.external ={
+        				smDoc = function(){return smDoc}; 
+        				fname = function(){return fname}        					
+        			}
+        			vm.addCode("Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)");
+        		} 
+    		}
+		}
+		catch(e){
+			//console.log(e)
+			//console.pause(false)
+		}
+	};
+	getTitleBlockOrigin = function(seSht){
+		select(seSht.Background.Name) {
+			case "A2-Sheet" {
+				return 584 / 1000, 10 / 1000; 
+			}
+			case "A3-Sheet" {
+				return 410 / 1000, 10 / 1000; 
+			}
+			else {
+				return 0,0; 
+			}
+		}
 	}
+	tabToBlk = function(oLbsTab, Blk){
+    	var nLbs = Blk.BlockLabelOccurrences;
+		for (i=1; nLbs.Count; 1) {
+			nLbs.Item(i).Value = oLbsTab[nLbs.Item(i).Name]
+		}
+	}
+	
+  )
 }
 /**intellisense()
 solidedge.DraftDocument = DraftDocument 支持库
-solidedge.DraftDocument = !DraftDocument.
+solidedge.DraftDocument() = !DraftDocument.
 !DraftDocument.getTitleBlock(_seSht) = return title block object
 !DraftDocument.getLabelTable(_blk) = return lables object
 !DraftDocument.getValueFromBlk(_blk,_lblName) = return lable value by name
 !DraftDocument.getVerFromShtCorner(_seSht) = return Ver value from sht rt_bt conrner
 !DraftDocument.getVerFromBlkCorner(_blk) = return Ver value from title block def
-!DraftDocument.setPdfOptions = set print All sheets, allow different sheet sizes, and allow color;
+!DraftDocument.closeDft(seApp) = 关闭所有DFT, 按CTRL键放弃保存
+!DraftDocument.getDftVer() = 用尽办法查找版本号
+!DraftDocument.getFileName() = 从seDFT.Name获取专用号
+!DraftDocument.getNameByExt(fileExt) = 按规则生成文件名
+!DraftDocument.saveToExt(fname) = 另存为其它格式
+!DraftDocument.getTitleBlockOrigin(seSht) = 获取坐标(x,y)
+!DraftDocument.tabToBlk(oLbsTab, Blk) = lable table write to block;
+?solidedge.DraftDocument = !DraftDocument.
 end intellisense**/
