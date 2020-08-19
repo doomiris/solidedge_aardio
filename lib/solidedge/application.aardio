@@ -16,21 +16,6 @@ namespace application{
 	};
 	set = function(k,v){
 		owner.seApp[k] = v;
-	};
-	setPdfOptions = function(){
-    	owner.SetGlobalParameter ( 172 /*Sheet options*/, 1 /*All sheets*/ )
-    	owner.SetGlobalParameter ( 174 /*Use individual sheet sizes*/, true)
-    	owner.SetGlobalParameter ( 168 /*Save all colors as black*/, false)
-	};
-	closeDft = function(saveChanges){
-		var Docs = owner.Documents; 
-		owner.DisplayAlerts = true;
-		for(i=Docs.Count; 1; -1){
-			if(Docs.item(i).Type == 2 /*Draft Document Type*/){
-				Docs.item(i).Close(saveChanges);
-			}
-		}
-		owner.DisplayAlerts = false;
 	}
 	nameRule = {
 		_get = function(){
@@ -39,7 +24,7 @@ namespace application{
 		_set = function(v){
 			..VBASettingIO.SaveSetting("Domisoft", "Config", "pdfNameRule", v); 
 		}	
-	}
+	};
 	toFolder = {
 		_get = function(){
 			return ..VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces"); 
@@ -47,18 +32,38 @@ namespace application{
 		_set = function(v){
 			..VBASettingIO.SaveSetting("Domisoft", "Config", "SE_Output", v); 
 		}	
-	}
+	};
+  )
+}
+namespace application{
+	setPdfOptions = function(){
+		var seApp = ..solidedge.application();
+    	seApp.SetGlobalParameter ( 172 /*Sheet options*/, 1 /*All sheets*/ )
+    	seApp.SetGlobalParameter ( 174 /*Use individual sheet sizes*/, true)
+    	seApp.SetGlobalParameter ( 168 /*Save all colors as black*/, false)
+	};
+	closeDft = function(saveChanges){
+		var seApp = ..solidedge.application();
+		var Docs = seApp.Documents; 
+		seApp.DisplayAlerts = true;
+		for(i=Docs.Count; 1; -1){
+			if(Docs.item(i).Type == 2 /*Draft Document Type*/){
+				Docs.item(i).Close(saveChanges);
+			}
+		}
+		seApp.DisplayAlerts = false;
+	};
+
 	reOpenDocument = function(seDoc){
-		owner.DisplayAlerts = false;
-		if (owner.Documents.Count == 0) return;
-		seDoc := owner.ActiveDocument;
+		var seApp = ..solidedge.application();
+		seApp.DisplayAlerts = false;
+		if (seApp.Documents.Count == 0) return;
+		seDoc := seApp.ActiveDocument;
 		var fPath = seDoc.FullName;
 		seDoc.Close(false);
-		owner.Documents.Open(fPath);
-		owner.DisplayAlerts = true;
-	}
-	
-  )
+		seApp.Documents.Open(fPath);
+		seApp.DisplayAlerts = true;
+	};
 }
 
 /**intellisense()

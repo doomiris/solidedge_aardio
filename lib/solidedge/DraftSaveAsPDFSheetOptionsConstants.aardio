@@ -1,4 +1,5 @@
-﻿//DraftSaveAsPDFSheetOptionsConstants 
+﻿//DraftSaveAsPDFSheetOptionsConstants
+namespace solidedge;
 namespace DraftSaveAsPDFSheetOptionsConstants{
     
     
