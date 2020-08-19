@@ -1,5 +1,4 @@
 import solidedge.application;
 import key;
-var seApp = solidedge.application();
 var saveChanges  = !(key.getState(key.VK.CTRL));	//按CTRL键放弃保存
-seApp.closeDft(saveChanges);	//关闭所有图纸文件
+solidedge.application.closeDft(saveChanges);	//关闭所有图纸文件

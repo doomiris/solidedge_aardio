@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="SE_Close_DFT" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\icon\Offline.ico" ui="win" output="SE_Close_DFT.exe" CompanyName="Carrier" FileDescription="SE_Close_DFT" LegalCopyright="Copyright (C) Carrier 2020" ProductName="SE_Close_DFT" InternalName="SE_Close_DFT" FileVersion="0.0.0.09" ProductVersion="0.0.0.09" publishDir="D:\users\CCL100100\workspaces" dstrip="false" local="false">
+<project ver="10" name="SE_Close_DFT" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\icon\Offline.ico" ui="win" output="SE_Close_DFT.exe" CompanyName="Carrier" FileDescription="SE_Close_DFT" LegalCopyright="Copyright (C) Carrier 2020" ProductName="SE_Close_DFT" InternalName="SE_Close_DFT" FileVersion="0.0.0.10" ProductVersion="0.0.0.10" publishDir="\dist\" dstrip="false" local="false">
 	<file name="main.aardio" path="main.aardio" comment="启动程序代码"/>
 	<folder name="资源文件" path="res" embed="true" local="false"/>
 </project>
