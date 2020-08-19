@@ -4,9 +4,9 @@ import fsys.table;
 namespace getList{
 	saveFolderTable = function(){
 		_searchLoc = {
-			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
 			"\\ccnsia1a\separts\Cabinet\QHC图纸库2020";
-			"\\ccnsia1a\separts\Cabinet\QHC图纸库"
+			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
+			"\\ccnsia1a\separts\Cabinet\QHC图纸库";
 		};
 		var dlist = ..fsys.table("S:\temp\addon\qtip\drawing_lists.table");
 		dlist.load();
@@ -16,6 +16,48 @@ namespace getList{
 			c = ..fsys.list(_searchLoc[3],,"*.*")
 		);
 		dlist.save();
+	};
+	saveFolderDB = function(){
+		_searchLoc = {
+			"\\ccnsia1a\separts\Cabinet\QHC图纸库2020";
+			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
+			"\\ccnsia1a\separts\Cabinet\QHC图纸库";
+		};
+		import sqlite;
+		var db = sqlite("S:\temp\addon\qtip\drawing_lists.db");
+		var tabName = {"QHC图纸库2020";"PDF图纸库";"QHC图纸库"};
+		var flist={
+			[1] = ..fsys.list(_searchLoc[1],,"*.*");
+			[2] = ..fsys.list(_searchLoc[2],,"*.*");
+			[3] = ..fsys.list(_searchLoc[3],,"*.*");
+		};
+		var dl={[1]={};[2]={};[3]={}};
+		for (i=1; #dl; 1){
+			dl[i] = ..table.map(flist[i],function(v,k,result){
+				result={};
+				..table.push(result,{
+						filename = k;
+						fullpath = v;
+				})
+			})
+		}
+sqlConn.exec("begin;")
+for(i=1;100;1){
+    sqlConn.exec( "insert into film values ('Silence of the Lambs, The', 11.8, 1991, 'Jodie Foster');")
+}
+//关闭....
+sqlConn.exec("commit;")
+		for (i=1; #tabName; 1) {
+			if (db.existsTable(tabName[i])) db.exec("DROP TABLE [" ++ tabName[i] ++ "];");
+			db.exec( "CREATE TABLE [" ++ tabName[i] ++ "](filename, fullpath);");
+			var command = db.prepare("INSERT INTO [" ++ tabName[i] ++ "] VALUES (?,?);" );
+			command.bind.parameters(
+				dl[i].filename, //设定第一个?号表示的参数
+	 			dl[i].fullpath, //设定第二个?号表示的参数
+			).step();
+			command.finalize();
+		}	
+		db.close();
 	};
 	appendDrawingMapFromExcel = function(eFileLoc, shtName){
 		import com.excel;

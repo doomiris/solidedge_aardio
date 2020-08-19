@@ -15,15 +15,11 @@ import fsys.table;
 mainForm = win.form(text="QHC物料查询";right=638;bottom=502)
 mainForm.add(
 button={cls="button";text='\uF002  查询';left=521;top=10;right=620;bottom=40;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
-button2={cls="button";text="安装驱动";left=184;top=472;right=270;bottom=495;db=1;dl=1;hide=1;z=3};
-button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=5};
-button4={cls="button";text="更新图号库";left=5;top=472;right=81;bottom=495;color=10789024;db=1;dl=1;flat=1;hide=1;z=6};
-button5={cls="button";text='\uF103 ';left=477;top=39;right=515;bottom=54;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
-button6={cls="button";text="更新目录库";left=95;top=472;right=171;bottom=495;color=10789024;db=1;dl=1;flat=1;hide=1;z=10};
-button7={cls="button";text="加密";left=280;top=472;right=360;bottom=496;hide=1;z=11};
-buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=9};
-editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=8};
-listview={cls="listview";left=1;top=53;right=638;bottom=463;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=4};
+button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=4};
+button5={cls="button";text='\uF103 ';left=477;top=39;right=515;bottom=54;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=5};
+buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
+editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=6};
+listview={cls="listview";left=1;top=53;right=638;bottom=463;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
 static={cls="static";text="Static";left=180;top=464;right=632;bottom=499;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2}
 )
 /*}}*/
@@ -212,30 +208,25 @@ mainForm.listview.onnotify = function(id,code,ptr){
     }
 }
 /*}}*/
-//todo: 搜索框Ctrl+C失效问题
 /*CTRLC复制模块{{*/
-var accelerator = win.ui.accelerator({
-    { 
-        ctrl = true; vkey = 'C'#; 
-        oncommand = function() {
-            if (grid.editBox.hide==1){
-                if (mainForm.listview.tag==1) {
-            		var tab=table.array();
-            		for (i=1;#mainForm.listview.selected;1){
-                		table.push(tab,string.join(mainForm.listview.items[mainForm.listview.selected[i]],'\t'))
-            		}           
-					win.clip.write(string.join(tab,'\n'))
-				}else{
-					win.clip.file.write(mainForm.listview.items[mainForm.listview.getSelection()][[2]])
-				}
-			}else {	//编辑状态直接调用copy
-				grid.editBox.copy()
-			}
-        }; 
-    };//  {more}
-    
-},mainForm );
-
+mainForm.listview.translateAccelerator = function( msg ){ 
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
+//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
+    var vk = msg.wParam ;    
+    if( ( vk == 'C'# ) && ctrl  ){
+        if (mainForm.listview.tag==1) {
+            var tab=table.array();
+            for (i=1;#mainForm.listview.selected;1){
+                table.push(tab,string.join(mainForm.listview.items[mainForm.listview.selected[i]],'\t'))
+            }           
+			win.clip.write(string.join(tab,'\n'))
+		}else{
+			win.clip.file.write(mainForm.listview.items[mainForm.listview.getSelection()][[2]])
+		}
+        return true;
+    }
+}
 /*}}*/
 /*onclose{{*/
 mainForm.onClose = function(hwnd,message,wParam,lParam){
