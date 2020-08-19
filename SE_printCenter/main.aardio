@@ -4,12 +4,12 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="Printing Center";right=365;bottom=275;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
 winform.add(
-button={cls="button";text='    \uF0F6  Print Active';left=210;top=90;right=325;bottom=135;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
-button2={cls="button";text='    \uF233  Print All';left=210;top=160;right=325;bottom=205;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
+button={cls="button";text='    \uF0F6  Print Active';left=208;top=96;right=323;bottom=141;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
+button2={cls="button";text='    \uF233  Print All';left=208;top=152;right=323;bottom=197;align="left";font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
 button3={cls="button";text='\uF05E  Discard';left=5;top=241;right=87;bottom=271;font=LOGFONT(name='FontAwesome');z=10};
 button4={cls="button";text='\uF05B Save';left=86;top=241;right=168;bottom=271;font=LOGFONT(name='FontAwesome');z=11};
 groupbox={cls="groupbox";text='\uF097  Actions';left=5;top=5;right=360;bottom=240;edge=1;font=LOGFONT(h=-16;name='FontAwesome');z=1};
-listbox={cls="listbox";left=45;top=94;right=178;bottom=206;border=1;cp=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf";".dwg";".dxf";".stp"};msel=1;z=2};
+listbox={cls="listbox";left=45;top=94;right=178;bottom=208;border=1;cp=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf";".dwg";".dxf";".stp"};msel=1;z=2};
 outpath={cls="static";text="d:\workspaces";left=29;top=211;right=343;bottom=236;center=1;color=8421504;notify=1;transparent=1;z=8};
 progress={cls="progress";left=171;top=241;right=360;bottom=271;color=32768;db=1;dl=1;dr=1;max=100;min=0;z=9};
 radNameRule0={cls="radiobutton";text="文件名只用图号";left=34;top=45;right=142;bottom=65;group=1;z=5};
@@ -17,14 +17,18 @@ radNameRule1={cls="radiobutton";text="+版本";left=165;top=45;right=226;bottom=
 radNameRule2={cls="radiobutton";text="+版本+名称";left=251;top=45;right=339;bottom=65;z=7}
 )
 /*}}*/
+
 import process;
 import key;
 import solidedge.application;
 import solidedge.DraftDocument;
 _ctrl = key.getState(key.VK.CTRL);
 _shift = key.getState(key.VK.CTRL);
+
+solidedge.application.setPdfOptions();
+
 var seApp = solidedge.application();
-seApp.setPdfOptions();
+
 
 /*pringSingleFile{{*/
 var startPrintActive = function(fileExt){
@@ -89,6 +93,7 @@ if (_ctrl) {
 winform.show();	
 /*控件初始值{{*/
 winform.listbox.setSelected(1);
+//win.msgbox(solidedge.application.nameRule);
 select(seApp.nameRule) {
 	case 0 {
 		winform.radNameRule0.checked = 1;
@@ -131,11 +136,11 @@ winform.button2.oncommand = function(id,event){
 	winform.close();
 }
 winform.button3.oncommand = function(id,event){
-	seApp.closeDft(false);
+	solidedge.application.closeDft(false);
 	winform.close();
 }
 winform.button4.oncommand = function(id,event){
-	seApp.closeDft(true);
+	solidedge.application.closeDft(true);
 	winform.close();
 }
 /*}}*/
