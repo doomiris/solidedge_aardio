@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\icon\heat_exchanger_selection2.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.0.0.22" ProductVersion="1.0.0.22" publishDir="dist" dstrip="false" local="false">
+<project ver="10" name="TBM" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\icon\heat_exchanger_selection2.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.0.0.29" ProductVersion="1.0.0.29" publishDir="dist" dstrip="false" local="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false">

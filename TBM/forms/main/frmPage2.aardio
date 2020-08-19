@@ -1,14 +1,13 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=759;bottom=470;bgcolor=16777215)
+var winform = win.form(text="aardio form";right=759;bottom=470;image=$"\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-bkplus={cls="bkplus";left=0;top=0;right=760;bottom=472;ah=1;aw=1;background="C:\Program Files\Siemens\Solid Edge 2020\Program\ResDLLs\0009\images\SE BG.png";db=1;dl=1;dr=1;dt=1;z=1};
-button={cls="button";text='\uF021 \r\r 一键更新图框';left=35;top=35;right=128;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=2};
-button2={cls="button";text='\uF01E  放弃保存, 重新打开当前文档';left=23;top=409;right=248;bottom=450;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=3};
-button3={cls="button";text='\uF07E \r\r 强改尺寸';left=144;top=35;right=234;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=4};
-button4={cls="button";text='\uF05A \r\r 修改球标';left=251;top=35;right=341;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=5};
-button5={cls="button";text='\uF05C \r\r 删除球标';left=360;top=35;right=450;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=6}
+button={cls="button";text='\uF021 \r\r 一键更新图框';left=35;top=35;right=128;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=1};
+button2={cls="button";text='\uF01E  放弃保存, 重新打开当前文档';left=23;top=409;right=248;bottom=450;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=2};
+button3={cls="button";text='\uF07E \r\r 强改尺寸';left=144;top=35;right=234;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=3};
+button4={cls="button";text='\uF05A \r\r 修改球标';left=251;top=35;right=341;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=4};
+button5={cls="button";text='\uF05C \r\r 删除球标';left=360;top=35;right=450;bottom=125;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=5}
 )
 /*}}*/
 
@@ -16,84 +15,15 @@ import solidedge.application;
 var seApp = solidedge.application();
 import solidedge.DraftDocument;
 
-var newTB = function(DFT,Sht){
-	_tPath = "\\ccnsia1a\separts\Admin\Templates\Solidedge_Template\Template_2020\Draft.dft";
-	var newDFT = solidedge.DraftDocument(seApp.Documents.Open(_tPath));	//模版文件
-	var seDFT = solidedge.DraftDocument(DFT);	//当前文件
-	seDFT.Activate();
-	// 获取当前旧的title block定义;
-	var seBlk = seDFT.getTitleBlock(Sht);
-	// 从模版获取全部新的block定义;
-	for (i = 1; newDFT.Blocks.Count; 1)
-		seDFT.Blocks.CopyBlock (newDFT.Blocks.item(i));
-	newDFT.Close(false);
-	// 插入新Title Block
-	var x,y = seDFT.getTitleBlockOrigin(Sht);
-	var neBlk = Sht.BlockOccurrences.Add("Title 2020", x, y);
-	
-	//获取旧Title Block数据
-	var oLbsTab = seDFT.getLabelTable(seBlk);
-	
-	//解决名称合并后有多行的显示问题, TODO: 对齐方式改进
-	oLbsTab["零件名称"] := (function(a,b){
-		if  b and ..string.len(..string.trim(b))>0 
-			return a ++ '\n' ++ b;	//旧模板命名问题
-		else 
-			return a;
-	})(oLbsTab["名称(中文)"], oLbsTab["名称(英文)"]);
-	if (..string.indexOf(oLbsTab["零件名称"], '\r')){
-		var newTitleBlockLableObject = seDFT.getLabelObjectTable(neBlk);
-		newTitleBlockLableObject["零件名称"].Style.Height = 3 / 1000
-    	newTitleBlockLableObject["零件名称"].OriginLocation = 7 /* igBlockLabelBottomCenter */
-    	newTitleBlockLableObject["零件名称"].BlockLabel.OriginLocation = 7 /* igBlockLabelBottomCenter */
-	}
-	//数据写入新Title Block
-	seDFT.tabToBlk(oLbsTab, neBlk);	
-	
-	//删除旧Title Block
-	seDFT.Blocks.Item(seBlk.Block.Name).Delete();
-	
-	//替换新图框
-	select (Sht.Background.Name) {
-		case "A3-Sheet", "A2-Sheet" {
-         	Sht.Background.ReplaceBackground(_tPath, Sht.Background.Name); 
-		}
-	} 
-	
-	// 检查如果有旧的变更记录就添加新格式变更记录block
-    for (i = 1;  Sht.BlockOccurrences.Count ) { //获取Titleblock
-        select  (Sht.BlockOccurrences.Item(i).Block.Name){
-            case "变更修改" {
-                Sht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
-               	break;
-            }
-        }
-    }
-    //获取x修改记录block, 由于实时删除, 需要反向循环
-    var gy = (48+6)/1000;	//变更记录y坐标
-    for (i = Sht.BlockOccurrences.Count; 1;  -1 ) { 
-    	var xblk = Sht.BlockOccurrences.Item(i);
-        select  (xblk.Block.Name){
-            case "变更修改" {
-                var xblklbs = seDFT.getLabelTable(xblk);
-               	var nxblk = Sht.BlockOccurrences.Add("变更记录 2020", x, y + gy);
-               	seDFT.tabToBlk(xblklbs, nxblk);
-               	xblk.Delete();
-               	gy += 6/1000;
-            }
-        }
-    }
-}
-
 winform.button.oncommand = function(id,event){
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
     var seDoc = seApp.ActiveDocument;
-	newTB(seDoc, seDoc.ActiveSheet);
+	solidedge.DraftDocument.replaceNewTitleBlock(seDoc, seDoc.ActiveSheet);
 	win.quitMessage();
 }
 
 winform.button2.oncommand = function(id,event){
-	seApp.reOpenDocument();
+	solidedge.application.reOpenDocument();
 	win.quitMessage();
 }
 
@@ -107,7 +37,7 @@ winform.button3.oncommand = function(id,event){
     var inputBox=win.inputBox();
     inputBox.info.text="input text to replace dimension";
     inputBox.text="Edit Dim";
-    inputBox.input.text="XXX";
+    inputBox.input.text="L";
     var s=inputBox.doModal();
     if !s return; 
     if ..string.len(..string.trim(s)) == 0 return ; 
