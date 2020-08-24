@@ -52,24 +52,9 @@ winform.button4.oncommand = function(id,event){
 	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
 	var seSht = seDFT.ActiveSheet;
 	var BBS = seSht.Balloons;
-	var ee = "a";
-	var revBlkLBLs;
-	for (i = 1 ; seSht.BlockOccurrences.Count) {
-		select(seSht.BlockOccurrences.Item(i).Block.Name ) {
-			case "变更修改","变更记录表格 2020" {
-        		var revBlk = seSht.BlockOccurrences.Item(i);
-        		revBlkLBLs = revBlk.BlockLabelOccurrences;
-        		break;
-			}
-		}
-	}
-	if !revBlkLBLs return ; 
-	for (i = 1 ; revBlkLBLs.Count){
-    	if (revBlkLBLs.Item(i).Name == "标记") {
-        	ee = revBlkLBLs.Item(i).Value;
-        	break;
-    	}
-	}
+	var ee = seDFT.getTopRecordMark(seSht);
+	ee = string.pack( ee[1] + 1 );
+
 	import win.inputBox;
 	var inputBox=win.inputBox();
 	inputBox.info.text="What symbol change bolloons to ?";
@@ -117,7 +102,6 @@ winform.button5.oncommand = function(id,event){
 	}
 	win.quitMessage();
 }
-
 winform.show();
 win.loopMessage();
 return winform;

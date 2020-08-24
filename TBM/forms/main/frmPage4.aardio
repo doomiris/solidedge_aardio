@@ -1,0 +1,81 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="插入变更记录";right=663;bottom=303;image=$"\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+winform.add(
+button={cls="button";text="OK";left=584;top=256;right=656;bottom=296;db=1;dr=1;z=13};
+button2={cls="button";text="Cancel";left=504;top=256;right=576;bottom=296;db=1;dr=1;z=14};
+cb_approve_date={cls="edit";left=88;top=232;right=208;bottom=256;dl=1;dt=1;edge=1;multiline=1;z=12};
+cb_approver={cls="combobox";left=88;top=192;right=208;bottom=216;dl=1;dt=1;edge=1;items={};mode="dropdown";z=10};
+cb_design_date={cls="edit";left=88;top=152;right=208;bottom=176;dl=1;dt=1;edge=1;multiline=1;z=8};
+cb_designer={cls="combobox";left=88;top=112;right=208;bottom=136;dl=1;dt=1;edge=1;items={};mode="dropdown";z=6};
+cb_desp={cls="edit";left=88;top=72;right=656;bottom=96;aw=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=4};
+cb_mark={cls="combobox";left=88;top=32;right=136;bottom=56;dl=1;dt=1;edge=1;items={"a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o";"p";"q";"r";"s";"t";"u";"v";"w";"x";"y";"z"};mode="dropdown";z=2};
+static={cls="static";text="标记";left=32;top=32;right=64;bottom=56;align="right";dl=1;dt=1;transparent=1;z=1};
+static2={cls="static";text="描述";left=32;top=72;right=64;bottom=96;align="right";dl=1;dt=1;transparent=1;z=3};
+static3={cls="static";text="设计";left=32;top=112;right=64;bottom=136;align="right";dl=1;dt=1;transparent=1;z=5};
+static4={cls="static";text="变更日期";left=8;top=152;right=64;bottom=176;align="right";dl=1;dt=1;transparent=1;z=7};
+static7={cls="static";text="批准";left=32;top=192;right=64;bottom=216;align="right";dl=1;dt=1;transparent=1;z=9};
+static8={cls="static";text="批准日期";left=8;top=232;right=64;bottom=256;align="right";dl=1;dt=1;transparent=1;z=11}
+)
+/*}}*/
+
+import VBASettingIO;
+import solidedge.application;
+var seApp = solidedge.application();
+if (seApp.Documents.Count==0) return; 
+if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return; 
+import solidedge.DraftDocument;
+var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+if (seDFT.Sheets.Count == 0) return ; 
+var seSht = seDFT.ActiveSheet;
+/*loadDefaults{{*/
+var loadDefaults = function(){
+	winform.cb_designer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
+	winform.cb_approver.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
+	winform.cb_design_date.text = time(,"%Y.%m.%d");
+	winform.cb_approve_date.text = time(,"%Y.%m.%d");
+	var mark = seDFT.getTopRecordMark(seSht);
+	winform.cb_mark.text = string.pack(mark[1] + 1);
+}
+/*}}*/
+/*loadLists{{*/
+var loadPromptList = function(){
+	_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
+	import access;
+	var dbRs = access(_dbpath);
+	var tab = dbRs.getTable("select * from SE_TBM_Lists");
+	for (i=1; #tab; 1) {
+		select(tab[i].ListName) {
+			case "designer" {
+				winform.cb_designer.add(tab[i].Title)
+			}
+			case "approver" {
+				winform.cb_approver.add(tab[i].Title)
+			}
+		}
+	}
+}
+/*}}*/
+var writeToDrw = function(seLbs){
+    seLbs["标记"].Value = winform.cb_mark.text;
+    seLbs["变更描述"].Value = winform.cb_desp.text;
+    seLbs["设计"].Value = winform.cb_designer.text;
+    seLbs["批准"].Value = winform.cb_approver.text ;
+    seLbs["设计日期"].Value = winform.cb_design_date.text;
+    seLbs["审核日期"].Value = winform.cb_approve_date.text; //日期重名问题,此处使用审核日期
+}
+winform.button.oncommand = function(id,event){
+    writeToDrw(seDFT.getLabelObjectTable(seDFT.insertRecordTabLine(seSht)));
+    win.quitMessage();
+}
+
+winform.button2.oncommand = function(id,event){
+	win.quitMessage();
+}
+
+winform.show();
+winform.cb_desp.setFocus();
+loadDefaults();	//读取默认值(新图纸)
+loadPromptList();	
+win.loopMessage();
+return winform;
