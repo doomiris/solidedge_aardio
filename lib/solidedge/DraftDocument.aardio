@@ -107,11 +107,11 @@ namespace DraftDocument{
 		tar["专用号"] := tar["图号"];
 		tar["零件名称"] := tar["名称(中文)"];
     	tar["型号/项目名称"] := tar["型  号"];	//旧模板命名问题
-    	tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
-    	tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
-    	tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
-    	tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-c");
-    	tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
+    	if tar["喷粉标准"] tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
+    	if tar["喷粉标准"] tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
+    	if tar["公差等级"] tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
+    	if tar["公差等级"] tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-c");
+    	if tar["公差等级"] tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
 		return tar; 
 	};
 	getValueFromBlk = function(blk, lableName){
@@ -122,6 +122,7 @@ namespace DraftDocument{
 		return owner.getTitleBlock(owner.getFirstSheet());
 	};
 	getVerFromShtCorner = function(seSht){
+		seSht := owner.ActiveSheet;
 		var	width = seSht.SheetSetup.SheetWidth * 1000;
         var txts = seSht.TextBoxes        
         for (i = 1 ; txts.Count){
@@ -273,6 +274,7 @@ namespace DraftDocument{
 		}
 	};
 	getTitleBlockOrigin = function(seSht){
+		seSht := owner.ActiveSheet;
 		select(seSht.Background.Name) {
 			case "A2-Sheet" {
 				return 584 / 1000, 10 / 1000; 
@@ -291,19 +293,80 @@ namespace DraftDocument{
 			nLbs.Item(i).Value = oLbsTab[nLbs.Item(i).Name]
 		}
 	}
+	getRecordBase = function(seSht){
+		seSht := owner.ActiveSheet;
+        for (i = 1;  seSht.BlockOccurrences.Count ) {
+            select  (seSht.BlockOccurrences.Item(i).Block.Name){
+                case "变更记录表格 2020" {
+                    var rt = seSht.BlockOccurrences.Item(i);
+                    return rt ;
+                }
+            }
+        }
+        return null; 
+	}
+	insertRecordBase = function(seSht){
+		seSht := owner.ActiveSheet;
+		var x,y = owner.getTitleBlockOrigin(seSht);
+		var recTab = owner.getRecordBase();
+		if !(recTab) seSht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
+	}
+	
+	insertRecordTabLine = function(seSht){
+		seSht := owner.ActiveSheet;
+		owner.insertRecordBase();
+		var x,y = owner.getTitleBlockOrigin(seSht);
 
+    	//获取x修改记录block, 由于实时删除, 需要反向循环
+    	var gy = (48+6)/1000;	//变更记录y坐标
+    	for (i = 1;  seSht.BlockOccurrences.Count ) { 
+        	select  (seSht.BlockOccurrences.Item(i).Block.Name){
+            	case "变更记录 2020" {
+                	gy += 6/1000;
+            	}
+        	}
+    	}
+		var nxblk = seSht.BlockOccurrences.Add("变更记录 2020", x, y+gy);
+		return nxblk;
+	}
+	getTopRecordMark = function(seSht){
+		seSht := owner.ActiveSheet;
+		var topRec, a, b, c
+    	for (i = 1;  seSht.BlockOccurrences.Count ) { 
+        	select  (seSht.BlockOccurrences.Item(i).Block.Name){
+            	case "变更记录", "变更记录 2020" {
+            		topRec := seSht.BlockOccurrences.Item(i);
+            		if (!a) a,b,c = topRec.getOrigin();
+            		var x,y,z = seSht.BlockOccurrences.Item(i).getOrigin();
+            		if ( y > b ){
+            			topRec = seSht.BlockOccurrences.Item(i);
+            			a, b, c = x, y, z;
+            		}
+            	}
+        	}
+    	}
+    	if !topRec return null ; 
+    	var lb = owner.getLabelTable(topRec);
+    	return lb["标记"]; 
+	}
+	
 	
   )
 }
 namespace DraftDocument{
 	replaceNewTitleBlock = function(DFT,Sht){
 		_tPath = "\\ccnsia1a\separts\Admin\Templates\Solidedge_Template\Template_2020\Draft.dft";
+		import solidedge.application;
+		var seApp = solidedge.application();
+		DFT := seApp.ActiveDocument;
 		var seDFT = ..solidedge.DraftDocument(DFT);	//当前文件
 		// 获取当前旧的title block定义;
+		Sht := seDFT.ActiveSheet;
 		var seBlk = seDFT.getTitleBlock(Sht);
 		// 从模版获取全部新的block定义;
 		var newDFT = seDFT.Parent.Documents.Open(_tPath);	//模版文件
 		newDFT.Readonly = true;
+		sleep(500);
 		for (i = 1; newDFT.Blocks.Count; 1)
 			seDFT.Blocks.CopyBlock (newDFT.Blocks.item(i));
 		newDFT.Close(false);
@@ -363,7 +426,9 @@ namespace DraftDocument{
             	}
         	}
     	}
-	}  
+	}
+
+	
 }
 
 /**intellisense()

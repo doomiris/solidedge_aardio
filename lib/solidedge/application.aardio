@@ -45,24 +45,25 @@ namespace application{
 	closeDft = function(saveChanges){
 		var seApp = ..solidedge.application();
 		var Docs = seApp.Documents; 
-		seApp.DisplayAlerts = true;
+		seApp.DisplayAlerts = 0;
 		for(i=Docs.Count; 1; -1){
 			if(Docs.item(i).Type == 2 /*Draft Document Type*/){
 				Docs.item(i).Close(saveChanges);
 			}
 		}
-		seApp.DisplayAlerts = false;
+		seApp.DisplayAlerts = 1;
 	};
 
 	reOpenDocument = function(seDoc){
 		var seApp = ..solidedge.application();
-		seApp.DisplayAlerts = false;
+		seApp.DisplayAlerts = 0;
 		if (seApp.Documents.Count == 0) return;
 		seDoc := seApp.ActiveDocument;
 		var fPath = seDoc.FullName;
 		seDoc.Close(false);
 		seApp.Documents.Open(fPath);
-		seApp.DisplayAlerts = true;
+		sleep(500);
+		seApp.DisplayAlerts = 1;
 	};
 }
 
@@ -94,7 +95,7 @@ solidedge.application() = !application.
 !application.Customization = An object that is used to customize the user interface.
 !application.DefaultFilePath = Sets and returns the default path used when files are opened.
 !application.DelayCompute = Specifies whether or not to suspend the computing process.
-!application.DisplayAlerts = Enables or disables the display of alerts and messages.
+!application.DisplayAlerts = 0/1 Enables or disables the display of alerts and messages.
 !application.DisplayFullScreen = Specifies whether or not the referenced Application object is maximized.
 !application.DisplayRecentFiles = Specifies whether or not the used file list is appended to the File menu of the referenced Application object.
 !application.DisplayRecentFilesCount = Sets and returns the number of files that are displayed in the most recently used (MRU) list.
