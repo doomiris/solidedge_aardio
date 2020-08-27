@@ -9,7 +9,7 @@ logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="D:\users\Persona
 nav1={cls="plus";text="TBM";left=0;top=48;right=85;bottom=128;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1EA';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=3};
 nav2={cls="plus";text="变更";left=0;top=129;right=85;bottom=209;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF277';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=4};
 nav3={cls="plus";text="工具";left=0;top=210;right=85;bottom=290;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1DE';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=5};
-nav4={cls="plus";text="关于";left=0;top=291;right=85;bottom=371;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF0F0';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=6};
+nav4={cls="plus";text="技术要求";left=0;top=291;right=85;bottom=371;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF0CB';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=6};
 navBar={cls="bkplus";left=0;top=37;right=83;bottom=373;bgcolor=11829830;db=1;dl=1;dt=1;z=1};
 titleBar={cls="bkplus";left=0;top=0;right=622;bottom=38;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=2}
 )
@@ -64,10 +64,11 @@ tbs.skin({
 tbs.loadForm(1,"\forms\main\frmPage1.aardio" );
 tbs.loadForm(2,"\forms\main\frmPage4.aardio" );
 tbs.loadForm(3,"\forms\main\frmPage2.aardio" );
-tbs.loadForm(4,"\forms\main\frmPage3.aardio" );
+tbs.loadForm(4,"\forms\main\frmPage5.aardio" );
 
-
-tbs.selIndex = 1;
+var navindex = 1;
+if (_ARGV.nav) navindex = tonumber(_ARGV.nav);
+tbs.selIndex = navindex;
 
 mainForm.show();
 return win.loopMessage(); 

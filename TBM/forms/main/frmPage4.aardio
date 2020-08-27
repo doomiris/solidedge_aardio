@@ -35,7 +35,7 @@ var loadDefaults = function(){
 	winform.cb_design_date.text = time(,"%Y.%m.%d");
 	winform.cb_approve_date.text = time(,"%Y.%m.%d");
 	var mark = seDFT.getTopRecordMark(seSht);
-	winform.cb_mark.text = string.pack(mark[1] + 1);
+	if (mark) winform.cb_mark.text = string.pack(mark[1] + 1);
 }
 /*}}*/
 /*loadLists{{*/

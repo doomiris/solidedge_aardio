@@ -6,35 +6,37 @@ import VBASettingIO;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=501;bottom=354;image=$"\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text='\uF062';left=80;top=145;right=103;bottom=172;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=9};
+button={cls="button";text='\uF062';left=72;top=144;right=96;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=9};
 button2={cls="button";text='\uF00C  OK';left=387;top=306;right=488;bottom=345;db=1;default=1;dr=1;font=LOGFONT(name='FontAwesome');z=16};
 button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=345;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=17};
-button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=27};
-button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=28};
-cb_approve_date={cls="edit";text="Edit";left=216;top=272;right=304;bottom=296;dl=1;dt=1;edge=1;z=15};
-cb_approver={cls="combobox";left=46;top=272;right=177;bottom=298;dl=1;dt=1;edge=1;items={};mode="dropdown";z=13};
-cb_design_date={cls="edit";text="Edit";left=216;top=184;right=304;bottom=208;dl=1;dt=1;edge=1;z=10};
-cb_designer={cls="combobox";left=47;top=185;right=177;bottom=211;dl=1;dt=1;edge=1;items={};mode="dropdown";z=11};
+button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=27};
+button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=28};
+cb_approve_date={cls="edit";text="Edit";left=215;top=248;right=300;bottom=272;dl=1;dt=1;z=15};
+cb_approver={cls="combobox";left=48;top=245;right=178;bottom=270;dl=1;dt=1;items={};mode="dropdown";z=13};
+cb_design_date={cls="edit";text="Edit";left=215;top=184;right=300;bottom=208;dl=1;dt=1;z=10};
+cb_designer={cls="combobox";left=48;top=185;right=178;bottom=210;dl=1;dt=1;items={};mode="dropdown";z=11};
 cb_material={cls="combobox";left=47;top=103;right=235;bottom=129;dl=1;dt=1;edge=1;items={};mode="dropdown";z=3};
 cb_model_no={cls="combobox";left=300;top=58;right=488;bottom=84;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 cb_name_cn={cls="combobox";left=47;top=58;right=235;bottom=84;dl=1;dt=1;edge=1;items={};mode="dropdown";z=1};
-cb_review_date={cls="edit";text="Edit";left=216;top=224;right=304;bottom=248;dl=1;dt=1;edge=1;z=14};
-cb_reviewer={cls="combobox";left=47;top=227;right=177;bottom=253;dl=1;dt=1;edge=1;items={};mode="dropdown";z=12};
+cb_review_date={cls="edit";text="Edit";left=215;top=216;right=300;bottom=240;dl=1;dt=1;z=14};
+cb_reviewer={cls="combobox";left=48;top=215;right=178;bottom=240;dl=1;dt=1;items={};mode="dropdown";z=12};
 cb_tol={cls="combobox";left=340;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18};
 cb_weight={cls="combobox";left=300;top=103;right=488;bottom=129;dr=1;dt=1;edge=1;items={};mode="dropdown";z=4};
-chkPaint={cls="checkbox";text="喷粉标准 Q/LD J52005";left=118;top=148;right=296;bottom=168;dl=1;dt=1;z=8};
+chkPaint={cls="checkbox";text="喷粉标准 Q/LD J52005";left=136;top=152;right=314;bottom=172;bgcolor=16777215;dl=1;dt=1;z=8};
 chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272;right=480;bottom=296;checked=1;color=16711680;db=1;dr=1;hide=1;z=29};
 groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
+rd_M={cls="radiobutton";text="自制件";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
+rd_P={cls="radiobutton";text="外购件";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
 seDocPath={cls="static";text="Static";left=25;top=24;right=476;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;transparent=1;z=6};
-static={cls="static";text="设计";left=17;top=190;right=47;bottom=209;dl=1;dt=1;transparent=1;z=19};
-static2={cls="static";text="审核";left=18;top=231;right=48;bottom=250;dl=1;dt=1;transparent=1;z=20};
-static3={cls="static";text="批准";left=17;top=277;right=47;bottom=296;dl=1;dt=1;transparent=1;z=21};
-static4={cls="static";text="名称";left=17;top=63;right=47;bottom=82;dl=1;dt=1;transparent=1;z=22};
-static5={cls="static";text="材料";left=16;top=106;right=46;bottom=125;dl=1;dt=1;transparent=1;z=23};
+static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
+static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20};
+static3={cls="static";text="批准";left=15;top=250;right=45;bottom=275;dl=1;dt=1;transparent=1;z=21};
+static4={cls="static";text="名称";left=15;top=63;right=45;bottom=82;dl=1;dt=1;transparent=1;z=22};
+static5={cls="static";text="材料";left=15;top=106;right=45;bottom=125;dl=1;dt=1;transparent=1;z=23};
 static6={cls="static";text="型号";left=269;top=63;right=299;bottom=82;dr=1;dt=1;transparent=1;z=24};
 static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;dt=1;transparent=1;z=25};
-static8={cls="static";text="版本";left=19;top=149;right=46;bottom=168;dl=1;dt=1;transparent=1;z=26};
-version={cls="edit";text="Edit";left=47;top=146;right=80;bottom=172;dl=1;dt=1;edge=1;font=LOGFONT(h=-13);z=7}
+static8={cls="static";text="版本";left=15;top=149;right=45;bottom=168;dl=1;dt=1;transparent=1;z=26};
+version={cls="edit";text="Edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1;font=LOGFONT(h=-13);z=7}
 )
 /*}}*/
 
@@ -65,6 +67,7 @@ var loadFromTab = function(_blk){
 	winform.cb_approver.text = _blk["批准"];
 	winform.cb_approve_date.text = _blk["批准日期"];
 
+
 }
 /*}}*/
 /*loadDefaults{{*/
@@ -72,16 +75,16 @@ var loadDefaults = function(){
 	if (winform.cb_designer.text == "" or winform.cb_designer.text == "-")
 		winform.cb_designer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
 	if (winform.cb_reviewer.text == "" or winform.cb_reviewer.text == "-")
-		winform.cb_reviewer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "")
+		winform.cb_reviewer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
 	if (winform.cb_approver.text == "" or winform.cb_approver.text == "-")
-		winform.cb_approver.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "")
+		winform.cb_approver.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
 	if (winform.cb_design_date.text == "YYYY.MM.DD" or winform.cb_design_date.text == "" or winform.cb_design_date.text == "2016.11.19")
-		winform.cb_design_date.text = time(,"%Y.%m.%d")
+		winform.cb_design_date.text = tostring(time(,"%Y.%m.%d"));;
 	if (winform.cb_review_date.text == "YYYY.MM.DD" or winform.cb_review_date.text == "" or winform.cb_review_date.text == "2016.11.18")
-		winform.cb_review_date.text = time(,"%Y.%m.%d")
+		winform.cb_review_date.text = tostring(time(,"%Y.%m.%d"));;
 	if (winform.cb_approve_date.text == "YYYY.MM.DD" or winform.cb_approve_date.text == "" or winform.cb_approve_date.text == "2016.11.18")
-		winform.cb_approve_date.text = time(,"%Y.%m.%d")
-	if (winform.version.text == "") winform.version.text = "00"
+		winform.cb_approve_date.text = tostring(time(,"%Y.%m.%d"));;
+	if (winform.version.text == "") winform.version.text = "00";
 }
 /*}}*/
 /*loadLists{{*/
@@ -117,11 +120,37 @@ var loadPromptList = function(){
 	}
 }
 /*}}*/
-var updateDate =function(){
-    winform.cb_design_date.text = time(,"%Y.%m.%d");
-    winform.cb_review_date.text = time(,"%Y.%m.%d");
-	winform.cb_approve_date.text = time(,"%Y.%m.%d");
+var updateDate = function(){
+    var t = tostring(time(,"%Y.%m.%d"));;
+    winform.cb_design_date.text = t;
+    winform.cb_review_date.text = t;
+	winform.cb_approve_date.text = t;
 }
+var showTimeBtn = function(){
+    var t = tostring(time(,"%Y.%m.%d"));
+	winform.button4.hide = (
+		winform.cb_design_date.text == t
+		and
+		winform.cb_review_date.text == t
+		and 
+		winform.cb_approve_date.text == t
+	
+	) ? 1: 0;
+}
+var showSaveNameBtn = function(){
+	var Default_Designer = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
+	var Default_Reviewer = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
+	var Default_Approver = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
+	winform.button5.hide = (
+		winform.cb_designer.text == Default_Designer
+		and
+		winform.cb_reviewer.text == Default_Reviewer
+		and
+		winform.cb_approver.text == Default_Approver
+	) ? 1 : 0;
+}
+
+
 
 var writeToDrw = function(seLbs){
     seLbs["型号/项目名称"].Value = winform.cb_model_no.text;
@@ -151,10 +180,18 @@ winform.button2.oncommand = function(id,event){
 		}
 	}
     writeToDrw(seDFT.getLabelObjectTable(seDFT.getTitleBlock(seSht)));
-
+	{
+		var blkObj = seDFT.getLabelObjectTable(seDFT.getBlkByName("Version_CCR 2020",seSht));
+		if blkObj {
+			if (winform.rd_P.checked == 1) blkObj["属性"].value = "P";
+			if (winform.rd_M.checked == 1) blkObj["属性"].value = "M";
+		}
+	
+	}
+	
     if (VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "")=="") {
 		winform.button5.oncommand();    /* 智能保存常用姓名 */
-    }
+    };
     
 	win.quitMessage();
 }
@@ -194,9 +231,41 @@ winform.button5.oncommand = function(id,event){
 }
 
 var seLbs = seDFT.getLabelTable(seBlk);	//获取titleblock lable
+
+select(seDFT.getSourcingType(seDFT.getFirstSheet())) {
+    case "P" {
+    	winform.rd_P.checked =1;
+    }
+    case "M" {
+    	winform.rd_M.checked = 1;
+    }
+    else {
+    	winform.rd_P.hide = 1;
+    	winform.rd_M.hide = 1;
+    }
+}
+
+winform.cb_designer.onEditChange= function(){ 
+	showSaveNameBtn();
+	winform.button5.top = winform.cb_designer.top - 1;
+	winform.button5.bottom = winform.cb_designer.bottom - 3;
+	
+}
+winform.cb_reviewer.onEditChange= function(){ 
+	showSaveNameBtn();
+	winform.button5.top = winform.cb_reviewer.top - 1;
+	winform.button5.bottom = winform.cb_reviewer.bottom - 3;
+}
+winform.cb_approver.onEditChange= function(){ 
+	showSaveNameBtn();
+	winform.button5.top = winform.cb_approver.top - 1;
+	winform.button5.bottom = winform.cb_approver.bottom - 3;
+}
 winform.show();
 loadFromTab(seLbs);	//读取当前内容
 loadDefaults();	//读取默认值(新图纸)
+showTimeBtn();
+showSaveNameBtn();
 winform.seDocPath.text = seDFT.FullName;
 loadPromptList();	//读取提示清单
 win.loopMessage();

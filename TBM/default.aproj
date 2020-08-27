@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\icon\heat_exchanger_selection2.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.1.0.34" ProductVersion="1.1.0.34" publishDir="dist" dstrip="false" local="false">
+<project ver="10" name="TBM" libEmbed="true" icon="D:\users\Personal LGP\personal Documents\code_space\icon\heat_exchanger_selection2.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.1.0.37" ProductVersion="1.1.0.37" publishDir="dist" dstrip="false" local="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false">
@@ -7,6 +7,7 @@
 			<file name="frmPage2.aardio" path="forms\main\frmPage2.aardio" comment="forms\main\frmPage2.aardio"/>
 			<file name="frmPage3.aardio" path="forms\main\frmPage3.aardio" comment="forms\main\frmPage3.aardio"/>
 			<file name="frmPage4.aardio" path="forms\main\frmPage4.aardio" comment="forms\main\frmPage4.aardio"/>
+			<file name="frmPage5.aardio" path="forms\main\frmPage5.aardio" comment="forms\main\frmPage5.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" embed="true" comment="目录"/>
 	</folder>
