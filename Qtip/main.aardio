@@ -126,7 +126,7 @@ mainForm.button.oncommand = function(id,event){
 		}else{
     		searchField = "物料描述";
 		}
-		var sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[价格],[跨工厂物料状态] AS [禁用] FROM [Sheet1] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+		var sqlstr = "SELECT [物料], [物料描述],[物料类型] AS [类型],[价格],[物料状态] AS [禁用] FROM [Sheet1] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
 		var t = db.getTable(sqlstr);
 		//console.dumpTable(t)
 		sapTab = table.concat(sapTab,t);
