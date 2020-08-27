@@ -23,7 +23,12 @@ namespace DraftDocument{
 		_set = function(){
 			//
 		}
-	} 
+	}
+	Activate = function(){
+		owner.seDFT.Activate();
+		sleep(500);
+	}
+	
 	getFirstSheet = function(){
 		for (i=1; owner.Sheets.Count; 1){
 			if (owner.Sheets.item(i).SectionType == 0 /* igWorkingSection */)
@@ -53,6 +58,7 @@ namespace DraftDocument{
         return null;
 	};
 	getLabelTable = function(seBlk){
+		if !seBlk return null; 
 		var seLbs = seBlk.BlockLabelOccurrences;
 		var tar = {};
 		for (i=1; seLbs.Count; 1){
@@ -83,7 +89,25 @@ namespace DraftDocument{
     	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
 		return tar; 
 	};
+	getBlkByName = function(blkName, seSht){
+        for (i = 1;  seSht.BlockOccurrences.Count ) { //获取Titleblock
+            select  (seSht.BlockOccurrences.Item(i).Block.Name){
+                case blkName {
+                    var blk = seSht.BlockOccurrences.Item(i);
+                    return blk ;
+                }
+            }
+        }
+        return null; 
+	}
+	
+	getSourcingType = function(seSht){
+        var vblk = owner.getBlkByName("Version_CCR 2020",seSht);
+        return owner.getValueFromBlk(vblk, "属性");
+	}
+	
 	getLabelObjectTable = function(seBlk){
+		if !seBlk return null; 
 		var seLbs = seBlk.BlockLabelOccurrences;
 		var tar = {};
 		for (i=1; seLbs.Count; 1){
@@ -116,7 +140,8 @@ namespace DraftDocument{
 	};
 	getValueFromBlk = function(blk, lableName){
 		var tar= owner.getLabelTable(blk);
-		return tar[lableName]; 
+		if tar return tar[lableName]; 
+		else return null; 
 	};
 	firstTitleBlock = function(){
 		return owner.getTitleBlock(owner.getFirstSheet());
@@ -364,9 +389,7 @@ namespace DraftDocument{
 		Sht := seDFT.ActiveSheet;
 		var seBlk = seDFT.getTitleBlock(Sht);
 		// 从模版获取全部新的block定义;
-		var newDFT = seDFT.Parent.Documents.Open(_tPath);	//模版文件
-		newDFT.Readonly = true;
-		sleep(500);
+		var newDFT = seApp.Open(_tPath, true);	//模版文件
 		for (i = 1; newDFT.Blocks.Count; 1)
 			seDFT.Blocks.CopyBlock (newDFT.Blocks.item(i));
 		newDFT.Close(false);
