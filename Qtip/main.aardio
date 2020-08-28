@@ -113,7 +113,7 @@ mainForm.button.oncommand = function(id,event){
     var userinputArr = string.split(mainForm.editUser.text, '\r\n');
  	table.clear(sapTab);
     for (i=1; #userinputArr; 1){
-		var userinput = userinputArr[i];
+		var userinput = string.trim(userinputArr[i]);
 		if (string.len(userinput)==0 ) continue;
     	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
     	userinput=string.replace(userinput,"@%","\%");
@@ -139,52 +139,36 @@ mainForm.button.oncommand = function(id,event){
 /*}}*/
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
+
     if !(filenumber) return;
     mainForm.listview.tag = 2;
     mainForm.listview.clear(true);
     mainForm.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
-	var fileTab = table.create(,{fields={[1]="文件名";[2]="位置";[3]="日期";[4]="版本"}});
-	var flistTab = fsys.table("S:\temp\addon\qtip\drawing_lists.table");
-		flistTab.load();
-	var flist = table.array();
-		table.push(flist,flistTab.a);
-		table.push(flist,flistTab.b);
-		table.push(flist,flistTab.c);
-	var dlistTab = fsys.table("S:\temp\addon\qtip\drawing_map.table");
-		dlistTab.load();
-	var mapping = dlistTab.dlist;
-	var maptab = table.filter(mapping, function(v,index){
-		if (v.专用号==searchFor) return true; 
-	}); 
-	if #maptab>0 searchFor = maptab[1].图号; 
-
-	for (j=1; #flist; 1){
-		var myfind = table.filter(flist[j],function(v,index){
-			if (string.indexOf(v,searchFor)) return true;
-		});
-		if (#myfind>0){
-			for(k=1;#myfind;1){
-				table.push(fileTab,{
-					文件名	=myfind[k];
-					位置	=flist[j][myfind[k]];
-					日期	=fsys.file(flist[j][myfind[k]]).getFileTime().write;
-					版本	=""
-				});
-			};
-		};
-	};
-
+	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
+	var flistDB = sqlite.aes256("S:\Admin\SAP\db\drawing_lists.db");	//打开数据库连接
+	var sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';"
+	var flist = flistDB.getTable(sql);
+	if (#flist == 0){
+		sql = "SELECT * FROM [Map] WHERE [专用号] = '" ++ searchFor ++ "';";
+		var maptab = flistDB.getTable(sql);
+		if (#maptab > 0) {
+			searchFor = maptab[1].图号; 
+			sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';";
+			flist = flistDB.getTable(sql);
+		}
+	}
+	if (#flist > 0) fileTab = table.concat(fileTab, flist);	
 	mainForm.listview.clear(true);
 	grid.setTable(fileTab);
 	grid.readonlyColums = {
-    	[1] = true;[2] = true;[3] = true;[4] = true;
-    }
+    	[1] = true; [2] = true; [3] = true; [4] = true;
+    };
 //调整列宽		
-	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},1)
-	mainForm.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2)
-	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/},3)
-	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},4)
+	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+	mainForm.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
+	mainForm.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
+	mainForm.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
 	mainForm.listview.adjust = function(cx,cy){
     	mainForm.listview.fillParent(1);
     	mainForm.listview.fillParent(3);
@@ -193,15 +177,17 @@ var searchDocument = function (filenumber){
 /*}}*/
 /*双击打开事件{{*/
 mainForm.listview.onnotify = function(id,code,ptr){
+    var selectedRow = mainForm.listview.getSelection();
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    		if (mainForm.listview.tag==1) {
-    			mainForm.button3.hide=false;
-    			mainForm.button3.tag  =mainForm.listview.getSelection();
-				searchDocument(mainForm.listview.items[mainForm.listview.getSelection()][[1]]);
+    		if (mainForm.listview.tag == 1) {
+    			mainForm.button3.hide = false;
+				mainForm.button3.tag  = selectedRow;
+				searchDocument(mainForm.listview.getItemText(selectedRow,1));
 			}else{
-				if io.exist(mainForm.listview.items[mainForm.listview.getSelection()][[2]]) {
-					process.execute(mainForm.listview.items[mainForm.listview.getSelection()][[2]]);
+				var fullName = mainForm.listview.getItemText(selectedRow, 2) ++ mainForm.listview.getItemText(selectedRow, 1);
+				if io.exist(fullName) {
+					process.execute(fullName);
 				}
 			}
     	}
