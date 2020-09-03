@@ -199,6 +199,7 @@ mainForm.listview.translateAccelerator = function( msg ){
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
 //    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
 //    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
+    var selectedRow = mainForm.listview.getSelection();
     var vk = msg.wParam ;    
     if( ( vk == 'C'# ) && ctrl  ){
         if (mainForm.listview.tag==1) {
@@ -208,7 +209,8 @@ mainForm.listview.translateAccelerator = function( msg ){
             }           
 			win.clip.write(string.join(tab,'\n'))
 		}else{
-			win.clip.file.write(mainForm.listview.items[mainForm.listview.getSelection()][[2]])
+			var fullName = mainForm.listview.getItemText(selectedRow, 2) ++ mainForm.listview.getItemText(selectedRow, 1);
+			win.clip.file.write(fullName)
 		}
         return true;
     }
