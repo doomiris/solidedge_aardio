@@ -29,25 +29,28 @@ solidedge.application.setPdfOptions();
 
 var seApp = solidedge.application();
 
+seApp.DisplayAlerts = 1;
 
 /*pringSingleFile{{*/
 var startPrintActive = function(fileExt){
-    fileExt := ".pdf";
+    for (i=1; winform.listbox.count)
+    	if winform.listbox.getSelected(i)
+    		fileExt := winform.listbox.getItemText(i);
     var seDFT, fname;
-	seApp.DisplayAlerts = false;
+	seApp.DisplayAlerts = 0;
      if (seApp.ActiveDocumentType == 2 /*Draft Document Type*/) {    //仅处理DFT格式
     	seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
 		fname = seDFT.getNameByExt(fileExt);
 		seDFT.saveToExt(fname);
 	}
-	seApp.DisplayAlerts = true;
+	seApp.DisplayAlerts = 1;
 	return fname; 
 }
 /*}}*/
 /*printAllFiles{{*/
 var startPrintAll = function(){
 	var Docs = seApp.Documents;
-	seApp.DisplayAlerts = false;
+	seApp.DisplayAlerts = 0;
 	for (j = Docs.Count; 1; -1){
     	if (Docs.Item(j).Type == 2 /*Draft Document Type*/) {    //仅处理DFT格式
         	var	seDFT = solidedge.DraftDocument(Docs.Item(j));
@@ -60,7 +63,7 @@ var startPrintAll = function(){
 			}
     	}
 	}
-	seApp.DisplayAlerts = true;
+	seApp.DisplayAlerts = 1;
 }
 /*}}*/
 /*closeOnEscPress{{*/
