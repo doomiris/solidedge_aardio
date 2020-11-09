@@ -7,7 +7,7 @@ import VBASettingIO;
 var winform = win.form(text="aardio form";right=783;bottom=471)
 winform.add(
 button={cls="button";text='\uF08B  插入图纸';left=688;top=424;right=776;bottom=464;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=5};
-button2={cls="button";text="关闭";left=592;top=424;right=680;bottom=464;db=1;dr=1;z=6};
+button2={cls="button";text="关闭";left=592;top=424;right=680;bottom=464;db=1;dr=1;hide=1;z=6};
 checklist={cls="checklist";left=152;top=40;right=776;bottom=416;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;items={};z=2};
 static={cls="static";text="技术要求:";left=144;top=8;right=304;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-16);transparent=1;z=3};
 static2={cls="static";text='\uF039';left=8;top=8;right=48;bottom=40;color=8388608;dl=1;dt=1;font=LOGFONT(h=-24;name='FontAwesome');transparent=1;z=4};
@@ -86,7 +86,7 @@ winform.button.oncommand = function(id,event){
 	winex.attach(seApp.hWnd);
 	win.setActive(seApp.hWnd);
 	winex.key.combine(seApp.hWnd,"CTRL","V");
-	winform.close();
+	win.quitMessage();
 }
 winform.show();
 loadPromptList();	//读取提示列表
