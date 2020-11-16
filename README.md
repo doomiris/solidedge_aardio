@@ -1,12 +1,14 @@
 # solidedge_aardio
 solid edge com addin with aardio
-#TBM
+
+# TBM
 title block manager
 
-#openDummy
+# openDummy
 open parent of a member asy.
 
-#Printing Center
+# Printing Center
 convert dxf to PDF, DWG, DXF, STP
 
-#qTip moved to https://github.com/doomiris/BOM_AARDIO
+# qTip
+moved to https://github.com/doomiris/BOM_AARDIO
