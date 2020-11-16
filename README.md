@@ -2,7 +2,11 @@
 solid edge com addin with aardio
 
 # TBM
-title block manager
+- title block manager
+- history edit
+- balloon delete and edit
+- specification library.
+- tools to replace with new title block.
 
 # openDummy
 open parent of a member asy.
@@ -12,3 +16,6 @@ convert dxf to PDF, DWG, DXF, STP
 
 # qTip
 moved to https://github.com/doomiris/BOM_AARDIO
+
+# Close DFT
+close all DFT files
