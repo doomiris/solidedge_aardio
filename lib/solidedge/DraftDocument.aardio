@@ -39,7 +39,7 @@ namespace DraftDocument{
 	getTitleBlock = function(seSht){
         for (i = 1;  seSht.BlockOccurrences.Count ) { //获取Titleblock
             select  (seSht.BlockOccurrences.Item(i).Block.Name){
-                case "Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC" {
+                case "Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC", "SRDC-Title" {
                     var titleblk = seSht.BlockOccurrences.Item(i);
                     return titleblk ;
                 }
@@ -80,8 +80,12 @@ namespace DraftDocument{
     		}
 		}
 		tar["专用号"] := tar["图号"];
+		
+		tar["名称(中文)"]:= tar["名称(中)"];	//旧模板命名问题
+		tar["名称(英文)"]:= tar["名称(英)"];	//旧模板命名问题
 		tar["零件名称"] := tar["名称(中文)"];
-    	tar["型号/项目名称"] := tar["型  号"];	//旧模板命名问题
+		tar["型号"] := tar["型  号"];			//旧模板命名问题
+    	tar["型号/项目名称"] := tar["型号"];	//旧模板命名问题
     	tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
     	tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
     	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
@@ -129,8 +133,13 @@ namespace DraftDocument{
     		}
 		}
 		tar["专用号"] := tar["图号"];
+		
+		tar["名称(中文)"]:= tar["名称(中)"];	//旧模板命名问题
+		tar["名称(英文)"]:= tar["名称(英)"];	//旧模板命名问题
 		tar["零件名称"] := tar["名称(中文)"];
-    	tar["型号/项目名称"] := tar["型  号"];	//旧模板命名问题
+		tar["型号"] := tar["型  号"];			//旧模板命名问题
+    	tar["型号/项目名称"] := tar["型号"];	//旧模板命名问题
+    	
     	if tar["喷粉标准"] tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
     	if tar["喷粉标准"] tar["喷粉标准"].Value := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
     	if tar["公差等级"] tar["公差等级"].Value := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
@@ -301,12 +310,19 @@ namespace DraftDocument{
 	getTitleBlockOrigin = function(seSht){
 		seSht := owner.ActiveSheet;
 		select(seSht.Background.Name) {
+			case "A0-Sheet" {
+				return (1189-21.5) / 1000, 20 / 1000; 
+			}
+			case "A1-Sheet" {
+				return (841-21.5) / 1000, 20 / 1000; 
+			}
 			case "A2-Sheet" {
-				return 584 / 1000, 10 / 1000; 
+				return (594-10) / 1000, 10 / 1000; 
 			}
 			case "A3-Sheet" {
-				return 410 / 1000, 10 / 1000; 
+				return (420-10) / 1000, 10 / 1000; 
 			}
+			
 			else {
 				return 0,0; 
 			}
@@ -427,7 +443,7 @@ namespace DraftDocument{
 		} 
 		
 		// 检查如果有旧的变更记录就添加新格式变更记录block
-    	for (i = 1;  Sht.BlockOccurrences.Count ) { //获取Titleblock
+    	for (i = Sht.BlockOccurrences.Count; 1; -1 ) { //获取Titleblock
         	select  (Sht.BlockOccurrences.Item(i).Block.Name){
             	case "变更修改" {
                 	Sht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
