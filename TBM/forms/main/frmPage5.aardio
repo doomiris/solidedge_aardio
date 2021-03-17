@@ -1,94 +1,140 @@
-import fonts.fontAwesome;
-import win.ui;
-import solidedge.application;
-import solidedge.DraftDocument;
-import VBASettingIO;
+//import fonts.fontAwesome;
+//import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=783;bottom=471)
+var winform = win.form(text="Printing Center";right=365;bottom=275;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
 winform.add(
-button={cls="button";text='\uF08B  插入图纸';left=688;top=424;right=776;bottom=464;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=5};
-button2={cls="button";text="关闭";left=592;top=424;right=680;bottom=464;db=1;dr=1;hide=1;z=6};
-checklist={cls="checklist";left=152;top=40;right=776;bottom=416;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;items={};z=2};
-static={cls="static";text="技术要求:";left=144;top=8;right=304;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-16);transparent=1;z=3};
-static2={cls="static";text='\uF039';left=8;top=8;right=48;bottom=40;color=8388608;dl=1;dt=1;font=LOGFONT(h=-24;name='FontAwesome');transparent=1;z=4};
-treeview={cls="treeview";left=8;top=40;right=144;bottom=416;asel=false;bgcolor=16777215;db=1;dl=1;dt=1;edge=1;vscroll=1;z=1}
+button={cls="button";text='    \uF0F6  Print Active';left=208;top=96;right=323;bottom=141;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
+button2={cls="button";text='    \uF233  Print All';left=208;top=152;right=323;bottom=197;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
+button3={cls="button";text='\uF05E  Discard';left=5;top=241;right=87;bottom=271;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=10};
+button4={cls="button";text='\uF05B Save';left=86;top=241;right=168;bottom=271;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=11};
+groupbox={cls="groupbox";text='\uF097  Actions';left=5;top=5;right=360;bottom=240;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-16;name='FontAwesome');z=1};
+listbox={cls="listbox";left=45;top=94;right=178;bottom=208;aw=1;border=1;cp=1;dl=1;dt=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf";".dwg";".dxf";".stp"};msel=1;z=2};
+outpath={cls="static";text="d:\workspaces";left=29;top=211;right=343;bottom=236;aw=1;center=1;color=8421504;db=1;dl=1;dr=1;notify=1;transparent=1;z=8};
+progress={cls="progress";left=171;top=241;right=360;bottom=271;aw=1;color=32768;db=1;dl=1;dr=1;max=100;min=0;z=9};
+radNameRule0={cls="radiobutton";text="文件名只用图号";left=34;top=45;right=142;bottom=65;dl=1;dt=1;group=1;z=5};
+radNameRule1={cls="radiobutton";text="+版本";left=165;top=45;right=226;bottom=65;dl=1;dt=1;z=6};
+radNameRule2={cls="radiobutton";text="+版本+名称";left=251;top=45;right=339;bottom=65;dl=1;dt=1;z=7}
 )
 /*}}*/
 
+//import win.util.tray;
+var tray = win.util.tray(mainForm) //创建托盘图标,用于通知 
+
+//import solidedge.application;
+//import solidedge.DraftDocument;
 /*initDeclare{{*/
-var seApp = solidedge.application();
-if (seApp.Documents.Count==0) return; 
-if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return; 
-var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
-if (seDFT.Sheets.Count == 0) return ; 
-var seSht = seDFT.ActiveSheet;
-
-_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
-import access;
-var dbRs = access(_dbpath);
-
-/*}}*/
-/*loadLists{{*/
-var loadPromptList = function(){
-	var tab = dbRs.getTable("select * from SE_SPEC_TEMPLATE order by [ID]");
-	var hitem = winform.treeview.insertItem( text="模板清单" );
-	//winform.treeview.insertTable(tab);
-	//var hSubItem;
-	for (i=1; #tab; 1) {
-		winform.treeview.insertItem( { text=tab[i].tName },hitem/*父节点*/); 
-	}
-	winform.treeview.expandAll();
+var seApp, seDFT, seSht;
+var initDeclare = function(){
+	seApp := solidedge.application();
+	if (! seApp) return false; 
+	solidedge.application.setPdfOptions();
+	//solidedge.application.setDwgOptions(); // TODO: 含多页文档保存为DWG时, 因为未指定多页, 可能导致只有一页.
+	seApp.DisplayAlerts = 1;
+	return true; 
 }
 /*}}*/
+/*pringSingleFile{{*/
+var startPrintActive = function(fileExt){
+    for (i=1; winform.listbox.count)
+    	if winform.listbox.getSelected(i)
+    		fileExt := winform.listbox.getItemText(i);
+    var seDFT, fname;
+	seApp.DisplayAlerts = 0;
+     if (seApp.ActiveDocumentType == 2 /*Draft Document Type*/) {    //仅处理DFT格式
+    	seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+		fname = seDFT.getNameByExt(fileExt);
+		seDFT.saveToExt(fname);
+	}
+	seApp.DisplayAlerts = 1;
+	return fname; 
+}
+/*}}*/
+/*printAllFiles{{*/
+var startPrintAll = function(){
+	var Docs = seApp.Documents;
+	seApp.DisplayAlerts = 0;
+	for (j = Docs.Count; 1; -1){
+    	if (Docs.Item(j).Type == 2 /*Draft Document Type*/) {    //仅处理DFT格式
+        	var	seDFT = solidedge.DraftDocument(Docs.Item(j));
+			seDFT.Activate(); //如果不Activate,只会重复保存当前文件
+			for (k=1; winform.listbox.count; 1){
+				winform.progress.pos += 1 ;				
+				if (!winform.listbox.getSelected(k)) continue 1;
+				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k));
+				seDFT.saveToExt(fname)
+			}
+    	}
+	}
+	seApp.DisplayAlerts = 1;
 
-winform.treeview.onnotify = function(id,code,ptr){
-	if (code == 0xFFFFFE3D/*_TVN_SELCHANGEDW*/){
-		winform.checklist.clear();
-		var hItem = winform.treeview.getSelection();
-		if(hItem){
-			var tab;
-			tab = dbRs.getTable("select tCombine,tSelect from SE_SPEC_TEMPLATE where tName='" ++ winform.treeview.getItemText(hItem) ++ "'");
-			var v = string.split(tab[1].tCombine,",")
-			var vs = string.split(tab[1].tSelect,",")
-			for (i=1; #v){
-				tab = dbRs.getTable("select sTxt from SE_SPEC_ITEM where ID=" ++ v[i]);
-				winform.checklist.addItem(tab[1].sTxt);
-				winform.checklist.setChecked(i,(vs[i]==1));
+	tray.pop("All Print Done","TBM")
+	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+
+}
+/*}}*/
+/*控件初始值{{*/
+var loadDefaults = function(){
+	winform.listbox.setSelected(1);
+	if (seApp) {
+		select(seApp.nameRule) {
+			case 0 {
+				winform.radNameRule0.checked = 1;
+			}
+			case 1 {
+				winform.radNameRule1.checked = 1;
+			}
+			case 2 {
+				winform.radNameRule2.checked = 1;
 			}
 		}
+		winform.outpath.text = seApp.toFolder;
 	}
 }
-
-winform.button2.oncommand = function(id,event){
-	win.quitMessage();
+/*}}*/
+/*选项保存{{*/
+winform.radNameRule2.oncommand = function(id,event){
+	if (seApp) seApp.nameRule = 2
 }
-
+winform.radNameRule1.oncommand = function(id,event){
+	if (seApp) seApp.nameRule = 1
+}
+winform.radNameRule0.oncommand = function(id,event){
+	if (seApp) seApp.nameRule = 0
+}
+/*}}*/
+/*控件事件{{*/
 winform.button.oncommand = function(id,event){
-	var txts = seSht.TextBoxes;
-	var txt = txts.Add(0.25, 0.12, 0);
-    	txt.HorizontalAlignment = 0 /* igTextHzAlignLeft */;
-    	txt.FlowOrientation = 0 /* igTextHorizontal */;
-    	txt.Justification = 0 /* igTextJustifyTop */;
-    	txt.TextControlType = 0 /* igTextFitToContent */;
-    	txt.Text = "技术要求:" ++ '\r';
-    	txt.Text = txt.Text ++ " " ++ '\r';
-
-    	var n = 1;	//编号
-    	for (i = 1 ; winform.checklist.count){
-        	if (winform.checklist.getChecked(i)) {
-            	txt.Text = txt.Text ++ n ++ ". " ++ winform.checklist.getItemText(i) ++ '\r';
-            	n += 1;
-        	}
-    	}
-	txt.Cut();
-	import winex;
-	import winex.key;
-	winex.attach(seApp.hWnd);
-	win.setActive(seApp.hWnd);
-	winex.key.combine(seApp.hWnd,"CTRL","V");
-	win.quitMessage();
+	var fname = startPrintActive();
+		if io.exist(fname)
+			process.execute(fname);	//如果onlyActive则打开结果文件
 }
-winform.show();
-loadPromptList();	//读取提示列表
+winform.button2.oncommand = function(id,event){
+	winform.progress.min = 0;
+	winform.progress.pos = 0;
+	winform.progress.max = seApp.Documents.Count * winform.listbox.count;
+	win.setForeground(mainForm.hwnd)
+	startPrintAll();
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+winform.button3.oncommand = function(id,event){
+	solidedge.application.closeDft(false);
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+winform.button4.oncommand = function(id,event){
+	solidedge.application.closeDft(true);
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+winform.outpath.oncommand = function(id,event){
+	process.explore(winform.outpath.text)
+}
+/*}}*/
+
+winform.show();	
+initDeclare();
+loadDefaults();
+
 win.loopMessage();
 return winform;

@@ -1,20 +1,54 @@
 import fonts.fontAwesome;
 import win.ui;
+import win.ui.simpleWindow;
+import win.ui.atom;
+import win.ui.tabs;
+import win.ui.tooltip; 
+import win.inputBox;
+import win.util.tray;
+import winex;
+import winex.key;
+import access;
+import process;
+
+//user lib
+import solidedge.application;
+import solidedge.DraftDocument;
+import VBASettingIO;
+
 /*DSG{{*/
-mainForm = win.form(text="TBM";right=617;bottom=371;image=$"\res\SE Mainframe Background.png";bgcolor=15793151;border="none")
+mainForm = win.form(text="TBM";right=623;bottom=447;image=$"\res\SE Mainframe Background.png";bgcolor=15793151;border="none")
 mainForm.add(
-caption={cls="bkplus";text="Title Block Manager";left=77;top=10;right=233;bottom=28;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=8};
-custom={cls="custom";left=83;top=40;right=618;bottom=374;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=9};
-logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="D:\users\Personal LGP\personal Documents\code_space\icon\ENGINE.ICO";color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');z=7};
+caption={cls="bkplus";text="Title Block Manager";left=77;top=10;right=233;bottom=28;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=9};
+custom={cls="custom";left=83;top=40;right=624;bottom=448;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=10};
+logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="D:\users\Personal LGP\personal Documents\code_space\icon\ENGINE.ICO";color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');z=8};
 nav1={cls="plus";text="TBM";left=0;top=48;right=85;bottom=128;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1EA';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=3};
 nav2={cls="plus";text="变更";left=0;top=129;right=85;bottom=209;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF277';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=4};
-nav3={cls="plus";text="工具";left=0;top=210;right=85;bottom=290;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1DE';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=5};
+nav3={cls="plus";text="SAP";left=0;top=210;right=85;bottom=290;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1B0';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=5};
 nav4={cls="plus";text="技术要求";left=0;top=291;right=85;bottom=371;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF0CB';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=6};
-navBar={cls="bkplus";left=0;top=37;right=83;bottom=373;bgcolor=11829830;db=1;dl=1;dt=1;z=1};
-titleBar={cls="bkplus";left=0;top=0;right=622;bottom=38;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=2}
+nav5={cls="plus";text="Print";left=0;top=372;right=85;bottom=456;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1C1';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=7};
+nav6={cls="plus";text="About";left=0;top=448;right=85;bottom=532;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF262';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=18};
+navBar={cls="bkplus";left=0;top=37;right=83;bottom=552;bgcolor=11829830;db=1;dl=1;dt=1;z=1};
+static={cls="static";text='\uF127';left=592;top=424;right=616;bottom=440;color=255;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');hide=1;transparent=1;z=19};
+tbutton1={cls="button";text='\uF01E';left=256;top=8;right=280;bottom=32;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=15};
+tbutton2={cls="button";text='\uF07E';left=288;top=8;right=312;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=11};
+tbutton3={cls="button";text='\uF05A';left=320;top=8;right=344;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
+tbutton4={cls="button";text='\uF05C';left=352;top=8;right=376;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=13};
+tbutton5={cls="button";text='\uF0EE';left=384;top=8;right=408;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=14};
+tbutton6={cls="button";text='\uF05E';left=416;top=8;right=440;bottom=32;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=16};
+tbutton7={cls="button";text='\uF05B';left=448;top=8;right=472;bottom=32;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=17};
+titleBar={cls="bkplus";left=0;top=0;right=624;bottom=38;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=2}
 )
 /*}}*/
 
+/*只允许一个实例{{*/
+var atom,hwnd = mainForm.atom("domisoft.aardio.tbm");
+if(!atom){ 
+	win.showForeground(hwnd);
+	win.quitMessage();	
+	return;
+}
+/*}}*/
 /*closeOnEscPress{{*/
 mainForm.isDialogMessage = function(hwnd,msg){ 
 	if( msg.message == 0x100/*_WM_KEYDOWN*/){
@@ -35,15 +69,62 @@ mainForm.isDialogMessage = function(hwnd,msg){
 	return win.isDialogMessage(hwnd,msg);
 }
 /*}}*/
-import win.ui.simpleWindow;
-win.ui.simpleWindow( mainForm );
 
-import win.ui.tabs;
+win.ui.simpleWindow( mainForm );
+var seApp = solidedge.application();
+if (!seApp) mainForm.static.hide = false;
+if (seApp) winex.attach(seApp.hWnd);
+
+/*托盘图标{{*/
+
+var tray = win.util.tray(mainForm) //创建托盘图标 
+
+mainForm.onMinimize = function(lParam){
+	mainForm.show(false); //隐藏窗口
+	return true;//阻击默认消息传递,取消最小化过程
+}
+mainForm.onClose = function(hwnd,message,wParam,lParam){
+	mainForm.show(false); //隐藏窗口
+	return true;//阻击默认消息传递,取消最小化过程
+}
+mainForm.wndproc = {
+	[0xACCF/*_WM_TRAYMESSAGE*/ ] = function(hwnd,message,wParam,lParam){
+		
+	    //弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	    win.setForeground(mainForm.hwnd)
+	    
+		select(lParam) {
+			case 0x205/*_WM_RBUTTONUP*/ {
+	    		var pt = ::POINT();
+				::User32.GetCursorPos(pt);   		
+	    		mainForm.popmenu.popup(pt.x,pt.y,true )
+			}
+			case 0x202/*_WM_LBUTTONUP*/ {
+				mainForm.show(!win.isVisible(mainForm.hwnd)); //点击托盘图标切换窗口显示隐藏
+			}
+		}
+	}
+}
+
+mainForm.popmenu = win.ui.popmenu(mainForm);//创建弹出菜单
+mainForm.popmenu.add('&Open',function(id){
+	//在下面输入菜单响应代码
+	win.setForeground(mainForm.hwnd)
+	mainForm.show();
+	
+});
+mainForm.popmenu.add();//分隔线
+mainForm.popmenu.add('&Exit',function(id){ win.quitMessage() })	
+/*}}*/
+/*左侧导航按钮{{*/
+
 var tbs = win.ui.tabs( 
 	mainForm.nav1,
 	mainForm.nav2,
 	mainForm.nav3,
 	mainForm.nav4,
+	mainForm.nav5,
+	mainForm.nav6,
 );
 
 tbs.skin({
@@ -62,13 +143,132 @@ tbs.skin({
 })
 
 tbs.loadForm(1,"\forms\main\frmPage1.aardio" );
-tbs.loadForm(2,"\forms\main\frmPage4.aardio" );
-tbs.loadForm(3,"\forms\main\frmPage2.aardio" );
-tbs.loadForm(4,"\forms\main\frmPage5.aardio" );
+tbs.loadForm(2,"\forms\main\frmPage2.aardio" );
+tbs.loadForm(3,"\forms\main\QTIP.aardio" );
+tbs.loadForm(4,"\forms\main\frmPage4.aardio" );
+tbs.loadForm(5,"\forms\main\frmPage5.aardio" );
+tbs.loadForm(6,"\forms\main\frmPage3.aardio" );
 
-var navindex = 1;
-if (_ARGV.nav) navindex = tonumber(_ARGV.nav);
+var navindex = 6;
+if (_ARGV.nav)	navindex = tonumber(_ARGV.nav);
 tbs.selIndex = navindex;
+/*}}*/
+/*顶部按钮{{*/
+mainForm.tbutton1.oncommand = function(id,event){
+	solidedge.application.reOpenDocument();
+	//win.quitMessage();
+}
+
+mainForm.tbutton2.oncommand = function(id,event){
+    if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+    var SelSet = seApp.ActiveDocument.SelectSet;
+    if SelSet.Count !== 1 return; 
+    if (SelSet(1).Type !== 488188096 /* igDimension */) return;
+
+    var inputBox=win.inputBox();
+    inputBox.info.text="input text to replace dimension";
+    inputBox.text="Edit Dim";
+    inputBox.input.text="L";
+    var s=inputBox.doModal();
+    if !s return; 
+    if ..string.len(..string.trim(s)) == 0 return ; 
+    SelSet(1).OverrideString = s;
+    SelSet(1).Style.NTSSymbol = 1 /* igDimStyleNTSNone */;
+    
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton3.oncommand = function(id,event){
+    if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+	var seSht = seDFT.ActiveSheet;
+	var BBS = seSht.Balloons;
+	var ee = seDFT.getTopRecordMark(seSht);
+	ee = ee ? string.pack( ee[1] + 1 ) : "a";
+	var inputBox=win.inputBox();
+	inputBox.info.text="What symbol change bolloons to ?";
+	inputBox.text = "Edit Balloon";
+	inputBox.input.text = ee ;
+	var e = inputBox.doModal();
+	if !e return ; 
+	if (..string.len(..string.trim(e)) == 0) return ; 
+	for (i = 1 ; BBS.Count) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		BBS.Item(i).BalloonText = e;
+	}
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton4.oncommand = function(id,event){
+	if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+	var seSht = seDFT.ActiveSheet;
+	var BBS = seSht.Balloons;
+	var ee = "a";
+	for (i = 1 ; BBS.Count) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		ee = BBS.Item(i).BalloonText;
+        		break;
+	}
+	
+	var inputBox=win.inputBox();
+	inputBox.info.text="What symbol bolloons you want to delete ?";
+	inputBox.text="delete Balloon";
+	inputBox.input.text= ee ;
+	var e = inputBox.doModal();
+	if !e return ; 
+	if (..string.len(..string.trim(e)) == 0) return ; 
+	
+	for (i = BBS.Count; 1 ;- 1 ) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		if (BBS.Item(i).BalloonText==e)
+        			BBS.Item(i).Delete();
+	}
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton5.oncommand = function(id,event){
+	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+	if (seAsm.SelectSet.Count != 1) return;
+	seAsm.openDummy(seAsm.SelectSet.Item(1));
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton6.oncommand = function(id,event){
+	solidedge.application.closeDft(false);
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton7.oncommand = function(id,event){
+	solidedge.application.closeDft(true);
+    mainForm.show(false); //隐藏窗口
+	win.setActive(seApp.hWnd);
+}
+
+
+var tooltipCtrl = win.ui.tooltip( mainForm );//在窗口上创建tooltip控件
+tooltipCtrl.addTool(mainForm.tbutton1,"Re-Open as Read-Only" )
+tooltipCtrl.addTool(mainForm.tbutton2,"Edit Dim" )
+tooltipCtrl.addTool(mainForm.tbutton3,"Edit Balloon" )
+tooltipCtrl.addTool(mainForm.tbutton4,"Delete Balloon" )
+tooltipCtrl.addTool(mainForm.tbutton5,"Open Dummy" )
+tooltipCtrl.addTool(mainForm.tbutton6,"Close All DFT (discard changes)" )
+tooltipCtrl.addTool(mainForm.tbutton7,"Save & Close All DFT" )
+
+/*}}*/
+
 
 mainForm.show();
-return win.loopMessage(); 
+return win.loopMessage();
