@@ -27,7 +27,7 @@ chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272
 groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
 rd_M={cls="radiobutton";text="自制件";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
 rd_P={cls="radiobutton";text="外购件";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
-seDocPath={cls="static";left=25;top=24;right=476;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;transparent=1;z=6};
+seDocPath={cls="static";left=25;top=24;right=476;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
 static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
 static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20};
 static3={cls="static";text="批准";left=15;top=250;right=45;bottom=275;dl=1;dt=1;transparent=1;z=21};
@@ -210,6 +210,8 @@ winform.button2.oncommand = function(id,event){
     mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	
+	initDeclare();
+	
 	if (winform.chkReplaceTB.hide == 0){
 		if (winform.chkReplaceTB.checked){
 			solidedge.DraftDocument.replaceNewTitleBlock(seDFT, seDFT.ActiveSheet);
@@ -273,10 +275,17 @@ var frmReLoad = function(){
 		loadDefaults();	//读取默认值(新图纸)
 		showTimeBtn();
 		showSaveNameBtn();
-		winform.seDocPath.text = seDFT.FullName;
+		winform.seDocPath.text = seDFT.FullName ? seDFT.FullName : "无法获取DFT信息, 点击此处刷新重试";
+		winform.redraw();
 	}
 }
 frmReLoad();
+
+winform.seDocPath.oncommand = function(id,event){
+	frmReLoad();
+
+}
+
 loadPromptList();	//读取提示清单
 win.loopMessage();
 return winform;

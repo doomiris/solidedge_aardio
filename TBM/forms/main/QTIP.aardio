@@ -22,9 +22,10 @@ button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db
 button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=4};
 button5={cls="button";text='\uF103 ';left=477;top=39;right=515;bottom=54;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=5};
 buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
-chkCost={cls="checkbox";text="显示价格";left=336;top=480;right=456;bottom=496;db=1;dl=1;hide=1;z=13};
+chkCost={cls="checkbox";text="显示价格";left=336;top=464;right=456;bottom=480;db=1;dl=1;hide=1;z=13};
 chkDisabled={cls="checkbox";text="不显示禁用件";left=216;top=480;right=336;bottom=496;checked=1;db=1;dl=1;hide=1;z=14};
-chkPaint={cls="checkbox";text="不显示已喷粉件";left=336;top=464;right=456;bottom=480;db=1;dl=1;hide=1;z=12};
+chkHideUnknown={cls="checkbox";text="不显示没查到的";left=440;top=480;right=544;bottom=496;db=1;dl=1;hide=1;z=17};
+chkPaint={cls="checkbox";text="不显示已喷粉件";left=336;top=480;right=440;bottom=496;db=1;dl=1;hide=1;z=12};
 editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=6};
 listview={cls="listview";left=1;top=53;right=638;bottom=463;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
 plus={cls="plus";left=608;top=472;right=632;bottom=496;db=1;dr=1;foreRepeat="scale";foreground="\res\communication-icon-png-2206.png";notify=1;z=8};
@@ -32,7 +33,7 @@ rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=64;top=480;right=192
 rdBG={cls="radiobutton";text="仅查询成品: BG";left=216;top=464;right=328;bottom=480;db=1;dl=1;group=1;hide=1;z=9};
 rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=64;top=464;right=208;bottom=480;checked=1;db=1;dl=1;hide=1;z=10};
 static={cls="static";text="Domisoft (C) 2020";left=520;top=464;right=624;bottom=488;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2};
-static2={cls="static";left=264;top=480;right=624;bottom=504;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=16}
+static2={cls="static";left=272;top=480;right=632;bottom=504;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=16}
 )
 /*}}*/
 
@@ -181,11 +182,14 @@ var searchSapDB = function(userinput){
 		
 		var t = db.getTable(sqlstr);
 		//console.dumpTable(t)
-		if (#t==0) table.push(t,{物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
+		if (#t==0)
+			if ( ! winform.chkHideUnknown.checked) 
+				table.push(t,{物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
 		sapTab = table.concat(sapTab,t);
 	}
 	if (#sapTab==0) {
-		table.push(sapTab,{物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
+		if ( ! winform.chkHideUnknown.checked) 
+			table.push(sapTab,{物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
 	}
 	else {
 		//todo: 在新线程里查询是否物料禁用
@@ -413,6 +417,9 @@ winform.button2.oncommand = function(id,event){
 	winform.chkCost.hide = !winform.chkCost.hide
 	winform.chkDisabled.hide = !winform.chkDisabled.hide
 	winform.chkPaint.hide = !winform.chkPaint.hide
+	winform.chkHideUnknown.hide = !winform.chkHideUnknown.hide
+	winform.static.hide = !winform.static.hide
+	winform.static2.hide = !winform.static2.hide
 }
 
 winform.editUser.setFocus();

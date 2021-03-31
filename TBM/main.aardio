@@ -10,12 +10,13 @@ import winex;
 import winex.key;
 import access;
 import process;
+//import console
+//console.open()
 
 //user lib
 import solidedge.application;
 import solidedge.DraftDocument;
 import VBASettingIO;
-
 /*DSG{{*/
 mainForm = win.form(text="TBM";right=623;bottom=447;image=$"\res\SE Mainframe Background.png";bgcolor=15793151;border="none")
 mainForm.add(
@@ -268,7 +269,6 @@ tooltipCtrl.addTool(mainForm.tbutton6,"Close All DFT (discard changes)" )
 tooltipCtrl.addTool(mainForm.tbutton7,"Save & Close All DFT" )
 
 /*}}*/
-
-
 mainForm.show();
+
 return win.loopMessage();

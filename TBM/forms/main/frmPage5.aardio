@@ -114,8 +114,8 @@ winform.button2.oncommand = function(id,event){
 	winform.progress.max = seApp.Documents.Count * winform.listbox.count;
 	win.setForeground(mainForm.hwnd)
 	startPrintAll();
-    mainForm.show(false); //隐藏窗口
-	win.setActive(seApp.hWnd);
+    //mainForm.show(false); //隐藏窗口
+	//win.setActive(seApp.hWnd);
 }
 winform.button3.oncommand = function(id,event){
 	solidedge.application.closeDft(false);

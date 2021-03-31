@@ -21,6 +21,7 @@ static7={cls="static";text="批准";left=32;top=192;right=64;bottom=216;align="r
 version={cls="edit";left=392;top=32;right=416;bottom=58;align="center";dl=1;dt=1;font=LOGFONT(h=-13);multiline=1;z=13}
 )
 /*}}*/
+
 //import access;
 //import VBASettingIO;
 //import solidedge.application;
@@ -107,6 +108,9 @@ var loadFromTab = function(_blk){
 winform.button.oncommand = function(id,event){
 	mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
+	
+	initDeclare();
+	
 	//写入记录表
 	writeToRec(seDFT.getLabelObjectTable(seDFT.insertRecordTabLine(seSht))); 
 	//写入CCR版本

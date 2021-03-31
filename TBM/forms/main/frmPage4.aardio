@@ -74,6 +74,8 @@ winform.button.oncommand = function(id,event){
 	mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	
+	initDeclare();
+	
 	var txts = seSht.TextBoxes;
 	var txt = txts.Add(0.25, 0.12, 0);
     	txt.HorizontalAlignment = 0 /* igTextHzAlignLeft */;
