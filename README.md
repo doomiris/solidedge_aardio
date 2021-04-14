@@ -8,14 +8,13 @@ solid edge com addin with aardio
 - specification library.
 - tools to replace with new title block.
 
-# openDummy
+- openDummy
 open parent of a member asy.
 
-# Printing Center
+- Printing Center
 convert dxf to PDF, DWG, DXF, STP
 
-# qTip
-moved to https://github.com/doomiris/BOM_AARDIO
+- qTip
 
-# Close DFT
+- Close DFT
 close all DFT files
