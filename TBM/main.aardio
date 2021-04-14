@@ -31,6 +31,7 @@ nav5={cls="plus";text="Print";left=0;top=372;right=85;bottom=456;bkBottom=3;bkLe
 nav6={cls="plus";text="About";left=0;top=448;right=85;bottom=532;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF262';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=18};
 navBar={cls="bkplus";left=0;top=37;right=83;bottom=552;bgcolor=11829830;db=1;dl=1;dt=1;z=1};
 static={cls="static";text='\uF127';left=592;top=424;right=616;bottom=440;color=255;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');hide=1;transparent=1;z=19};
+static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=20};
 tbutton1={cls="button";text='\uF01E';left=256;top=8;right=280;bottom=32;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=15};
 tbutton2={cls="button";text='\uF07E';left=288;top=8;right=312;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=11};
 tbutton3={cls="button";text='\uF05A';left=320;top=8;right=344;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
@@ -72,35 +73,44 @@ mainForm.isDialogMessage = function(hwnd,msg){
 /*}}*/
 
 win.ui.simpleWindow( mainForm );
+mainForm.enableDpiScaling();
+
 var seApp = solidedge.application();
 if (!seApp) mainForm.static.hide = false;
 if (seApp) winex.attach(seApp.hWnd);
 
 /*托盘图标{{*/
-
-var tray = win.util.tray(mainForm) //创建托盘图标 
-
 mainForm.onMinimize = function(lParam){
-	mainForm.show(false); //隐藏窗口
-	return true;//阻击默认消息传递,取消最小化过程
+	mainForm.tray = win.util.tray(mainForm)  
+	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
+	mainForm.show(false); 
+	return true; 
 }
+
 mainForm.onClose = function(hwnd,message,wParam,lParam){
-	mainForm.show(false); //隐藏窗口
-	return true;//阻击默认消息传递,取消最小化过程
+	if(!_STUDIO_INVOKED){
+		mainForm.onMinimize();
+		return true;    	
+	} 
 }
+
+mainForm.onDestroy = function(){
+	if(mainForm.tray){
+		mainForm.tray.delete()
+	}
+}
+
 mainForm.wndproc = {
 	[0xACCF/*_WM_TRAYMESSAGE*/ ] = function(hwnd,message,wParam,lParam){
-		
-	    //弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
-	    win.setForeground(mainForm.hwnd)
-	    
 		select(lParam) {
 			case 0x205/*_WM_RBUTTONUP*/ {
+				win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	    		var pt = ::POINT();
 				::User32.GetCursorPos(pt);   		
 	    		mainForm.popmenu.popup(pt.x,pt.y,true )
 			}
 			case 0x202/*_WM_LBUTTONUP*/ {
+				win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 				mainForm.show(!win.isVisible(mainForm.hwnd)); //点击托盘图标切换窗口显示隐藏
 			}
 		}
@@ -266,9 +276,30 @@ tooltipCtrl.addTool(mainForm.tbutton3,"Edit Balloon" )
 tooltipCtrl.addTool(mainForm.tbutton4,"Delete Balloon" )
 tooltipCtrl.addTool(mainForm.tbutton5,"Open Dummy" )
 tooltipCtrl.addTool(mainForm.tbutton6,"Close All DFT (discard changes)" )
-tooltipCtrl.addTool(mainForm.tbutton7,"Save & Close All DFT" )
-
+tooltipCtrl.addTool(mainForm.tbutton7,"Save && Close All DFT" )
+tooltipCtrl.addTool(mainForm.static2,"显示/隐藏导航按钮" )
 /*}}*/
+/*折叠导航按钮{{*/
+mainForm.static2.tag = true;
+mainForm.static2.tag2 = mainForm.custom.left;
+mainForm.static2.oncommand = function(id,event){
+    if (mainForm.static2.tag){
+        mainForm.static2.text = '\uF03C';
+    	mainForm.static2.tag = false
+		tbs.show ( false )
+		tbs.dropButton.hide = true
+		mainForm.custom.left = 0
+		
+	}else{
+		mainForm.static2.text = '\uF03B';
+    	mainForm.static2.tag = true
+		tbs.show ( true )
+		tbs.dropButton.hide = false
+		mainForm.custom.left = mainForm.static2.tag2
+	}
+}
+/*}}*/
+
 mainForm.show();
 
 return win.loopMessage();

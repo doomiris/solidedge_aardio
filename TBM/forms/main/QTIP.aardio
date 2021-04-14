@@ -100,10 +100,11 @@ var formatListView = function(){
     	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
     }
 	winform.listview.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
-	winform.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
+//	winform.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
 	winform.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
 	winform.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
 	winform.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},5);
+	winform.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},6);
 	winform.listview.adjust = function(cx,cy){
     	winform.listview.fillParent(2);
 	} 	
@@ -119,7 +120,7 @@ var searchSapDB = function(userinput){
     var userinputArr = string.split(userinput, '\r\n');
     if (#userinputArr == 1) saveInputList(userinputArr[1]);
  	table.clear(sapTab);
-	sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="类型";[4]="价格";[5]="禁用"}});
+	sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="类型";[4]="价格";[5]="禁用";[6]="禁用"}});
 	
     for (i=1; #userinputArr; 1){
 		userinput = string.trim(userinputArr[i]);
@@ -157,9 +158,9 @@ var searchSapDB = function(userinput){
 		
 		var sqlstr;		/* 目前结构无法智能判断 是01分类 还是08分类, TODO: 全部选项可选: 不显示xxx  */
 		if (!winform.chkCost.checked)
-			sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'" ;
+			sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[物料组],[Bun] AS [单位] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'" ;
 		else
-			sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[价格] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
+			sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[物料组],[价格],[Bun] AS [单位] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
 
     	if (winform.rdBG.checked){
 			sqlstr = sqlstr ++ " AND [MTyp] = 'FERT'" ++ " AND LENGTH([物料])=11"
