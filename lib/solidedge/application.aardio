@@ -1,10 +1,18 @@
 //solidedge 支持库
 import com;
-import VBASettingIO;
+import VBASettingIO;	//兼容以往VBA保存的设置选项内容
 namespace solidedge;
+
 class application{
-	ctor(...){
-		this.seApp = ..com.GetObject("SolidEdge.Application");	
+	ctor( ... ){
+		this.seApp = ..com.TryGetObject("SolidEdge.Application") 
+		if( ! this.seApp ) return null,"请先打开SolidEdge";
+/*
+		try{
+			this.seApp = ..com.GetObject("SolidEdge.Application");
+		}
+		if( ! this.seApp ) return null, "请先打开SolidEdge";
+*/
 	};
 	@_metaProperty;
 }
