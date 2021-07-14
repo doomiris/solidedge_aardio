@@ -1,0 +1,15 @@
+﻿
+namespace domipub{
+	isFileOccupied = function(fullpath){
+		try{
+			return  ..io.remove(fullpath)
+			..io.close();
+			return false; 
+		}
+		catch(e){
+			..io.close();
+			return true; 
+		}
+	}
+	
+}

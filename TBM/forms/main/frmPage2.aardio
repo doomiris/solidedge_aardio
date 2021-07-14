@@ -1,3 +1,4 @@
+import fonts.fontAwesome;
 //import win.ui;
 /*DSG{{*/
 var winform = win.form(text="插入变更记录";right=663;bottom=303;image=$"\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
@@ -5,6 +6,7 @@ winform.add(
 button={cls="button";text="OK";left=584;top=256;right=656;bottom=296;db=1;dr=1;z=11};
 button2={cls="button";text="Cancel";left=504;top=256;right=576;bottom=296;db=1;dr=1;z=12};
 button3={cls="button";text='\uF062';left=416;top=24;right=440;bottom=47;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=14};
+button4={cls="button";text='\uF06E';left=448;top=24;right=472;bottom=47;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=18};
 cbAddBalloon={cls="checkbox";text="同时添加此球标";left=160;top=32;right=304;bottom=48;checked=1;dl=1;dt=1;z=16};
 cb_approve_date={cls="edit";left=216;top=192;right=336;bottom=216;dl=1;dt=1;multiline=1;transparent=1;z=10};
 cb_approver={cls="combobox";left=88;top=192;right=208;bottom=216;dl=1;dt=1;edge=1;items={};mode="dropdown";z=9};
@@ -50,9 +52,12 @@ var loadDefaults = function(){
 /*}}*/
 /*loadLists{{*/
 var loadPromptList = function(){
-	_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
+//	_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
+//	var dbRs = access(_dbpath);
 
-	var dbRs = access(_dbpath);
+	_dbpath = "S:\Admin\SAP\db\tbm.db"
+	var dbRs = sqlite.aes256(_dbpath, /*"CCL100100"*/);	//打开数据库连接
+	
 	var tab = dbRs.getTable("select * from SE_TBM_Lists");
 	for (i=1; #tab; 1) {
 		select(tab[i].ListName) {
@@ -115,7 +120,8 @@ winform.button.oncommand = function(id,event){
 	writeToRec(seDFT.getLabelObjectTable(seDFT.insertRecordTabLine(seSht))); 
 	//写入CCR版本
 	if (winform.chkCCRV.checked)
-		writeToCCRV(seDFT.getLabelObjectTable(seDFT.getBlkByName("Version_CCR 2020",seSht)));
+		if seDFT.getBlkByName("Version_CCR 2020",seSht)
+			writeToCCRV(seDFT.getLabelObjectTable(seDFT.getBlkByName("Version_CCR 2020",seSht)));
 	//写入QHC版本
 	if (winform.version.changed) 
 		writeToTB(seDFT.getLabelObjectTable(seDFT.getTitleBlock(seSht)));
@@ -150,6 +156,12 @@ var frmReLoad = function(){
 		loadDefaults();	//读取默认值(新图纸)
 	}
 }
+
+winform.button4.oncommand = function(id,event){
+    var pcode = seDFT ? string.match(seDFT.FullName,"\d+") : null;
+	loadcodex("\forms\main\check_QHC_Release.aardio", pcode);
+}
+
 frmReLoad();
 loadPromptList();	
 win.loopMessage();

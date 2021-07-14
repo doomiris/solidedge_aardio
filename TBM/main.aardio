@@ -8,7 +8,8 @@ import win.inputBox;
 import win.util.tray;
 import winex;
 import winex.key;
-import access;
+//import access;
+import sqlite.aes256;
 import process;
 //import console
 //console.open()
@@ -20,6 +21,7 @@ import VBASettingIO;
 /*DSG{{*/
 mainForm = win.form(text="TBM";right=623;bottom=447;image=$"\res\SE Mainframe Background.png";bgcolor=15793151;border="none")
 mainForm.add(
+button={cls="button";text='\uF127';left=36;top=4;right=68;bottom=36;bgcolor=255;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');hide=1;z=20};
 caption={cls="bkplus";text="Title Block Manager";left=77;top=10;right=233;bottom=28;align="left";color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=9};
 custom={cls="custom";left=83;top=40;right=624;bottom=448;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=10};
 logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="D:\users\Personal LGP\personal Documents\code_space\icon\ENGINE.ICO";color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');z=8};
@@ -30,8 +32,7 @@ nav4={cls="plus";text="技术要求";left=0;top=291;right=85;bottom=371;bkBottom
 nav5={cls="plus";text="Print";left=0;top=372;right=85;bottom=456;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1C1';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=7};
 nav6={cls="plus";text="About";left=0;top=448;right=85;bottom=532;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF262';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=18};
 navBar={cls="bkplus";left=0;top=37;right=83;bottom=552;bgcolor=11829830;db=1;dl=1;dt=1;z=1};
-static={cls="static";text='\uF127';left=592;top=424;right=616;bottom=440;color=255;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');hide=1;transparent=1;z=19};
-static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=20};
+static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=19};
 tbutton1={cls="button";text='\uF01E';left=256;top=8;right=280;bottom=32;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=15};
 tbutton2={cls="button";text='\uF07E';left=288;top=8;right=312;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=11};
 tbutton3={cls="button";text='\uF05A';left=320;top=8;right=344;bottom=32;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
@@ -76,22 +77,20 @@ win.ui.simpleWindow( mainForm );
 mainForm.enableDpiScaling();
 
 var seApp = solidedge.application();
-if (!seApp) mainForm.static.hide = false;
+if (!seApp) mainForm.button.hide = 0;
 if (seApp) winex.attach(seApp.hWnd);
 
 /*托盘图标{{*/
+mainForm.tray = win.util.tray(mainForm)  
 mainForm.onMinimize = function(lParam){
-	mainForm.tray = win.util.tray(mainForm)  
-	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
+//	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
 	mainForm.show(false); 
 	return true; 
 }
 
 mainForm.onClose = function(hwnd,message,wParam,lParam){
-	if(!_STUDIO_INVOKED){
-		mainForm.onMinimize();
-		return true;    	
-	} 
+	mainForm.onMinimize();
+	return true;    	
 }
 
 mainForm.onDestroy = function(){
@@ -124,6 +123,14 @@ mainForm.popmenu.add('&Open',function(id){
 	mainForm.show();
 	
 });
+mainForm.popmenu.add();//分隔线
+mainForm.popmenu.add('检查专用号申请表',function(id){loadcodex("\forms\Excel\check_专用号申请表.aardio");});
+mainForm.popmenu.add('智能填写专用号申请表',function(id){loadcodex("\forms\Excel\assist_专用号申请表.aardio");});
+mainForm.popmenu.add('检查新BOM申请表',function(id){loadcodex("\forms\Excel\check_新BOM申请表.aardio");});
+mainForm.popmenu.add('更新ItemMaster物料信息',function(id){loadcodex("\forms\Excel\Excel_update_info.aardio");});
+mainForm.popmenu.add('原材料用量计算',function(id){loadcodex("\forms\Excel\BOM-CALC.aardio");});
+mainForm.popmenu.add('根据下发清单更新ItemMaster',function(id){loadcodex("\forms\Excel\Update_Item_master_by_下发清单.aardio");});
+mainForm.popmenu.add('打开图纸下发版次查询窗口',function(id){loadcodex("\forms\main\check_QHC_Release.aardio");});
 mainForm.popmenu.add();//分隔线
 mainForm.popmenu.add('&Exit',function(id){ win.quitMessage() })	
 /*}}*/
@@ -209,7 +216,13 @@ mainForm.tbutton3.oncommand = function(id,event){
 	for (i = 1 ; BBS.Count) {	
 		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
     		if !BBS.Item(i).Leader
-        		BBS.Item(i).BalloonText = e;
+    			with BBS.Item(i){
+    				BalloonText = e;
+    				BalloonType = 1; /* DimBalloonTypeConstants.igDimBalloonCircle */
+    				BalloonSize = 2; /* 形状是字体几倍数 */
+    				Leader = false; 
+    				Style.DrivenColor = 255;	/* ColorConstants.seColorRed */;    				
+    			}
 	}
     mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
@@ -299,6 +312,31 @@ mainForm.static2.oncommand = function(id,event){
 	}
 }
 /*}}*/
+
+/*快捷查询{{*/
+var hkId;
+
+
+//删除之前注册的热键,hkId如果是null空值，此函数可忽略不做任何操
+mainForm.unreghotkey(hkId);
+
+//重新注册系统热键;
+hkId = mainForm.reghotkey(
+	function(id,mod,vk){
+		loadcodex("\forms\Excel\Excel_notify_selection.aardio");
+	}
+	
+	,1/*_MOD_ALT*/, 'J'# 
+	
+);
+
+
+/*}}*/
+
+mainForm.button.oncommand = function(id,event){
+	seApp = solidedge.application();
+	if (seApp) mainForm.button.hide = 1;
+}
 
 mainForm.show();
 

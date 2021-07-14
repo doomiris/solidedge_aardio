@@ -18,19 +18,21 @@ treeview={cls="treeview";left=8;top=40;right=144;bottom=416;asel=false;bgcolor=1
 /*initDeclare{{*/
 var seApp, seDFT, seSht;
 var initDeclare = function(){
-	seApp := solidedge.application();
+	seApp = solidedge.application();
 	if (! seApp) return false; 
-	if (seApp.Documents.Count==0) return; 
-	if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return; 
+	if (seApp.Documents.Count==0) return false; 
+	if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return false; 
 	seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
-	if (seDFT.Sheets.Count == 0) return ; 
+	if (seDFT.Sheets.Count == 0) return false; 
 	seSht = seDFT.ActiveSheet;
 	return true; 
 }
 /*}}*/
-_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
+//_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
+//var dbRs = access(_dbpath);
 
-var dbRs = access(_dbpath);
+_dbpath = "S:\Admin\SAP\db\tbm.db"
+var dbRs = sqlite.aes256(_dbpath, /*"CCL100100"*/);	//打开数据库连接
 
 
 /*loadLists{{*/
@@ -51,7 +53,7 @@ winform.treeview.onnotify = function(id,code,ptr){
 	if (code == 0xFFFFFE3D/*_TVN_SELCHANGEDW*/){
 		winform.checklist.clear();
 		var hItem = winform.treeview.getSelection();
-		if(hItem){
+		if(hItem and winform.treeview.getParentItem(hItem)){
 			var tab;
 			tab = dbRs.getTable("select tCombine,tSelect from SE_SPEC_TEMPLATE where tName='" ++ winform.treeview.getItemText(hItem) ++ "'");
 			var v = string.split(tab[1].tCombine,",")
@@ -74,7 +76,7 @@ winform.button.oncommand = function(id,event){
 	mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	
-	initDeclare();
+	if !initDeclare() return false; ;
 	
 	var txts = seSht.TextBoxes;
 	var txt = txts.Add(0.25, 0.12, 0);
@@ -93,7 +95,7 @@ winform.button.oncommand = function(id,event){
         	}
     	}
 	txt.Cut();
-	sleep(100);
+	sleep(200);
 	winex.key.combine(seApp.hWnd,"CTRL","V");
 
 }

@@ -1,27 +1,26 @@
-//import fonts.fontAwesome;
-//import win.ui;
+import fonts.fontAwesome;
+import win.ui;
 /*DSG{{*/
-var winform = win.form(text="Printing Center";right=365;bottom=275;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
+var winform = win.form(text="Printing Center";right=759;bottom=599;border="dialog frame";exmode="none";max=false;min=false;mode="popup")
 winform.add(
-button={cls="button";text='    \uF0F6  Print Active';left=208;top=96;right=323;bottom=141;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
-button2={cls="button";text='    \uF233  Print All';left=208;top=152;right=323;bottom=197;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
-button3={cls="button";text='\uF05E  Discard';left=5;top=241;right=87;bottom=271;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=10};
-button4={cls="button";text='\uF05B Save';left=86;top=241;right=168;bottom=271;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=11};
-groupbox={cls="groupbox";text='\uF097  Actions';left=5;top=5;right=360;bottom=240;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-16;name='FontAwesome');z=1};
-listbox={cls="listbox";left=45;top=94;right=178;bottom=208;aw=1;border=1;cp=1;dl=1;dt=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf";".dwg";".dxf";".stp"};msel=1;z=2};
-outpath={cls="static";text="d:\workspaces";left=29;top=211;right=343;bottom=236;aw=1;center=1;color=8421504;db=1;dl=1;dr=1;notify=1;transparent=1;z=8};
-progress={cls="progress";left=171;top=241;right=360;bottom=271;aw=1;color=32768;db=1;dl=1;dr=1;max=100;min=0;z=9};
-radNameRule0={cls="radiobutton";text="文件名只用图号";left=34;top=45;right=142;bottom=65;dl=1;dt=1;group=1;z=5};
-radNameRule1={cls="radiobutton";text="+版本";left=165;top=45;right=226;bottom=65;dl=1;dt=1;z=6};
-radNameRule2={cls="radiobutton";text="+版本+名称";left=251;top=45;right=339;bottom=65;dl=1;dt=1;z=7}
+button={cls="button";text='    \uF0F6  Print Active';left=624;top=32;right=739;bottom=77;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
+button2={cls="button";text='    \uF233  Print All';left=624;top=96;right=739;bottom=141;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=4};
+button3={cls="button";text='\uF1DA';left=480;top=32;right=600;bottom=144;color=8421376;dr=1;dt=1;font=LOGFONT(h=-48;name='FontAwesome');z=10};
+groupbox={cls="groupbox";text='\uF097  Actions';left=5;top=5;right=752;bottom=152;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-16;name='FontAwesome');z=1};
+listbox={cls="listbox";left=24;top=32;right=157;bottom=146;border=1;cp=1;dl=1;dt=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf";".dwg";".dxf";".stp"};msel=1;z=2};
+outpath={cls="static";text="d:\workspaces";left=16;top=552;right=416;bottom=568;aw=1;center=1;color=8421504;db=1;dl=1;dr=1;notify=1;transparent=1;z=9};
+progress={cls="progress";left=0;top=576;right=752;bottom=600;aw=1;color=32768;db=1;dl=1;dr=1;max=100;min=0;z=7};
+radNameRule0={cls="radiobutton";text="仅图号";left=184;top=56;right=292;bottom=76;dl=1;dt=1;group=1;z=5};
+radNameRule2={cls="radiobutton";text="图号-版本-型号 名称";left=184;top=88;right=424;bottom=108;dl=1;dt=1;z=6};
+tab={cls="tab";left=8;top=160;right=752;bottom=552;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=8}
 )
 /*}}*/
 
-//import win.util.tray;
+import win.util.tray;
 var tray = win.util.tray(mainForm) //创建托盘图标,用于通知 
 
-//import solidedge.application;
-//import solidedge.DraftDocument;
+import solidedge.application;
+import solidedge.DraftDocument;
 /*initDeclare{{*/
 var seApp, seDFT, seSht;
 var initDeclare = function(){
@@ -38,15 +37,15 @@ var startPrintActive = function(fileExt){
     for (i=1; winform.listbox.count)
     	if winform.listbox.getSelected(i)
     		fileExt := winform.listbox.getItemText(i);
-    var seDFT, fname;
+    var seDFT, fname, succ;
 	seApp.DisplayAlerts = 0;
      if (seApp.ActiveDocumentType == 2 /*Draft Document Type*/) {    //仅处理DFT格式
     	seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
 		fname = seDFT.getNameByExt(fileExt);
-		seDFT.saveToExt(fname);
+		succ = seDFT.saveToExt(fname);
 	}
 	seApp.DisplayAlerts = 1;
-	return fname; 
+	return fname, succ; 
 }
 /*}}*/
 /*printAllFiles{{*/
@@ -61,7 +60,8 @@ var startPrintAll = function(){
 				winform.progress.pos += 1 ;				
 				if (!winform.listbox.getSelected(k)) continue 1;
 				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k));
-				seDFT.saveToExt(fname)
+				var succ = seDFT.saveToExt(fname)
+				// if !succ
 			}
     	}
 	}
@@ -69,6 +69,31 @@ var startPrintAll = function(){
 
 	tray.pop("All Print Done","TBM")
 	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+
+}
+var vtab;
+subscribe("dft_loaded",function(...){
+vtab = ...;	
+} )
+var startPrintAllLV = function(){
+	seApp.DisplayAlerts = 0;
+	for (j = 1 ; #vtab) {
+			if !tbs.listview.getChecked(j) continue;
+        	var	seDFT = solidedge.DraftDocument(vtab[j]);
+			seDFT.Activate(); //如果不Activate,只会重复保存当前文件
+			for (k=1; winform.listbox.count; 1){
+				winform.progress.pos += 1 ;				
+				if (!winform.listbox.getSelected(k)) continue 1;
+				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k));
+				var succ = seDFT.saveToExt(fname)
+				// if !succ
+			}
+	}
+	seApp.DisplayAlerts = 1;
+
+	tray.pop("All Print Done","TBM")
+	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+
 
 }
 /*}}*/
@@ -81,7 +106,7 @@ var loadDefaults = function(){
 				winform.radNameRule0.checked = 1;
 			}
 			case 1 {
-				winform.radNameRule1.checked = 1;
+//				winform.radNameRule1.checked = 1;
 			}
 			case 2 {
 				winform.radNameRule2.checked = 1;
@@ -89,14 +114,16 @@ var loadDefaults = function(){
 		}
 		winform.outpath.text = seApp.toFolder;
 	}
+
+
 }
+tbs = winform.tab.loadForm("\forms\printcenter\dft-list.aardio" );
+
+
 /*}}*/
 /*选项保存{{*/
 winform.radNameRule2.oncommand = function(id,event){
 	if (seApp) seApp.nameRule = 2
-}
-winform.radNameRule1.oncommand = function(id,event){
-	if (seApp) seApp.nameRule = 1
 }
 winform.radNameRule0.oncommand = function(id,event){
 	if (seApp) seApp.nameRule = 0
@@ -104,33 +131,34 @@ winform.radNameRule0.oncommand = function(id,event){
 /*}}*/
 /*控件事件{{*/
 winform.button.oncommand = function(id,event){
-	var fname = startPrintActive();
-		if io.exist(fname)
-			process.execute(fname);	//如果onlyActive则打开结果文件
+	var fname, succ = startPrintActive();
+		if succ
+			if io.exist(fname) 
+				process.execute(fname);	//如果onlyActive则打开结果文件
 }
 winform.button2.oncommand = function(id,event){
 	winform.progress.min = 0;
 	winform.progress.pos = 0;
-	winform.progress.max = seApp.Documents.Count * winform.listbox.count;
-	win.setForeground(mainForm.hwnd)
-	startPrintAll();
+	var n=0;
+	for (i=1; winform.listbox.count)
+		if winform.listbox.getSelected(i) n=n+1
+	winform.progress.max = #vtab * n;
+	//win.setForeground(mainForm.hwnd)
+	//win.setTopmost(winform.hwnd);
+	startPrintAllLV();
+	//win.setTopmost(winform.hwnd,false);
     //mainForm.show(false); //隐藏窗口
 	//win.setActive(seApp.hWnd);
 }
-winform.button3.oncommand = function(id,event){
-	solidedge.application.closeDft(false);
-    mainForm.show(false); //隐藏窗口
-	win.setActive(seApp.hWnd);
-}
-winform.button4.oncommand = function(id,event){
-	solidedge.application.closeDft(true);
-    mainForm.show(false); //隐藏窗口
-	win.setActive(seApp.hWnd);
-}
+
 winform.outpath.oncommand = function(id,event){
 	process.explore(winform.outpath.text)
 }
 /*}}*/
+
+winform.button3.oncommand = function(id,event){
+	tbs.publish("Refresh")
+}
 
 winform.show();	
 initDeclare();

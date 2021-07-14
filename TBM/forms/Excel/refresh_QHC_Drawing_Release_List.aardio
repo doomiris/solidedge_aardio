@@ -1,0 +1,71 @@
+import console; 
+
+import com.excel;
+console.open()
+console.log("正在打开...")
+var excel = com.excel(true);
+var sht = excel.WorkBooks.Open("\\ccnqia05\开发部共享文件-\01.2021Y图纸&技术通知及BOM\2021年开发部图纸下发台账.xlsx").Sheets("2021");
+
+console.log(sht.name,"打开成功")
+
+
+
+
+/*getTabFromRange{{*/
+var getTabFromRange = function(range){
+    	var eArr = range.value2
+		var tab = {}; 
+		tab.fields = eArr[1];
+		for(i=2;#eArr){    
+	    	var d = table.array();
+	    	for (j=1;#tab.fields){
+	    		eArr[i][j] = eArr[i][j] ? eArr[i][j] : eArr[i-1][j];
+	    		d[tab.fields[j]] = eArr[i][j] ? eArr[i][j] : eArr[i-1][j];
+			}		
+			table.push(tab,d);
+		}
+		return tab; 	
+}
+/*}}*/
+sht.Range("$D:$E").Replace ("'", "");
+var etab = getTabFromRange(sht.range("C6:J" ++ sht.UsedRange.Rows.Count))
+console.log(#etab,"数据获取成功")
+sht.parent.close(false);
+excel.Quit()
+console.log("Excel退出成功")
+import sqlite.aes256;
+var db = sqlite.aes256("S:\Admin\SAP\db\qhc_dw_rel_list.db");
+if db.existsTable("qhc_dw_rel_list") db.exec("DROP table qhc_dw_rel_list;")
+var fieldsName = (string.replace(string.join(etab.fields,", "),"/",""));
+db.exec( "CREATE TABLE [qhc_dw_rel_list](" ++ fieldsName ++");")  
+
+
+var getTabValArr = function(tab){
+    var t={};
+	for(i=1;#etab.fields){
+		table.push(t,tab[etab.fields[i]])	
+	}
+	return t; 
+}
+
+
+console.log("开始导入数据库")
+
+import console.progress;
+var bar = console.progress()
+
+db.beginTrans();
+for (i=1; #etab){
+    bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
+    //console.log(string.join(getTabValArr(etab[i]),"', '"))
+	var cmd = db.prepare("INSERT INTO [qhc_dw_rel_list] VALUES(?,?,?,?,?,?,?,?);");
+	cmd.bind.parameters(table.unpack(getTabValArr(etab[i]))).step();
+};
+db.commitTrans();
+console.log("更新完成");
+db.close();
+
+
+
+
+console.pause(true);

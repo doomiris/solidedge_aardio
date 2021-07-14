@@ -1,0 +1,83 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="DFT_LIST";right=663;bottom=471)
+winform.add(
+listview={cls="listview";left=0;top=0;right=664;bottom=472;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1}
+)
+/*}}*/
+
+var getDftList = function(){
+	import solidedge.application;
+	import solidedge.DraftDocument;
+	seApp := solidedge.application();
+	var seDfts = {};
+	
+	for (i = 1; seApp.Documents.Count)
+    	if (seApp.Documents.item(i).Type == 2 /*Draft Document Type*/ ) {
+    		table.push(seDfts, seApp.Documents.item(i));
+    	}
+	vtab = table.create(,
+ 		{
+ 			fields = {
+ 				[1] = "物料";
+ 				[2] = "名称"; 
+ 				[3] = "版本";
+ 				[4] = "属性";
+// 				[5] = "index";
+ 			}
+ 		}
+ 	)
+	for(i=1;#seDfts){
+		var seDft = solidedge.DraftDocument(seDfts[i]);
+		var t={};
+		try{
+			var tb = seDft.getLabelTable(seDft.getTitleBlock(seDft.getFirstSheet()));
+		}
+		if(tb){
+			t.物料 = seDft.getFileName();
+			t.名称 = tb["零件名称"];
+			t.版本 = seDft.getDftVer();
+			var blkObj = seDft.getLabelObjectTable(seDft.getBlkByName("Version_CCR 2020",seDft.getFirstSheet()));
+			t.属性 = blkObj["属性"].value;
+		}else{
+			t.物料 = seDft.getFileName();
+			t.名称 = "";
+			t.版本 = "";
+			t.属性 = "";
+		}
+
+
+		//t.index = seDftIndex[i];
+		table.push(vtab, t)
+	}
+	
+	import win.ui.grid;
+	var grid = win.ui.grid(winform.listview);//创建数据视图
+	grid.setTable(vtab)
+	winform.listview.setExtended(0x4/*_LVS_EX_CHECKBOXES*/)
+	for(i=1;winform.listview.count;1){
+		winform.listview.setChecked(i);
+		
+	}
+	
+	publish("dft_loaded",seDfts);
+	
+	/*
+	winform.listview.setColumn({cx=120}, 1)
+	winform.listview.setColumn({cx=120}, 2)
+	winform.listview.setColumn({cx=250}, 3)
+	winform.listview.setColumn({cx=50}, 4)
+	winform.listview.setColumn({cx=50}, 5)
+	winform.listview.setColumn({cx=50}, 6)
+	*/
+
+}
+winform.show();
+
+//getDftList()
+subscribe("Refresh",function(...){
+	getDftList();
+} )
+
+win.loopMessage();
+return winform;
