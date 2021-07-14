@@ -1,0 +1,71 @@
+//SAP 支持库
+import com;
+namespace SAP;
+class session{
+	ctor( ... ){
+		this.oGui = ..com.GetObject("SAPGUI");
+		this.oApp =  this.oGui.GetScriptingEngine();
+		this.oConn = this.oApp.Children.item(0);
+		this.oSession = this.oConn.Children.item(0);
+		if( ! this.oConn ) return null,"请先打开SAP";
+	};
+	@_metaProperty;
+}
+namespace session{
+  import util.metaProperty; 
+  _metaProperty = util.metaProperty( 
+	get = function(k){
+		return owner.oSession[k]
+	};
+	set = function(k,v){
+		owner.oSession[k] = v;
+	};
+/*
+	nameRule = {
+		_get = function(){
+			return tonumber(..VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0)); 
+		}
+		_set = function(v){
+			..VBASettingIO.SaveSetting("Domisoft", "Config", "pdfNameRule", v); 
+		}	
+	};
+ */
+	Close = function(){
+		owner.oConn.CloseSession(owner.oSession.id);
+	}
+	
+  )
+}
+namespace session{
+/***
+	setPdfOptions = function(){
+		var oSession = ..SAP.session();
+    	oSession.SetGlobalParameter ( 172 /*Sheet options*/, 1 /*All sheets*/ )
+    	oSession.SetGlobalParameter ( 174 /*Use individual sheet sizes*/, true)
+    	oSession.SetGlobalParameter ( 168 /*Save all colors as black*/, false)
+	};
+***/
+}
+
+/**intellisense()
+SAP.session = SAP支持库
+SAP.session() = !session.
+!session.Close() = 关闭GUI
+session.findById(controll_id) = 按ID查找控件
+!session.findById() = !SAP_Element.
+!SAP_Element.press() = 点击
+!SAP_Element.text = 文本内容
+!SAP_Element.selected = 选中状态
+!SAP_Element.setFocus() = 获取焦点
+!SAP_Element.caretPosition = 光标位置
+?SAP.session = !session.
+session.AddHistoryEntry(Fieldname, Value) = SAP GUI for Windows has an input historyfunctionality, which displays for text fields the entries made inthe past as a suggestion. With this function, an entry can be addedto the history database so that it will be available the next timethe end user accesses the text field with the given fieldname
+session.CreateGuiCollection() = Some functions accept collections asparameters. This function creates a collection object that isindependent of the scripting language used, such as VBScript orJavaScript
+session.DropHistory() = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
+session.Ignore(WindowHandle) = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
+session.OpenConnection(Description, Sync, Raise) = The parameter connectString should contain one of the descriptionsdisplayed in SAPlogon, for example "XYZ [PUBLIC]". If you want tocreate a new SAP GUI instance and place it within your applicationyou may add the suffix “/INPLACE”. \nThis function will raisethe exception E_ACCESSDENIED if the scripting support has beendisabled by the administrator or the user
+session.OpenConnectionByConnectionString(ConnectString, Sync, Raise) = The parameter connectionData is the connectionstring for the SAP server, for example “/R/ALR/G/SPACE”. See thedescription of the openConnection method for a discussion of thesync and raise parameters.
+session.RegisterROT() = Accessing the SAPGUI entry in the Running Object Table from a C++application may fail unless the interface is registered with astrong reference. This is not required when using Visual Basic orscripting languages.The reference must be released using revokeRotbefore shutting down the Scripting component. Failing to do so willlead to undefined behaviour.Most applications do not need to usethis method, and shouldn’t call it.
+session.RevokeROT() = This method must be called before shutting down the Scripting component ifregisterROT was used.
+session.SetCookie( WindowHandle) = Object
+end intellisense**/
