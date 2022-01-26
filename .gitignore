@@ -1,5 +1,3 @@
 *.log
-forms/obsolete/**
-forms/TEST/**
 .build/**
 dist/**
