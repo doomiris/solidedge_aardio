@@ -1,4 +1,0 @@
-import solidedge.application;
-import key;
-var saveChanges  = !(key.getState(key.VK.CTRL));	//按CTRL键放弃保存
-solidedge.application.closeDft(saveChanges);	//关闭所有图纸文件
