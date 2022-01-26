@@ -1,16 +1,17 @@
-//import fonts.fontAwesome;
-//import win.ui;
-//import solidedge.application;
-//import solidedge.DraftDocument;
+import fonts.fontAwesome;
+import win.ui;
+import solidedge.application;
+import solidedge.DraftDocument;
 //import access;
+import config;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=501;bottom=354;image=$"\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+var winform = win.form(text="TBM";right=501;bottom=354;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text='\uF062';left=72;top=144;right=96;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=9};
 button2={cls="button";text='\uF00C  OK';left=387;top=306;right=488;bottom=345;db=1;default=1;dr=1;font=LOGFONT(name='FontAwesome');z=16};
 button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=345;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=17};
 button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=27};
-button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=28};
+button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=28};
 button6={cls="button";text='\uF06E';left=104;top=144;right=128;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=32};
 cb_approve_date={cls="edit";left=215;top=248;right=300;bottom=272;dl=1;dt=1;z=15};
 cb_approver={cls="combobox";left=48;top=245;right=178;bottom=270;dl=1;dt=1;items={};mode="dropdown";z=13};
@@ -28,8 +29,9 @@ chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272
 groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
 rd_M={cls="radiobutton";text="自制件";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
 rd_P={cls="radiobutton";text="外购件";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
-seDocPath={cls="static";left=25;top=24;right=476;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
+seDocPath={cls="static";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
 static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
+static10={cls="static";text="唤起快捷键 Alt+T";left=168;top=320;right=272;bottom=336;align="right";color=32768;db=1;dr=1;transparent=1;z=34};
 static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20};
 static3={cls="static";text="批准";left=15;top=250;right=45;bottom=275;dl=1;dt=1;transparent=1;z=21};
 static4={cls="static";text="名称";left=15;top=63;right=45;bottom=82;dl=1;dt=1;transparent=1;z=22};
@@ -37,6 +39,7 @@ static5={cls="static";text="材料";left=15;top=106;right=45;bottom=125;dl=1;dt=
 static6={cls="static";text="型号";left=269;top=63;right=299;bottom=82;dr=1;dt=1;transparent=1;z=24};
 static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;dt=1;transparent=1;z=25};
 static8={cls="static";text="版本";left=15;top=149;right=45;bottom=168;dl=1;dt=1;transparent=1;z=26};
+static9={cls="static";text='\uF0E2';left=24;top=24;right=40;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=33};
 version={cls="edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1;font=LOGFONT(h=-13);z=7}
 )
 /*}}*/
@@ -61,12 +64,18 @@ var initDeclare = function(){
     		}
     	}
     	if !seBlk{
-    		win.msgbox("找不到Title Blocks定义");
+    	    import win.dlg.message;
+    	    var dlg = win.dlg.message(mainForm.hwnd);
+    	    if dlg.ask( "找不到Title Blocks定义,插入新TitleBlock?" ){
+				solidedge.DraftDocument.replaceNewTitleBlock(seDFT, seDFT.ActiveSheet);
+				seBlk = seDFT.getTitleBlock(seSht);
+			}
     	}
 	}	
 	if ( seBlk ) seLbs = seDFT.getLabelTable(seBlk);	//获取titleblock lable
 	return true; 
 }
+
 /*}}*/
 /*loadFromTab{{*/
 var loadFromTab = function(_blk){
@@ -92,11 +101,11 @@ var loadFromTab = function(_blk){
 /*loadDefaults{{*/
 var loadDefaults = function(){
 	if (winform.cb_designer.text == "" or winform.cb_designer.text == "-")
-		winform.cb_designer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
+		winform.cb_designer.text = config.tbm.Designer;
 	if (winform.cb_reviewer.text == "" or winform.cb_reviewer.text == "-")
-		winform.cb_reviewer.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
+		winform.cb_reviewer.text = config.tbm.Reviewer;
 	if (winform.cb_approver.text == "" or winform.cb_approver.text == "-")
-		winform.cb_approver.text = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
+		winform.cb_approver.text = config.tbm.Approver;
 	if (winform.cb_design_date.text == "YYYY.MM.DD" or winform.cb_design_date.text == "" or winform.cb_design_date.text == "2016.11.19")
 		winform.cb_design_date.text = tostring(time(,"%Y.%m.%d"));;
 	if (winform.cb_review_date.text == "YYYY.MM.DD" or winform.cb_review_date.text == "" or winform.cb_review_date.text == "2016.11.18")
@@ -107,36 +116,21 @@ var loadDefaults = function(){
 }
 /*}}*/
 /*loadLists{{*/
-var loadPromptList = function(){
-//	_dbpath = VBASettingIO.GetSetting("Domisoft", "Config", "Spec_db_path", "");
-	_dbpath = "S:\Admin\SAP\db\tbm.db"
-//	var dbRs = access(_dbpath);
-	var dbRs = sqlite.aes256(_dbpath, /*"CCL100100"*/);	//打开数据库连接
+var loadPromptList = function(winform){
+	import config;
+	import sqlite;
+	var dbpath = config.dbServer.path + "tbm.db"
+	var dbRs = sqlite(dbpath);	//打开数据库连接
+	import tarray;
 	var tab = dbRs.getTable("select * from SE_TBM_Lists");
-	for (i=1; #tab; 1) {
-		select(tab[i].ListName) {
-			case "name_cn" {
-				winform.cb_name_cn.add(tab[i].Title)
-			}
-			case "model_no" {
-				winform.cb_model_no.add(tab[i].Title)
-			}
-			case "material" {
-				winform.cb_material.add(tab[i].Title)
-			}
-			case "weight" {
-				winform.cb_weight.add(tab[i].Title)
-			}
-			case "designer" {
-				winform.cb_designer.add(tab[i].Title)
-			}
-			case "reviewer" {
-				winform.cb_reviewer.add(tab[i].Title)
-			}
-			case "approver" {
-				winform.cb_approver.add(tab[i].Title)
-			}
-		}
+	for(name,ctrl in winform.eachControl() ){
+		if ctrl.cls !== "combobox" continue ; 
+		var keyword = string.trimleft(name,"cb_");
+		ctrl.items = tarray.getCol(
+			table.filter(tab, function(v, index){
+				return v.ListName == keyword;
+			}) , "Title"
+		)
 	}
 	dbRs.close();
 }
@@ -160,9 +154,9 @@ var showTimeBtn = function(){
 	) ? 1: 0;
 }
 var showSaveNameBtn = function(){
-	var Default_Designer = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
-	var Default_Reviewer = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
-	var Default_Approver = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
+	var Default_Designer = config.tbm.Designer;
+	var Default_Reviewer = config.tbm.Reviewer;
+	var Default_Approver = config.tbm.Approver;
 	winform.button5.hide = (
 		winform.cb_designer.text == Default_Designer
 		and
@@ -233,7 +227,7 @@ winform.button2.oncommand = function(id,event){
 	
 	}
 	
-    if (VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "")=="") {
+    if !#config.tbm.Designer {
 		winform.button5.oncommand();    /* 智能保存常用姓名 */
     };
     
@@ -248,9 +242,10 @@ winform.button4.oncommand = function(id,event){
 	updateDate();
 }
 winform.button5.oncommand = function(id,event){
-    VBASettingIO.SaveSetting("Domisoft", "TBM_SE", "Default_Designer", winform.cb_designer.text);
-	VBASettingIO.SaveSetting("Domisoft", "TBM_SE", "Default_Reviewer", winform.cb_reviewer.text);
-	VBASettingIO.SaveSetting("Domisoft", "TBM_SE", "Default_Approver", winform.cb_approver.text);
+    config.tbm.Designer = winform.cb_designer.text;
+	config.tbm.Reviewer = winform.cb_reviewer.text;
+	config.tbm.Approver = winform.cb_approver.text;
+	config.tbm.save();
 }
 winform.cb_designer.onEditChange= function(){ 
 	showSaveNameBtn();
@@ -270,6 +265,7 @@ winform.cb_approver.onEditChange= function(){
 }
 
 /*}}*/
+
 winform.show();
 var frmReLoad = function(){
     var initSucc = initDeclare();
@@ -285,8 +281,8 @@ var frmReLoad = function(){
 		winform.redraw();
 	}
 }
-frmReLoad();
-
+//frmReLoad();
+subscribe("refresh_1",frmReLoad);
 winform.seDocPath.oncommand = function(id,event){
 	frmReLoad();
 
@@ -296,7 +292,8 @@ winform.button6.oncommand = function(id,event){
     var pcode = seDFT ? string.match(seDFT.FullName,"\d+") : null;
 	loadcodex("\forms\main\check_QHC_Release.aardio", pcode);
 }
+thread.invoke( loadPromptList, winform )
 
-loadPromptList();	//读取提示清单
+//loadPromptList();	//读取提示清单
 win.loopMessage();
 return winform;

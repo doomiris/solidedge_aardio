@@ -2,7 +2,6 @@ import console;
 import com.excel;
 var excel = com.excel(false);
 var mSht = excel.Workbooks("Service Counter Item_Master.xlsx").Sheets("part list");
-
 var sht = excel.ActiveWorkbook.ActiveSheet;
 
 
@@ -25,24 +24,39 @@ var getTabFromRange = function(range){
 /*}}*/
 
 var range_str = (sht.cells(6,"N").value2) == "团队" ? "$B$6:$R$" : "$A$1:$N$"
-var etab = getTabFromRange(sht.Range(range_str ++ sht.usedrange.rows.count))
+var etab = getTabFromRange(sht.Range(range_str ++ table.pop(string.split(sht.usedrange.address(),"$"))))
 
 var vc = {
 	["00"] = "U";
 	["01"] = "V";
 	["02"] = "W";
 	["03"] = "X";
+	["04"] = "U";
+	["05"] = "V";
+	["06"] = "W";
+	["07"] = "X";
 }
+
+
 
 import console.progress;
 var bar = console.progress();
 
 for(i=1;#etab){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
-    if !etab[i].物料号码 continue;
-    var r =	mSht.columns("A").find(etab[i].物料号码).row;
+    if !etab[i].物料号码
+    	continue;
+    
+    var dr = mSht.columns("A").find(etab[i].物料号码);
+    if !dr {
+		console.log(i,etab[i].物料号码, "在ItemMaster内找不到");
+		continue;
+    }
+    var r =	dr.row;
+
     mSht.cells(r,"R").value2 = etab[i].图纸号;
     mSht.cells(r,"S").value2 = etab[i].图纸版次;
-    mSht.cells(r,vc[etab[i].图纸版次]).value2 = etab[i].图纸下发时间;
+    mSht.cells(r,vc[etab[i].图纸版次]).value2 = string.replace(etab[i].图纸下发时间,"@.","/");
 }
+
 console.pause(true);

@@ -6,59 +6,54 @@ import win.ui.accelerator;
 import win.cur;
 import win.clip;
 import win.clip.file;
-import sqlite.aes256;
+import sqlite;
 import fsys;
 import fsys.file;
-import fsys.table;
-//import console;
-//console.open();
+import config;
+import process;
+/*
+import console;
+console.open();
+*/
 var getUserInput = function(){
 	if (winform.editUser.hide == 0) return winform.editUser.text; 
 	else return winform.editUser2.text; 
-	
 }
 
 //import win.util.tray;
 /*DSG{{*/
-winform = win.form(text="QHC物料查询";right=638;bottom=502)
+winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text='\uF002  查询SAP';left=521;top=10;right=620;bottom=40;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=1};
-button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db=1;dl=1;flat=1;font=LOGFONT(name='FontAwesome');z=15};
-button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=4};
-button4={cls="button";text='\uF085 ';left=192;top=8;right=227;bottom=42;color=16711680;dl=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=19};
-button5={cls="button";text='\uF103 ';left=477;top=38;right=515;bottom=55;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=17};
-buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=7};
-chkCost={cls="checkbox";text="显示价格";left=336;top=464;right=456;bottom=480;db=1;dl=1;hide=1;z=13};
-chkDisabled={cls="checkbox";text="不显示禁用件";left=216;top=480;right=336;bottom=496;checked=1;db=1;dl=1;hide=1;z=14};
-chkHideUnknown={cls="checkbox";text="不显示没查到的";left=440;top=480;right=544;bottom=496;db=1;dl=1;hide=1;z=18};
-chkPaint={cls="checkbox";text="不显示已喷粉件";left=336;top=480;right=440;bottom=496;db=1;dl=1;hide=1;z=12};
-editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=6};
-editUser2={cls="edit";left=250;top=10;right=515;bottom=100;autohscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);hide=1;multiline=1;tabstop=1;vscroll=1;z=5};
-listview={cls="listview";left=1;top=53;right=638;bottom=463;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
-plus={cls="plus";left=608;top=472;right=632;bottom=496;db=1;dr=1;foreRepeat="scale";foreground="\res\communication-icon-png-2206.png";notify=1;z=8};
-rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=64;top=480;right=192;bottom=496;db=1;dl=1;hide=1;z=11};
-rdBG={cls="radiobutton";text="仅查询成品: BG";left=216;top=464;right=328;bottom=480;db=1;dl=1;group=1;hide=1;z=9};
-rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=64;top=464;right=208;bottom=480;checked=1;db=1;dl=1;hide=1;z=10};
-static={cls="static";text="Domisoft (C) 2020";left=520;top=464;right=624;bottom=488;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=2};
-static2={cls="static";left=272;top=480;right=632;bottom=504;align="right";aw=1;center=1;color=12632256;db=1;dl=1;dr=1;font=LOGFONT(h=-11);transparent=1;z=16}
+button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2};
+button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=11};
+button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=3};
+button4={cls="button";text='\uF085 ';left=192;top=8;right=227;bottom=42;color=16711680;dl=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=14};
+button5={cls="button";text='\uF103 ';left=477;top=38;right=515;bottom=55;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
+buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=6};
+chkDisabled={cls="checkbox";text="不显示禁用件";left=72;top=472;right=192;bottom=488;bgcolor=16777215;checked=1;db=1;dl=1;hide=1;z=10};
+chkHideUnknown={cls="checkbox";text="不显示没查到的";left=344;top=472;right=472;bottom=488;bgcolor=16777215;db=1;dl=1;hide=1;z=13};
+chkPaint={cls="checkbox";text="不显示已喷粉件";left=200;top=472;right=304;bottom=488;bgcolor=16777215;db=1;dl=1;hide=1;z=9};
+clLegacyType={cls="checklist";left=8;top=200;right=64;bottom=448;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13;name='Arial Narrow');hide=1;items={"BG";"01";"02";"03";"04";"05";"06";"07";"08";"09";"10";"14";"15";"16";"40";"53";"75"};msel=1;tabstop=1;transparent=1;z=16};
+clOrderType={cls="checklist";left=72;top=368;right=128;bottom=440;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13;name='Arial Narrow');hide=1;items={"HALB";"ROH";"KMAT";"FERT"};msel=1;tabstop=1;transparent=1;z=18};
+clSapType={cls="checklist";left=144;top=160;right=216;bottom=448;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13;name='Arial Narrow');hide=1;items={"SA";"SB";"SC";"SD";"SE";"SG";"SH";"SI";"R01";"R02";"R03";"R04";"R15";"R05";"R06";"R07";"R08";"R10";"R14";"R40"};msel=1;tabstop=1;transparent=1;z=19};
+clUnit={cls="checklist";left=72;top=264;right=128;bottom=344;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13;name='Arial Narrow');hide=1;items={"ZA";"KG";"M";"BOT";"L"};msel=1;tabstop=1;transparent=1;z=17};
+edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=20};
+editUser={cls="edit";left=250;top=10;right=515;bottom=40;autohscroll=false;autovscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);tabstop=1;z=5};
+editUser2={cls="edit";left=250;top=10;right=515;bottom=100;autohscroll=false;aw=1;border=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-13);hide=1;multiline=1;tabstop=1;vscroll=1;z=4};
+listview={cls="listview";left=1;top=53;right=638;bottom=464;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=1};
+rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=272;top=352;right=400;bottom=368;db=1;dl=1;hide=1;z=8};
+rdBG={cls="radiobutton";text="仅查询成品: BG";left=272;top=320;right=384;bottom=336;db=1;dl=1;group=1;hide=1;z=7};
+rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=272;top=288;right=416;bottom=304;checked=1;db=1;dl=1;hide=1;z=15}
 )
 /*}}*/
 
 var grid = win.ui.grid(winform.listview);//创建数据视图
 var sapTab;
 /*sqliteDB{{*/
-_sapdb := (function(){
-    if io.exist("\qhcsap.db")
-    	_path=io.fullpath("\qhcsap.db");
-	else
-		if io.exist("\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db")
-			_path="\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db";
-    	else
-    		win.msgbox("无法访问数据库!");
-    return _path; 
-})()
-winform.static2.text = _sapdb
-var db,err = sqlite.aes256(_sapdb, /*"CCL100100"*/);	//打开数据库连接
+var sapdb = config.dbServer.path + "\qhcsap.db";
+if !io.exist(sapdb) 
+	win.msgboxErr("无法访问数据库!");
+var db,err = sqlite(sapdb);	//打开数据库连接
 
 if (err) error(err)
 /*}}*/
@@ -66,37 +61,29 @@ if (err) error(err)
 var logInput,setting;
 winform.popmenu = win.ui.popmenu(winform);//创建弹出菜单
 
-var readInputList = function(){
-	logInput = table.array()
-	setting = fsys.table(fsys.getTempDir()++"/domisoft.qtip.setting.table") 
-	setting.load(); //从文件载入表
-	if !(setting.inputlog) setting.inputlog = table.array()
-}
 var updatePopmenu = function(){
     winform.popmenu = win.ui.popmenu(winform)
 	winform.popmenu.add("输入历史:");
 	winform.popmenu.add();//分隔线
-	for (i=1; #setting.inputlog; 1){
+	for (i=1; #config.qTipLog){
     	winform.popmenu.add(
-    		text = setting.inputlog[i];
+    		text = config.qTipLog[i];
     		proc = function(id){
-    			winform.editUser.text= setting.inputlog[i];
+    			winform.editUser.text= config.qTipLog[i];
     			winform.editUser.setFocus();
     		}
     	);
 	}
 }
 var saveInputList = function(str){
-    if !(table.find(setting.inputlog, str)){
-    	table.unshift(setting.inputlog,str);
-    	if (#setting.inputlog>15) table.pop(setting.inputlog);
-    	setting.save();
+    if !(table.find(config.qTipLog, str)){
+    	table.unshift(config.qTipLog, str);
+    	if ( #config.qTipLog>15 ) table.pop(config.qTipLog);
+    	config.qTipLog.save();
     };
-    table.push(logInput, str);
     updatePopmenu();
 };
 
-readInputList();
 updatePopmenu();
 /*}}*/
 /*调整列宽{{*/
@@ -125,11 +112,14 @@ var searchSapDB = function(userinput){
     winform.listview.clear(true);
     winform.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
     var userinputArr = string.split(userinput, '\r\n');
+    userinputArr = table.unique(userinputArr);
+    
     if (#userinputArr == 1) saveInputList(userinputArr[1]);
  	table.clear(sapTab);
-	sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="类型";[4]="价格";[5]="禁用";[6]="禁用"}});
+	sapTab={};
 	
     for (i=1; #userinputArr; 1){
+        if string.indexOf(userinputArr[i], '\t') userinputArr[i] = table.pop(string.split(userinputArr[i],'\t'));
 		userinput = string.trim(userinputArr[i]);
 		if (string.len(userinput)==0 ) continue;
     	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
@@ -144,6 +134,8 @@ var searchSapDB = function(userinput){
     		searchField = "物料描述";
 		}
 		
+
+/*
     	if (string.startWith(userinput,"BG",true)) {
     		winform.rdBG.checked = true;
     		winform.rdAsm.checked = false;
@@ -153,25 +145,27 @@ var searchSapDB = function(userinput){
 				winform.rdBG.checked = false;
 				winform.rdAsm.checked = true;
 				winform.rdPart.checked = false;
-    			
 			}else{
-/* //逻辑需要深入完善,否则不能指定类型了
+ 				//逻辑需要深入完善,否则不能指定类型了
 				winform.rdBG.checked = false;
 				winform.rdAsm.checked = false;
 				winform.rdPart.checked = true;
-*/
 			}
 		}
+*/
 		
 		var sqlstr;		/* 目前结构无法智能判断 是01分类 还是08分类, TODO: 全部选项可选: 不显示xxx  */
-		if (!winform.chkCost.checked)
-			sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[物料组],[Bun] AS [单位],[物料是可配置的] AS [配置] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'" ;
-		else
-			sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[物料组],[价格],[Bun] AS [单位] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'";
 
-    	if (winform.rdBG.checked){
+		sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
+		sqlstr = "SELECT [物料], [物料描述],[Bun] AS [单位], [MTyp] AS [类型],[物料组],[价格],[物料是可配置的] AS [配置], [禁用] FROM [所有物料] WHERE [" ++ searchField ++"] LIKE '" ++ userinput ++"'" ;
+
+    	if (string.startWith(userinput,"BG",true)){
 			sqlstr = sqlstr ++ " AND [MTyp] = 'FERT'" ++ " AND LENGTH([物料])=11"
 		}
+		if (winform.chkDisabled.checked){
+			sqlstr = sqlstr ++ " AND [禁用] IS NULL";
+		}
+/*
 		if (winform.rdPart.hide==false){	//解决无法无法查询08ROH物料问题
 			if (winform.rdPart.checked){
 				if (winform.chkPaint.checked){
@@ -183,54 +177,48 @@ var searchSapDB = function(userinput){
 			if (winform.rdAsm.checked){
 				sqlstr = sqlstr ++ " AND [物料组] IN ('SG','SA','SD')" ++ " AND [MTyp] NOT IN ('FERT','ROH')"
 			}
-			if (winform.chkDisabled.checked){
-				sqlstr = sqlstr ++ " AND [物料] NOT IN (SELECT [物料] FROM [已禁用物料])";
-			}
 		}
-		
-		var t = db.getTable(sqlstr);
-		//console.dumpTable(t)
+*/
+			var t = string.indexOf(sqlstr,"%") ? db.getTable(sqlstr) : {[1] = db.stepQuery((string.replace(sqlstr,"LIKE","=")))} ;
+
 		if (#t==0)
 			if ( ! winform.chkHideUnknown.checked) 
 				table.push(t,{物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
 		sapTab = table.concat(sapTab,t);
+		
+		import tarray;
+		sapTab = tarray.uniqueCol(sapTab, 1);
 	}
 	if (#sapTab==0) {
 		if ( ! winform.chkHideUnknown.checked) 
 			table.push(sapTab,{物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
 	}
 	else {
-		//todo: 在新线程里查询是否物料禁用
-/*
-		if (!winform.chkDisabled.checked){
-			for (i=1; #sapTab){
-				if db.stepQuery("SELECT * FROM [已禁用物料] where [物料]='" ++ sapTab[i].物料 ++"'") 
-				sapTab[i].禁用 = "禁用";			
-			}
-		}	
-*/
+
 	}
 	formatListView();
 }
 /*}}*/
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
-	
-	
-    if !(filenumber) return;
+    if !filenumber return;
+    
+	winform.edit2.text = "";
     winform.listview.tag = 2;
     winform.listview.clear(true);
     winform.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
-	var flistDB = sqlite.aes256("S:\Admin\SAP\db\drawing_lists.db");	//打开数据库连接
+	var flistDB = sqlite(config.dbServer.path + "drawing_lists.db");	//打开数据库连接
 	var sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';"
 	var flist = flistDB.getTable(sql);
 	if (#flist == 0){
-		sql = "SELECT * FROM [Map] WHERE [专用号] = '" ++ searchFor ++ "';";
-		var maptab = flistDB.getTable(sql);
+		var maptab = flistDB.getTable("SELECT * FROM [Map]", { 专用号  =  searchFor });
 		if (#maptab > 0) {
 			searchFor = maptab[1].图号; 
+			if #searchFor winform.edit2.text = searchFor;
+			winform.edit2.hide = !(#searchFor);
+			
 			sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';";
 			flist = flistDB.getTable(sql);
 		}
@@ -254,57 +242,91 @@ var searchDocument = function (filenumber){
 /*}}*/
 /*搜索按钮事件{{*/
 winform.button.oncommand = function(id,event){
+	//owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="搜索中..."};
 	if (winform.button3.hide){		
 		searchSapDB();
 	}else{
 		searchDocument(getUserInput());		
 	}
+	//owner.disabledText = null;
 }
 /*}}*/
 /*双击打开事件{{*/
 winform.listview.onnotify = function(id,code,ptr){
-    var selectedRow = winform.listview.getSelection();
+    var selectedRow = owner.getSelection();
+    if !selectedRow return ; 
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    		if (winform.listview.tag == 1) {
+    		if (owner.tag == 1) {
     			winform.button3.hide = false;
 				winform.button3.tag  = selectedRow;
-				searchDocument(winform.listview.getItemText(selectedRow,1));
+				searchDocument(owner.getItemText(selectedRow,1)); 
 				winform.button.text = '\uF002  搜索图纸';
 			}else{
-				var fullName = winform.listview.getItemText(selectedRow, 2) ++ winform.listview.getItemText(selectedRow, 1);
+				var fullName = owner.getItemText(selectedRow, 2) ++ owner.getItemText(selectedRow, 1);
 				if io.exist(fullName) {
 					process.execute(fullName);
 				}
 			}
     	}
+    	case 0xFFFFFFFB/*_NM_RCLICK*/  {
+			var x,y = win.getMessagePos();
+			//var hItem,tvht = winform.listview.hitTest(x,y,true);
+			var menu = win.ui.popmenu(winform);
+			menu.add("下载BOM", downloadbom);
+			menu.popup(x,y,true);
+    	}
     }
 }
+
+
 /*}}*/
 /*CTRLC复制模块{{*/
 winform.listview.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
 //    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
 //    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
-//    var selectedRow = winform.listview.getSelection();
+//    var selectedRow = owner.getSelection();
     var vk = msg.wParam ;    
     if( ( vk == 'C'# ) && ctrl  ){
-        if (winform.listview.tag==1) {
+        if (owner.tag==1) {
             var tab=table.array();
-            for (i=1;#winform.listview.selected;1){
-                table.push(tab,string.join(winform.listview.items[winform.listview.selected[i]],'\t'))
+            for (i=1;#owner.selected;1){
+                table.push(tab,string.join(owner.items[owner.selected[i]],'\t'))
             }           
 			win.clip.write(string.join(tab,'\n'))
 		}else{
 			var tab = table.array();
-			for (i=1; winform.listview.count; 1){
+			for (i=1; owner.count; 1){
 
-				if (table.find(winform.listview.selected,i)){
-					table.push(tab, winform.listview.getItemText(i, 2) ++ winform.listview.getItemText(i, 1));
+				if (table.find(owner.selected,i)){
+					table.push(tab, owner.getItemText(i, 2) ++ owner.getItemText(i, 1));
 				}
 			}
 
-			win.clip.file.write(tab[1])	//TODO: 多文件copy
+			
+/*
+import dotNet; 
+var appDomain = dotNet.appDomain();
+var system = appDomain.load("System");
+var Clipboard = system.import("Clipboard")
+var FileCollection = system.new("System.Collections.Specialized.StringCollection");
+
+var tab = {
+	[1] = "D:\users\CCL100100\workspaces\E6\0080291071.dft";
+	[2] = "D:\users\CCL100100\workspaces\E6\ccaabbcc.txt";
+}
+for (k,v in tab) {
+	FileCollection.Add(tab[k]);
+}
+
+
+Clipboard.SetFileDropList(FileCollection);
+*/
+
+			
+			if io.exist(tab[[1]])
+				win.clip.file.write(tab[[1]],"copy")	//TODO: 多文件copy
 		}
         return true;
     }
@@ -318,9 +340,11 @@ winform.onClose = function(hwnd,message,wParam,lParam){
 /*后退返回搜索结果{{*/
 winform.button3.oncommand = function(id,event){
     formatListView();
-	winform.listview.setSelected(winform.button3.tag)
+	winform.listview.setSelected(owner.tag)
 	winform.listview.tag=1;
-	winform.button3.hide=true;	
+	owner.hide=true;
+	winform.edit2.text = "";
+	winform.edit2.hide = true;
 	winform.button.text = '\uF002  查询SAP';
 }
 /*}}*/
@@ -341,9 +365,9 @@ winform.button5.oncommand = function(id,event){
 		
 		winform.listview.top -= 60;
 
-		winform.button5.top -= 60;
-		winform.button5.height = 16;
-		winform.button5.text = '\uF078'; //向下	
+		owner.top -= 60;
+		owner.height = 16;
+		owner.text = '\uF078'; //向下	
 	}else{	//放大搜索框
 
 		winform.editUser.hide = 1
@@ -356,9 +380,9 @@ winform.button5.oncommand = function(id,event){
 		
 		winform.listview.top += 60;
 
-		winform.button5.top += 60;
-		winform.button5.height = 16;
-		winform.button5.text = '\uF077'; //向上
+		owner.top += 60;
+		owner.height = 16;
+		owner.text = '\uF077'; //向上
 	}
 }
 /*}}*/
@@ -373,61 +397,67 @@ winform.buttonD.oncommand = function(id,event){
 }
 /*}}*/
 
-
-winform.show();
-
-
-
-/*foot页脚设置{{*/
-var getVer = function(str){
-	import fsys.version;
-	var v = fsys.version.getInfo(..io._exepath).productVersion;
-	return str ++ ..string.join({v.major; v.minor; v.revision},"."); 
-}
-
-var hand = win.cur.load(32649 /*_IDC_HAND*/ );
-winform.text = winform.text ++ getVer(" Ver: ");
-
-/*
-winform.plus.skin(
-	background = { 
-		hover = "/res/images/btn-hover.png";
-		focus = "/res/images/btn-focus.jpg";
-		active = "/res/images/btn-active.png";
-		disabled = "/res/images/btn-disabled.png"; 
-	}
-)
-*/
-
-winform.plus.wndproc = function(hwnd,message,wParam,lParam){
-	if(message = 0x200/*_WM_MOUSEMOVE*/) { 
-		win.cur.setCur(hand);
-	} 
-}
-
-winform.plus.oncommand = function(id,event){
-	process.execute("sip:gongpeng.lan@carrier.com");
-}
-/*}}*/
-
-
-
 winform.button2.oncommand = function(id,event){
-	winform.rdBG.hide = !winform.rdBG.hide
-	winform.rdPart.hide = !winform.rdPart.hide
-	winform.rdAsm.hide = !winform.rdAsm.hide
-	winform.chkCost.hide = !winform.chkCost.hide
+
+	
 	winform.chkDisabled.hide = !winform.chkDisabled.hide
 	winform.chkPaint.hide = !winform.chkPaint.hide
 	winform.chkHideUnknown.hide = !winform.chkHideUnknown.hide
-	winform.static.hide = !winform.static.hide
-	winform.static2.hide = !winform.static2.hide
+	
+
+/*
+	winform.rdBG.hide = !winform.rdBG.hide
+	winform.rdPart.hide = !winform.rdPart.hide
+	winform.rdAsm.hide = !winform.rdAsm.hide
+	winform.listbox.hide = !winform.listbox.hide
+	winform.clLegacyType.hide = !winform.clLegacyType.hide
+	winform.clUnit.hide = !winform.clUnit.hide
+	winform.clOrderType.hide = !winform.clOrderType.hide
+	winform.clSapType.hide = !winform.clSapType.hide
+	winform.button6.hide = !winform.button6.hide
+	
+*/
 }
 
-winform.button4.oncommand = function(id,event){
-	var frmChild = winform.loadForm("\forms\main\QTIP_ADMIN.aardio");
-	frmChild.show();
+
+
+subscribe("dok",function(...){
+	winform.button6.disabledText = null;
+	win.delay(3*1000);
+	var ftab = ...
+	if ftab {
+		import com.excel;
+		var excel = com.excel(false);
+		
+		for(i = excel.WorkBooks.Count; 1; -1) // 反向
+			if table.indexOf(ftab, excel.WorkBooks(i).Name) {
+				excel.WorkBooks(i).Activate();
+				try{
+					excel.Run("initExportedBom"); //调用宏格式化样式
+				}
+		 		excel.WorkBooks(i).close(true /* _save_changes */);
+			}
+	}
+
+} )
+
+var downloadbom = function(){
+    var tab=table.array();
+    for (k, v in winform.listview.selected){
+        var bg = winform.listview.getItemText(v, 1);
+        if string.startWith(bg,"BG")
+            table.push(tab,  bg);
+    }  
+    if !#tab return ;
+	import SAP.session;
+	var session = SAP.session();
+	session.downloadBOM(winform, tab);
 }
+winform.show();
+subscribe("refresh_3",function(){
+		winform.redraw();
+	}
+);
 
 winform.editUser.setFocus();
 win.loopMessage();

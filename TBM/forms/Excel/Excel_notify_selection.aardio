@@ -15,36 +15,21 @@ static={cls="static";text="SAP物料速查";left=8;top=0;right=312;bottom=24;fon
 )
 /*}}*/
 
+import config;
 /*sqliteDB{{*/
-import sqlite.aes256;
-_sapdb := (function(){
-    if io.exist("\qhcsap.db")
-    	_path=io.fullpath("\qhcsap.db");
-	else
-		if io.exist("\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db")
-			_path="\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db";
-    	else
-    		win.msgbox("无法访问数据库!");
-    return _path; 
-})()
-
-var db,err = sqlite.aes256(_sapdb, /*"CCL100100"*/);	//打开数据库连接
+import sqlite;
+var sapdb = config.dbServer.path + "qhcsap.db";
+var db,err = sqlite(sapdb);	//打开数据库连接
 
 if (err) error(err)
 /*}}*/
 
-var textjoin = function(tab){
-	import web.json;
-	var str = web.json.stringifyArray(tab);
-	str = string.replace(str, '\"', "");	
-	str = string.replace(str, '\]', "");
-	str = string.replace(str, '\\[', ""); 
-	return string.join(string.split(str,","),","); 
-}
+
 
 /*searchSapDB{{*/
 var searchSapDB = function(inarr){
 
+/*
     if table.isArray(inarr){
     	 inarr = textjoin(inarr)
     }else{
@@ -52,16 +37,17 @@ var searchSapDB = function(inarr){
          inarr = string.replace(inarr,'\n',",");
     }
     var userinputArr = string.split(inarr, ",");
+*/
+    userinputArr = table.unique(inarr);
 	var sapTab=table.create(,{fields={[1]="物料";[2]="物料描述";[3]="类型";[4]="价格";[5]="禁用";[6]="禁用"}});	
-    for (i=1; #userinputArr; 1){
+    for (i=1; #userinputArr){
 		var userinput = string.trim(userinputArr[i]);
-		if (string.len(userinput)==0 ) continue;		
-    	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
-    	if (!string.startWith(userinput,"BG",true) and !string.startWith(userinput,"H0",true)) continue;
-		var sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[物料组],[价格],[Bun] AS [单位] FROM [所有物料] WHERE [物料] LIKE '" ++ userinput ++"'";
-		var t = db.getTable(sqlstr);
-		if (#t>0)
-			sapTab = table.concat(sapTab,t);		
+		if !#userinput continue;		
+    	if string.startWith(userinput,"008",true) userinput="H" ++ userinput;
+    	if !string.startWith(userinput,"BG",true) and !string.startWith(userinput,"H0",true) continue;
+		var sqlstr = "SELECT [物料], [物料描述],[MTyp] AS [类型],[物料组],[价格],[Bun] AS [单位] FROM [所有物料]";
+		var t = db.stepQuery(sqlstr, {"物料" = userinput});
+		if t table.push(sapTab,t);		
 	}
 	return sapTab;
 }
@@ -71,21 +57,23 @@ var grid = win.ui.grid(winform.listview);//创建数据视图
 
 import win.clip;
 
-var str;
+var str={};
 
-
-
-if (excel) {
+if (excel and excel.ActiveWindow.WindowState !== -4140) {
 	var wb = excel.ActiveWorkbook;
 	var sht = wb.ActiveSheet;
 	sht.Activate();
-    str = sht.Application.Selection.value;
+    var st = sht.Application.Selection.value2;
+    if !table.isArray(st) table.push(str, st);
+    else str = table.flat(st);
 }
 else {
-	str =  win.clip.read();
+    var st = win.clip.read();
+    if !table.isArray(st) table.push(str, st);
+    else str = table.flat(st);
 }
 
-if str {
+if #str {
   var tab = searchSapDB(str);
   grid.setTable(tab);
 //调整列宽		

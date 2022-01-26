@@ -1,34 +1,25 @@
 import console; 
 console.open();
 import com.excel;
+import tarray;
 var excel = com.excel(false);
+if !excel.ActiveWorkbook excel.Quit();
 
-var sht = excel.ActiveWorkbook.ActiveSheet;
-
+var sht = excel.ActiveSheet;
+if !sht console.pause("需要重新执行");
+import config;
 /*sqliteDB{{*/
-import sqlite.aes256;
-_sapdb := (function(){
-    if io.exist("\qhcsap.db")
-    	_path=io.fullpath("\qhcsap.db");
-	else
-		if io.exist("\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db")
-			_path="\\ccnsia1a\separts\Admin\SAP\db\QHCSAP.db";
-    	else
-    		win.msgbox("无法访问数据库!");
-    return _path; 
-})()
-
-var db,err = sqlite.aes256(_sapdb, /*"CCL100100"*/);	//打开数据库连接
+import sqlite;
+var sapdb = config.dbServer.path + "qhcsap.db";
+var db,err = sqlite(sapdb);	//打开数据库连接
 
 if (err) error(err)
 /*}}*/
 
 /*searchSapDB{{*/
-var checkIsConfig = function(hcode){
-		var sqlstr = "SELECT [物料], [物料是可配置的] FROM [所有物料] WHERE [物料] = '" ++ hcode ++"'";
-		var t = db.getTable(sqlstr)
-		if #t>0 return (t[1].物料是可配置的=="X");
-		else return ""; 
+var getSapItem = function(hcode){
+    	if string.len(hcode) > 11 hcode = string.trim(hcode);
+		return db.stepQuery("SELECT * FROM [所有物料]", {物料 = hcode });
 }
 /*}}*/
 
@@ -55,7 +46,7 @@ var etab = (function(){
 		if !etr() return error("找不到边界");
 		
 		var tab = {};
-		var eArr = sht.Range("$A$5:$J$" ++ etr()).value2
+		var eArr = sht.Range("$A$5:$J$" ++ etr()).value2;
 		for(i=1; #eArr; 1){    
 	    	var d = table.array();
 	    	for (j=1;#fields;1){
@@ -67,14 +58,23 @@ var etab = (function(){
 		return tab; 
 })()
 
+var etab_count = #etab;
+
 var rule_desp = {
 	[1] = "层级跳跃错误";
 	[2] = "层级含非法字符或格式错误";
 	[3] = "可选项上级组件不可配置";
 	[4] = "配置件没有下挂可选项, 如果是借用组件注意维护下挂的特征类和默认配置";
-	[5] = "缺少单位用量"; //用量为0也报错
-
+	[5] = "缺少单位用量或用量为0"; 
+	[6] = "ROH不可有下级物料"; 
+	[7] = "当前组件下有重复项";
+	[8] = "当前物料已禁用";
+	[9] = "单位错误";
+	[10] = "此行之后有重复添加子项";
+	[11] = "请核实高银焊条用量";
+	[12] = "ZA单位对应数量不应该有小数";
 }
+
 var sapErr = {
 	[1] = function(i){
 		if (i == 1) return ; 
@@ -94,7 +94,8 @@ var sapErr = {
 		if (etab[i].物料类型 !== "KMAT" ) return ; 
 		for (j=i-1; 5; -1){
 			if (etab[j].层级数 == etab[i].层级数 - 1){
-				return !checkIsConfig(etab[j].物料号); 
+				if getSapItem(etab[j].物料号)
+				return !(getSapItem(etab[j].物料号).物料是可配置的=="X"); 
 			}
 		}
 	}
@@ -102,8 +103,9 @@ var sapErr = {
 		if !etab[i].物料号 return ; 
 		if !string.startWith(etab[i].物料号 ,"H00808") return ; 
 		if (etab[i].物料类型 !== "HALB" ) return ; 
-		if !checkIsConfig(etab[i].物料号) return ; 
-		for (j=i+1;#etab;1){
+		if !getSapItem(etab[i].物料号) return ; 
+		if !(getSapItem(etab[i].物料号).物料是可配置的=="X") return ; 
+		for (j=i+1; etab_count){
 			if etab[j].层级数 <= etab[i].层级数  break ; 
 			if etab[j].物料号 
 				if string.startWith(etab[j].物料号, "H00809") 
@@ -112,24 +114,74 @@ var sapErr = {
 		return true; 
 	}
 	[5] = function(i){
-		return !etab[i].单位用量; 
+		if etab[i].单位用量 return !(tonumber(etab[i].单位用量))
+		else return true; 
 	}
-
+	[6] = function(i){
+		if (i<etab_count)
+			if (etab[i].物料类型 == "ROH")
+				if etab[i+1] return (etab[i].层级数 < etab[i+1].层级数);
+				
+	}
+	[7] = function(i){
+		var t={};
+		for (n=i+1; etab_count){
+			if etab[n] {
+				if (etab[n].层级数 == etab[i].层级数 + 1) {
+					table.push(t,etab[n].物料号);				
+				}
+				if etab[n].层级数 <= etab[i].层级数 break;
+			}
+		} 
+		return  #(table.unique(t)) !== #t;
+	}
+	[8] = function(i){
+		var sapItem = getSapItem(etab[i].物料号);
+		if sapItem return (sapItem.禁用 == "禁用");
+		//else return true; 
+	}
+	[9] = function(i){
+		return !table.find({"ZA","KG","M","ROL","BOT"}, string.upper(etab[i].单位));
+	}
+	[10] = function(i){
+		var hasChild = function(z){
+			if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
+			else return false; 
+		}
+		//console.log(i, hasChild(i))
+		if !hasChild(i) return; 
+		var t = table.slice(etab, i+1, etab_count);
+		var tx = tarray.getCol( t, "物料号" );
+		var x = table.find(tx, etab[i].物料号);
+		if x return hasChild(x+i) ;
+	}
+	[11] = function(i){
+		if etab[i].物料号  == "H0088300011"
+			return (etab[i].单位用量 > 0.1);  
+	}
+	[12] = function(i){
+		if etab[i].单位  == "ZA"
+			if !string.indexOf(etab[i].物料描述,"胶带")
+				return !math.isInteger(tonumber(etab[i].单位用量));  
+	}
 };
 
 
-
+import console.progress;
+var bar = console.progress();
 
 var getErr = {};
 
-for(i=1; #etab; 1){
-	for(j=1;#sapErr;1){		
+for(i=1; etab_count){
+	bar.setProgress(math.round(i*100/etab_count), math.round(i*100/etab_count) + "% processing......");
+	for(j=1; #sapErr){		
 		if sapErr[j](i)
-		table.push(getErr,{errRow=i; errRule=j})
+			table.push(getErr, {errRow=i; errRule=j})
 	}
 }
 
-for(i=1;#getErr;1){
+for(i=1; #getErr){
 	console.log("第" ++ (getErr[i].errRow + 4) ++ "行, " ++ etab[getErr[i].errRow].物料号, rule_desp[getErr[i].errRule]);
 }
+
 console.pause(true);

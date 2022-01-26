@@ -1,0 +1,103 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="专用号填入itemmaster";right=759;bottom=469)
+winform.add(
+button={cls="button";text="填入";left=552;top=368;right=752;bottom=408;z=1};
+combobox2={cls="combobox";left=136;top=40;right=728;bottom=64;edge=1;items={};mode="dropdownlist";z=3};
+listview={cls="listview";left=0;top=120;right=760;bottom=360;edge=1;fullRow=1;gridLines=1;msel=false;z=2}
+)
+/*}}*/
+
+import tarray;
+import com.excel;
+
+import config;
+
+//	import console
+//	console.open()
+var fileTab = {
+	[1] = {"名称" = "service counter"; workbook = "Service Counter Item_Master.xlsx"; sheet = "part list"};
+	[2] = {"名称" = "Monaxis"; workbook = "Monaxis_Item_Master.xlsx"; sheet = "part list"};
+	[3] = {"名称" = "Monaxis A"; workbook = "Monaxis_EP_Item_Master.xlsx"; sheet = "part list"};
+	fields = { [1] = "名称"; [2] = "workbook"; [3]="sheet" };
+}
+winform.listview.setTable(fileTab);
+
+winform.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable之后, 否则失效
+    listview = "selIndex"
+} );
+
+
+var excel = com.excel(false);
+if !excel.ActiveWorkbook win.msgbox("excel存在未完全退出的进程,需要手动处理");
+
+for (i=1; excel.WorkBooks.Count)
+	if string.startWith(excel.WorkBooks(i).Name,"新增--专用号申请") winform.combobox2.add(excel.WorkBooks(i).Name)
+if winform.combobox2.count {
+	var findActiveWB = table.indexOf(winform.combobox2.items, excel.ActiveWorkbook.Name)
+	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
+}
+winform.button.oncommand = function(id,event){
+	if !#winform.listview.selected return ; 
+	if !#winform.combobox2.selText return ; 
+	config.itemMasterAppendNew.save();
+	var sht = excel.WorkBooks(winform.combobox2.text).sheets("申请表");
+	var isThisShtMatch = function(){
+		if !sht.Columns("A:A").find("4.基本计量:后附") return false;
+		if !sht.Rows("2:2").find("产品大类") return false;
+	}
+	if !isThisShtMatch return;
+	/*getTabFromRange{{*/
+	var getTabFromRange = function(range){
+    	var eArr = range.value2;
+		var fields = table.shift(eArr);
+		eArr.fields = fields
+		return eArr; 	
+	}
+	/*}}*/
+
+	var etr = function(){
+		for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
+			if (sht.cells(i,"F").value2) return i;
+		}
+	}
+	var otab = getTabFromRange(sht.Range("$E$2:$K$" ++ etr()));
+	var itemMaster = excel.WorkBooks(
+			winform.listview.getItemText(winform.listview.selIndex, 2)
+		).Sheets(
+			winform.listview.getItemText(winform.listview.selIndex, 3)
+		);
+	itemMaster.AutoFilterMode = false;
+	var itemCount = itemMaster.usedRange.rows.count;
+	var etab = getTabFromRange(itemMaster.range("A2:E" ++ itemCount));
+
+	if tarray.indexOfCol(etab, otab[1][1],1) {
+		win.msgbox("已经存在了");
+		return ;
+	}
+	var tar_b = itemCount + 1;
+	var tar_e = tar_b + #otab -1;
+	itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
+	tarRng = itemMaster.range("A" ++ tar_b ++ ":E" ++ tar_e);
+	tarTab = tarRng.value2
+	for (i=1; #otab){
+		tarTab[i][1] = otab[i][1];
+		tarTab[i][2] = otab[i][2];
+		tarTab[i][3] = otab[i][4];
+		tarTab[i][4] = otab[i][6];
+		tarTab[i][5] = otab[i][7] == "配置" ? "配置" : "";
+	}
+	
+	tarRng.value2 = tarTab;
+
+	//console.dumpTable(tarTab)
+	//console.pause(true);
+	winform.close();
+}
+winform.onDestroy = function(){
+   	if excel excel.alerts = true;    //防止意外关闭后Excel假死
+}
+winform.show();
+
+win.loopMessage();
+return winform;

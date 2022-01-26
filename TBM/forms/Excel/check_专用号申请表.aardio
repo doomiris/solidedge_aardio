@@ -97,8 +97,10 @@ var rule_desp = {
 	[38] = "物料描述首尾含有多余的空格";
 	[39] = "喷粉件为未喷粉在前，已喷粉在后";
 	[40] = "物料描述有重复行";
-	[41] = "点焊件(未喷)是SH组";
+	[41] = "点焊组件(未喷)是SH组";
 	[42] = "SH组不需要填写展开尺寸和基本物料";
+	[43] = "系统已存在同名物料";
+	[44] = "发泡组件需要SD";
 }
 var sapErr={
 	[1] = function(i){return (etab[i].SAP物料组[[1]]=="S" and etab[i].物料类型 == "ROH")}
@@ -124,7 +126,7 @@ var sapErr={
 	[21] = function(i){return (etab[i].物料类型=="HALB" and etab[i].SAP物料组[[1]] !== "S")}
 	[22] = function(i){return (etab[i].物料类型=="HALB" and !table.find({"01";"02";"08"}, etab[i].物料分类明细))}
 	[23] = function(i){return (etab[i].物料类型=="ROH" and etab[i].SAP物料组[[1]] !== "R")}
-	[24] = function(i){return (etab[i].SAP物料组[[1]]=="R" and string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细)}
+	[24] = function(i){if etab[i].SAP物料组 !== "R05" and etab[i].物料分类明细 !== "16" return (etab[i].SAP物料组[[1]]=="R" and string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细)}
 	[25] = function(i){return (etab[i].物料类型=="ROH" and (etab[i].SAP展开尺寸 or table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料) or etab[i].SAP颜色分组 or etab[i].SAP是否为点焊中最大件))}
 	[26] = function(i){return (etab[i].物料类型=="ROH" and etab[i].属性 !== "非配置")}
 	[27] = function(i){return (etab[i].SAP物料组=="SC" and table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料))}
@@ -141,7 +143,7 @@ var sapErr={
 	[38] = function(i){return (string.trim(etab[i].物料描述) !== etab[i].物料描述)}
 	[39] = function(i){
 		if etab[i].SAP物料组 == "SC" 
-			return (string.replace(etab[i].物料描述,"已喷","未喷") !== etab[i-1].物料描述)
+			return (string.replace(string.trim(etab[i].物料描述),"已喷","未喷") !== string.trim(etab[i-1].物料描述))
 	}
 	[40] = function(i){
 		for (j=i+1;#etab;1)
@@ -149,7 +151,18 @@ var sapErr={
 	}
 	[41] = function(i){if !string.indexOf(etab[i].物料描述,"已喷") return (string.indexOf(etab[i].物料描述,"点焊") and etab[i].SAP物料组 !== "SH")}
 	[42] = function(i){return (etab[i].SAP物料组=="SH" and (etab[i].SAP展开尺寸 or etab[i].SAP基本物料 or etab[i].SAP是否为点焊中最大件))}
+	[43] = function(i){
+		import QHC;
+		if #QHC.getSapItemByDesp(etab[i].物料描述) return true; 
+	}
+	[44] = function(i){
+		if etab[i].物料类型=="HALB"
+			if etab[i].物料分类明细 == "08"
+				if string.indexOf(etab[i].物料描述,"发泡")
+					return etab[i].SAP物料组!=="SD" ;
 
+	}
+	
 };
 
 import console.progress;

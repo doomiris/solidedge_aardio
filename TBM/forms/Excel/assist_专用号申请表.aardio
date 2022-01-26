@@ -1,4 +1,6 @@
 import console; 
+console.open();
+import etip;
 /*
 _SAP物料组 = {
 	["S"] = {"SA"; "SB"; "SC"; "SD"; "SE"; "SG"; "SH"; "SI"};
@@ -8,9 +10,13 @@ _物料类型 = {"HALB";"ROH";"KMAT"};
 _属性 = {"配置";"非配置";"委外加工"};
 */
 import com.excel;
-var excel = com.excel(false);
+var excel,err = com.excel(false);
 
-var sht = excel.ActiveWorkbook.ActiveSheet;
+//excel.ActiveWorkbook.Save();
+
+var sht = excel.ActiveSheet;
+sht.AutoFilterMode = false;
+
 if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表"); 
 if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 var etr = function(){
@@ -18,126 +24,85 @@ var etr = function(){
 		if (sht.cells(i,"F").value2) return i;
 	}
 }
-/*
-var etab = (function(){
-		var fields = {
-			"序号";
-			"长度检查";
-			"申请人";
-			"申请日期";
-			"SAP专用号";
-			"物料描述";
-			"基本计量单位";
-			"SAP物料组";
-			"产品大类";
-			"物料类型";
-			"属性";
-			"物料分类明细";
-			"用途";
-			"SAP展开尺寸";
-			"SAP基本物料";
-			"SAP颜色分组";
-			"SAP是否为点焊中最大件";
-			"SAP密度";
-			"适用产品型号";
-			"换算关系";
-			"图号";
-		};
-		var etr = function(){
-			for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-				if (sht.cells(i,"F").value2) return i;
-			}
-		}
-		
-		if !etr() return error("找不到物料描述");
-		
-		var tab = {};
-		var eArr = sht.Range("$A$3:$U$" ++ etr()).value2
-		for(i=1;#eArr;1){    
-	    	var d = table.array();
-	    	for (j=1;#fields;1){
-	    		d[fields[j]] = eArr[i][j];
-			}		
-			table.push(tab,d);
-		}
-		return tab; 
-})()
-var rule_desp = {
-	[1] = "S-组不能是ROH";
-	[2] = "S-组只能是01,08,09";
-}
-var sapErr={
-	[1] = function(i){return (etab[i].SAP物料组[[1]]=="S" and etab[i].物料类型 == "ROH")}
-	[2] = function(i){return (etab[i].SAP物料组[[1]]=="S" and !table.find({"01";"08";"09"}, etab[i].物料分类明细))}
-};
-*/
+var tRng = sht.Range("A3:S" ++ etr());
+
+var etab = tRng.value;
+
 
 import console.progress;
 var bar = console.progress();
 
-var getErr = {};
-
-/*
-for(i=1;#etab;1){
-    bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
-	for(j=1;#sapErr;1){
-		if sapErr[j](i)
-		table.push(getErr,{errRow=i; errRule=j})
-	}
-}
-*/
 var str_today = function(separator){
 	var tm = time.now();
 	tm.format = string.join({"%Y";"%m";"%d"},separator);
 	return tostring(tm);
 }
+import config;
+var username = config.tbm.Designer;
+
+
+for(i=1; #etab){
+    bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
+    
+	for(j=1; 19 /* S */)
+		if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
+		
+	etab[i][1] = i;
+	etab[i][2] = "=len(F" ++ (i+2) ++ ")";
+	
+	if !#etab[i][3] etab[i][3] = username;
+	if !#etab[i][4] etab[i][4] = str_today("/");
+	if !#etab[i][7] etab[i][7] = "ZA";
+	if !#etab[i][9] etab[i][9] = "柜体";
+	if !#etab[i][13] etab[i][13 /* M */] = "4.新品BOM";
+	if !#etab[i][19] etab[i][19 /* S */] = table.shift(string.split(etab[i][6 /* F */]," "));
+	
+	var str = etab[i][6];
+	
+	var ePush = function(index,val){
+		for(k=1; #index)
+			if !#etab[i][index[k]] etab[i][index[k]] = val[k];
+		//TODO: 根据已经填写的信息计算空白内容
+	}	
+	if string.indexOf(str,"可选项")			ePush({8,10,11,12},{"SG","KMAT","配置","09"});
+	elseif string.indexOf(str, "总装")		ePush({8,10,11,12},{"SG","HALB","配置","08"});
+	elseif string.indexOf(str, "组装")		ePush({8,10,11,12},{"SG","HALB","配置","08"});
+	elseif string.indexOf(str, "已喷")		ePush({8,10,11,12},{"SC","HALB","非配置","01"});
+	elseif string.indexOf(str, "组件")		ePush({8,10,11,12},{"SA","HALB","非配置","08"});
+	elseif string.indexOf(str, "ABS")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
+	elseif string.indexOf(str, "PVC")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
+	elseif string.indexOf(str, "EPS")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
+	elseif string.indexOf(str, "PC")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
+	elseif string.indexOf(str, "尼龙")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
+	elseif string.indexOf(str, "玻璃")		ePush({8,10,11,12},{"R14","ROH","非配置","14"});
+	elseif string.indexOf(str, "铝合金")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
+	elseif string.indexOf(str, "点焊")		ePush({8,10,11,12},{"SH","HALB","非配置","01"});
+	elseif string.indexOf(str, "不锈钢")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
+	elseif string.indexOf(str, "焊接件")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
+	elseif string.indexOf(str, "铆接件")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
+	elseif string.indexOf(str, "木包装")	ePush({8,10,11,12},{"R05","ROH","非配置","16"});
+	elseif string.indexOf(str, "TP2M")		ePush({8,10,11,12},{"R07","ROH","非配置","07"});
+	elseif string.endWith(str, "底箱体")		ePush({8,10,11,12},{"SD","HALB","非配置","08"});
+	elseif string.endWith(str, "发泡板")		ePush({8,10,11,12},{"SD","HALB","非配置","08"});
+	elseif string.indexOf(str, "板")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
+	elseif string.indexOf(str, "连接件")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
+	elseif string.indexOf(str, "支撑")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
+	elseif string.indexOf(str, "未喷")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
+	elseif string.indexOf(str, "蒸发器")	ePush({8,10,11,12},{"R07","ROH","非配置","07"});	
+}
+//table.sort(etab, lambda(b) owner[12]>b[12]);
+sht.Columns(10 /* J */).ColumnWidth = #etab[1][10 /* J */] + 2.75;
+sht.Columns(19 /* S */).ColumnWidth = #etab[1][19 /* S */] + 2.75;
+
+tRng.value2 = etab;
+
 var filename = excel.ActiveWorkbook.name;
-filename = string.replace(filename, "姓名", "兰功鹏");
+filename = string.replace(filename, "姓名", username);
+filename = string.replace(filename, "型号", etab[1][19 /* S */]);
 filename = string.replace(filename, "日期", str_today("."));
 
-for(i=3;etr();1){
-    todo = sht.Range("A" ++ i ++ ":S" ++ i);
-    var str = todo.cells(1,"F").value2;
-
-    var t = {};
-
-	table.push(t,i-2);
-	table.push(t,string.len(str));
-	table.push(t,"兰功鹏");
-	table.push(t,str_today("/"));
-	table.push(t,"");
-	table.push(t,string.trim(str));
-	table.push(t,"ZA");
-	if string.indexOf(str,"可选项") 
-			table.push(t,"SG","柜体","KMAT","配置","09");
-	elseif string.indexOf(str, "已喷")
-			table.push(t,"SC","柜体","HALB","非配置","01");
-	elseif string.indexOf(str, "未喷")
-			table.push(t,"SB","柜体","HALB","非配置","01");
-	elseif string.endWith(str, "组件")
-			table.push(t,"SA","柜体","HALB","非配置","08");
-	elseif string.indexOf(str, "玻璃")
-			table.push(t,"R14","柜体","ROH","非配置","14");
-	else
-		table.push(t,
-			todo.cells(1,"H").value2 ? todo.cells(1,"H").value2 : "" ,
-			todo.cells(1,"I").value2 ? todo.cells(1,"I").value2 : "" ,
-			todo.cells(1,"J").value2 ? todo.cells(1,"J").value2 : "" ,
-			todo.cells(1,"K").value2 ? todo.cells(1,"K").value2 : "" ,
-			todo.cells(1,"L").value2 ? todo.cells(1,"L").value2 : "" ,
-		);
-	table.push(t,"4.新品BOM");
-	table.push(t,"","","","","");
-	table.push(t,"CGL");	
-
-	todo.value2 = t
-}
-
-/*
-for(i=1;#getErr;1){
-	console.log("第" ++ (getErr[i].errRow + 2) ++ "行, 序号:" ++ etab[getErr[i].errRow].序号 , rule_desp[getErr[i].errRule]);
-}
-*/
 import win.clip
 win.clip.write(string.left(filename,#filename-1))
-console.pause(true, "检查完成! 按任意键退出...");
+
+
+console.pause(true, "完成! 按任意键退出...");

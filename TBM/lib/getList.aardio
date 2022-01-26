@@ -20,13 +20,14 @@ namespace getList{
 	};
 */
 	saveFolderDB = function(){
-		_searchLoc = {
+		_searchLoc := {
 			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
 			"\\ccnsia1a\separts\Cabinet\QHC图纸库";
 		};
-		import sqlite.aes256;
-		var db = sqlite.aes256("S:\Admin\SAP\db\drawing_lists.db");
-		_libName = "Lib";
+		import config;
+		import sqlite;
+		var db = sqlite(config.dbServer.path + "drawing_lists.db");
+		_libName := "Lib";
 		var flist={
 			[1] = ..fsys.list(_searchLoc[1],,"*.*");
 			[2] = ..fsys.list(_searchLoc[2],,"*.*");
@@ -75,9 +76,10 @@ namespace getList{
 		var _c = xlRng.find("专用号").column;
 		var _d = xlRng.find("图号").column;
 		console.log("专用号所在列: "++_c, "图号所在列: " ++ _d)
+		import config;
 		import sqlite;
-		var db = sqlite("S:\Admin\SAP\db\drawing_lists.db");
-		_libName = "Map";		
+		var db = sqlite(config.dbServer.path + "drawing_lists.db");
+		_mapName = "Map";
 		var dlist = db.getTable("SELECT * FROM [Map]");		
 		console.log("更新前数据行数:", #dlist);
 		console.log("----------");
@@ -120,9 +122,10 @@ namespace getList{
 			return str; 
 		}
 /*}}*/
-		import sqlite.aes256;
-		var db = sqlite.aes256("S:\Admin\SAP\db\drawing_lists.db");
-		_libName = "Map";		
+		import config;
+		import sqlite;
+		var db = sqlite(config.dbServer.path + "drawing_lists.db");
+		_mapName = "Map";		
 		var dlist = db.getTable("SELECT * FROM [Map]");		
 		console.log("更新前数据行数:", #dlist);
 		console.log("----------");
@@ -154,14 +157,15 @@ namespace getList{
 			return str; 
 		}
 /*}}*/
-		import sqlite.aes256;
-		var db = sqlite.aes256("S:\Admin\SAP\db\drawing_lists.db");
-		_libName = "Map";		
+		import config;
+		import sqlite;
+		var db = sqlite(config.dbServer.path + "drawing_lists.db");
+		//_libName = "Map";		
 		var dlist = db.getTable("SELECT * FROM [Map]");		
 		console.log("更新前数据行数:", #dlist);
 		console.log("----------");
 		console.log("开始分析当前sheet数据...");
-		var tar = sqlite.aes256("S:\Admin\SAP\db\qhc_dw_rel_list.db");
+		var tar = sqlite(config.dbServer.path + "qhc_dw_rel_list.db");
 		var tarList = tar.getTable("SELECT DISTINCT 图纸号, 物料号码 FROM [qhc_dw_rel_list]")
 		db.beginTrans();
 

@@ -1,0 +1,85 @@
+import QHC;
+import com.excel;
+import console;
+console.open();
+
+var excel = com.excel(false) ;
+var osht = excel.ActiveWorkbook.ActiveSheet;
+if osht.cells(1,1).value2 !== "展开层" error("格式错误");
+
+/*
+var getColIndex = function(A){
+	return A[1]-'A'# + 1; 
+}
+*/
+import etip;
+
+var etab = osht.UsedRange.value2;
+
+for(j = 10 /* J */; 17 /* Q */){
+    if !#etab[2][j] continue;
+    //if !osht.cells(2,j).value2 continue;
+    excel.alerts = false;
+    var tbk = excel.WorkBooks.Add("d:\temp\新产品BOM申请单模板.xlsx");
+    var tsht = tbk.Sheets(1);
+    tsht.Range("6:"++ (#etab+6)).EntireRow.insert();
+    for(i=5; tsht.UsedRange.Rows.Count - 3){
+        if ((i-3) > #etab) break;
+        if !etab[i-3][1 /* A */] and i>5 continue; //如果主表层级为空则跳过,  BUG:层级为0时怎么处理
+        if etab[i-3][j] == "X" continue;
+    	var bun = etab[i-3][4 /* D */]; 
+    	if !bun bun = "1";
+    	if string.indexOf(bun,"\") {
+    		var arr = string.split(bun,"\");
+    		if #arr==2 arr = table.concat(arr,arr,arr,arr); // TODO: 125_188重复方式不好
+    		if #arr==4 arr = table.concat(arr,arr);
+    		bun = arr[j - 10 /* J */ + 1];
+    	}
+    	if !bun or bun=="0" continue;
+    	
+        var tar={};
+        
+       	table.push(tar, etab[i-3][1 /* A */])	//列名:层级
+       	table.push(tar, "","L")	//列名:BOM项目,项目类别
+       	
+    	var hcode = etab[i-3][j]; 
+    	if !hcode hcode = etab[i-3][2 /* B */]; 
+    	if !hcode continue;	//如果还是没有物料则跳过， 目标文件内不显示描述等信息， 此种情况不可下发导入．
+    	
+      	table.push(tar, hcode);	//列名:物料号
+      	
+		var hitem = QHC.getSapItem(hcode);
+		
+      	table.push(tar, hitem ? hitem.物料描述 : "");	//列名:物料描述
+      	table.push(tar, bun);			//列名:单位用量
+      	table.push(tar, hitem ? hitem.BUn : "");	//列名： 单位
+      	table.push(tar, "");	//列名:排序文本
+      	table.push(tar, hitem ? hitem.MTyp : ""); //列名:物料类型
+      	table.push(tar, #etab[i-3][8 /* H */]  ?  etab[i-3][8 /* H */] : ""); //列名: 相关性语句
+		tsht.range("A" ++ i ++ ":J" ++ i).value2 = tar;
+    }
+    
+    for (k= tsht.UsedRange.Rows.Count-3; 6; -1){
+    	if !tsht.Cells(k,"A").value2 or !tsht.Cells(k,"D").value2
+    		tsht.Rows(k).Delete();	//删除空行
+    }
+    tsht.Activate();
+    
+	try{
+		excel.Run("initExportedBom"); //调用宏格式化样式
+	}
+    
+    excel.alerts = false;	//调用的宏重置了此状态    
+    tbk.SaveAs( "d:\temp\"++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx");
+    console.log(tbk.FullName);
+    tbk.close();
+    excel.alerts = true;
+}
+
+
+
+/*
+TODO:
+1. 通用底箱体不展开
+*/
+console.pause("完成")

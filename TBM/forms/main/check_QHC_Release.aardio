@@ -13,9 +13,10 @@ listview={cls="listview";left=0;top=112;right=760;bottom=432;ah=1;aw=1;db=1;dl=1
 )
 /*}}*/
 
+import config;
 /*sqliteDB{{*/
-import sqlite.aes256;
-var db,err = sqlite.aes256("\\ccnsia1a\separts\Admin\SAP\db\qhc_dw_rel_list.db", /*"CCL100100"*/);	//打开数据库连接
+import sqlite;
+var db,err = sqlite(config.dbServer.path + "qhc_dw_rel_list.db");	//打开数据库连接
 if (err) error(err)
 /*}}*/
 	//import console
@@ -25,9 +26,7 @@ var searchQHCDB = function(pcode){
 	var userinput = string.trim(pcode);
 	if !userinput return null ; 	
     if !(string.startWith(userinput,"H",true)) userinput = "H" ++ userinput;
-	var sqlstr = "SELECT * FROM [qhc_dw_rel_list] WHERE [物料号码] = '" ++ userinput ++"'";
-	var t = db.getTable(sqlstr);
-
+	var t = db.getTable("SELECT * FROM [qhc_dw_rel_list]", { 物料号码 = userinput } );
 	//console.dumpTable(t)
 	return t;
 }
@@ -42,8 +41,15 @@ var getLatestVer = function(pcode){
 import win.ui.grid;
 var grid = win.ui.grid(winform.listview);//创建数据视图
 var tab;
+
+
 winform.button.oncommand = function(id,event){
+	winform.edit.text = string.upper(winform.edit.text);
 	tab = searchQHCDB(winform.edit.text)
+	for(i=1;#tab){
+		tab[i].图纸下发时间 = time(tab[i].图纸下发时间,"%Y/%m/%d");
+	}
+	
   	grid.setTable(tab);
   	winform.edit2.text = #tab ? tab[#tab].图纸版次 : ""
 }
@@ -57,12 +63,11 @@ if(pd){
 }
 
 winform.button2.oncommand = function(id,event){
-    _dbb_app = "D:\users\Personal LGP\personal Documents\code_space\DB.Browser.for.SQLite-3.11.2-win64\DB Browser for SQLite\DB Browser for SQLite.exe";
-    if !io.exist(_dbb_app) return ; 
-    _dw_path = "\\ccnqia05\开发部共享文件-\01.2021Y图纸&技术通知及BOM\2021年开发部图纸下发台账--打开后请及时关闭，谢谢.xlsx";
-	if !io.exist(_dw_path) return error("找不到开发部共享文件");
-	loadcodex("\forms\Excel\refresh_QHC_Drawing_Release_List.aardio");
+    _dw_path = "\\ccnqia05\开发部共享文件-\01.2021Y图纸&技术通知及BOM\2021年开发部图纸下发台账-.xlsx";
+	if !io.exist(_dw_path) return error("找不到开发部共享文件: " ++ _dw_path);
+	loadcodex("\forms\Excel\refresh_QHC_Drawing_Release_List.aardio", _dw_path );
 }
+
 
 win.loopMessage();
 return winform;
