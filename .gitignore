@@ -1,4 +1,6 @@
 
 *.log
-TBM\obsolete\
-TBM\TEST\
+TBM/forms/obsolete/
+TBM/forms/TEST/
+TBM/.build/
+TBM/dist/
