@@ -1,6 +1,5 @@
-
 *.log
-TBM/forms/obsolete/
-TBM/forms/TEST/
-TBM/.build/
-TBM/dist/
+forms/obsolete
+forms/TEST
+.build/
+dist/
