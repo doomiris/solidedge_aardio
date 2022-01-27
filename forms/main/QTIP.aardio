@@ -127,6 +127,7 @@ var searchSapDB = function(userinput){
     	userinput=string.replace(userinput,"@_","\_");
     	userinput=string.replace(userinput,"@*","%");
     	userinput=string.replace(userinput,"@?","_");
+    	
     	var searchField;	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) {
     		searchField = "物料";

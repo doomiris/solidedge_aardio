@@ -49,7 +49,7 @@ var dealWithTxt = function(winform){
 	if !db error("dberror");
 	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
 	db.exec("VACUUM");
-	db.exec("CREATE TABLE [all_cost](物料 TEXT,物料描述 TEXT,MTyp TEXT,物料组 TEXT,BUn TEXT,价格 NUMERIC,PGr TEXT);")  
+	db.exec("CREATE TABLE [all_cost](物料 TEXT collate nocase,物料描述 TEXT collate nocase,MTyp TEXT,物料组 TEXT,BUn TEXT,价格 NUMERIC,PGr TEXT);")  
 	db.beginTrans();
 	
 	var n = 1;
@@ -211,8 +211,8 @@ var mergeDb = function(winform){
 	//	db.exec("REINDEX 物料是可配置的;") //避免大量NULL值的索引
 	//	db.exec("REINDEX 禁用;")
 	}else{
-		db.exec("CREATE UNIQUE INDEX 物料 on 所有物料 (物料);")
-		db.exec("CREATE INDEX 物料描述 on 所有物料 (物料描述);")
+		db.exec("CREATE UNIQUE INDEX 物料 on 所有物料 (物料 collate nocase);")
+		db.exec("CREATE INDEX 物料描述 on 所有物料 (物料描述 collate nocase);")
 		db.exec("CREATE INDEX MTyp on 所有物料 (MTyp);")
 		db.exec("CREATE INDEX 物料组 on 所有物料 (物料组);")
 		db.exec("CREATE INDEX BUn on 所有物料 (BUn);")
