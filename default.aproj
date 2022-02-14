@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.143" ProductVersion="1.5.0.143" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.145" ProductVersion="1.5.0.145" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -36,11 +36,11 @@
 			<file name="download-cost-bom-va02.aardio" path="forms\SAP\download-cost-bom-va02.aardio" comment="forms\SAP\download-cost-bom-va02.aardio"/>
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="SAP-download-bom.aardio" path="forms\SAP\SAP-download-bom.aardio" comment="forms\SAP\SAP-download-bom.aardio"/>
-			<file name="SAP-GETLIST.aardio" path="forms\SAP\SAP-GETLIST.aardio" comment="forms\SAP\SAP-GETLIST.aardio"/>
 		</folder>
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="true" ignored="false">
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
+			<file name="SAP-GETLIST.aardio" path="forms\admin_only\SAP-GETLIST.aardio" comment="forms\admin_only\SAP-GETLIST.aardio"/>
 		</folder>
 		<folder name="TEST" path="forms\TEST" comment="forms\TEST" local="false" embed="false" ignored="true">
 			<file name="BOM_FILL_FROM_BASE.aardio" path="forms\TEST\BOM_FILL_FROM_BASE.aardio" comment="forms\TEST\BOM_FILL_FROM_BASE.aardio"/>

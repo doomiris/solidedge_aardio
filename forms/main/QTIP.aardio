@@ -393,6 +393,7 @@ winform.buttonD.oncommand = function(id,event){
 		    var pt = ::POINT();
 			::User32.GetCursorPos(pt);
 	    	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	    	if !winform.popmenu return ; 
 	    	win.setForeground(winform.hwnd)
 	    	winform.popmenu.popup(pt.x,pt.y,true )
 }

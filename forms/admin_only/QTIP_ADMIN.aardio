@@ -95,7 +95,7 @@ winform.button5.oncommand = function(id,event){
 
 
 winform.button9.oncommand = function(id,event){
-	loadcodex("\forms\SAP\SAP-GETLIST.aardio");
+	loadcodex("\forms\admin_only\SAP-GETLIST.aardio");
 	winform.close();
 }
 var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");

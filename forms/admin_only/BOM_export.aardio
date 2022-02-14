@@ -14,36 +14,49 @@ var getColIndex = function(A){
 */
 import etip;
 
+import console.progress;
+var progress = console.progress();
+
 var etab = osht.UsedRange.value2;
+var ts_count = #etab;
 
 for(j = 10 /* J */; 17 /* Q */){
     if !#etab[2][j] continue;
-    //if !osht.cells(2,j).value2 continue;
+
     excel.alerts = false;
+    
     var tbk = excel.WorkBooks.Add("d:\temp\新产品BOM申请单模板.xlsx");
     var tsht = tbk.Sheets(1);
-    tsht.Range("6:"++ (#etab+6)).EntireRow.insert();
-    for(i=5; tsht.UsedRange.Rows.Count - 3){
-        if ((i-3) > #etab) break;
-        if !etab[i-3][1 /* A */] and i>5 continue; //如果主表层级为空则跳过,  BUG:层级为0时怎么处理
-        if etab[i-3][j] == "X" continue;
-    	var bun = etab[i-3][4 /* D */]; 
+
+    var tsht_tab = {};
+    
+    for(i=1; ts_count){
+        progress.setProgress( (i+(j-10)*ts_count)*100/(ts_count*8), "wait... ["++(j-9) ++ "/8]");
+        
+        if i == 1 continue; //跳过标题行
+		
+        if !#etab[i][1 /* A */] continue; //跳过层级为空的行
+        if etab[i][j] == "X" continue;	// 跳过X标记
+        
+    	var bun = etab[i][4 /* D */]; 
+    	
     	if !bun bun = "1";
-    	if string.indexOf(bun,"\") {
+    	
+    	if string.indexOf(bun, "\") {
     		var arr = string.split(bun,"\");
     		if #arr==2 arr = table.concat(arr,arr,arr,arr); // TODO: 125_188重复方式不好
     		if #arr==4 arr = table.concat(arr,arr);
     		bun = arr[j - 10 /* J */ + 1];
     	}
-    	if !bun or bun=="0" continue;
+    	if !bun or bun=="0" continue; //跳过数量为0的行
     	
         var tar={};
         
-       	table.push(tar, etab[i-3][1 /* A */])	//列名:层级
+       	table.push(tar, etab[i][1 /* A */])	//列名:层级
        	table.push(tar, "","L")	//列名:BOM项目,项目类别
        	
-    	var hcode = etab[i-3][j]; 
-    	if !hcode hcode = etab[i-3][2 /* B */]; 
+    	var hcode = etab[i][j]; 
+    	if !hcode hcode = etab[i][2 /* B */]; 
     	if !hcode continue;	//如果还是没有物料则跳过， 目标文件内不显示描述等信息， 此种情况不可下发导入．
     	
       	table.push(tar, hcode);	//列名:物料号
@@ -55,14 +68,19 @@ for(j = 10 /* J */; 17 /* Q */){
       	table.push(tar, hitem ? hitem.BUn : "");	//列名： 单位
       	table.push(tar, "");	//列名:排序文本
       	table.push(tar, hitem ? hitem.MTyp : ""); //列名:物料类型
-      	table.push(tar, #etab[i-3][8 /* H */]  ?  etab[i-3][8 /* H */] : ""); //列名: 相关性语句
-		tsht.range("A" ++ i ++ ":J" ++ i).value2 = tar;
+      	table.push(tar, #etab[i][8 /* H */]  ?  etab[i][8 /* H */] : ""); //列名: 相关性语句
+      	
+      	if !#tar[1 /* A */] or !#tar[4 /* D */] continue; //跳过 无层级 和 无专用号的行
+      	
+      	table.push(tsht_tab, tar);
+ //     	console.dump(tar);
     }
     
-    for (k= tsht.UsedRange.Rows.Count-3; 6; -1){
-    	if !tsht.Cells(k,"A").value2 or !tsht.Cells(k,"D").value2
-    		tsht.Rows(k).Delete();	//删除空行
-    }
+    tsht.Range("6:"++ (#tsht_tab + 6)).EntireRow.insert();
+
+	tsht.range("A" ++ 5 ++ ":J" ++ #tsht_tab).value2 = tsht_tab;
+
+
     tsht.Activate();
     
 	try{
@@ -71,7 +89,10 @@ for(j = 10 /* J */; 17 /* Q */){
     
     excel.alerts = false;	//调用的宏重置了此状态    
     tbk.SaveAs( "d:\temp\"++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx");
-    console.log(tbk.FullName);
+    
+    
+   // console.log((j-9) ++ "/8", tbk.FullName);
+    
     tbk.close();
     excel.alerts = true;
 }

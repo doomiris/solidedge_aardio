@@ -32,14 +32,19 @@ class 下料尺寸{
 		this.l = tonumber(s[1]);
 		this.w = tonumber(s[2]);
 		this.t = tonumber(s[3]);
-		var m = this.l * this.w * 2 * 0.18 / 0.9 / 1000000; //白色粉末 0.9, 特殊粉末0.5
+		
+		
+		/* 粉末密度  2022/2/7 更新 */
+		var m = this.l * this.w * 2 * 0.191 / 0.9 / 1E+6;
+		
+		
 		this.powder = (m<0.001) ? 0.001 : ..math.round(m, precision);
 		this.powderItem =  rawTab["白色"] ;
 		/* 
 			利用率93.31%标准计算，密度7.85，最终结果保留3位小数  2021.12.13 更新
 			原材料价格上涨 2021/12/30
 		 */
-		var n = this.l * this.w * this.t * 7.85 / 0.9331 / 1000000;
+		var n = this.l * this.w * this.t * 7.85 / 0.9331 / 1E+6;
 		this.metel = (n<0.001) ? 0.001 : ..math.round(n, precision);
 		this.raw = (function(t){
 			var tab = ..table.filter(rawTab,function(v,index){
@@ -51,11 +56,50 @@ class 下料尺寸{
 		})(this.t)
 	};
 }
+class 发泡料用量{
+	ctor( size_str ){
+		if !size_str return; 
+		precision = 3;
+		
+		size_str = ..string.replace(..string.lower(size_str),"x","*");
+		
+		if ..string.indexOf(size_str,"*") { 
+			var s = ..string.split(size_str,"*");
+			this.l = tonumber(s[1]);
+			this.w = tonumber(s[2]);
+			this.t = tonumber(s[3]);
+			this.volumn = this.l * this.w * this.t / 1E+9;
+		}
+		else { //如果不含星号时按vol计算
+			if ..math.isFinite(size_str)
+				this.volumn = size_str / 1E+9;
+		}
+		
+
+		/* 
+			总重量M=体积*42.7kg/m3，其中黑料异氰酸酯/白料组合聚醚=1.15:1
+		 */
+		this.density = 42.7 /* kg/m3 */;
+		this.proportion = 1.15 /* 黑料异氰酸酯:白料组合聚醚 */;
+
+		this.mass = this.volumn * this.density;
+
+		this.white = ..math.round( this.mass * 1 / (1 + this.proportion), precision );
+		this.black = ..math.round( this.mass * this.proportion / (1 + this.proportion), precision );
+
+		this.raw =  {
+			white = "H0080300487";
+			black = "H0088200013";
+		};
+	};
+}
 
 openDb = function(path){
-	return sqlite(path); 
+	return sqlite(path);
 }
 getSapItem = function(hcode){
+	//import console;
+	//console.log(sap_db_path, hcode)
 	var db,err = openDb(sap_db_path);
     if string.len(hcode) > 11
     	hcode = string.trim(hcode);

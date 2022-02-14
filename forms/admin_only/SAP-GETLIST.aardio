@@ -123,6 +123,9 @@ var importFromQHC = function(winform, path){
 	qTab.fields = tarray.replaceValue(qTab.fields,"行业标准描述-工艺", "生产展平尺寸");	
 	qTab.fields = tarray.replaceValue(qTab.fields,"禁用物料", "禁用");
 	qTab.fields = tarray.replaceValue(qTab.fields,"物料状态", "禁用");
+	//定义格式
+	qTab.fields = tarray.replaceValue(qTab.fields,"物料", "物料 TEXT collate nocase");
+	qTab.fields = tarray.replaceValue(qTab.fields,"物料描述", "物料描述 TEXT collate nocase");
 	import config;
 	import sqlite;
 	var db = sqlite(config.dbServer.path + "step_qhcsap.db");
@@ -199,6 +202,12 @@ var mergeDb = function(winform){
 	db.exec("VACUUM");
 	
 	winform.log.print("更新索引...");
+	/*  https://stackoverflow.com/questions/44947414/sqlite-speed-up-select-with-collate-nocase
+		An index can be used to speed up a search only if it uses the same collation as the query.
+		By default, an index takes the collation from the table column, 
+		To speed up both queries, you need two indexes, one for each collation. So to use the default collation for the implicit index, and NOCASE for the explicit index:
+		(Adding the second column to the index speeds up the ORDER BY in this query.)
+	*/
 	var t= db.getTable("SELECT name from [sqlite_master] where type='index';")
 	import tarray;
 	var x = tarray.transpose(t)
@@ -226,7 +235,7 @@ var mergeDb = function(winform){
 
 /*}}*/
 winform.button3.oncommand = function(id,event){
-	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
+	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."};
 	thread.invoke(mergeDb, winform);
 }
 
