@@ -252,6 +252,18 @@ winform.button.oncommand = function(id,event){
 	//owner.disabledText = null;
 }
 /*}}*/
+var downloadbom = function(){
+    var tab=table.array();
+    for (k, v in winform.listview.selected){
+        var bg = winform.listview.getItemText(v, 1);
+        if string.startWith(bg,"BG")
+            table.push(tab,  bg);
+    }  
+    if !#tab return ;
+	import SAP.session;
+	var session = SAP.session();
+	session.downloadBOM(winform, tab);
+}
 /*双击打开事件{{*/
 winform.listview.onnotify = function(id,code,ptr){
     var selectedRow = owner.getSelection();
@@ -424,7 +436,7 @@ winform.button2.oncommand = function(id,event){
 
 
 subscribe("dok",function(...){
-	winform.button6.disabledText = null;
+	//winform.button6.disabledText = null;
 	win.delay(3*1000);
 	var ftab = ...
 	if ftab {
@@ -443,21 +455,10 @@ subscribe("dok",function(...){
 
 } )
 
-var downloadbom = function(){
-    var tab=table.array();
-    for (k, v in winform.listview.selected){
-        var bg = winform.listview.getItemText(v, 1);
-        if string.startWith(bg,"BG")
-            table.push(tab,  bg);
-    }  
-    if !#tab return ;
-	import SAP.session;
-	var session = SAP.session();
-	session.downloadBOM(winform, tab);
-}
+
 winform.show();
 subscribe("refresh_3",function(){
-		winform.redraw();
+		//winform.redraw();
 	}
 );
 

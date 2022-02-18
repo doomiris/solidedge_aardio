@@ -2,7 +2,7 @@ import fonts.fontAwesome;
 import win.ui;
 import tarray;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=999;bottom=751)
+var winform = win.form(text="分类和特性查询";right=999;bottom=751)
 winform.add(
 button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;color=255;db=1;dl=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
 button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;dr=1;dt=1;z=9};
@@ -10,9 +10,9 @@ edit={cls="edit";left=8;top=32;right=216;bottom=64;dl=1;dt=1;edge=1;z=6};
 edit2={cls="edit";left=232;top=32;right=528;bottom=64;dl=1;dt=1;edge=1;z=8};
 listview1={cls="listview";left=8;top=88;right=216;bottom=216;ah=1;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;items={};msel=false;z=1};
 listview2={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;items={};z=2};
-listview3={cls="listview";left=536;top=88;right=992;bottom=368;ah=1;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
+listview3={cls="listview";left=536;top=88;right=992;bottom=728;ah=1;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
 splitter={cls="splitter";left=216;top=88;right=224;bottom=384;ah=1;db=1;dt=1;frame=1;z=4};
-splitter2={cls="splitter";left=528;top=88;right=536;bottom=384;ah=1;db=1;dt=1;frame=1;z=5};
+splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;frame=1;z=5};
 static={cls="static";text="分类";left=8;top=72;right=88;bottom=88;dl=1;dt=1;transparent=1;z=10};
 static2={cls="static";text="特性";left=224;top=72;right=304;bottom=88;dl=1;dt=1;transparent=1;z=11};
 static3={cls="static";text="特性值";left=536;top=72;right=616;bottom=88;dl=1;dt=1;transparent=1;z=12}
@@ -54,7 +54,8 @@ var filterDeleted = function(t){
 			if string.find(t[i].更改标记,"删") continue;
 		table.push(z, t[i])
 	}
-	table.sort(z, lambda(a) owner.特性 < a.特性)
+	if table.indexOf(z.fields,"特性值") table.sort(z, lambda(a) tonumber((owner.特性值)) < tonumber(a.特性值));
+	else if table.indexOf(z.fields,"特性") table.sort(z, lambda(a) owner.特性 < a.特性);
 	return z;
 }
 
