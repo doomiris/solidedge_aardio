@@ -151,7 +151,7 @@ tbs = {
 initDeclare();
 
 subscribe("refresh_5",function(){
-		winform.redraw();
+		//winform.redraw();
 		tbs[1].publish("refresh_dft_list");
 	}
 );

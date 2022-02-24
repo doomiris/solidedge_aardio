@@ -79,7 +79,7 @@ namespace DraftDocument{
     		}
 		}
 		tar["专用号"] := tar["图号"];
-		
+		tar["版本"] := null;
 		tar["名称(中文)"]:= tar["名称(中)"];	//旧模板命名问题
 		tar["名称(英文)"]:= tar["名称(英)"];	//旧模板命名问题
 		tar["零件名称"] := tar["名称(中文)"];
@@ -147,7 +147,7 @@ namespace DraftDocument{
 		return tar; 
 	};
 	getValueFromBlk = function(blk, lableName){
-		var tar= owner.getLabelTable(blk);
+		var tar = owner.getLabelTable(blk);
 		if tar return tar[lableName]; 
 		else return null; 
 	};
@@ -155,15 +155,17 @@ namespace DraftDocument{
 		return owner.getTitleBlock(owner.getFirstSheet());
 	};
 	getVerFromShtCorner = function(seSht){
-		seSht := owner.ActiveSheet;
+		if !seSht seSht = owner.ActiveSheet;
 		var	width = seSht.SheetSetup.SheetWidth * 1000;
         var txts = seSht.TextBoxes        
         for (i = 1 ; txts.Count){
-            var x,y,z=txts.Item(i).GetOrigin( )
-            //Debug.Print txts.Item(i).Text, x * 1000, y * 1000, z * 1000
+            var x,y,z = txts.Item(i).GetOrigin();
+            //..io.open()
+            //..io.print(txts.Item(i).Text);
+            //..io.Print txts.Item(i).Text, x * 1000, y * 1000, z * 1000
             if (..string.len(..string.trim(txts.Item(i).Text)) == 2) {
                 if (x * 1000 > width * 0.94 && y * 1000 > 10) {
-                    return ..string.trim(txts.Item(i).Text)
+                    return ..string.trim(txts.Item(i).Text), txts.Item(i);
                 }
             }
         }
@@ -173,16 +175,22 @@ namespace DraftDocument{
         var txts = _blk.Block.Views.Item(1).TextBoxes;
         var txtbox = txts.Item(1);
         if (txts && txtbox) {
-            var a,b,c=txtbox.GetOrigin ( )
+            var a,b,c = txtbox.GetOrigin ();
+            //..io.open();
+            //..io.print(a,b,c);
             for (i = 2 ; txts.Count){
                 var x,y,z=txts.Item(i).GetOrigin ()
                 if (x > a || y < b) {
                     txtbox = txts.Item(i);
-                    a,b,c=txtbox.GetOrigin ();
+                    a,b,c= txtbox.GetOrigin ();
                 }
             }
         }
-        return ..string.trim(txtbox.Text)
+        
+        if ..math.isInteger(txtbox.Text) and #txtbox.Text == 2
+        		return ..string.trim(txtbox.Text);
+        else
+        		return null; 
 	};
 	getDftVer = function(){
 		var qhc_ver;
@@ -408,81 +416,97 @@ namespace DraftDocument{
   )
 }
 namespace DraftDocument{
-	replaceNewTitleBlock = function(DFT,Sht){
+	replaceNewTitleBlock = function(DFT){
 		_tPath = "\\ccnsia1a\separts\Admin\Templates\Solidedge_Template\Template_2020\Draft.dft";
 		import solidedge.application;
 		var seApp = solidedge.application();
 		DFT := seApp.ActiveDocument;
 		var seDFT = ..solidedge.DraftDocument(DFT);	//当前文件
-		// 获取当前旧的title block定义;
-		Sht := seDFT.ActiveSheet;
-		var seBlk = seDFT.getTitleBlock(Sht);
+		var Sht = seDFT.ActiveSheet;
+		var x,y = seDFT.getTitleBlockOrigin(Sht);
+		
 		// 从模版获取全部新的block定义;
 		var newDFT = seApp.Open(_tPath, true);	//模版文件
 		for (i = 1; newDFT.Blocks.Count; 1)
 			seDFT.Blocks.CopyBlock (newDFT.Blocks.item(i));		//todo:  旧图纸tb名称不规范, 背景名称不规范的处理
 		newDFT.Close(false);
-		// 插入新Title Block
-		var x,y = seDFT.getTitleBlockOrigin(Sht);
-		var neBlk = Sht.BlockOccurrences.Add("Title 2020", x, y);
-	
-		//获取旧Title Block数据
-		var oLbsTab = seBlk ? seDFT.getLabelTable(seBlk) : null;
+		// 获取当前旧的title block定义;
+		//var oLbsTab={};
+		//var seBlkTab = {};
+		//var neBlkTab = {};
+	var oldBlockName;
+	for (j=1; seDFT.SheetGroups.Item(1).Sheets.Count){
+		var sesht = seDFT.SheetGroups.Item(1).Sheets.Item(j)
+		var seBlk = seDFT.getTitleBlock(sesht);
+		oldBlockName := seBlk.Block.Name;
+		//..table.push(seBlkTab, seBlk);
 		
+		var oLbs = seDFT.getLabelTable(seBlk); //获取旧Title Block数据
+		if !oLbs["版本"]{
+			oLbs["版本"], txtItem = seDFT.getVerFromShtCorner(sesht);
+			if txtItem txtItem.Delete();
+		}
+		//..table.push(oLbsTab, oLbs);
+		
+		var neBlk = sesht.BlockOccurrences.Add("Title 2020", x, y); // 插入新Title Block
+		//..table.push(neBlkTab, neBlk);
 		//解决名称合并后有多行的显示问题, TODO: 对齐方式改进
-		if oLbsTab{
-			oLbsTab["零件名称"] := (function(a,b){
+		if oLbs{
+			oLbs["零件名称"] := (function(a,b){
 				if  b and ..string.len(..string.trim(b))>0 
 					return a ++ '\n' ++ b;	//旧模板命名问题
 				else 
 					return a;
-			})(oLbsTab["名称(中文)"], oLbsTab["名称(英文)"]);
+			})(oLbs["名称(中文)"], oLbs["名称(英文)"]);
 			
-			if (..string.indexOf(oLbsTab["零件名称"], '\r')){
+			if (#oLbs["零件名称"] && ..string.indexOf(oLbs["零件名称"], '\r')){
 				var newTitleBlockLableObject = seDFT.getLabelObjectTable(neBlk);
 				newTitleBlockLableObject["零件名称"].Style.Height = 3 / 1000
     			newTitleBlockLableObject["零件名称"].OriginLocation = 7 /* igBlockLabelBottomCenter */
     			newTitleBlockLableObject["零件名称"].BlockLabel.OriginLocation = 7 /* igBlockLabelBottomCenter */
 			}
 		}
-		//数据写入新Title Block
-		seDFT.tabToBlk(oLbsTab, neBlk);	
-		
-		//删除旧Title Block
-		try{
-			seDFT.Blocks.Item(seBlk.Block.Name).Delete();
-		}
+		seDFT.tabToBlk(oLbs, neBlk); //数据写入新Title Block
 		
 		//替换新图框
-		select (Sht.Background.Name) {
+		select (sesht.Background.Name) {
 			case "A3-Sheet", "A2-Sheet" {
-         		Sht.Background.ReplaceBackground(_tPath, Sht.Background.Name); 
+         		sesht.Background.ReplaceBackground(_tPath, sesht.Background.Name); 
 			}
-		} 
-		
+		}
 		// 检查如果有旧的变更记录就添加新格式变更记录block
-    	for (i = Sht.BlockOccurrences.Count; 1; -1 ) { //获取Titleblock
-        	select  (Sht.BlockOccurrences.Item(i).Block.Name){
+    	for (i = sesht.BlockOccurrences.Count; 1; -1 ) { //获取Titleblock
+        	select  (sesht.BlockOccurrences.Item(i).Block.Name){
             	case "变更修改" {
-                	Sht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
+                	sesht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
                		break;
             	}
         	}
     	}
     	//获取x修改记录block, 由于实时删除, 需要反向循环
     	var gy = (48+6)/1000;	//变更记录y坐标
-    	for (i = Sht.BlockOccurrences.Count; 1;  -1 ) { 
-    		var xblk = Sht.BlockOccurrences.Item(i);
+    	for (i = sesht.BlockOccurrences.Count; 1;  -1 ) { 
+    		var xblk = sesht.BlockOccurrences.Item(i);
         	select  (xblk.Block.Name){
             	case "变更修改" {
                 	var xblklbs = seDFT.getLabelTable(xblk);
-               		var nxblk = Sht.BlockOccurrences.Add("变更记录 2020", x, y + gy);
+               		var nxblk = sesht.BlockOccurrences.Add("变更记录 2020", x, y + gy);
                		seDFT.tabToBlk(xblklbs, nxblk);
                		xblk.Delete();
                		gy += 6/1000;
             	}
         	}
     	}
+	}
+		
+		
+		//删除旧Title Block
+		try{
+			seDFT.Blocks.Item(oldBlockName).Delete();
+		}
+		
+		
+
 	}
 
 	

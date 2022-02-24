@@ -44,6 +44,7 @@ transpose = function(arr){
 }
 mapfields = function(arr, fields){
 	var t={}
+	if !fields if #arr.fields fields = arr.fields;
 	for(i=1;#arr){
 		var cc={};
 		for(j=1; #arr[i])

@@ -175,7 +175,7 @@ var frmReLoad = function(){
 		winform.cb_desp.setFocus();
 		loadDefaults();	//读取默认值(新图纸)
 	}
-	winform.redraw();
+//	winform.redraw();
 }
 
 winform.button4.oncommand = function(id,event){

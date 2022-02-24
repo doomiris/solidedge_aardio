@@ -67,7 +67,7 @@ var initDeclare = function(){
     	    import win.dlg.message;
     	    var dlg = win.dlg.message(mainForm.hwnd);
     	    if dlg.ask( "找不到Title Blocks定义,插入新TitleBlock?" ){
-				solidedge.DraftDocument.replaceNewTitleBlock(seDFT, seDFT.ActiveSheet);
+				solidedge.DraftDocument.replaceNewTitleBlock(seDFT);
 				seBlk = seDFT.getTitleBlock(seSht);
 			}
     	}
@@ -181,8 +181,9 @@ var writeToDrw = function(Lbs){
     Lbs["版本"].Value = winform.version.text;
 }
 var iniFrmCTRL = function(){
-	if (seBlk.Block.Name !== "Title 2020")    winform.chkReplaceTB.hide = 0;
-
+	var seBlk = seDFT.getTitleBlock(seDFT.ActiveSheet) ; 
+	winform.chkReplaceTB.hide = (seBlk.Block.Name == "Title 2020");
+	
 	select(seDFT.getSourcingType(seDFT.getFirstSheet())) {
     	case "P" {
     		winform.rd_M.checked = false;
@@ -213,7 +214,7 @@ winform.button2.oncommand = function(id,event){
 	
 	if (winform.chkReplaceTB.hide == 0){
 		if (winform.chkReplaceTB.checked){
-			solidedge.DraftDocument.replaceNewTitleBlock(seDFT, seDFT.ActiveSheet);
+			solidedge.DraftDocument.replaceNewTitleBlock(seDFT);
 			seBlk = seDFT.getTitleBlock(seSht);
 		}
 	}
@@ -278,14 +279,13 @@ var frmReLoad = function(){
 		showTimeBtn();
 		showSaveNameBtn();
 		winform.seDocPath.text = seDFT.FullName ? seDFT.FullName : "无法获取DFT信息, 点击此处刷新重试";
-		winform.redraw();
+//		winform.redraw();
 	}
 }
 //frmReLoad();
 subscribe("refresh_1",frmReLoad);
 winform.seDocPath.oncommand = function(id,event){
 	frmReLoad();
-
 }
 
 winform.button6.oncommand = function(id,event){

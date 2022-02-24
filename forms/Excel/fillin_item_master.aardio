@@ -4,6 +4,7 @@ var winform = win.form(text="专用号填入itemmaster";right=759;bottom=469)
 winform.add(
 button={cls="button";text="填入";left=552;top=368;right=752;bottom=408;z=1};
 combobox2={cls="combobox";left=136;top=40;right=728;bottom=64;edge=1;items={};mode="dropdownlist";z=3};
+edit={cls="edit";left=0;top=416;right=760;bottom=472;autohscroll=false;aw=1;db=1;dl=1;dr=1;edge=1;multiline=1;vscroll=1;z=4};
 listview={cls="listview";left=0;top=120;right=760;bottom=360;edge=1;fullRow=1;gridLines=1;msel=false;z=2}
 )
 /*}}*/
@@ -31,8 +32,11 @@ winform.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable�
 var excel = com.excel(false);
 if !excel.ActiveWorkbook win.msgbox("excel存在未完全退出的进程,需要手动处理");
 
-for (i=1; excel.WorkBooks.Count)
-	if string.startWith(excel.WorkBooks(i).Name,"新增--专用号申请") winform.combobox2.add(excel.WorkBooks(i).Name)
+for (i=1; excel.WorkBooks.Count) {
+	if string.startWith(excel.WorkBooks(i).Name,"新增--专用号申请") winform.combobox2.add(excel.WorkBooks(i).Name);
+	else if string.startWith(excel.WorkBooks(i).Name,"图纸明细需求") winform.combobox2.add(excel.WorkBooks(i).Name);
+}
+	
 if winform.combobox2.count {
 	var findActiveWB = table.indexOf(winform.combobox2.items, excel.ActiveWorkbook.Name)
 	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
@@ -41,12 +45,6 @@ winform.button.oncommand = function(id,event){
 	if !#winform.listview.selected return ; 
 	if !#winform.combobox2.selText return ; 
 	config.itemMasterAppendNew.save();
-	var sht = excel.WorkBooks(winform.combobox2.text).sheets("申请表");
-	var isThisShtMatch = function(){
-		if !sht.Columns("A:A").find("4.基本计量:后附") return false;
-		if !sht.Rows("2:2").find("产品大类") return false;
-	}
-	if !isThisShtMatch return;
 	/*getTabFromRange{{*/
 	var getTabFromRange = function(range){
     	var eArr = range.value2;
@@ -55,41 +53,85 @@ winform.button.oncommand = function(id,event){
 		return eArr; 	
 	}
 	/*}}*/
-
-	var etr = function(){
-		for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-			if (sht.cells(i,"F").value2) return i;
-		}
-	}
-	var otab = getTabFromRange(sht.Range("$E$2:$K$" ++ etr()));
 	var itemMaster = excel.WorkBooks(
 			winform.listview.getItemText(winform.listview.selIndex, 2)
 		).Sheets(
 			winform.listview.getItemText(winform.listview.selIndex, 3)
 		);
 	itemMaster.AutoFilterMode = false;
+	itemMaster.ListObjects("表1").AutoFilter.ShowAllData();
+
 	var itemCount = itemMaster.usedRange.rows.count;
 	var etab = getTabFromRange(itemMaster.range("A2:E" ++ itemCount));
 
-	if tarray.indexOfCol(etab, otab[1][1],1) {
-		win.msgbox("已经存在了");
-		return ;
-	}
-	var tar_b = itemCount + 1;
-	var tar_e = tar_b + #otab -1;
-	itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
-	tarRng = itemMaster.range("A" ++ tar_b ++ ":E" ++ tar_e);
-	tarTab = tarRng.value2
-	for (i=1; #otab){
-		tarTab[i][1] = otab[i][1];
-		tarTab[i][2] = otab[i][2];
-		tarTab[i][3] = otab[i][4];
-		tarTab[i][4] = otab[i][6];
-		tarTab[i][5] = otab[i][7] == "配置" ? "配置" : "";
-	}
-	
-	tarRng.value2 = tarTab;
+	if string.startWith(winform.combobox2.selText, "新增") {
+		var sht = excel.WorkBooks(winform.combobox2.text).sheets("申请表");
+		var isThisShtMatch = function(){
+			if !sht.Columns("A:A").find("4.基本计量:后附") return false;
+			if !sht.Rows("2:2").find("产品大类") return false;
+		}
+		if !isThisShtMatch return;
 
+		var etr = function(){
+			for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
+				if (sht.cells(i,"F").value2) return i;
+			}
+		}
+		var otab = getTabFromRange(sht.Range("$E$2:$K$" ++ etr()));
+	
+		if tarray.indexOfCol(etab, otab[1][1],1) {
+			win.msgbox("已经存在了");
+			return ;
+		}
+		var tar_b = itemCount + 1;
+		var tar_e = tar_b + #otab -1;
+		itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
+		tarRng = itemMaster.range("A" ++ tar_b ++ ":E" ++ tar_e);
+		tarTab = tarRng.value2
+		for (i=1; #otab){
+			tarTab[i][1] = otab[i][1];
+			tarTab[i][2] = otab[i][2];
+			tarTab[i][3] = otab[i][4];
+			tarTab[i][4] = otab[i][6];
+			tarTab[i][5] = otab[i][7] == "配置" ? "配置" : "";
+		}
+		
+		tarRng.value2 = tarTab;
+	}
+	else if string.startWith(winform.combobox2.selText, "图纸明细需求") {
+
+		var sht = excel.WorkBooks(winform.combobox2.text).sheets("下发台账模板");
+		var range_str = (sht.cells(6,"N").value2) == "团队" ? "$B$6:$R$" : "$A$1:$N$"
+		var otab = getTabFromRange(sht.Range(range_str ++ table.pop(string.split(sht.usedrange.address(),"$"))))
+		otab = tarray.mapfields(otab);
+		var vc = {
+			["00"] = "U";
+			["01"] = "V";
+			["02"] = "W";
+			["03"] = "X";
+			["04"] = "U";
+			["05"] = "V";
+			["06"] = "W";
+			["07"] = "X";
+		}
+		
+		for(i=1;#otab){
+			
+    		if !otab[i].物料号码
+    			continue;
+    		var dr = itemMaster.columns("A").find(otab[i].物料号码);
+    		if !dr {
+				winform.edit.print(i, otab[i].物料号码, "在ItemMaster内找不到");
+				continue;
+    		}
+    		var r =	dr.row;
+
+    		itemMaster.cells(r,"R").value2 = otab[i].图纸号;
+    		itemMaster.cells(r,"S").value2 = otab[i].图纸版次;
+    		itemMaster.cells(r,vc[otab[i].图纸版次]).value2 = string.replace(otab[i].图纸下发时间,"@.","/");
+		}
+	}
+	winform.edit.print("图纸明细需求开始导入完成");
 	//console.dumpTable(tarTab)
 	//console.pause(true);
 	winform.close();

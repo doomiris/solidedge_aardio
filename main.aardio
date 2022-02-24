@@ -162,7 +162,7 @@ mainForm.popmenu2.add('检查专用号申请表', λ() loadcodex("\forms\Excel\c
 mainForm.popmenu2.add('智能填写专用号申请表', λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('专用号填入ItemMaster...', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
-mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\Update_Item_master_by_下发清单.aardio"));
+mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
 mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Excel\Excel_update_info.aardio"));
 mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
 mainForm.popmenu2.add();//分隔线

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.148" ProductVersion="1.5.0.148" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.151" ProductVersion="1.5.0.151" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -27,7 +27,6 @@
 			<file name="Excel_update_info.aardio" path="forms\Excel\Excel_update_info.aardio" comment="forms\Excel\Excel_update_info.aardio"/>
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
 			<file name="refresh_QHC_Drawing_Release_List.aardio" path="forms\Excel\refresh_QHC_Drawing_Release_List.aardio" comment="forms\Excel\refresh_QHC_Drawing_Release_List.aardio"/>
-			<file name="Update_Item_master_by_下发清单.aardio" path="forms\Excel\Update_Item_master_by_下发清单.aardio" comment="forms\Excel\Update_Item_master_by_下发清单.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
 		</folder>
