@@ -97,6 +97,7 @@ if seApp sePid = seApp.ProcessID;
 mainForm.tray = win.util.tray(mainForm)  
 mainForm.onMinimize = function(lParam){
 //	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
+	publish("main_window_hide"); //通知qtip窗口中的 orphanWindow 隐藏
 	mainForm.show(false); 
 	return true; 
 }

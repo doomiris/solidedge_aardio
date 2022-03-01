@@ -6,7 +6,7 @@ import win.ui.accelerator;
 import win.cur;
 import win.clip;
 import win.clip.file;
-import sqlite.latest;
+import sqlite;
 import fsys;
 import fsys.file;
 import config;
@@ -15,15 +15,13 @@ import process;
 import console;
 console.open();
 */
-
-
 /*DSG{{*/
 winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2};
-button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=11};
-button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;color=16711680;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=3};
-button4={cls="button";text='\uF085 ';left=192;top=8;right=227;bottom=42;color=16711680;dl=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=14};
+button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db=1;dl=1;flat=1;font=LOGFONT(h=-14;name='FontAwesome');z=11};
+button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=3};
+button4={cls="button";text='\uF085 ';left=192;top=8;right=227;bottom=42;dl=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=14};
 button5={cls="button";text='\uF103 ';left=477;top=38;right=515;bottom=55;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
 buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=6};
 chkDisabled={cls="checkbox";text="不显示禁用件";left=72;top=472;right=192;bottom=488;bgcolor=16777215;checked=1;db=1;dl=1;hide=1;z=10};
@@ -45,7 +43,6 @@ static2={cls="static";text="筛选条件 (按CTRL多选)";left=8;top=64;right=23
 )
 /*}}*/
 
-
 /*orphanWindow{{*/
 winform.clSapType.orphanWindow();
 winform.clUnit.orphanWindow();
@@ -55,7 +52,7 @@ winform.static.orphanWindow();
 winform.static2.orphanWindow();
 /*}}*/
 
-var grid = win.ui.grid(winform.listview);//创建数据视图
+var grid = win.ui.grid(winform.listview); //创建数据视图
 
 var sapTab;
 /*sqliteDB{{*/
@@ -118,7 +115,7 @@ var getUserInput = function(){
 	if (winform.editUser.hide == 0) return winform.editUser.text; 
 	else return winform.editUser2.text; 
 }
-var getCheckedCol = function(listCtrl){
+var getSelectedText = function(listCtrl){
 	var t = {}
 	for index, text in listCtrl.eachSelected()
 		table.unshift(t, text);
@@ -181,6 +178,7 @@ var searchSapDB = function(userinput){
 		if !quickSearch sqlstr = string.replace(sqlstr,"=","LIKE");
 		
 		if (winform.chkDisabled.checked)	sqlstr += " AND [禁用] IS NULL";
+		if table.indexOf(getSelectedText(winform.clOrderType),"FERT") sqlstr += " AND LENGTH([物料])=11";
 
 		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
 
@@ -246,12 +244,14 @@ var searchDocument = function (filenumber){
 /*搜索按钮事件{{*/
 winform.button.oncommand = function(id,event){
 	//owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="搜索中..."};
+	if winform.button2.tag winform.button2.oncommand();
+	
 	if (winform.button3.hide){		
 		searchSapDB();
 	}else{
 		searchDocument(getUserInput());		
 	}
-	if winform.button2.tag winform.button2.oncommand();
+
 	//owner.disabledText = null;
 }
 /*}}*/
@@ -413,6 +413,11 @@ winform.buttonD.oncommand = function(id,event){
 	    	winform.popmenu.popup(pt.x,pt.y,true )
 }
 /*}}*/
+var updateColor = function(btCtrl){
+	var t = #winform.clSapType.selected + #winform.clUnit.selected + #winform.clOrderType.selected;
+	btCtrl.bgcolor = t ? color.rgb(124,252,0) : null;
+	btCtrl.redraw();
+}
 winform.button2.tag = false;
 winform.button2.oncommand = function(id,event){
 	owner.tag = !owner.tag;
@@ -436,9 +441,12 @@ winform.button2.oncommand = function(id,event){
 	winform.clOrderType.hide = !winform.clOrderType.hide
 	winform.clSapType.hide = !winform.clSapType.hide
 	winform.static.hide = !winform.static.hide
+	updateColor(winform.button2);	
 }
 
-
+subscribe("main_window_hide",function(...){	//orphanWindow随主窗口隐藏
+	if (winform.button2.tag) winform.button2.oncommand();
+} )
 
 subscribe("dok",function(...){
 	//winform.button6.disabledText = null;
@@ -462,19 +470,31 @@ subscribe("dok",function(...){
 
 
 winform.show();
+/*
 subscribe("refresh_3",function(){
-		//winform.redraw();
+		winform.redraw();
 	}
 );
+*/
 
 winform.static.onHyperlinkClick = function(nmSysLink,url,id){
 	winform.clLegacyType.selected = null;
 	winform.clUnit.selected = null;
 	winform.clOrderType.selected = null;
 	winform.clSapType.selected = null;
+	updateColor(winform.button2);	
 }
+import color;
 
 
-
+winform.clUnit.onSelChange = function(){
+	updateColor(winform.button2);	
+}
+winform.clOrderType.onSelChange = function(){
+	updateColor(winform.button2);	
+}
+winform.clSapType.onSelChange = function(){
+	updateColor(winform.button2);	
+}
 winform.editUser.setFocus();
 win.loopMessage();

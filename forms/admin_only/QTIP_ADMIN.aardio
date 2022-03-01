@@ -6,14 +6,14 @@ import config;
 winform = win.form(text="qtip Admin";right=638;bottom=502)
 winform.add(
 button={cls="button";text='\uF09C \r 解密';left=536;top=8;right=632;bottom=40;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=5};
-button11={cls="button";text="更新图纸下发库";left=16;top=56;right=288;bottom=88;align="left";color=10789024;db=1;dl=1;flat=1;z=13};
-button12={cls="button";text="更新OD库";left=16;top=136;right=288;bottom=168;align="left";color=10789024;db=1;dl=1;flat=1;z=14};
+button11={cls="button";text="更新";left=16;top=72;right=288;bottom=120;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新图纸下发库";z=13};
+button12={cls="button";text="更新";left=16;top=184;right=288;bottom=232;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新OD库";z=14};
 button13={cls="button";text="bom_export";left=432;top=248;right=608;bottom=288;hide=1;z=15};
 button2={cls="button";text="euro tif download";left=424;top=456;right=600;bottom=496;z=12};
 button3={cls="button";text="手动映射图号";left=24;top=360;right=120;bottom=456;color=10789024;db=1;dl=1;flat=1;z=6};
 button4={cls="button";text="更新图号库 from Excel";left=336;top=96;right=608;bottom=128;align="left";color=10789024;db=1;dl=1;flat=1;z=1};
-button5={cls="button";text="从图纸下发库更新图号";left=16;top=96;right=288;bottom=128;align="left";color=10789024;db=1;dl=1;flat=1;z=10};
-button6={cls="button";text="更新共享目录库";left=16;top=16;right=288;bottom=48;align="left";color=10789024;db=1;dl=1;flat=1;z=2};
+button5={cls="button";text="更新";left=16;top=128;right=288;bottom=176;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="从图纸下发库更新图号";z=10};
+button6={cls="button";text="更新";left=16;top=16;right=288;bottom=64;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新共享目录库";z=2};
 button7={cls="button";text='\uF084 \r 加密';left=424;top=8;right=520;bottom=40;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=3};
 button9={cls="button";text="admin数据库操作...";left=432;top=200;right=608;bottom=240;hide=1;z=11};
 edit={cls="edit";text="CCL100100";left=424;top=48;right=520;bottom=72;hide=1;multiline=1;z=4};

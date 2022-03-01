@@ -1,3 +1,4 @@
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469)
@@ -6,6 +7,8 @@ button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;z=1}
 button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;z=3};
 button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;z=4};
 button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;z=5};
+button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;font=LOGFONT(h=-16;name='FontAwesome');z=7};
+edit={cls="edit";left=72;top=24;right=568;bottom=56;edge=1;z=6};
 log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 )
 /*}}*/
@@ -154,9 +157,8 @@ var importFromQHC = function(winform, path){
 /*}}*/
 
 winform.button2.oncommand = function(id,event){
-	import fsys.dlg;
-	var path = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件","S:\Admin\SAP\",owner);
-	if !path return ;
+	var path = winform.edit.text;
+	if !io.exist(path) return ; 
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
 	winform.log.print("打开 " ++ path );
 	thread.invoke(importFromQHC, winform, path)
@@ -278,10 +280,23 @@ winform.button4.oncommand = function(id,event){
 		winform.log.print("完成:" + dest);
 		
 	}
-	thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.db", "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
+	if !io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\") winform.log.print("无法访问:" + "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
+	else thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.db", "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
 	thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.db", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
+getXlsxDbPath = function(){
+	import fsys;
+	var list = fsys.list("S:\Admin\SAP",,"*所有物料*.xlsx");
+	if #list 
+		return list[list[#list]]; 
+}
 
+winform.button5.oncommand = function(id,event){
+	import fsys.dlg;
+	winform.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件","S:\Admin\SAP\",owner);
+}
+
+winform.edit.text = getXlsxDbPath();
 winform.show();
 win.loopMessage();
 return winform;
