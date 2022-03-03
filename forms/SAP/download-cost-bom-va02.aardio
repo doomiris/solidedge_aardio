@@ -1,23 +1,26 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=743;bottom=527)
+var winform = win.form(text="下载成本BOM";right=743;bottom=527)
 winform.add(
 button={cls="button";text="开始下载";left=528;top=416;right=680;bottom=456;db=1;dr=1;z=1};
+button2={cls="button";text="下载";left=528;top=224;right=736;bottom=272;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="下载单物料订单";z=9};
 button3={cls="button";text='\uF07C';left=688;top=416;right=726;bottom=454;color=16711680;db=1;dr=1;font=LOGFONT(h=-21;name='FontAwesome');z=7};
 edit={cls="edit";text="0";left=80;top=112;right=296;bottom=144;edge=1;z=2};
 edit2={cls="edit";text="1-17";left=80;top=216;right=296;bottom=256;edge=1;multiline=1;z=3};
+edit3={cls="edit";left=528;top=8;right=736;bottom=216;dr=1;dt=1;edge=1;multiline=1;z=8};
 progress={cls="progress";left=72;top=424;right=488;bottom=454;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)的所在行数(仅限当前屏幕, 不可超出屏幕) (不是项目编号)";left=80;top=168;right=288;bottom=208;transparent=1;z=4};
 static2={cls="static";text="校正行数 (当前屏幕页首行, 首页0, 下页12) 两处 +12 表示从13行";left=80;top=56;right=304;bottom=104;transparent=1;z=5}
 )
 /*}}*/
 
-import console;
-//console.open();
-	
 var dcb = function(winform, absline, HT){
 	import win;
+/*
+import console;
+console.open();
+*/
 	import SAP.session;
 	var session = SAP.session();
  
@@ -35,13 +38,15 @@ var dcb = function(winform, absline, HT){
     	var costFilename = "cost_" ++ string.trim(pcode) ++ "_" ++ string.trim(pdesp) ++ ".xls"
     	//Debug.Print costFilename
     	session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select();
+    	var markcost = null; //不要在Try内声明变量.....
+    	//var productcost = null;
     	try {
-    		var markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1");
- //   		var productcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
+    		markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1");
+ //   		productcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
 		};	
-    	if  markcost 
+    	if  markcost
         		markcost.press()  //使用标记成本
-	    else{
+	    else {
 	        //确认时间
         	var tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT").Text
         	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr
@@ -54,10 +59,10 @@ var dcb = function(winform, absline, HT){
     		//    session.findById("wnd[0]/tbar[0]/btn[0]").press  // 确认时间 和上面不同时用
     		//    session.findById("wnd[0]/tbar[0]/btn[0]").press  // 确认时间 和上面不同时用
     	}
-	
+
     	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton("&PRINT_BACK");
     	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem("&PRINT_PREV_ALL");
-    	session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select()
+    	session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select();
     	session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select()
     	session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").SetFocus()
     	session.findById("wnd[1]/tbar[0]/btn[0]").press()
@@ -77,12 +82,17 @@ winform.button.oncommand = function(id,event){
 	if !#absline return ; 
 	var HT = winform.edit2.text;
 	if !#HT return ;
+	//call(dcb, winform, absline, HT);
 	thread.invoke(dcb, winform, absline, HT);
 }
 
 winform.button3.oncommand = function(id,event){
 	import process;
 	process.explore(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\");	
+}
+
+winform.button2.oncommand = function(id,event){
+	
 }
 
 winform.show();
