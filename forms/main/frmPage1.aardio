@@ -2,6 +2,7 @@ import fonts.fontAwesome;
 import win.ui;
 import solidedge.application;
 import solidedge.DraftDocument;
+import win.ui.menu;
 //import access;
 import config;
 /*DSG{{*/
@@ -13,6 +14,7 @@ button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=34
 button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=27};
 button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=28};
 button6={cls="button";text='\uF06E';left=104;top=144;right=128;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=32};
+button7={cls="button";text='\uF142';left=487;top=103;right=501;bottom=127;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-11;name='FontAwesome');z=35};
 cb_approve_date={cls="edit";left=215;top=248;right=300;bottom=272;dl=1;dt=1;z=15};
 cb_approver={cls="combobox";left=48;top=245;right=178;bottom=270;dl=1;dt=1;items={};mode="dropdown";z=13};
 cb_design_date={cls="edit";left=215;top=184;right=300;bottom=208;dl=1;dt=1;z=10};
@@ -295,5 +297,24 @@ winform.button6.oncommand = function(id,event){
 thread.invoke( loadPromptList, winform )
 
 //loadPromptList();	//读取提示清单
+
+winform.button7.oncommand = function(id,event){
+	if !seDFT return ; 
+	var menu = win.ui.popmenu(winform);//创建弹出菜单
+	for index, item in com.each(seDFT.ModelLinks){
+		menu.add(
+			text = "["+ index +"] " + item.ModelDocument.Name;
+			proc = function(id){
+				winform.cb_weight.text = string.replace("%{Mass|R_}","_",index)
+			}
+		);
+	}
+	var pt = ::POINT();
+	::User32.GetCursorPos(pt);
+	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	win.setForeground(winform.hwnd);
+	menu.popup(pt.x,pt.y,true );	
+}
+
 win.loopMessage();
 return winform;
