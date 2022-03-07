@@ -183,7 +183,7 @@ winform.button4.oncommand = function(id,event){
 	loadcodex("\forms\main\check_QHC_Release.aardio", pcode);
 }
 
-subscribe("refresh_2",frmReLoad);
+subscribe("refresh",frmReLoad);
 thread.invoke(loadPromptList, winform)	
 win.loopMessage();
 return winform;

@@ -146,11 +146,11 @@ winform.button.oncommand = function(id,event){
 winform.show();
 initDeclare();
 loadPromptList();	//读取提示列表
-/*
-subscribe("refresh_4",function(){
-		winform.redraw();
+
+subscribe("refresh",function(){
+//		winform.redraw();
 	}
 );
-*/
+
 win.loopMessage();
 return winform;

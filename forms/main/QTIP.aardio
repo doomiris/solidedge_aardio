@@ -31,7 +31,7 @@ clOrderType={cls="listbox";left=80;top=272;right=144;bottom=400;clipch=1;cp=1;db
 clSapType={cls="listbox";left=152;top=88;right=224;bottom=448;clipch=1;db=1;dl=1;font=LOGFONT(h=-13);fullRow=1;gridLines=1;hide=1;items={"SA";"SB";"SC";"SD";"SE";"SG";"SH";"SI";"R01";"R02";"R03";"R04";"R15";"R05";"R06";"R07";"R08";"R10";"R14";"R40"};msel=1;tabstop=1;z=18};
 clUnit={cls="listbox";left=80;top=88;right=136;bottom=216;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"ZA";"KG";"M";"BOT";"L"};msel=1;tabstop=1;z=15};
 edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=17};
-editUser3={cls="plus";left=255;top=10;right=520;bottom=40;align="left";autohscroll=false;autovscroll=false;aw=1;border={color=-16777216;radius=2;width=1};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-15);iconStyle={align="right";font=LOGFONT(h=-11;name='FontAwesome');padding={right=2;bottom=2};valign="bottom"};iconText='\uF078';paddingRight=20;z=20};
+editUser3={cls="plus";left=255;top=10;right=520;bottom=40;align="left";autohscroll=false;aw=1;border={color=-16777216;radius=2;width=1};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-15);iconStyle={align="right";font=LOGFONT(h=-11;name='FontAwesome');padding={right=2;bottom=2};valign="bottom"};iconText='\uF078';paddingRight=20;wrap=1;z=20};
 listview={cls="listview";left=1;top=53;right=638;bottom=464;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=1};
 rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=272;top=352;right=400;bottom=368;db=1;dl=1;hide=1;z=6};
 rdBG={cls="radiobutton";text="仅查询成品: BG";left=272;top=320;right=384;bottom=336;db=1;dl=1;group=1;hide=1;z=5};
@@ -427,12 +427,12 @@ subscribe("dok",function(...){
 
 
 
-/*
-subscribe("refresh_3",function(){
-		winform.redraw();
+
+subscribe("refresh",function(){
+//		winform.redraw();
 	}
 );
-*/
+
 
 winform.static.onHyperlinkClick = function(nmSysLink,url,id){
 	winform.clLegacyType.selected = null;
@@ -481,7 +481,7 @@ winform.editUser3.oncommand = function(id,event){
 		owner.paddingRight = 1;
 		owner.paddingTop = 2;
 
-		owner.createEditBox( 
+		owner.createEditBox(  //richtext
 			vscroll = true; 
 			hscroll = false; 
 			multiline = true;
@@ -494,7 +494,7 @@ winform.editUser3.oncommand = function(id,event){
 		owner.paddingBottom = 0;
 		owner.paddingRight = 20;
 		owner.paddingTop = 0;
-		owner.createEditBox( 
+		owner.createEditBox(  //richtext
 			vscroll = false; 
 			hscroll = false; 
 			multiline = false;

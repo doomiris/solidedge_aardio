@@ -285,7 +285,7 @@ var frmReLoad = function(){
 	}
 }
 //frmReLoad();
-subscribe("refresh_1",frmReLoad);
+subscribe("refresh",frmReLoad);
 winform.seDocPath.oncommand = function(id,event){
 	frmReLoad();
 }

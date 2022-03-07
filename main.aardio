@@ -10,6 +10,7 @@ import winex;
 import winex.key;
 import sqlite;
 import process;
+//import console;
 
 //user lib
 import config;
@@ -48,10 +49,13 @@ var atom,hwnd = mainForm.atom("domisoft.aardio.tbm");
 if(!atom){ 
 	win.showForeground(hwnd);
 	win.setActive(hwnd);
+	var thrdId = win.getThreadProcessId(hwnd);
+	::PostThreadMessage(thrdId,123,0,0);
 	win.quitMessage();	
 	return;
 }
 /*}}*/
+
 /*自动更新模块{{*/
 /*
 import fsys.update.simpleMain;
@@ -84,7 +88,7 @@ mainForm.isDialogMessage = function(hwnd,msg){
 	return win.isDialogMessage(hwnd,msg);
 }
 /*}}*/
-
+			
 win.ui.simpleWindow( mainForm );
 //mainForm.enableDpiScaling();
 var start_time = time();
@@ -178,7 +182,7 @@ mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
 /*左侧导航按钮{{*/
 
-var tbs = win.ui.tabs( 
+mainForm.tbs = win.ui.tabs( 
 	mainForm.nav1,
 	mainForm.nav2,
 	mainForm.nav3,
@@ -186,7 +190,7 @@ var tbs = win.ui.tabs(
 	mainForm.nav5,
 	mainForm.nav6,
 );
-
+var tbs = mainForm.tbs;
 tbs.skin({
 	background={
 		active=0xFFFFFFFF;
@@ -212,7 +216,9 @@ tbs.loadForm(6,"\forms\main\frmPage3.aardio" );
 var navindex = 6;
 if (_ARGV.nav)	navindex = tonumber(_ARGV.nav);
 tbs.selIndex = navindex;
+tbs.currentTab = navindex;
 /*}}*/
+
 /*顶部按钮{{*/
 mainForm.tbutton1.oncommand = function(id,event){
 	solidedge.application.reOpenDocument();
@@ -474,8 +480,16 @@ subscribe("checkupdate",function(...){
 } )
 */
 
-
 tbs.onSelchange = function(idx,strip,form){
-		form.publish("refresh_" ++ idx);
+	form.publish("refresh");
+	tbs.currentTab = idx;
 } 
-return win.loopMessage();
+
+return win.loopMessage(function(msg){
+	if !msg return ;
+	if msg.message == 123 {
+//		console.log(mainForm.tbs.currentTab);
+		mainForm.tbs.forms[mainForm.tbs.currentTab].publish("refresh"); 
+	}
+}
+);
