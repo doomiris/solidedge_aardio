@@ -26,6 +26,8 @@ if !config.revmgr.desp
 	config.revmgr.desp = {};
 if !config.serverIndex.combobox
 	config.serverIndex.combobox = 1;
+if config.settings.closeToTray === null
+	config.settings.closeToTray = true;
 /**intellisense(config)
 __appName = 应用程序名
 __appVersion = 应用程序内部版本号

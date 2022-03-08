@@ -299,11 +299,10 @@ namespace DraftDocument{
 	//        			smDoc.Models.SaveAsFlatDXFEx(fname, Nothing , Nothing, Nothing, true);
         				import web.script;
         				var vm = web.script("VBScript") ;
-        				vm.external ={
-        					smDoc = function(){return smDoc}; 
-        					fname = function(){return fname}        					
-        				}
-        				vm.addCode("Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)");
+        				vm.external = {smDoc : smDoc; fname : fname}
+        				vm.addCode(`
+        				Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)
+        				`);
 	       				succ = true; 
 	       			}
         		}

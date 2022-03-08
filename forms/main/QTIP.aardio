@@ -196,11 +196,14 @@ var searchSapDB = function(userinput){
 /*}}*/
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
-    if !filenumber return;
-    
+    filenumber := winform.editUser3.text;
+
 	winform.edit2.text = "";
     winform.listview.tag = 2;
     winform.listview.clear(true);
+    
+    if !#filenumber return ; 
+    
     winform.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
@@ -243,7 +246,7 @@ winform.button.oncommand = function(id,event){
 	if (winform.button3.hide){		
 		searchSapDB();
 	}else{
-		searchDocument(getUserInput());		
+		searchDocument();		
 	}
 
 	//owner.disabledText = null;
@@ -429,7 +432,7 @@ subscribe("dok",function(...){
 
 
 subscribe("refresh",function(){
-//		winform.redraw();
+		winform.redraw();
 	}
 );
 

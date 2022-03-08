@@ -98,19 +98,24 @@ var sePid;
 if seApp sePid = seApp.ProcessID;
 //if (seApp) winex.attach(seApp.hWnd);
 /*托盘图标{{*/
-mainForm.tray = win.util.tray(mainForm)  
+if config.settings.closeToTray
+	mainForm.tray = win.util.tray(mainForm);
 mainForm.onMinimize = function(lParam){
 //	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
 	publish("main_window_hide"); //通知qtip窗口中的 orphanWindow 隐藏
-	mainForm.show(false); 
-	return true; 
+	if config.settings.closeToTray {
+		mainForm.show(false); 
+		return true; 
+	}
 }
 
 mainForm.onClose = function(hwnd,message,wParam,lParam){
 	if time().diffday(start_time) > 1
 		win.quitMessage(); //如果程序启动超过1天则退出;
-	mainForm.onMinimize();
-	return true;    	
+	if config.settings.closeToTray {
+		mainForm.onMinimize();
+		return true;    
+	}	
 }
 
 mainForm.onDestroy = function(){
@@ -215,6 +220,8 @@ tbs.loadForm(6,"\forms\main\frmPage3.aardio" );
 
 var navindex = 6;
 if (_ARGV.nav)	navindex = tonumber(_ARGV.nav);
+elseif (config.settings.simpleSAPmode=="checked") navindex = 3;
+
 tbs.selIndex = navindex;
 tbs.currentTab = navindex;
 /*}}*/
@@ -417,19 +424,22 @@ mainForm.static2.tag2 = mainForm.custom.left;
 mainForm.static2.oncommand = function(id,event){
     if (mainForm.static2.tag){
         mainForm.static2.text = '\uF03C';
-    	mainForm.static2.tag = false
-		tbs.show ( false )
-		tbs.dropButton.hide = true
-		mainForm.custom.left = 0
+    	mainForm.static2.tag = false;
+		tbs.show ( false );
+		tbs.dropButton.hide = true;
+		mainForm.custom.left = 0;
 		
 	}else{
 		mainForm.static2.text = '\uF03B';
-    	mainForm.static2.tag = true
-		tbs.show ( true )
-		tbs.dropButton.hide = false
-		mainForm.custom.left = mainForm.static2.tag2
+    	mainForm.static2.tag = true;
+		tbs.show ( true );
+		tbs.dropButton.hide = false;
+		mainForm.custom.left = mainForm.static2.tag2;
 	}
 }
+
+if config.settings.simpleSAPmode
+	mainForm.static2.oncommand(); //simpleSAPmode
 /*}}*/
 
 /*快捷查询{{*/
@@ -473,7 +483,8 @@ mainForm.button.oncommand = function(id,event){
 	if (seApp) owner.hide = true;
 }
 
-mainForm.show();
+if !config.settings.startupMinimized or !config.settings.closeToTray
+		mainForm.show();
 /*
 subscribe("checkupdate",function(...){
 	fsys.update.simpleMain.checkUpdate(true);

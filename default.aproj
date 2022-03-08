@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.159" ProductVersion="1.5.0.159" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.163" ProductVersion="1.5.0.163" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -10,6 +10,7 @@
 			<file name="frmPage4.aardio" path="forms\main\frmPage4.aardio" comment="forms\main\frmPage4.aardio"/>
 			<file name="frmPage5.aardio" path="forms\main\frmPage5.aardio" comment="forms\main\frmPage5.aardio"/>
 			<file name="QTIP.aardio" path="forms\main\QTIP.aardio" comment="forms\main\QTIP.aardio"/>
+			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" embed="true" comment="目录" local="false" ignored="false"/>
 		<folder name="printcenter" path="forms\printcenter" embed="true" comment="目录" local="false" ignored="false">

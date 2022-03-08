@@ -90,8 +90,10 @@ var update = function(winform, tab){
 	import QHC;
 	var excel = com.excel(false);
 	var sht = excel.ActiveWorkbook.ActiveSheet;
-	import console;
-	console.open();
+	sht.AutoFilterMode = false;
+	sht.ListObjects("表1").AutoFilter.ShowAllData();
+//	import console;
+//	console.open();
 	excel.alerts = false;
 	
 	var tCount = sht.usedrange.rows.count;	

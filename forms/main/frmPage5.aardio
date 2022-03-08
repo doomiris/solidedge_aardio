@@ -91,7 +91,7 @@ var startPrintAllLV = function(vtab){
 				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k), vtab[j], config.setbm.workingDir);
 				var succ = seDFT.saveToExt(fname);
 				
-				if !mainForm.taskbar continue;
+				if !mainForm or !mainForm.taskbar continue;
 				mainForm.taskbar.SetProgressValue(mainForm.hwnd, winform.progress.pos, winform.progress.max)	//win taskbar
 			}
 	}
