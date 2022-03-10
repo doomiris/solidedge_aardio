@@ -187,7 +187,7 @@ mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
 /*左侧导航按钮{{*/
 
-mainForm.tbs = win.ui.tabs( 
+var tbs = win.ui.tabs( 
 	mainForm.nav1,
 	mainForm.nav2,
 	mainForm.nav3,
@@ -195,7 +195,7 @@ mainForm.tbs = win.ui.tabs(
 	mainForm.nav5,
 	mainForm.nav6,
 );
-var tbs = mainForm.tbs;
+
 tbs.skin({
 	background={
 		active=0xFFFFFFFF;
@@ -210,17 +210,22 @@ tbs.skin({
 		color={default=0xff0047ab;};
 	}
 })
-
-tbs.loadForm(1,"\forms\main\frmPage1.aardio" );
-tbs.loadForm(2,"\forms\main\frmPage2.aardio" );
-tbs.loadForm(3,"\forms\main\QTIP.aardio" );
-tbs.loadForm(4,"\forms\main\frmPage4.aardio" );
-tbs.loadForm(5,"\forms\main\frmPage5.aardio" );
-tbs.loadForm(6,"\forms\main\frmPage3.aardio" );
+_frmName = {
+	[1] = "\forms\main\frmPage1.aardio";
+	[2] = "\forms\main\frmPage2.aardio";
+	[3] = "\forms\main\QTIP.aardio";
+	[4] = "\forms\main\frmPage4.aardio";
+	[5] = "\forms\main\frmPage5.aardio";
+	[6] = "\forms\main\frmPage3.aardio";
+}
+for k,v in _frmName
+	tbs.loadForm(k,v );
 
 var navindex = 6;
-if (_ARGV.nav)	navindex = tonumber(_ARGV.nav);
-elseif (config.settings.simpleSAPmode=="checked") navindex = 3;
+if (_ARGV.nav)
+	navindex = tonumber(_ARGV.nav);
+elseif config.settings.simpleSAPmode
+	navindex = 3;
 
 tbs.selIndex = navindex;
 tbs.currentTab = navindex;
@@ -490,17 +495,31 @@ subscribe("checkupdate",function(...){
 	fsys.update.simpleMain.checkUpdate(true);
 } )
 */
-
+subscribe("控件丢失",function(...){
+	var index = ...;
+	tbs.loadForm (index, _frmName[index]);
+} )
 tbs.onSelchange = function(idx,strip,form){
 	form.publish("refresh");
 	tbs.currentTab = idx;
 } 
-
+/*处理异常的excel进程{{*/
+thread.invoke( 
+	function(){
+		import com.excel;
+		var excel = com.excel(false);
+		if excel.Visible == false and excel.WorkBooks.Count==0 {
+			import process.popen;
+			var prcs = process.popen.cmd(`taskkill /im EXCEL.EXE /f`)
+		}
+	}
+)
+/*}}*/
 return win.loopMessage(function(msg){
 	if !msg return ;
 	if msg.message == 123 {
 //		console.log(mainForm.tbs.currentTab);
-		mainForm.tbs.forms[mainForm.tbs.currentTab].publish("refresh"); 
+		tbs.forms[tbs.currentTab].publish("refresh"); 
 	}
 }
 );

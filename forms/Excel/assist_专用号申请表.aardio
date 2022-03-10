@@ -40,6 +40,7 @@ var str_today = function(separator){
 import config;
 var username = config.tbm.Designer;
 
+import string.keywords;
 
 for(i=1; #etab){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
@@ -59,36 +60,37 @@ for(i=1; #etab){
 	
 	var str = etab[i][6];
 	
-	var ePush = function(index,val){
+	var ePush = function(val, index){
+		index := {8,10,11,12};
 		for(k=1; #index)
 			if !#etab[i][index[k]] etab[i][index[k]] = val[k];
 		//TODO: 根据已经填写的信息计算空白内容
 	}	
-	if string.indexOf(str,"可选项")			ePush({8,10,11,12},{"SG","KMAT","配置","09"});
-	elseif string.indexOf(str, "总装")		ePush({8,10,11,12},{"SG","HALB","配置","08"});
-	elseif string.indexOf(str, "组装")		ePush({8,10,11,12},{"SG","HALB","配置","08"});
-	elseif string.indexOf(str, "已喷")		ePush({8,10,11,12},{"SC","HALB","非配置","01"});
-	elseif string.indexOf(str, "组件")		ePush({8,10,11,12},{"SA","HALB","非配置","08"});
-	elseif string.indexOf(str, "ABS")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
-	elseif string.indexOf(str, "PVC")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
-	elseif string.indexOf(str, "EPS")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
-	elseif string.indexOf(str, "PC")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
-	elseif string.indexOf(str, "尼龙")		ePush({8,10,11,12},{"R02","ROH","非配置","02"});
-	elseif string.indexOf(str, "玻璃")		ePush({8,10,11,12},{"R14","ROH","非配置","14"});
-	elseif string.indexOf(str, "铝合金")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
-	elseif string.indexOf(str, "点焊")		ePush({8,10,11,12},{"SH","HALB","非配置","01"});
-	elseif string.indexOf(str, "不锈钢")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
-	elseif string.indexOf(str, "焊接件")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
-	elseif string.indexOf(str, "铆接件")	ePush({8,10,11,12},{"R01","ROH","非配置","01"});
-	elseif string.indexOf(str, "木包装")	ePush({8,10,11,12},{"R05","ROH","非配置","16"});
-	elseif string.indexOf(str, "TP2M")		ePush({8,10,11,12},{"R07","ROH","非配置","07"});
-	elseif string.endWith(str, "底箱体")		ePush({8,10,11,12},{"SD","HALB","非配置","08"});
-	elseif string.endWith(str, "发泡板")		ePush({8,10,11,12},{"SD","HALB","非配置","08"});
-	elseif string.indexOf(str, "板")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
-	elseif string.indexOf(str, "连接件")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
-	elseif string.indexOf(str, "支撑")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
-	elseif string.indexOf(str, "未喷")		ePush({8,10,11,12},{"SB","HALB","非配置","01"});
-	elseif string.indexOf(str, "蒸发器")	ePush({8,10,11,12},{"R07","ROH","非配置","07"});	
+	
+	if string.keywords('可选项').findOne(str)
+		ePush({"SG","KMAT","配置","09"});
+	elseif string.keywords('总装|组装').findOne(str)
+		ePush({"SG","HALB","配置","08"});
+	elseif string.keywords('已喷').findOne(str)	
+		ePush({"SC","HALB","非配置","01"});
+	elseif string.keywords('ABS|PVC|亚克力|EPS|PC|尼龙').findOne(str)
+		ePush({"R02","ROH","非配置","02"});	
+	elseif string.keywords('玻璃').findOne(str)		
+		ePush({"R14","ROH","非配置","14"});
+	elseif string.keywords('点焊').findOne(str)
+		ePush({"SH","HALB","非配置","01"});	
+	elseif string.keywords('铝合金|不锈钢|焊接件|铆接件').findOne(str)
+		ePush({"R01","ROH","非配置","01"});
+	elseif string.keywords('木包装').findOne(str)
+		ePush({"R05","ROH","非配置","16"});
+	elseif string.keywords('底箱体|发泡板').findOne(str)
+		ePush({"SD","HALB","非配置","08"});
+	elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
+		ePush({"SB","HALB","非配置","01"});
+	elseif string.keywords('管|TP2M|蒸发器').findOne(str)
+		ePush({"R07","ROH","非配置","07"});	
+	elseif string.keywords('组件').findOne(str)	
+		ePush({"SA","HALB","非配置","08"});
 }
 //table.sort(etab, lambda(b) owner[12]>b[12]);
 sht.Columns(10 /* J */).ColumnWidth = #etab[1][10 /* J */] + 2.75;

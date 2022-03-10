@@ -34,10 +34,9 @@ tab = tarray.replaceValue(tab, "MTyp", "物料类型");
 tab = tarray.replaceValue(tab, "BUn", "单位");
 tab = tarray.replaceValue(tab, "PGr", "采购组");
 tab = tarray.transpose(tab);
+//table.push(tab, { "长", ""},{ "宽", ""},{ "厚", ""});
 var fields = { [1] = "可用字段"; [2] = "绑定到列"}
 tab = tarray.mapfields(tab, fields);
-
-
 
 import win.ui.grid
 var grid = win.ui.grid(winform.listview);

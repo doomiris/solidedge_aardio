@@ -432,7 +432,11 @@ subscribe("dok",function(...){
 
 
 subscribe("refresh",function(){
-		winform.redraw();
+	//	winform.redraw();
+		if !winform.editUser3 or !winform.listview {
+			win.msgbox("控件丢失");
+			winform.publish("控件丢失",3);
+		}
 	}
 );
 
