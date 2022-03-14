@@ -12,13 +12,14 @@ import QHC
 import tarray;
 //import console
 //console.open()
+import win.ui.grid;
+var grid = win.ui.grid(winform.listview)
 winform.button.oncommand = function(id,event){
 	var t = QHC.getSapItem(winform.edit.text);
-	var tab = {}
+	var tab = {fields = QHC.getColDef()}
 	tab = tarray.pushFields(tab,t)
 	table.push(tab, t)
-	//console.dumpTable(tab)W
-	winform.listview.setTable(tab)
+	grid.setTable(tab)
 }
 
 winform.show();
