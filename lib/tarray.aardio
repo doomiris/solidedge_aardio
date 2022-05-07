@@ -25,8 +25,23 @@ serialize = function(arr){
 		var b = {}
 		for k,v in arr[j] 
 			b[indexOf(arr.fields,k) ? indexOf(arr.fields,k): k] = v;
-		push(t, b);
+		push(t, b:"");
 	}
+	return t; 
+}
+detach = function(arr){
+	var t={};
+	var f = {}
+	for k,v in arr {
+		push(t, v:"")
+		push(f, k:"")
+	}
+	return t,f; 
+}
+detachBy = function(arr,fields){
+	var t={};
+	for k, v in fields 
+		push(t, arr[v]:"");
 	return t; 
 }
 transpose0 = function(arr){	
@@ -45,11 +60,11 @@ transpose = function(arr){
 mapfields = function(arr, fields){
 	var t={}
 	if !fields if #arr.fields fields = arr.fields;
-	for(i=1;#arr){
+	if (#fields == 1) fields = fields[1];
+	for(i=1; #arr){
 		var cc={};
-		for(j=1; #arr[i])
-			if arr[i][j]
-				cc[fields[j]] = arr[i][j];
+		for(j=1; #fields)
+				cc[fields[j]] = arr[i][j] : "";
 		t[i] = cc;
 	}
 	t.fields = fields;
@@ -77,7 +92,7 @@ uniqueCol = function(arr,col = 1){
 	for (i=1; #arr) 
 		if arr[i][col]	//跳过空值
 			if !indexOf(getCol(t,col), arr[i][col]) //跳过重复值
-				push(t, arr[i]);
+				push(t, arr[i]:"");
 	return mapfields(t,fields); 
 }
 getCol = function(arr, col){
@@ -96,7 +111,7 @@ drop = function(arr, index){
 pushFields = function(arr, tab){
 	var fields = {};
 	for k, v in tab {
-		push(fields, k)
+		push(fields, k:"")
 	}
 	arr.fields = fields;
 	return arr; 

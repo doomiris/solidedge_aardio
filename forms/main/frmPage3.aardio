@@ -91,7 +91,7 @@ winform.combobox.onListChange= function(){
 			import fsys.dlg.dir;
 			var path = fsys.dlg.dir(,winform,"指定DB所在目录");
 			if !path return ; 
-			config.dbServer.path = path;
+			config.dbServer.path = io.joinpath(path,"\");
 		}
 	}
 	config.dbServer.save();

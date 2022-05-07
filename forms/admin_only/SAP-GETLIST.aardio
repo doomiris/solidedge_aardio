@@ -1,5 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
+import config;
+import fsys;
+
 /*DSG{{*/
 var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469)
 winform.add(
@@ -13,26 +16,33 @@ log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 )
 /*}}*/
 
+/* 无法把对象传进线程 */
+winform.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
+
 /*Get获取数据{{*/
 var getFromSAP = function(winform){
 	import win;
 	import SAP.session;
 	var session = SAP.session();
-	//session.findById("wnd[0]").maximize();
-	winform.log.print("开始从SAP获取数据...");
-	session.findById("wnd[0]/tbar[0]/okcd").text = "mm60";
-	session.findById("wnd[0]/tbar[0]/btn[0]").press();
-	session.findById("wnd[0]/usr/chkBEWFLG").selected = false;
-	session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*";
-	session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841";
-	session.findById("wnd[0]/tbar[1]/btn[8]").press();
-	session.findById("wnd[0]/tbar[1]/btn[45]").press();
-	session.findById("wnd[1]/tbar[0]/btn[0]").press();
-	session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt";
-	session.findById("wnd[1]/tbar[0]/btn[11]").press();
-	session.findById("wnd[0]/tbar[0]/btn[12]").press();
-	session.findById("wnd[0]/tbar[0]/btn[12]").press();
-	winform.log.print("数据已经保存到txt...");
+	if session {
+		//session.findById("wnd[0]").maximize();
+		winform.log.print("开始从SAP获取数据...");
+		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60";
+		session.findById("wnd[0]/tbar[0]/btn[0]").press();
+		session.findById("wnd[0]/usr/chkBEWFLG").selected = false;
+		session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*";
+		session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841";
+		session.findById("wnd[0]/tbar[1]/btn[8]").press();
+		session.findById("wnd[0]/tbar[1]/btn[45]").press();
+		session.findById("wnd[1]/tbar[0]/btn[0]").press();
+		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt";
+		session.findById("wnd[1]/tbar[0]/btn[11]").press();
+		session.findById("wnd[0]/tbar[0]/btn[12]").press();
+		session.findById("wnd[0]/tbar[0]/btn[12]").press();
+		winform.log.print("数据已经保存到txt...");
+	} else {
+		winform.log.print("无法访问SAP, 尝试直接打开TXT...");
+	}
 	winform.publish("getFromSAP",true);
 	win.loopMessage();
 }
@@ -48,7 +58,7 @@ var dealWithTxt = function(winform){
 	if file winform.log.print("开始处理多余行", _path);
 	import config;
 	import sqlite;
-	var db = sqlite(config.dbServer.path + "step_qhcsap.db");
+	var db = sqlite(winform.stepDBpath);
 	if !db error("dberror");
 	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
 	db.exec("VACUUM");
@@ -131,7 +141,7 @@ var importFromQHC = function(winform, path){
 	qTab.fields = tarray.replaceValue(qTab.fields,"物料描述", "物料描述 TEXT collate nocase");
 	import config;
 	import sqlite;
-	var db = sqlite(config.dbServer.path + "step_qhcsap.db");
+	var db = sqlite(winform.stepDBpath);
 	if db.existsTable("qhc_export") db.exec("DROP table qhc_export;")
 	db.exec("VACUUM");
 	var fields = string.join(qTab.fields,", ");
@@ -157,11 +167,16 @@ var importFromQHC = function(winform, path){
 /*}}*/
 
 winform.button2.oncommand = function(id,event){
+
 	var path = winform.edit.text;
 	if !io.exist(path) return ; 
+	
+	config.admin.lastWorkingFolder = fsys.getParentDir(path);
+	config.admin.save();
+	
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
 	winform.log.print("打开 " ++ path );
-	thread.invoke(importFromQHC, winform, path)
+	thread.invoke(importFromQHC, winform, path);
 }
 /*mergeDb{{*/
 
@@ -173,7 +188,7 @@ var mergeDb = function(winform){
 import console
 console.open();
 */
-	var step_db = sqlite(config.dbServer.path + "step_qhcsap.db");
+	var step_db = sqlite(winform.stepDBpath);
 	winform.log.print("合并临时数据...");	
 	if step_db.existsTable("所有物料")
 		step_db.exec("DROP table 所有物料;");
@@ -204,7 +219,7 @@ console.open();
 	if db.existsTable("所有物料") db.exec("ALTER TABLE 所有物料 RENAME TO 备份所有物料;");
 	
 	winform.log.print("挂接新数据...");
-	db.exec("ATTACH DATABASE '" + config.dbServer.path + "step_qhcsap.db' as 'stepDB';")
+	db.exec("ATTACH DATABASE '" + winform.stepDBpath + "' as 'stepDB';")
 	db.exec(`
 		CREATE TABLE 所有物料 (
 			物料 TEXT UNIQUE COLLATE NOCASE,
@@ -286,14 +301,15 @@ winform.button4.oncommand = function(id,event){
 }
 getXlsxDbPath = function(){
 	import fsys;
-	var list = fsys.list("S:\Admin\SAP",,"*所有物料*.xlsx");
+	if !io.exist(config.admin.lastWorkingFolder) return null; 
+	var list = fsys.list(config.admin.lastWorkingFolder,,"*所有物料*.xlsx");
 	if #list 
 		return list[list[#list]]; 
 }
 
 winform.button5.oncommand = function(id,event){
 	import fsys.dlg;
-	winform.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件","S:\Admin\SAP\",owner);
+	winform.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件",config.admin.lastWorkingFolder,owner);
 }
 
 winform.edit.text = getXlsxDbPath();

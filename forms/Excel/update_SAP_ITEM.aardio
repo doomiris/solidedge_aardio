@@ -18,13 +18,9 @@ import config;
 import sqlite;
 var db = sqlite(config.dbServer.path + "QHCSAP.db");
 
-var getColDef =function(){
-	var t = db.prepare("SELECT * FROM [所有物料]");
-	return t.getColumns(); 
-}
 
 var tab = {};	//可用列
-table.push(tab, getColDef());
+table.push(tab, QHC.getColDef());
 table.push(tab, table.array(#tab[1],"")); //对应列号初始化
 
 db.close();

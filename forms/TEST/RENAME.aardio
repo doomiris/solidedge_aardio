@@ -2,14 +2,19 @@ import console;
 console.open();
 import fsys;
 
-var path = "S:\Cabinet\AMADP\"
+var path = "L:\Monaxis"
 
 var dlist = fsys.list(path,,"*.DFT");
 
 for (i=1; #dlist){
 	if !string.startWith(dlist[i], "008") continue;
-	fsys.rename(path + dlist[i], path + "H" + dlist[i]);
-	console.log( "H" + dlist[i])	
+	var oldName = io.joinpath(path, dlist[i]);
+	var newName = io.joinpath(path, "H" + dlist[i]);
+	if io.exist(newName)
+		io.remove(oldName);
+	else 
+		io.rename(oldName, newName);
+	console.log( newName )	
 }
 
 console.pause(true);

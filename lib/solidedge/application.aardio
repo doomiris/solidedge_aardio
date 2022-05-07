@@ -34,6 +34,12 @@ namespace application{
 		sleep(500);
 		return seDoc; 
 	};
+/*
+	RefreshView = function(){
+		owner.seApp.ActiveWindow.View.RefreshView();
+	}
+*/
+	
 	_topointer = lambda() owner.seApp;
   )
 }

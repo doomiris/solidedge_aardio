@@ -13,7 +13,10 @@ import tarray;
 import solidedge.application;
 import solidedge.SheetMetalDocument;
 var seApp = solidedge.application();
-
+/*
+import console
+console.open()
+*/
 import config;
 
 winform.onDropFiles = function(files){
@@ -43,7 +46,7 @@ winform.onDropFiles = function(files){
 winform.button.oncommand = function(id,event){
 	for (i=1; winform.listview.count){
 		var fn = winform.listview.getItemText(i,2) ++ "\" ++ winform.listview.getItemText(i,1);
-		var psm = seApp.Open(fn, true);
+		var psm = seApp.Open(fn, false);
 		var sePSM = solidedge.SheetMetalDocument(psm);
 		sePSM.psm2dxf(winform.listview.getItemText(i,3));
 		sePSM.close(true /* SaveChanges */);

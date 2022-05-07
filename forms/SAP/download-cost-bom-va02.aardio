@@ -48,11 +48,16 @@ console.open();
         		markcost.press()  //使用标记成本
 	    else {
 	        //确认时间
-        	var tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT").Text
-        	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr
-        	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr
-        	session.findById("wnd[0]/tbar[0]/btn[0]").press()  // 确认时间 和上面不同时用
-
+        	var tdstr = null;
+        	
+        	try {
+        		tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
+        	}
+        	if tdstr {
+        		session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
+        		session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
+        		session.findById("wnd[0]/tbar[0]/btn[0]").press()  // 确认时间 和上面不同时用
+			}
     		//    session.findById("wnd[1]/usr/btnSPOP-VAROPTION2").press //产品成本按钮
     		//    session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").Text = "Z086"
     		//    session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").Text = "Z001"

@@ -50,7 +50,8 @@ var initDeclare = function(){
 	seApp := solidedge.application();
 	if (! seApp) return false; 
 	solidedge.application.setPdfOptions();
-	//solidedge.application.setDwgOptions(); // TODO: 含多页文档保存为DWG时, 因为未指定多页, 可能导致只有一页.
+	// TODO: 含多页文档保存为DWG时, 因为未指定多页, 可能导致只有一页.
+	//seApp.Documents.AutoCadConfigFile = config.setbm.workingDir + "\SEACAD.INI";
 	seApp.DisplayAlerts = 1;
 	return true; 
 }

@@ -139,7 +139,7 @@ var searchSapDB = function(userinput){
     	userinput=string.replace(userinput,"@?","_");
 
 		sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
-		var sqlstr = "SELECT [物料], [物料描述],[Bun] AS [单位], [MTyp] AS [类型],[物料组],[价格],[物料是可配置的] AS [配置], [禁用] FROM [所有物料] WHERE ??" ;
+		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格`,`物料是可配置的` AS `配置`, `禁用` FROM `所有物料` WHERE ??" ;
 
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
@@ -171,8 +171,8 @@ var searchSapDB = function(userinput){
 		var quickSearch = !string.indexOf(userinput,"%");
 		if !quickSearch sqlstr = string.replace(sqlstr,"=","LIKE");
 		
-		if (winform.chkDisabled.checked)	sqlstr += " AND [禁用] IS NULL";
-		if table.indexOf(getSelectedText(winform.clOrderType),"FERT") sqlstr += " AND LENGTH([物料])=11";
+		if (winform.chkDisabled.checked)	sqlstr += " AND `禁用` IS NULL";
+		if table.indexOf(getSelectedText(winform.clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11";
 
 		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
 
@@ -207,18 +207,18 @@ var searchDocument = function (filenumber){
     winform.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
-	var flistDB = sqlite(config.dbServer.path + "drawing_lists.db");	//打开数据库连接
-	var sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';"
-	var flist = flistDB.getTable(sql);
+	var flistDB = sqlite(config.dbServer.path + "\drawing_lists.db");	//打开数据库连接
+	var sql = "SELECT `文件名`, `路径` FROM `Lib` WHERE `文件名` LIKE ?;"
+	var flist = flistDB.getTable(sql, {"%" + searchFor + "%"});
 	if (#flist == 0){
-		var maptab = flistDB.getTable("SELECT * FROM [Map]", { 专用号  =  searchFor });
+		var maptab = flistDB.getTable("SELECT * FROM `Map`", { 专用号  =  searchFor });
 		if (#maptab > 0) {
 			searchFor = maptab[1].图号; 
 			if #searchFor winform.edit2.text = searchFor;
 			winform.edit2.hide = !(#searchFor);
 			
-			sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';";
-			flist = flistDB.getTable(sql);
+			//sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';";
+			flist = flistDB.getTable(sql, {"%" + searchFor + "%"});
 		}
 	}
 	if (#flist > 0) fileTab = table.concat(fileTab, flist);	
@@ -268,15 +268,16 @@ var downloadbom = function(){
 winform.listview.onnotify = function(id,code,ptr){
     var selectedRow = owner.getSelection();
     if !selectedRow return ; 
+    var pcode = owner.getItemText(selectedRow,1);
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
     		if (owner.tag == 1) {
     			winform.button3.hide = false;
 				winform.button3.tag  = selectedRow;
-				searchDocument(owner.getItemText(selectedRow,1)); 
+				searchDocument(pcode); 
 				winform.button.text = '\uF002  搜索图纸';
 			}else{
-				var fullName = owner.getItemText(selectedRow, 2) ++ owner.getItemText(selectedRow, 1);
+				var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
 				if io.exist(fullName) {
 					process.execute(fullName);
 				}
@@ -286,7 +287,10 @@ winform.listview.onnotify = function(id,code,ptr){
 			var x,y = win.getMessagePos();
 			//var hItem,tvht = winform.listview.hitTest(x,y,true);
 			var menu = win.ui.popmenu(winform);
-			menu.add("下载BOM", downloadbom);
+			if string.startWith(pcode,"BG",true)
+				menu.add("下载BOM", downloadbom);
+			else 
+				menu.add("详细信息...", λ() loadcodex("\forms\SAP\sap-query.aardio", pcode));
 			menu.popup(x,y,true);
     	}
     }

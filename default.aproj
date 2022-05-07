@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.166" ProductVersion="1.5.0.166" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.183" ProductVersion="1.5.0.183" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -30,12 +30,14 @@
 			<file name="refresh_QHC_Drawing_Release_List.aardio" path="forms\Excel\refresh_QHC_Drawing_Release_List.aardio" comment="forms\Excel\refresh_QHC_Drawing_Release_List.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
+			<file name="提取原材料用量追加到物料后列.aardio" path="forms\Excel\提取原材料用量追加到物料后列.aardio" comment="forms\Excel\提取原材料用量追加到物料后列.aardio"/>
 		</folder>
 		<folder name="SAP" path="forms\SAP" comment="forms\SAP" local="false" embed="true" ignored="false">
 			<file name="BOM_OD_LIB.aardio" path="forms\SAP\BOM_OD_LIB.aardio" comment="forms\SAP\BOM_OD_LIB.aardio"/>
 			<file name="download-cost-bom-va02.aardio" path="forms\SAP\download-cost-bom-va02.aardio" comment="forms\SAP\download-cost-bom-va02.aardio"/>
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="SAP-download-bom.aardio" path="forms\SAP\SAP-download-bom.aardio" comment="forms\SAP\SAP-download-bom.aardio"/>
+			<file name="sap-query.aardio" path="forms\SAP\sap-query.aardio" comment="forms\SAP\sap-query.aardio"/>
 		</folder>
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="true" ignored="false">
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
@@ -53,7 +55,6 @@
 			<file name="frmPage_XXX.aardio" path="forms\TEST\frmPage_XXX.aardio" comment="forms\TEST\frmPage_XXX.aardio"/>
 			<file name="odview.aardio" path="forms\TEST\odview.aardio" comment="forms\TEST\odview.aardio"/>
 			<file name="RENAME.aardio" path="forms\TEST\RENAME.aardio" comment="forms\TEST\RENAME.aardio"/>
-			<file name="sap-query.aardio" path="forms\TEST\sap-query.aardio" comment="forms\TEST\sap-query.aardio"/>
 			<file name="shortcut.aardio" path="forms\TEST\shortcut.aardio" comment="forms\TEST\shortcut.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">

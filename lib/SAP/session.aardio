@@ -7,11 +7,11 @@ var string = ..string;
 namespace SAP;
 class session{
 	ctor( ... ){
-		this.oGui = ..com.GetObject("SAPGUI");
+		this.oGui = ..com.TryGetObject("SAPGUI");
+		if( ! this.oGui ) return null,"请先打开SAP";
 		this.oApp =  this.oGui.GetScriptingEngine();
 		this.oConn = this.oApp.Children.item(0);
 		this.oSession = this.oConn.Children.item(0);
-		if( ! this.oConn ) return null,"请先打开SAP";
 	};
 	@_metaProperty;
 }

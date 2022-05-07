@@ -26,11 +26,11 @@ cb_review_date={cls="edit";left=215;top=216;right=300;bottom=240;dl=1;dt=1;z=14}
 cb_reviewer={cls="combobox";left=48;top=215;right=178;bottom=240;dl=1;dt=1;items={};mode="dropdown";z=12};
 cb_tol={cls="combobox";left=340;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18};
 cb_weight={cls="combobox";left=300;top=103;right=488;bottom=129;dr=1;dt=1;edge=1;items={};mode="dropdown";z=4};
-chkPaint={cls="checkbox";text="喷粉标准 Q/LD J52005";left=136;top=152;right=314;bottom=172;bgcolor=16777215;dl=1;dt=1;z=8};
+chkPaint={cls="checkbox";text="喷粉标准 &Q/LD J52005";left=136;top=152;right=314;bottom=172;bgcolor=16777215;dl=1;dt=1;z=8};
 chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272;right=480;bottom=296;checked=1;color=16711680;db=1;dr=1;hide=1;z=29};
 groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
-rd_M={cls="radiobutton";text="自制件";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
-rd_P={cls="radiobutton";text="外购件";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
+rd_M={cls="radiobutton";text="自制件(&E)";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
+rd_P={cls="radiobutton";text="外购件(&F)";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
 seDocPath={cls="static";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
 static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
 static10={cls="static";text="唤起快捷键 Alt+T";left=168;top=320;right=272;bottom=336;align="right";color=32768;db=1;dr=1;transparent=1;z=34};
@@ -57,22 +57,29 @@ var initDeclare = function(){
 	if (seDFT.Sheets.Count == 0) return false ; 
 	seSht = seDFT.ActiveSheet;
 	seBlk = seDFT.getTitleBlock(seSht); //获取titleblock		
-	if !seBlk{
-    	var x,y = seDFT.getTitleBlockOrigin(seSht);
-    	for (i=1; seDFT.Blocks.Count; 1) {
-        	if (seDFT.Blocks.item(i).name=="Title 2020") {
-    			seBlk = seSht.BlockOccurrences.Add("Title 2020", x, y);
-    			break;
+	if !seBlk {
+		var x,y = seDFT.getTitleBlockOrigin(seSht);
+		var firstSheetTitleBlock = seDFT.getTitleBlock(seDFT.getFirstSheet());
+		if firstSheetTitleBlock {
+			firstSheetTitleBlock.Duplicate ();
+			seBlk =seDFT.getTitleBlock(seSht);
+			seApp.ActiveWindow.Update(); /* ActiveWindow = SheetWindow */
+		}else {   		
+    		for (i=1; seDFT.Blocks.Count) {
+        		if (seDFT.Blocks.item(i).name=="Title 2020") {
+    				seBlk = seSht.BlockOccurrences.Add("Title 2020", x, y);
+    				break;
+    			}
     		}
-    	}
-    	if !seBlk{
-    	    import win.dlg.message;
-    	    var dlg = win.dlg.message(mainForm.hwnd);
-    	    if dlg.ask( "找不到Title Blocks定义,插入新TitleBlock?" ){
-				solidedge.DraftDocument.replaceNewTitleBlock(seDFT);
-				seBlk = seDFT.getTitleBlock(seSht);
-			}
-    	}
+    		if !seBlk{
+    	    	import win.dlg.message;
+    	    	var dlg = win.dlg.message(mainForm.hwnd);
+    	    	if dlg.ask( "找不到Title Blocks定义,插入新TitleBlock?" ){
+					solidedge.DraftDocument.replaceNewTitleBlock(seDFT);
+					seBlk = seDFT.getTitleBlock(seSht);
+				}
+    		}
+		}
 	}	
 	if ( seBlk ) seLbs = seDFT.getLabelTable(seBlk);	//获取titleblock lable
 	return true; 
@@ -208,11 +215,33 @@ winform.button3.oncommand = function(id,event){
     mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 }
+var saveLists = function(winform){
+	import config;
+	import sqlite;
+	var dbpath = config.dbServer.path + "tbm.db"
+	var dbRs = sqlite(dbpath);	//打开数据库连接
+
+	//replace语句根据主键查询,不存在相同数据则插入新的,否则更新已存在的数据
+	var cmd = dbRs.prepare("INSERT INTO SE_TBM_Lists VALUES (@ID,@ListName,@Title);" );
+	
+	for(name,ctrl in winform.eachControl() ){
+		if ctrl.cls !== "combobox" continue ;
+		var keyword = string.trimleft(name,"cb_");
+		if !table.indexOf(ctrl.items, ctrl.text)
+			cmd.step(  
+				Title = ctrl.text;
+				ListName = keyword;
+			);
+	}
+	dbRs.close();	
+}
+
 winform.button2.oncommand = function(id,event){
     mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	
 	initDeclare();
+	thread.invoke( saveLists, winform);
 	
 	if (winform.chkReplaceTB.hide == 0){
 		if (winform.chkReplaceTB.checked){

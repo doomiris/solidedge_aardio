@@ -19,6 +19,7 @@ var rawTab = {
 	[6] =	{["厚度"]=1.2; ["物料"] = "H0087500193-G"; ["物料描述"] = "定尺料组 热锌板 1.2*1250*C"; ["价格"] = 6.69};
 	[7] =	{["厚度"]=1.5; ["物料"] = "H0087500188-G"; ["物料描述"] = "定尺料组 热锌板 1.5*1250*C"; ["价格"] = 6.69};
 	[8] =	{["厚度"]=2.0; ["物料"] = "H0087500190-G"; ["物料描述"] = "定尺料组 热锌板 2.0*1250*C"; ["价格"] = 6.69};
+	[9] =	{["厚度"]=0.4; ["物料"] = "H0080154856-G"; ["物料描述"] = "定尺料组 热锌板 0.4*1250*C"; ["价格"] = 7.25};
 	["X"] =	{ ["物料"] = ""; ["物料描述"] = "厂内无此规格"; ["价格"] = 7};
 	["白色"] =	{["物料"] = "H0088200085"; ["物料描述"] = "标准白色"; ["价格"] = 17.59}
 }
@@ -29,10 +30,16 @@ class 下料尺寸{
 		if !..string.indexOf(size_str,"*") return ; 
 		precision = 3;
 		var s = ..string.split(size_str,"*");
-		this.l = tonumber(s[1]);
-		this.w = tonumber(s[2]);
-		this.t = tonumber(s[3]);
 		
+		for (i=1; #s)
+			s[i] = tonumber(s[i]);
+			
+		table.sort(s);
+		table.reverse(s);
+		
+		this.l = s[1];
+		this.w = s[2];
+		this.t = s[3];
 		
 		/* 粉末密度  2022/2/7 更新 */
 		var m = this.l * this.w * 2 * 0.191 / 0.9 / 1E+6;
@@ -222,6 +229,7 @@ QHC.openDb(sap_db_path) = 返回DB
 QHC.getSapItem(hcode) = 返回hitem\n!QHC_hitem.
 QHC.getSapItemByDesp(desp) = 返回table
 QHC.getSapItem() = 返回hitem\n!QHC_hitem.
+QHC.getColDef() = 获取列名称数组
 !QHC_hitem.物料 = 物料
 !QHC_hitem.物料描述 = 物料描述
 !QHC_hitem.类型 = 类型
