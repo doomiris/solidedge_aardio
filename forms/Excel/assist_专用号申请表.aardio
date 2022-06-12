@@ -71,6 +71,8 @@ for(i=1; #etab){
 		ePush({"SG","KMAT","配置","09"});
 	elseif string.keywords('总装|组装').findOne(str)
 		ePush({"SG","HALB","配置","08"});
+	elseif string.keywords('组件').findOne(str)	
+		ePush({"SA","HALB","非配置","08"});
 	elseif string.keywords('已喷').findOne(str)	
 		ePush({"SC","HALB","非配置","01"});
 	elseif string.keywords('ABS|PVC|亚克力|EPS|PC|尼龙').findOne(str)
@@ -89,8 +91,7 @@ for(i=1; #etab){
 		ePush({"SD","HALB","非配置","08"});
 	elseif string.keywords('管|TP2M|蒸发器').findOne(str)
 		ePush({"R07","ROH","非配置","07"});	
-	elseif string.keywords('组件').findOne(str)	
-		ePush({"SA","HALB","非配置","08"});
+
 }
 //table.sort(etab, lambda(b) owner[12]>b[12]);
 sht.Columns(10 /* J */).ColumnWidth = #etab[1][10 /* J */] + 2.75;

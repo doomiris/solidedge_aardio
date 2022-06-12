@@ -21,7 +21,7 @@ if !config.tbm.Reviewer
 if !config.tbm.Approver
 	config.tbm.Approver = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
 if !config.setbm.workingDir
-	config.setbm.workingDir = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces");
+	config.setbm.workingDir = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces\");
 if !config.revmgr.desp
 	config.revmgr.desp = {};
 if !config.serverIndex.combobox

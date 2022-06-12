@@ -32,9 +32,12 @@ winform.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable�
 var excel = com.excel(false);
 if !excel.ActiveWorkbook win.msgbox("excel存在未完全退出的进程,需要手动处理");
 
+import string.keywords;
+
 for (i=1; excel.WorkBooks.Count) {
-	if string.startWith(excel.WorkBooks(i).Name,"新增--专用号申请") winform.combobox2.add(excel.WorkBooks(i).Name);
-	else if string.startWith(excel.WorkBooks(i).Name,"图纸明细需求") winform.combobox2.add(excel.WorkBooks(i).Name);
+	var wbname = excel.WorkBooks(i).Name;
+	if string.keywords('新增--专用号申请|图纸明细|图纸下发').findOne(wbname)
+		winform.combobox2.add(wbname);
 }
 	
 if winform.combobox2.count {
@@ -97,13 +100,17 @@ winform.button.oncommand = function(id,event){
 		}
 		
 		tarRng.value2 = tarTab;
+		winform.edit.print("专用号导入完成");
 	}
-	else if string.startWith(winform.combobox2.selText, "图纸明细需求") {
+	elseif string.keywords('图纸明细|图纸下发').findOne(winform.combobox2.selText) {
 
 		var sht = excel.WorkBooks(winform.combobox2.text).sheets("下发台账模板");
-		var range_str = (sht.cells(6,"N").value2) == "团队" ? "$B$6:$R$" : "$A$1:$N$"
+		var range_str = (sht.cells(6,"N").value2) == "团队" ? "$B$6:$R$" : "$A$1:$N$";
+		//如果删除首列会无法正确识别
 		var otab = getTabFromRange(sht.Range(range_str ++ table.pop(string.split(sht.usedrange.address(),"$"))))
+
 		otab = tarray.mapfields(otab);
+		
 		var vc = {
 			["00"] = "U";
 			["01"] = "V";
@@ -115,26 +122,30 @@ winform.button.oncommand = function(id,event){
 			["07"] = "X";
 		}
 		
-		for(i=1;#otab){
+		for(i=1; #otab){
 			
-    		if !otab[i].物料号码
-    			continue;
+    		if !#otab[i].物料号码 continue;
     		var dr = itemMaster.columns("A").find(otab[i].物料号码);
     		if !dr {
 				winform.edit.print(i, otab[i].物料号码, "在ItemMaster内找不到");
 				continue;
     		}
+    		//else winform.edit.print(i, otab[i].物料号码);
     		var r =	dr.row;
 
     		itemMaster.cells(r,"R").value2 = otab[i].图纸号;
-    		itemMaster.cells(r,"S").value2 = otab[i].图纸版次;
+
+    		if !#otab[i].图纸版次 otab[i].图纸版次 = "00";
+    		if !#itemMaster.cells(r,"S").value2 or tonumber(itemMaster.cells(r,"S").value2) < tonumber(otab[i].图纸版次)
+    			itemMaster.cells(r,"S").value2 = otab[i].图纸版次;    		
     		itemMaster.cells(r,vc[otab[i].图纸版次]).value2 = string.replace(otab[i].图纸下发时间,"@.","/");
 		}
+		winform.edit.print("图纸明细导入完成");
 	}
-	winform.edit.print("图纸明细需求开始导入完成");
+	
 	//console.dumpTable(tarTab)
 	//console.pause(true);
-	winform.close();
+	//winform.close();
 }
 winform.onDestroy = function(){
    	if excel excel.alerts = true;    //防止意外关闭后Excel假死

@@ -175,6 +175,7 @@ var showSaveNameBtn = function(){
 	) ? 1 : 0;
 }
 var writeToDrw = function(Lbs){
+	if !Lbs return ; 
     Lbs["型号/项目名称"].Value = winform.cb_model_no.text;
     Lbs["零件名称"].Value = winform.cb_name_cn.text;
     Lbs["材料"].Value = winform.cb_material.text;
@@ -190,7 +191,8 @@ var writeToDrw = function(Lbs){
     Lbs["版本"].Value = winform.version.text;
 }
 var iniFrmCTRL = function(){
-	var seBlk = seDFT.getTitleBlock(seDFT.ActiveSheet) ; 
+	var seBlk = seDFT.getTitleBlock(seDFT.ActiveSheet);
+	if !seBlk return ; 
 	winform.chkReplaceTB.hide = (seBlk.Block.Name == "Title 2020");
 	
 	select(seDFT.getSourcingType(seDFT.getFirstSheet())) {
@@ -224,17 +226,52 @@ var saveLists = function(winform){
 	//replace语句根据主键查询,不存在相同数据则插入新的,否则更新已存在的数据
 	var cmd = dbRs.prepare("INSERT INTO SE_TBM_Lists VALUES (@ID,@ListName,@Title);" );
 	
-	for(name,ctrl in winform.eachControl() ){
-		if ctrl.cls !== "combobox" continue ;
+	for name, ctrl in winform.eachControl("combobox"){
 		var keyword = string.trimleft(name,"cb_");
-		if !table.indexOf(ctrl.items, ctrl.text)
+		if #ctrl.text and !ctrl.find(ctrl.text) {
 			cmd.step(  
 				Title = ctrl.text;
 				ListName = keyword;
 			);
+			ctrl.add(ctrl.text);
+		}
 	}
+	dbRs.close();
+}
+/*
+var removeFromLists = function(winform, ctrl){
+	import config;
+	import sqlite;
+	var dbpath = config.dbServer.path + "tbm.db"
+	var dbRs = sqlite(dbpath);	//打开数据库连接
+
+	//replace语句根据主键查询,不存在相同数据则插入新的,否则更新已存在的数据
+	var ListName = string.trimleft(ctrl.id,"cb_");
+	var Title = ctrl.text;
+	
+	db.exec("DELETE FROM SE_TBM_Lists", {ListName = ListName; Title = Title} )
+	table.removeByValue(ctrl.items, Title);
+
 	dbRs.close();	
 }
+for(name,ctrl in winform.eachControl("combobox") ){
+    ctrl.oncommand = function(id,event){
+        if(event == ){
+			var pop = win.ui.popmenu(winform);//创建弹出菜单
+			pop.add("删除此条记录",
+				function(id){
+					
+				}
+			)
+			win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+			var pt = ::POINT();
+			::User32.GetCursorPos(pt);   		
+			pop.popup(pt.x,pt.y,true );
+        }
+    }
+
+}
+*/
 
 winform.button2.oncommand = function(id,event){
     mainForm.show(false); //隐藏窗口
@@ -344,6 +381,9 @@ winform.button7.oncommand = function(id,event){
 	win.setForeground(winform.hwnd);
 	menu.popup(pt.x,pt.y,true );	
 }
+
+
+
 
 win.loopMessage();
 return winform;
