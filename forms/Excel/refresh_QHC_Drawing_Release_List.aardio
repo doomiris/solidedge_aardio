@@ -1,7 +1,7 @@
 
 
 if ... _wbpath = ... ;
-else _wbpath = "\\ccnqia05\开发部共享文件-\01.2022Y图纸&技术通知及BOM\2022年开发部图纸下发台账.xlsx";
+else _wbpath = "\\ccnqia05\开发部共享文件-\01.2022Y图纸&技术通知及BOM\2022年开发部图纸下发台账-以此为准.xlsx";
 
 
 import console; 
@@ -10,7 +10,7 @@ console.open()
 console.log("正在打开...")
 var excel = com.excel(true);
 var wb = excel.WorkBooks.Open(_wbpath,false /* updateLinks */,true /* readonly */,null /* format */,null /* password */);
-var sht = wb.Sheets("2021");
+var sht = wb.Sheets("2022");
 
 console.log(sht.name,"打开成功")
 

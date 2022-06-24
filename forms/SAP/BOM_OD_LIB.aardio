@@ -9,11 +9,11 @@ var excel = com.excel(true);
 
 _sname = {"分类新", "特性参数规划表新", "分类新", "特性参数规划表新"}
 _wbname = {
-	{"\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表更新日期2021.6.11.xlsx", false, true, null,"0000"},
+	{"\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表2022.06.01.xlsx", false, true, null,"0000"},
 	{"\\ccnqia05\kaifa-SAP数据整理—研发中心\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx",false,true,null,null},
 }
-
-
+if !io.exist(_wbname[1][1]) console.log("找不到开发表", _wbname[1][1]);
+if !io.exist(_wbname[2][1]) console.log("找不到研发表", _wbname[2][1]);
 /*getTabFromRange{{*/
 var getTabFromRange = function(range){
 	var simpleName = function(str){

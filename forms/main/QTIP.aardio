@@ -36,7 +36,7 @@ listview={cls="listview";left=1;top=53;right=638;bottom=464;ah=1;aw=1;db=1;dl=1;
 rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=272;top=352;right=400;bottom=368;db=1;dl=1;hide=1;z=6};
 rdBG={cls="radiobutton";text="仅查询成品: BG";left=272;top=320;right=384;bottom=336;db=1;dl=1;group=1;hide=1;z=5};
 rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=272;top=288;right=416;bottom=304;checked=1;db=1;dl=1;hide=1;z=12};
-static={cls="syslink";text="<a>清空选择</a>";left=16;top=432;right=72;bottom=448;db=1;dl=1;hide=1;z=19};
+static={cls="syslink";text="<a>清空选择</a>";left=16;top=432;right=72;bottom=448;db=1;dl=1;hide=1;notify=1;z=19};
 static2={cls="static";text="筛选条件 (按CTRL多选)";left=8;top=64;right=232;bottom=456;bgcolor=16777215;db=1;disabled=1;dl=1;edge=1;frame=1;hide=1;z=13}
 )
 /*}}*/
@@ -145,7 +145,7 @@ var searchSapDB = function(userinput){
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
 			table.assign(searchField, {物料 = userinput});
-		else
+		else {
 			table.assign (searchField, {物料描述 = userinput});
 
 /*
@@ -155,13 +155,14 @@ var searchSapDB = function(userinput){
 		
 */
 
-		if #winform.clSapType.selected
-			table.assign(searchField, {物料组 = getSelectedText(winform.clSapType)});
-		if #winform.clUnit.selected
-			table.assign(searchField, {单位 = getSelectedText(winform.clUnit)});
-		if #winform.clOrderType.selected
-			table.assign(searchField, {类型 = getSelectedText(winform.clOrderType)});
-		
+		//直接搜索物料时忽略filter
+			if #winform.clSapType.selected
+				table.assign(searchField, {物料组 = getSelectedText(winform.clSapType)});
+			if #winform.clUnit.selected
+				table.assign(searchField, {单位 = getSelectedText(winform.clUnit)});
+			if #winform.clOrderType.selected
+				table.assign(searchField, {类型 = getSelectedText(winform.clOrderType)});
+		}		
 /*
 		if #winform.clLegacyType.checked
 			sqlstr +=  " AND [物料] LIKE `H008`";
@@ -197,7 +198,7 @@ var searchSapDB = function(userinput){
 /*}}*/
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
-    filenumber := winform.editUser3.text;
+    filenumber :=  winform.editUser3.text;
 
 	winform.edit2.text = "";
     winform.listview.tag = 2;
@@ -207,19 +208,21 @@ var searchDocument = function (filenumber){
     
     winform.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
+
 	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
 	var flistDB = sqlite(config.dbServer.path + "\drawing_lists.db");	//打开数据库连接
-	var sql = "SELECT `文件名`, `路径` FROM `Lib` WHERE `文件名` LIKE ?;"
-	var flist = flistDB.getTable(sql, {"%" + searchFor + "%"});
+	var sql = "SELECT `文件名`, `路径` FROM `Lib` WHERE ??";
+	sql = sqlite.format(sql, {[1]={文件名 = "%" + searchFor + "%"}});
+	sql = string.replace(sql, "=", "LIKE");
+	
+	var flist = flistDB.getTable(sql);
 	if (#flist == 0){
 		var maptab = flistDB.getTable("SELECT * FROM `Map`", { 专用号  =  searchFor });
 		if (#maptab > 0) {
-			searchFor = maptab[1].图号; 
-			if #searchFor winform.edit2.text = searchFor;
-			winform.edit2.hide = !(#searchFor);
-			
-			//sql = "SELECT [文件名], [路径] FROM [Lib] WHERE [文件名] LIKE '%" ++ searchFor ++ "%';";
-			flist = flistDB.getTable(sql, {"%" + searchFor + "%"});
+			if #maptab[1].图号 winform.edit2.text = maptab[1].图号;
+			winform.edit2.hide = !(#maptab[1].图号);
+			sql = string.replace(sql, searchFor, maptab[1].图号);
+			flist = flistDB.getTable(sql);
 		}
 	}
 	if (#flist > 0) fileTab = table.concat(fileTab, flist);	
@@ -515,6 +518,12 @@ winform.editUser3.oncommand = function(id,event){
 	}
 
 }
+//右键点击快速取消筛选
+winform.button2.wndproc = function(hwnd,message,wParam,lParam){
+	if message == 0x205/*_WM_RBUTTONUP*/ winform.static.onHyperlinkClick();
+}
+
+
 winform.show();
 winform.editUser3.setFocus();
 win.loopMessage();

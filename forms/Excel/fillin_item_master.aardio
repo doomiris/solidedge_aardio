@@ -82,24 +82,29 @@ winform.button.oncommand = function(id,event){
 		}
 		var otab = getTabFromRange(sht.Range("$E$2:$K$" ++ etr()));
 	
-		if tarray.indexOfCol(etab, otab[1][1],1) {
-			win.msgbox("已经存在了");
-			return ;
-		}
-		var tar_b = itemCount + 1;
-		var tar_e = tar_b + #otab -1;
-		itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
-		tarRng = itemMaster.range("A" ++ tar_b ++ ":E" ++ tar_e);
-		tarTab = tarRng.value2
+
+		var tarTab = {};
 		for (i=1; #otab){
-			tarTab[i][1] = otab[i][1];
-			tarTab[i][2] = otab[i][2];
-			tarTab[i][3] = otab[i][4];
-			tarTab[i][4] = otab[i][6];
-			tarTab[i][5] = otab[i][7] == "配置" ? "配置" : "";
+			if tarray.indexOfCol(etab, otab[i][1],1) {
+				winform.edit.print(i,otab[i][1],"专用号存在了");
+				continue;
+			}
+			table.push(tarTab, {
+				otab[i][1];
+				otab[i][2];
+				otab[i][4];
+				otab[i][6];
+				otab[i][7] == "配置" ? "配置" : "";
+			})
 		}
-		
-		tarRng.value2 = tarTab;
+		if #tarTab {
+			var tar_b = itemCount + 1;
+			var tar_e = tar_b + #tarTab -1;
+			itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
+			tarRng = itemMaster.range("A" ++ tar_b ++ ":E" ++ tar_e);
+			
+			tarRng.value2 = tarTab;
+		}
 		winform.edit.print("专用号导入完成");
 	}
 	elseif string.keywords('图纸明细|图纸下发').findOne(winform.combobox2.selText) {

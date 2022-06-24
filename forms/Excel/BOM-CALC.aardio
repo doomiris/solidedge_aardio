@@ -50,19 +50,19 @@ winform.button.oncommand = function(id,event){
 		}			
 		if !#d_size and !#m_size continue;
 		var rez = QHC.下料尺寸(d_size : m_size );
-		if !rez continue;
-		var t={}
-		t["设计尺寸"] = d_size;
-		t["生产尺寸(参考)"] = m_size;
-		t["长,宽,厚"] = string.join({rez.l, rez.w, rez.t}, ",");
-		t["原材料"] = rez.raw.物料 ;
-		t["原材料描述"] = rez.raw.物料描述 ;
-		t["钣金用量"]= rez.metel;
-		t["粉末用量"]= rez.powder;
-		t["钣材价格"]= math.round( rez.metel * rez.raw.价格, 2);
-		t["喷粉后总价"]= math.round(rez.powder * rez.powderItem.价格 + t["钣材价格"], 2);
-		
-		table.push(tab,t);
+		var t={};
+		if rez {		
+			t["设计尺寸"] = d_size;
+			t["生产尺寸(参考)"] = m_size;
+			t["长,宽,厚"] = string.join({rez.l, rez.w, rez.t}, ",");
+			t["原材料"] = rez.raw.物料 ;
+			t["原材料描述"] = rez.raw.物料描述 ;
+			t["钣金用量"]= rez.metel;
+			t["粉末用量"]= rez.powder;
+			t["钣材价格"]= math.round( rez.metel * rez.raw.价格, 2);
+			t["喷粉后总价"]= math.round(rez.powder * rez.powderItem.价格 + t["钣材价格"], 2);
+		}
+		table.push(tab,t); //保留空行
 	}
 
 	grid.setTable(tab);

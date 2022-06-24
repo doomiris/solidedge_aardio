@@ -63,7 +63,7 @@ if(pd){
 }
 
 winform.button2.oncommand = function(id,event){
-    _dw_path = "\\ccnqia05\开发部共享文件-\01.2021Y图纸&技术通知及BOM\2021年开发部图纸下发台账-.xlsx";
+    _dw_path = "\\ccnqia05\开发部共享文件-\01.2022Y图纸&技术通知及BOM\2022年开发部图纸下发台账-以此为准.xlsx";
 	if !io.exist(_dw_path) return error("找不到开发部共享文件: " ++ _dw_path);
 	loadcodex("\forms\Excel\refresh_QHC_Drawing_Release_List.aardio", _dw_path );
 }

@@ -124,7 +124,7 @@ winform.listview2.onnotify = function(id,code,ptr){
 }
 
 winform.button.oncommand = function(id,event){
-	if io.exist("\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表更新日期2021.6.11.xlsx")
+	if io.exist("\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表2022.06.01.xlsx")
 		if io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx")
 			loadcodex("\forms\SAP\BOM_OD_LIB.aardio");
 }
