@@ -32,7 +32,7 @@ clSapType={cls="listbox";left=152;top=88;right=224;bottom=448;clipch=1;db=1;dl=1
 clUnit={cls="listbox";left=80;top=88;right=136;bottom=216;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"ZA";"KG";"M";"BOT";"L"};msel=1;tabstop=1;z=15};
 edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=17};
 editUser3={cls="plus";left=255;top=10;right=520;bottom=40;align="left";autohscroll=false;aw=1;border={color=-16777216;radius=2;width=1};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-15);iconStyle={align="right";font=LOGFONT(h=-11;name='FontAwesome');padding={right=2;bottom=2};valign="bottom"};iconText='\uF078';paddingRight=20;wrap=1;z=20};
-listview={cls="listview";left=1;top=53;right=638;bottom=464;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=1};
+listview={cls="listview";left=0;top=56;right=637;bottom=467;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=1};
 rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=272;top=352;right=400;bottom=368;db=1;dl=1;hide=1;z=6};
 rdBG={cls="radiobutton";text="仅查询成品: BG";left=272;top=320;right=384;bottom=336;db=1;dl=1;group=1;hide=1;z=5};
 rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=272;top=288;right=416;bottom=304;checked=1;db=1;dl=1;hide=1;z=12};
@@ -115,12 +115,14 @@ var getSelectedText = function(listCtrl){
 		table.unshift(t, text);
 	return t; 
 }
+
 var searchSapDB = function(userinput){
     userinput := winform.editUser3.text;
     winform.button3.hide=true;
     winform.listview.tag=1;
     winform.listview.clear(true);
     winform.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
+    userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
     userinput = string.replace(userinput,`、`,'\r\n');
     var userinputArr = string.split(userinput, '\r\n');
     userinputArr = table.unique(userinputArr);
@@ -134,6 +136,7 @@ var searchSapDB = function(userinput){
 		userinput = string.trim(userinputArr[i]);
 		if (string.len(userinput)==0 ) continue;
     	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
+    	userinput=string.replace(userinput, string.fromUnicode('\u00A0') /* NO-BREAK SPACE */,"");
     	userinput=string.replace(userinput,"@%","\%");
     	userinput=string.replace(userinput,"@_","\_");
     	userinput=string.replace(userinput,"@*","%");
@@ -288,13 +291,13 @@ winform.listview.onnotify = function(id,code,ptr){
 			}
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/  {
+    	    if !winform.button3.hide return ; //搜索图纸时不显示右键
 			var x,y = win.getMessagePos();
 			//var hItem,tvht = winform.listview.hitTest(x,y,true);
-			var menu = win.ui.popmenu(winform);
-			if string.startWith(pcode,"BG",true)
-				menu.add("下载BOM", downloadbom);
-			else 
-				menu.add("详细信息...", λ() loadcodex("\forms\SAP\sap-query.aardio", pcode));
+			var menu = win.ui.popmenu(winform);			
+			if string.startWith(pcode,"BG",true) menu.add("下载BOM", downloadbom);
+			menu.add("详细信息...", λ() loadcodex("\forms\SAP\sap-query.aardio", pcode));
+			menu.add("图纸版次...", λ() loadcodex("\forms\main\check_QHC_Release.aardio", pcode));
 			menu.popup(x,y,true);
     	}
     }
@@ -440,11 +443,13 @@ subscribe("dok",function(...){
 
 
 subscribe("refresh",function(){
-	//	winform.redraw();
+		winform.redraw();
+/*
 		if !winform.editUser3 or !winform.listview {
-			win.msgbox("控件丢失");
+			//win.msgbox("控件丢失");
 			winform.publish("控件丢失",3);
 		}
+*/
 	}
 );
 

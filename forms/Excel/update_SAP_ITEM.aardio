@@ -18,7 +18,7 @@ import config;
 import sqlite;
 var db = sqlite(config.dbServer.path + "QHCSAP.db");
 
-
+import QHC;
 var tab = {};	//可用列
 table.push(tab, QHC.getColDef());
 table.push(tab, table.array(#tab[1],"")); //对应列号初始化
@@ -80,38 +80,53 @@ winform.button2.oncommand = function(id,event){
 
 
 var update = function(winform, tab){
+	//import console;
+	//console.open();
+	import win;
 	import com.excel;
 	import tarray;
 	import QHC;
 	var excel = com.excel(false);
 	var sht = excel.ActiveWorkbook.ActiveSheet;
 	sht.AutoFilterMode = false;
-	sht.ListObjects("表1").AutoFilter.ShowAllData();
-//	import console;
-//	console.open();
+	for (i=1; sht.ListObjects.Count)
+		sht.ListObjects.item(i).AutoFilter.ShowAllData();
+
 	excel.alerts = false;
 	
-	var tCount = sht.usedrange.rows.count;	
+	var tCount = sht.usedrange.rows[sht.usedrange.rows.count].row;	
+
+	var listitems = winform.listview.items;
+	for (i=1; #tab) 
+		tab[i].绑定到列 = listitems[i][2] : "";
+		
 	var key = tarray.mapAsItem(tab,  tab.fields[1], tab.fields[2]); //字段和列号对应起来
+	
 	var ucol =  winform.listview.checked;
 	
-	var keyCol = sht.range(key.物料 ++ "1:" ++ key.物料 ++ tCount).value2;
+	var keyCol = sht.range(key.物料 ++ sht.usedRange.rows[1].row + ":" ++ key.物料 ++ tCount).value2;
+
 	for (i=1; #keyCol){
 		var t={};
+		
 		if !keyCol[i][1] continue;	//如果title行之前有空行,string.startWith会报错
-		if !string.startWith(keyCol[i][1],"H") continue;
+		if !string.startWith(keyCol[i][1],"H") and !string.startWith(keyCol[i][1],"BG") continue;
 		var hitem = QHC.getSapItem(keyCol[i][1]);
+		//console.log(i, keyCol[i][1])
 		if !hitem continue;
+		
 		for (j=1; #ucol){
+			
 			var hitemname = winform.listview.getItemText(ucol[j],1)
 			if hitemname == "物料类型" hitemname="MTyp";
 			if hitemname == "单位" hitemname="BUn";
 			if hitemname == "采购组" hitemname="PGr";
-			sht.cells(i, winform.listview.getItemText(ucol[j],2)).value2 = hitem[hitemname];
+			sht.cells(sht.usedRange.rows[i].row, winform.listview.getItemText(ucol[j],2)).value2 = hitem[hitemname];
 		}
 	}
 	excel.alerts = true;
 	winform.button.disabledText = null;
+	//win.loopMessage();
 }
 
 winform.button.oncommand = function(id,event){

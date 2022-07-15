@@ -3,6 +3,7 @@ import win.ui;
 var winform = win.form(text="原材料用量计算 (ctrl复制板材料用量, alt复制粉末用量, ctrl+alt同时复制, 选择多行时用\分隔) 价格仅供参考";right=1215;bottom=575)
 winform.add(
 button={cls="button";text="计算";left=80;top=8;right=152;bottom=32;dl=1;dt=1;z=3};
+checkbox={cls="checkbox";text="去除重复项";left=8;top=8;right=80;bottom=24;z=6};
 edit={cls="edit";left=8;top=56;right=152;bottom=568;ah=1;db=1;dl=1;dt=1;edge=1;font=LOGFONT(h=-16);multiline=1;vscroll=1;z=1};
 listview={cls="listview";left=160;top=8;right=1208;bottom=568;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-13);z=2};
 static={cls="syslink";text="<a>清空列表</a>";left=8;top=32;right=64;bottom=48;dl=1;dt=1;transparent=1;z=4};
@@ -21,7 +22,7 @@ import QHC;
 
 winform.button.oncommand = function(id,event){
 	var pArr = string.split(winform.edit.text,'\n');
-	pArr = table.unique(pArr);
+	if winform.checkbox.checked pArr = table.unique(pArr);
 	winform.edit.text = string.replace( string.join(pArr,'\n'), '\n\r\n', '\n');
 
 	var tab=table.create(,{fields = {
@@ -51,7 +52,7 @@ winform.button.oncommand = function(id,event){
 		if !#d_size and !#m_size continue;
 		var rez = QHC.下料尺寸(d_size : m_size );
 		var t={};
-		if rez {		
+		if rez {
 			t["设计尺寸"] = d_size;
 			t["生产尺寸(参考)"] = m_size;
 			t["长,宽,厚"] = string.join({rez.l, rez.w, rez.t}, ",");

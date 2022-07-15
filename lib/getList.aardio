@@ -26,6 +26,7 @@ namespace getList{
 		};
 		import config;
 		import sqlite;
+		
 		var db = sqlite(config.dbServer.path + "drawing_lists.db");
 		_libName := "Lib";
 		var flist={

@@ -19,7 +19,7 @@ import win.ui.grid;
 var grid = win.ui.grid(winform.listview)
 var showDetail = function(pnumber){
 	var t = QHC.getSapItem(pnumber);
-	
+	if !t return; 
 	var fields = QHC.getColDef();
 
 	var tab = {};	//可用列

@@ -56,17 +56,17 @@ namespace session{
     		session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab[i];
     		session.findById("wnd[0]/tbar[1]/btn[8]").press();
     		 			
- 			var vt = QHC.getSapItem(etab[i]);
- 			var filename;
- 			if !vt continue;
-    		filename = vt.物料描述;    		
-    		filename = string.replace(filename, " ", "_");
-    		filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
-    		table.push(ftab, filename);
     		var test;
     		try{
     			test = session.findById("wnd[0]/tbar[1]/btn[9]");    	
     		}	
+    		
+ 			var vt = QHC.getSapItem(etab[i]);
+ 			var filename;
+ 			if vt filename = vt.物料描述;    		
+    		filename = string.replace(filename, " ", "_");
+    		filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
+    		table.push(ftab, filename);
     		if test {
     			session.findById("wnd[0]/tbar[1]/btn[9]").press(); //zmdm_001 里面的download
     			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename;
@@ -74,6 +74,7 @@ namespace session{
     			session.findById("wnd[0]/tbar[0]/btn[12]").press();//[x]取消
     			..publish("bom_down",filename);
     		}else{ //搜索不到时跳过,继续下一个
+    			win.msgbox(etab[i] + "无BOM");
 				while(session.findById("wnd[0]/tbar[0]/btn[12]").Changeable){
 					session.findById("wnd[0]/tbar[0]/btn[12]").press();
 				}

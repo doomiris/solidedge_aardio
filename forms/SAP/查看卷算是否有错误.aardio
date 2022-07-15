@@ -1,0 +1,20 @@
+import console; 
+import SAP.session;
+var session = SAP.session();
+console.open()
+
+//session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow(8).selected = true;
+//session.findById("wnd[0]").sendVKey(31);
+session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select();
+session.findById("wnd[0]/tbar[0]/btn[0]").press();
+session.findById("wnd[0]/tbar[1]/btn[20]").press();
+//session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").currentCellRow = -1;
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn ("CMF_LIGHTS");
+session.findById("wnd[0]/tbar[1]/btn[38]").press();
+session.findById("wnd[1]/usr/chkP_RED").selected = true;
+session.findById("wnd[1]/tbar[0]/btn[0]").press();
+console.pause(false,"有问题请截图,按任意键继续");
+session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+
+console.close();

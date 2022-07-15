@@ -1,0 +1,54 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="下载订单BOM";right=759;bottom=469)
+winform.add(
+button={cls="button";text="下载";left=528;top=384;right=704;bottom=440;z=3};
+edit={cls="edit";text="D2205175S";left=72;top=72;right=312;bottom=104;edge=1;multiline=1;z=1};
+edit2={cls="edit";text="510";left=72;top=152;right=160;bottom=184;edge=1;multiline=1;z=2};
+static={cls="static";text="订单号";left=72;top=48;right=184;bottom=64;transparent=1;z=4};
+static2={cls="static";text="项目号";left=72;top=128;right=184;bottom=144;transparent=1;z=5}
+)
+/*}}*/
+
+/*
+import console;
+console.open();
+*/
+
+var dcb = function(winform){
+	import win;
+
+	import SAP.session;
+	var session = SAP.session();
+ 
+    var order = winform.edit.text;
+    var item = winform.edit2.text;
+	session.findById("wnd[0]/tbar[0]/okcd").text = "CSK2";
+	session.findById("wnd[0]").sendVKey(0);
+
+	session.findById("wnd[0]/usr/ctxtRC29L-VBELN").text = order
+	session.findById("wnd[0]/usr/txtRC29L-VBPOS").text = item
+	session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text= ""
+	session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01"
+	
+	session.findById("wnd[0]").sendVKey(0);
+	var code = session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text;
+	
+	session.findById("wnd[0]/tbar[1]/btn[8]").press()
+	
+	session.findById("wnd[0]/tbar[1]/btn[43]").press()
+	session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = string.join({"ORDER", order, item, code}, "_") + ".xlsx";
+	session.findById("wnd[1]/tbar[0]/btn[0]").press()
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+	winform.button.disabledText = null;
+	win.loopMessage();
+	
+}
+winform.button.oncommand = function(id,event){
+	winform.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷",text = "下载中..."};
+	thread.invoke(dcb, winform);	
+}
+
+winform.show();
+win.loopMessage();

@@ -1,0 +1,41 @@
+import console; 
+
+/*
+session.findById("wnd[0]/tbar[0]/okcd").text = "CS12"
+session.findById("wnd[0]").sendVKey 0
+session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text = "H0080154671"
+session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = "0841"
+session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01"
+session.findById("wnd[0]/usr/ctxtRC29L-CAPID").setFocus
+session.findById("wnd[0]/usr/ctxtRC29L-CAPID").caretPosition = 4
+session.findById("wnd[0]/tbar[1]/btn[8]").press
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").currentCellColumn = "OJTXP"
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectedRows = "0"
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").currentCellColumn = "MENGE"
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").doubleClickCurrentCell
+
+*/
+import com.excel;
+var excel = com.excel(false)
+
+//var sht = excel.ActiveWorkbook.ActiveSheet;
+
+var a = excel.ActiveCell.value2
+
+//console.log(#a)
+
+//var b = string.crlf(a,'\r');
+//console.log(#b)
+
+var nbsp = string.fromUnicode('\u00A0') //NO-BREAK SPACE
+var c = string.trimright(a,nbsp)
+console.log(#c)
+
+
+/*
+var x = string.right(a, 1, true);
+console.log(string.charCodeAt(x))
+*/
+
+console.pause(true);

@@ -14,6 +14,8 @@ cb_design_date={cls="edit";left=216;top=160;right=336;bottom=184;dl=1;dt=1;multi
 cb_designer={cls="combobox";left=88;top=160;right=208;bottom=184;dl=1;dt=1;edge=1;items={};mode="dropdown";z=6};
 cb_desp={cls="combobox";left=88;top=72;right=656;bottom=96;aw=1;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdown";multiline=1;tabstop=1;z=4};
 cb_mark={cls="combobox";left=88;top=32;right=136;bottom=56;dl=1;dt=1;edge=1;items={"a";"b";"c";"d";"e";"f";"g";"h";"i";"j";"k";"l";"m";"n";"o";"p";"q";"r";"s";"t";"u";"v";"w";"x";"y";"z"};mode="dropdown";z=2};
+checkbox={cls="checkbox";text="同时把所有数字球标改为版本标记";left=40;top=248;right=280;bottom=264;db=1;dl=1;z=20};
+checkbox2={cls="checkbox";text="更新所有Sheets版本号";left=40;top=224;right=280;bottom=240;checked=1;db=1;dl=1;z=21};
 chkCCRV={cls="checkbox";text="同时递增CCR版本";left=40;top=272;right=184;bottom=288;checked=1;db=1;dl=1;z=17};
 static={cls="static";text="标记";left=32;top=32;right=64;bottom=56;align="right";dl=1;dt=1;transparent=1;z=1};
 static2={cls="static";text="描述";left=32;top=72;right=64;bottom=96;align="right";dl=1;dt=1;transparent=1;z=3};
@@ -28,7 +30,7 @@ version={cls="edit";left=392;top=32;right=416;bottom=58;align="center";dl=1;dt=1
 import solidedge.application;
 import solidedge.DraftDocument;
 import config;
-
+import key;
 var seApp, seDFT, seSht, seLbs;
 var initDeclare = function(){
 	seApp := solidedge.application();
@@ -128,8 +130,8 @@ var loadFromTab = function(_blk){
 
 /*界面控件事件{{*/
 winform.button.oncommand = function(id,event){
-	mainForm.show(false); //隐藏窗口
-	if (seApp) winex.attach(seApp.hWnd);
+	if mainForm mainForm.show(false); //隐藏窗口
+	
 	win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd)
 	
@@ -149,13 +151,12 @@ winform.button.oncommand = function(id,event){
 		var b = addBalloon (winform.cb_mark.text);
 		b.Cut();
 		win.delay(0.1*1000);
-		winex.key.combine(seApp.hWnd,"CTRL","V"); //调用前必须先winex.attach
-		//seApp.ActiveWindow.Paste();
+		key.combine("CTRL","V"); 
 	}
 
 }
 winform.button2.oncommand = function(id,event){
-    mainForm.show(false); //隐藏窗口
+    if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 }
 winform.button3.oncommand = function(id,event){

@@ -73,7 +73,7 @@ var initDeclare = function(){
     		}
     		if !seBlk{
     	    	import win.dlg.message;
-    	    	var dlg = win.dlg.message(mainForm.hwnd);
+    	    	var dlg = win.dlg.message(mainForm ? mainForm.hwnd : winform.hwnd);
     	    	if dlg.ask( "找不到Title Blocks定义,插入新TitleBlock?" ){
 					solidedge.DraftDocument.replaceNewTitleBlock(seDFT);
 					seBlk = seDFT.getTitleBlock(seSht);
@@ -214,7 +214,7 @@ var iniFrmCTRL = function(){
 /*}}*/
 /*控件事件{{*/
 winform.button3.oncommand = function(id,event){
-    mainForm.show(false); //隐藏窗口
+    if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 }
 var saveLists = function(winform){
@@ -274,7 +274,7 @@ for(name,ctrl in winform.eachControl("combobox") ){
 */
 
 winform.button2.oncommand = function(id,event){
-    mainForm.show(false); //隐藏窗口
+    if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	
 	initDeclare();

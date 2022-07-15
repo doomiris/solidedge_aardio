@@ -20,6 +20,15 @@ var  getSubLevel = function(currentLevel){
 
 if !sht.Columns("B:B").find("BOM项目") return error("不是新BOM申请表"); 
 if !sht.Rows("4:4").find("相关性语句") return error("不是最新版申请表"); 
+var lvlErrFind = sht.columns("A").find("…");
+
+if lvlErrFind and lvlErrFind.rows.count {
+	for(i=1; lvlErrFind.rows.count)
+		console.log(lvlErrFind.rows[i].row,"层级含非法字符错误");
+	console.pause();
+	sht.columns("A").Replace ("…", "...");
+}
+
 var etab = (function(){
 		var fields = {
 			"层级";  "BOM项目";  "项目类别";  "物料号";  "物料描述";  "单位用量";  "单位";  "排序文本";  "物料类型";  "相关性语句"
@@ -64,6 +73,7 @@ var rule_desp = {
 	[14] = "HALB无下挂(借用件可忽略)"; 
 	[15] = "原材料用量错误";  //TODO
 	[16] = "物料类型/单位与SAP内不一致"; 
+	[17] = "发泡料比例错误(黑料 = 1.15*白料)"; 
 	
 }
 var hasChild = function(z){
@@ -186,7 +196,9 @@ var sapErr = {
 		if etab[i].单位 !== sapItem.BUn return true;
 		if etab[i].物料类型 !== sapItem.MTyp return true;
 	}
+	[17] = function(i){
 
+	}
 };
 
 
@@ -197,7 +209,7 @@ var getErr = {};
 
 for(i=1; etab_count){
 	bar.setProgress(math.round(i*100/etab_count), math.round(i*100/etab_count) + "% processing......");
-	for(j=1; #sapErr){		
+	for(j=1; #sapErr){
 		if sapErr[j](i)
 			table.push(getErr, {errRow=i; errRule=j})
 	}

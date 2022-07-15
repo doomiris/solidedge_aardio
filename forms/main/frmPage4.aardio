@@ -1,4 +1,5 @@
 import fonts.fontAwesome;
+import key;
 import win.ui;
 import win.ui.menu;
 import solidedge.application;
@@ -106,13 +107,12 @@ winform.treeview.onnotify = function(id,code,ptr){
 }
 
 winform.button2.oncommand = function(id,event){
-	mainForm.show(false); //隐藏窗口
+	if mainForm mainForm.show(false); //隐藏窗口
 	
 }
 
 winform.button.oncommand = function(id,event){
-	mainForm.show(false); //隐藏窗口
-	if (seApp) winex.attach(seApp.hWnd);
+	if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd)
 	seApp.DisplayAlerts = false;
@@ -139,8 +139,7 @@ winform.button.oncommand = function(id,event){
 	
 	seApp.DisplayAlerts = true;
 	win.delay(0.1*1000);
-	winex.key.combine(seApp.hWnd,"CTRL","V"); //调用前必须先winex.attach
-
+	key.combine("CTRL","V");
 }
 /*}}*/
 winform.show();
