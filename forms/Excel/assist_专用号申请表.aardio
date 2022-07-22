@@ -19,6 +19,7 @@ sht.AutoFilterMode = false;
 
 if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表"); 
 if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
+//物料描述列???
 var etr = function(){
 	for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
 		if (sht.cells(i,"F").value2) return i;
@@ -49,7 +50,7 @@ for(i=1; #etab){
 		if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
 		
 	etab[i][1] = i;
-	etab[i][2] = "=len(F" ++ (i+2) ++ ")";
+	etab[i][2] = "=len(E" ++ (i+2) ++ ")";
 	
 	if !#etab[i][3] etab[i][3] = username;
 	if !#etab[i][4] etab[i][4] = str_today("/");

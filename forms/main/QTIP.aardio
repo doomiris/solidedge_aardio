@@ -123,7 +123,11 @@ var searchSapDB = function(userinput){
     winform.listview.clear(true);
     winform.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
     userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
-    userinput = string.replace(userinput,`、`,'\r\n');
+    
+    //分隔符号转换行
+	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`} 
+		userinput = string.replace(userinput, v,'\r\n');    
+
     var userinputArr = string.split(userinput, '\r\n');
     userinputArr = table.unique(userinputArr);
     

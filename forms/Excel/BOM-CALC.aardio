@@ -118,6 +118,7 @@ var copyTable = function(){
 	var tab={}
 	for k, v in items {
 		var t = string.join(v,'\t');
+		t = string.crlf(t,'\r');
 		t = string.replace(t, '\r',"");
 		table.push(tab, t);
 
