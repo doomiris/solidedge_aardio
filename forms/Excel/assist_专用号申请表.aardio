@@ -22,7 +22,7 @@ if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号�
 //物料描述列???
 var etr = function(){
 	for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-		if (sht.cells(i,"F").value2) return i;
+		if (sht.cells(i,"E").value2) return i;
 	}
 }
 var tRng = sht.Range("A3:S" ++ etr());
@@ -43,6 +43,13 @@ var username = config.tbm.Designer;
 
 import string.keywords;
 
+_plastics = 'PC|PVC|PS|PP|ABS|夜帘|橡胶';
+_glass = '玻璃|钢化玻璃|有机玻璃';
+_glass_sys = '钢化玻璃|钢化玻璃|有机玻璃';
+_metal_sys = '铝合金|不锈钢板|焊接件|焊接件';
+_metal = '铝合金|不锈钢|焊接件|铆接件';
+_cooper = '管|TP2M|蒸发器|冷凝器|阀';
+_cooper_sys = '铜管|铜管|蒸发器|冷凝器|阀';
 for(i=1; #etab){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
     
@@ -54,48 +61,63 @@ for(i=1; #etab){
 	
 	if !#etab[i][3] etab[i][3] = username;
 	if !#etab[i][4] etab[i][4] = str_today("/");
-	if !#etab[i][7] etab[i][7] = "ZA";
-	if !#etab[i][9] etab[i][9] = "柜体";
-	if !#etab[i][13] etab[i][13 /* M */] = "4.新品BOM";
-	if !#etab[i][19] etab[i][19 /* S */] = table.shift(string.split(etab[i][6 /* F */]," "));
+	if !#etab[i][7] etab[i][6 /* F */] = "ZA";
+	if !#etab[i][9] etab[i][8 /* H */] = "柜体";
+	if !#etab[i][13] etab[i][13 /* M */] = "新品BOM";
+	if !#etab[i][19] etab[i][19 /* S */] = table.shift(string.split(etab[i][5 /* E */]," "));
 	
-	var str = etab[i][6];
+	var str = etab[i][5 /* E */];
 	
 	var ePush = function(val, index){
-		index := {8,10,11,12};
+		index := {7 /* G */,9 /* I */,10 /* J */,11 /* K */,12 /* L */};
 		for(k=1; #index)
 			if !#etab[i][index[k]] etab[i][index[k]] = val[k];
 		//TODO: 根据已经填写的信息计算空白内容
 	}	
+
 	
 	if string.keywords('可选项').findOne(str)
-		ePush({"SG","KMAT","配置","09"});
+		ePush({"SG","KMAT","配置","09","可选项"});
+		
 	elseif string.keywords('总装|组装').findOne(str)
-		ePush({"SG","HALB","配置","08"});
+		ePush({"SG","HALB","配置","08","总装"});
+		
 	elseif string.keywords('组件').findOne(str)	
-		ePush({"SA","HALB","非配置","08"});
+		ePush({"SA","HALB","非配置","08","总装"});
+		
 	elseif string.keywords('已喷').findOne(str)	
-		ePush({"SC","HALB","非配置","01"});
-	elseif string.keywords('ABS|PVC|亚克力|EPS|PC|尼龙').findOne(str)
-		ePush({"R02","ROH","非配置","02"});	
+		ePush({"SC","HALB","非配置","01","喷粉件"});
+		
+	elseif string.keywords(_plastics).findOne(str)
+		ePush({"R02","ROH","非配置","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)]});
+
+	elseif string.keywords('亚克力|EPS|尼龙|GFRP|GFK').findOne(str)
+		ePush({"R02","ROH","非配置","02","其他塑料件"});
+
 	elseif string.keywords('底箱体|发泡板|发泡箱体').findOne(str)
-		ePush({"SD","HALB","非配置","08"});
-	elseif string.keywords('玻璃').findOne(str)		
-		ePush({"R14","ROH","非配置","14"});
+		ePush({"SD","HALB","非配置","08","发泡"});
+		
+	elseif string.keywords(_glass).findOne(str)		
+		ePush({"R14","ROH","非配置","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)]});
+		
 	elseif string.keywords('点焊').findOne(str)
-		ePush({"SH","HALB","非配置","01"});
-	elseif string.keywords('铝合金|不锈钢|焊接件|铆接件').findOne(str)
-		ePush({"R01","ROH","非配置","01"});
+		ePush({"SH","HALB","非配置","01","焊接件"});
+		
+	elseif string.keywords(_metal).findOne(str)
+		ePush({"R01","ROH","非配置","01", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)]});
+		
 	elseif string.keywords('木包装').findOne(str)
-		ePush({"R05","ROH","非配置","16"});
+		ePush({"R05","ROH","非配置","16","木包装"});
+		
 	elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
-		ePush({"SB","HALB","非配置","01"});
-	elseif string.keywords('管|TP2M|蒸发器').findOne(str)
-		ePush({"R07","ROH","非配置","07"});
+		ePush({"SB","HALB","非配置","01","钣金"});
+		
+	elseif string.keywords(_cooper).findOne(str)
+		ePush({"R07","ROH","非配置","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)]});
 
 }
 //table.sort(etab, lambda(b) owner[12]>b[12]);
-sht.Columns(10 /* J */).ColumnWidth = #etab[1][10 /* J */] + 2.75;
+sht.Columns(9 /* I */).ColumnWidth = #etab[1][9 /* I */] + 2.75;
 sht.Columns(19 /* S */).ColumnWidth = #etab[1][19 /* S */] + 2.75;
 
 tRng.value2 = etab;

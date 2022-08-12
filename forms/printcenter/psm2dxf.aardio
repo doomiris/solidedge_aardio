@@ -18,10 +18,17 @@ import console
 console.open()
 */
 import config;
-
-winform.onDropFiles = function(files){
-	var tab = {};	
+var tab;
+var renew = function(){
+	tab = {};	
 	tab.fields = {[1] = "文件名"; [2]="Path"; [3] = "output"}
+}
+renew();
+
+import tarray;
+winform.onDropFiles = function(files){
+	
+
 	var t = {}
 	for (i=1;#files){
 		var fn = string.match(files[i],".+\\(.+)$");
@@ -29,11 +36,13 @@ winform.onDropFiles = function(files){
 		var tf = config.setbm.workingDir;
 		if !string.endWith(tf,"\") tf = tf ++ "\";
 		tf = tf ++ string.replace(fn,"@@.psm",".dxf");
-		tab[i]={
-			"文件名" =  fn;
-			"Path" = fp;
-			"output" = tf;
-		}
+		
+		if !table.find(tarray.getCol(tab, 1), fn)
+			table.push(tab,	{
+					"文件名" =  fn;
+					"Path" = fp;
+					"output" = tf;
+			})
 	}
 	winform.listview.setTable(tab);
 	winform.listview.adjust = function(cx,cy){
@@ -56,6 +65,7 @@ winform.button.oncommand = function(id,event){
 
 winform.static2.onHyperlinkClick = function(nmSysLink,url,id){
 	winform.listview.clear(true);
+	renew();
 }
 
 

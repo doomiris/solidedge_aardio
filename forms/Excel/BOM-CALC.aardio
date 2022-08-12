@@ -88,14 +88,14 @@ winform.listview.translateAccelerator = function( msg ){
 	if (vk == 'C'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {
 	    	var tab = {};
 	    	for (k, v in winform.listview.selected){
-	        	table.push(tab, winform.listview.getItemText(v,5));
+	        	table.push(tab, winform.listview.getItemText(v,6));
 	    	}           
 			win.clip.write(string.join(tab,"\"));
 	}
 	if (vk == 'C'#) && !ctrl && alt && (msg.message == 0x104/*_WM_SYSKEYDOWN*/){
         	var tab = {};
         	for (k, v in winform.listview.selected){
-            	table.push(tab, winform.listview.getItemText(v,6));
+            	table.push(tab, winform.listview.getItemText(v,7));
         	}           
 			win.clip.write(string.join(tab,"\"));
 	}
@@ -104,8 +104,8 @@ winform.listview.translateAccelerator = function( msg ){
 	    	var tab1 = {};
 	    	var tab2 = {};
 	    	for (k, v in winform.listview.selected){
-	        	table.push(tab1, winform.listview.getItemText(v,5));
-	        	table.push(tab2, winform.listview.getItemText(v,6));
+	        	table.push(tab1, winform.listview.getItemText(v,6));
+	        	table.push(tab2, winform.listview.getItemText(v,7));
 	    	} 
 	    	table.push(t, string.join(tab1,"\"));
 	    	table.push(t, string.join(tab2,"\"));

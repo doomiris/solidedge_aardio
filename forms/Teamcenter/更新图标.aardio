@@ -1,0 +1,18 @@
+import console; 
+var ulist = {
+	[1] = {
+		sourceFile = "S:\Admin\Software\TeamCenter安装文件\00-PLM二次开发安装包\图标\customer.properties";
+		targetFolder = "C:\Program Files\Siemens\Teamcenter13\portal\plugins\configuration_13000.1.0\";
+		overwrite = true;
+	},
+	[2] = {
+		sourceFile = "S:\Admin\Software\TeamCenter安装文件\00-PLM二次开发安装包\图标\Ob.png";
+		targetFolder = "C:\Program Files\Siemens\Teamcenter13\portal\plugins\configuration_13000.1.0\images\";
+		overwrite = true;
+	}
+}
+import fsys;
+for (i=1;#ulist)
+	fsys.copy(ulist[i].sourceFile,ulist[i].targetFolder,0x100/*_FOF_SIMPLEPROGRESS*/);
+
+console.pause(true);

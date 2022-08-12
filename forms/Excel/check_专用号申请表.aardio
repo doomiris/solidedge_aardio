@@ -19,7 +19,6 @@ var etab = (function(){
 			"长度检查";
 			"申请人";
 			"申请日期";
-			"SAP专用号";
 			"物料描述";
 			"基本计量单位";
 			"SAP物料组";
@@ -27,6 +26,7 @@ var etab = (function(){
 			"物料类型";
 			"属性";
 			"物料分类明细";
+			"材质分类";
 			"用途";
 			"SAP展开尺寸";
 			"SAP基本物料";
@@ -39,7 +39,7 @@ var etab = (function(){
 		};
 		var etr = function(){
 			for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-				if (sht.cells(i,"F").value2) return i;
+				if (sht.cells(i,"E").value2) return i;
 			}
 		}
 		
@@ -159,7 +159,8 @@ var sapErr={
 		if etab[i].物料类型=="HALB"
 			if etab[i].物料分类明细 == "08"
 				if string.indexOf(etab[i].物料描述,"发泡")
-					return etab[i].SAP物料组!=="SD" ;
+					if !string.indexOf(etab[i].物料描述,"总装")
+						return etab[i].SAP物料组!=="SD" ;
 
 	}
 	

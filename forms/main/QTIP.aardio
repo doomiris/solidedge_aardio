@@ -180,7 +180,7 @@ var searchSapDB = function(userinput){
 		var quickSearch = !string.indexOf(userinput,"%");
 		if !quickSearch sqlstr = string.replace(sqlstr,"=","LIKE");
 		
-		if (winform.chkDisabled.checked)	sqlstr += " AND `禁用` IS NULL";
+		//if (winform.chkDisabled.checked)	sqlstr += " AND `禁用` IS NULL"; //null 无法处理空值!!
 		if table.indexOf(getSelectedText(winform.clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11";
 
 		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
@@ -188,6 +188,10 @@ var searchSapDB = function(userinput){
 		if (#t==0)
 			if ( ! winform.chkHideUnknown.checked) 
 				table.push(t,{物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
+
+		if (winform.chkDisabled.checked)	
+			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 )
+
 		sapTab = table.concat(sapTab,t);
 		
 		import tarray;
@@ -200,6 +204,7 @@ var searchSapDB = function(userinput){
 	else {
 
 	}
+
 	formatListView();
 }
 /*}}*/

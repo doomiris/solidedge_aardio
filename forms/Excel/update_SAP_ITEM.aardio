@@ -80,8 +80,8 @@ winform.button2.oncommand = function(id,event){
 
 
 var update = function(winform, tab){
-	//import console;
-	//console.open();
+	import console;
+	console.open();
 	import win;
 	import com.excel;
 	import tarray;

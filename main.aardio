@@ -183,7 +183,6 @@ mainForm.popmenu2.add('打开分类查询窗口...', λ() loadcodex("\forms\SAP\
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio"));
 mainForm.popmenu2.add('下载订单BOM...', λ() loadcodex("\forms\SAP\下载订单BOM.aardio"));
-mainForm.popmenu2.add('订单BOM>检查当前选中行是否有卷算问题...', λ() loadcodex("\forms\SAP\查看卷算是否有错误.aardio"));
 mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());

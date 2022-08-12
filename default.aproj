@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.211" ProductVersion="1.5.0.211" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.222" ProductVersion="1.5.0.222" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -41,8 +41,6 @@
 			<file name="sap-query.aardio" path="forms\SAP\sap-query.aardio" comment="forms\SAP\sap-query.aardio"/>
 			<file name="下载订单BOM.aardio" path="forms\SAP\下载订单BOM.aardio" comment="forms\SAP\下载订单BOM.aardio"/>
 			<file name="处理默认值表格.aardio" path="forms\SAP\处理默认值表格.aardio" comment="forms\SAP\处理默认值表格.aardio"/>
-			<file name="查看卷算是否有错误.aardio" path="forms\SAP\查看卷算是否有错误.aardio" comment="forms\SAP\查看卷算是否有错误.aardio"/>
-			<file name="导出订单清单.aardio" path="forms\SAP\导出订单清单.aardio" comment="forms\SAP\导出订单清单.aardio"/>
 		</folder>
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="true" ignored="false">
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
@@ -73,6 +71,9 @@
 			<file name="SAP-job.aardio" path="forms\obsolete\SAP-job.aardio" comment="forms\obsolete\SAP-job.aardio"/>
 			<file name="SAP-job2.aardio" path="forms\obsolete\SAP-job2.aardio" comment="forms\obsolete\SAP-job2.aardio"/>
 			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
+		</folder>
+		<folder name="Teamcenter" path="forms\Teamcenter" embed="true" comment="目录" local="false" ignored="false">
+			<file name="更新图标.aardio" path="forms\Teamcenter\更新图标.aardio" comment="forms\Teamcenter\更新图标.aardio"/>
 		</folder>
 	</folder>
 	<folder name="res" path="res" comment="res" local="false" embed="false" ignored="true">

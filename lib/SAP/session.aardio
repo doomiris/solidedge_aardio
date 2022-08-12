@@ -58,7 +58,8 @@ namespace session{
     		 			
     		var test;
     		try{
-    			test = session.findById("wnd[0]/tbar[1]/btn[9]");    	
+    			test = session.findById("wnd[0]/tbar[1]/btn[9]");    
+    			//test = session.findById("wnd[0]/tbar[1]"); //试试这个
     		}	
     		
  			var vt = QHC.getSapItem(etab[i]);

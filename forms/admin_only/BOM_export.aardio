@@ -19,8 +19,9 @@ var progress = console.progress();
 
 var etab = osht.UsedRange.value2;
 var ts_count = #etab;
-
-for(j = 10 /* J */; 17 /* Q */){
+//console.dump(etab);
+//console.pause(true);
+for(j = 10 /* J */; 13 /* M */){
     if !#etab[2][j] continue;
 
     excel.alerts = false;
@@ -34,10 +35,10 @@ for(j = 10 /* J */; 17 /* Q */){
         progress.setProgress( (i+(j-10)*ts_count)*100/(ts_count*8), "wait... ["++(j-9) ++ "/8]");
         
         if i == 1 continue; //跳过标题行
-		
+
         if !#etab[i][1 /* A */] continue; //跳过层级为空的行
         if etab[i][j] == "X" continue;	// 跳过X标记
-        
+
     	var bun = etab[i][4 /* D */]; 
     	
     	if !bun bun = "1";
@@ -76,9 +77,11 @@ for(j = 10 /* J */; 17 /* Q */){
  //     	console.dump(tar);
     }
     
-    tsht.Range("6:"++ (#tsht_tab + 6)).EntireRow.insert();
+    var tar_end_row = #tsht_tab + 4 ;
+    
+    tsht.Range("6:"++ tar_end_row).EntireRow.insert();
 
-	tsht.range("A" ++ 5 ++ ":J" ++ #tsht_tab).value2 = tsht_tab;
+	tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
 
 
     tsht.Activate();

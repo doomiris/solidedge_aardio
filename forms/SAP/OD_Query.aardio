@@ -5,10 +5,10 @@ import tarray;
 var winform = win.form(text="分类和特性查询";right=999;bottom=751)
 winform.add(
 button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;color=255;db=1;dl=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
-button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;dr=1;dt=1;z=9};
+button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;db=1;dl=1;z=9};
 edit={cls="edit";left=8;top=32;right=216;bottom=64;dl=1;dt=1;edge=1;z=6};
 edit2={cls="edit";left=232;top=32;right=528;bottom=64;dl=1;dt=1;edge=1;z=8};
-listview1={cls="listview";left=8;top=88;right=216;bottom=216;ah=1;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;items={};msel=false;z=1};
+listview1={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;items={};msel=false;z=1};
 listview2={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;items={};z=2};
 listview3={cls="listview";left=536;top=88;right=992;bottom=728;ah=1;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
 splitter={cls="splitter";left=216;top=88;right=224;bottom=384;ah=1;db=1;dt=1;frame=1;z=4};

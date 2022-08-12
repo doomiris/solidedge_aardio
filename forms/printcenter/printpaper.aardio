@@ -6,7 +6,7 @@ button={cls="button";text="开始打印";left=632;top=438;right=752;bottom=469;d
 combobox={cls="combobox";left=10;top=438;right=247;bottom=464;db=1;dl=1;edge=1;items={};mode="dropdownlist";z=3};
 listview={cls="listview";left=0;top=0;right=760;bottom=424;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
 progress={cls="progress";left=0;top=425;right=760;bottom=435;aw=1;color=8421376;db=1;dl=1;dr=1;max=100;min=0;z=4};
-static={cls="syslink";text="<a>清空列表</a>";left=560;top=448;right=616;bottom=464;db=1;dr=1;transparent=1;z=5}
+static={cls="syslink";text="<a>清空列表</a>";left=560;top=448;right=616;bottom=464;db=1;dr=1;notify=1;transparent=1;z=5}
 )
 /*}}*/
 
@@ -20,21 +20,26 @@ var grid = win.ui.grid(winform.listview);//创建数据视图
 import domipub;
 var aid;
 var apath = domipub.findPath({"AcroRd32.exe"});
+var tab;
+var renew = function(){
+	tab = {};	
+	tab.fields = {[1] = "#"; [2] = "文件名"; [3]="Path"; }
+}
+renew();
 
 winform.onDropFiles = function(files){
-	var tab = {};	
-	tab.fields = {[1] = "#"; [2] = "文件名"; [3]="Path"; }
 	var t = {}
 	for (i=1; #files){
 		var fn = string.match(files[i],".+\\(.+)$");
 		var fp = string.match(files[i],"^(.+)\\.+$");
 		//var tf = toFolder ++ string.replace(fn,"@@.psm",".dxf");
-		tab[i]={
-			"#" = i;
+		if !table.find(tarray.getCol(tab, 2), fn)
+		table.push(tab, {
+			"#" = #tab;
 			"文件名" =  fn;
 			"Path" = fp;
 			//"output" = tf;
-		}
+		})
 	}
 	grid.setTable(tab);
 	winform.listview.checked = tarray.getCol(tab, "#");
@@ -43,7 +48,7 @@ winform.onDropFiles = function(files){
 	winform.listview.setColumn({cx=500 ;fmt=0x0/*_LVCFMT_LEFT*/},2);
 	winform.listview.setColumn({cx=0 ;fmt=0x0/*_LVCFMT_LEFT*/},3);
 	
-	aid = process.execute(apath, "/n /s /h", ,6/*_SW_MINIMIZE*/);
+	if !aid aid = process.execute(apath, "/n /s /h", ,6/*_SW_MINIMIZE*/);
 }
 
 
@@ -97,6 +102,7 @@ winform.button.oncommand = function(id,event){
 
 winform.static.onHyperlinkClick = function(nmSysLink,url,id){
 	winform.listview.clear(true);
+	renew();
 }
 
 winform.show();

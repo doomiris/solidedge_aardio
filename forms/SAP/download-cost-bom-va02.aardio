@@ -4,11 +4,14 @@ import win.ui;
 var winform = win.form(text="下载成本BOM";right=743;bottom=527)
 winform.add(
 button={cls="button";text="开始下载";left=528;top=416;right=680;bottom=456;db=1;dr=1;z=1};
-button2={cls="button";text="创建虚拟订单";left=528;top=328;right=736;bottom=376;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
+button2={cls="button";text="创建虚拟订单";left=440;top=8;right=648;bottom=56;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
 button3={cls="button";text='\uF07C';left=688;top=416;right=726;bottom=454;color=16711680;db=1;dr=1;font=LOGFONT(h=-21;name='FontAwesome');z=7};
+button4={cls="button";text="导出订单清单";left=624;top=168;right=712;bottom=200;z=11};
+button5={cls="button";text="查找错误";left=440;top=64;right=648;bottom=112;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=12};
 edit={cls="edit";text="0";left=80;top=112;right=296;bottom=144;edge=1;z=2};
 edit2={cls="edit";text="1-17";left=80;top=216;right=296;bottom=256;edge=1;multiline=1;z=3};
-edit3={cls="edit";left=528;top=8;right=736;bottom=216;dr=1;dt=1;edge=1;multiline=1;z=8};
+edit3={cls="edit";left=448;top=232;right=720;bottom=376;dr=1;dt=1;edge=1;multiline=1;z=8};
+edit4={cls="edit";left=448;top=168;right=608;bottom=200;edge=1;multiline=1;z=10};
 progress={cls="progress";left=72;top=424;right=488;bottom=454;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
 的所在行数(仅限当前屏幕, 不可超出屏幕)
@@ -40,6 +43,28 @@ var createOrder = function(){
 */
 }
 
+var filterRed = function(){
+	import console; 
+	import SAP.session;
+	var session = SAP.session();
+	console.open()
+	
+	//session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow(8).selected = true;
+	//session.findById("wnd[0]").sendVKey(31);
+	session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select();
+	session.findById("wnd[0]/tbar[0]/btn[0]").press();
+	session.findById("wnd[0]/tbar[1]/btn[20]").press();
+	//session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").currentCellRow = -1;
+	session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn ("CMF_LIGHTS");
+	session.findById("wnd[0]/tbar[1]/btn[38]").press();
+	session.findById("wnd[1]/usr/chkP_RED").selected = true;
+	session.findById("wnd[1]/tbar[0]/btn[0]").press();
+	console.pause(false,"有问题请截图,按任意键继续");
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+	
+	console.close();
+}
 
 
 var dcb = function(winform, absline, HT){
@@ -125,6 +150,41 @@ winform.button3.oncommand = function(id,event){
 
 winform.button2.oncommand = function(id,event){
 	createOrder()
+}
+
+winform.button4.oncommand = function(id,event){
+	thread.invoke( 
+		function(winform){
+			//import console; 
+			import SAP.session;
+			var session = SAP.session();
+			var order = winform.edit4.text;
+			session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
+			session.findById("wnd[0]").sendVKey(0);
+			session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order;
+			session.findById("wnd[0]").sendVKey(0);
+			//获取订单日期
+			var startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text;
+			session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select();
+			session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order;
+			session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate;
+			session.findById("wnd[0]/tbar[0]/btn[0]").press();
+			session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu();
+			session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem("&XXL");
+			session.findById("wnd[1]/tbar[0]/btn[0]").press();
+			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" + order+ ".XLSX";
+			session.findById("wnd[1]/tbar[0]/btn[11]").press();
+			//返回
+			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+		}, winform
+	)
+}
+
+winform.button5.oncommand = function(id,event){
+	filterRed();
 }
 
 winform.show();

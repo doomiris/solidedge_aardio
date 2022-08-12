@@ -36,7 +36,7 @@ import string.keywords;
 
 for (i=1; excel.WorkBooks.Count) {
 	var wbname = excel.WorkBooks(i).Name;
-	if string.keywords('新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(wbname)
+	if string.keywords('tc_|新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(wbname)
 		winform.combobox2.add(wbname);
 }
 	
@@ -106,6 +106,39 @@ winform.button.oncommand = function(id,event){
 			tarRng.value2 = tarTab;
 		}
 		winform.edit.print("专用号导入完成");
+	}
+	elseif string.startWith(winform.combobox2.selText, "tc_") {
+		var sht = excel.WorkBooks(winform.combobox2.text).sheets(1);
+		var ot = sht.range("B2:B"+sht.usedrange.rows.count).value2;
+		
+		var otab = {};
+		for (i=1; #ot) {
+			var t = string.replace(ot[i][1], "-", '\t', 1);
+			table.push(otab, string.split(t, '\t', 2));
+		}
+				var tarTab = {};
+		for (i=1; #otab){
+			if tarray.indexOfCol(etab, otab[i][1],1) {
+				winform.edit.print(i,otab[i][1],"专用号存在了");
+				continue;
+			}
+			table.push(tarTab, {
+				otab[i][1];
+				otab[i][2];
+			})
+		}
+		//排序
+		table.sort(tarTab, lambda(a) tonumber(string.trimleft(owner[1],"H")) < tonumber(string.trimleft(a[1],"H")) );
+		
+		var tar_b = itemCount + 1;
+		var tar_e = tar_b + #tarTab -1;
+		if #tarTab {
+			itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
+			tarRng = itemMaster.range("A" ++ tar_b ++ ":B" ++ tar_e);			
+			tarRng.value2 = tarTab;
+			winform.edit.print("专用号导入完成, 共 "++ #tarTab ++ " 行, 行号: " ++ tar_b ++ " - " ++ tar_e);	
+		}
+	
 	}
 	elseif string.startWith(winform.combobox2.selText, "图纸下发台账_") {
 		var sht = excel.WorkBooks(winform.combobox2.text).sheets("下发台账模板");
