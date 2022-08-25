@@ -10,6 +10,8 @@ _属性 = {"配置";"非配置";"委外加工"};
 import com.excel;
 var excel = com.excel(false);
 
+import string.keywords;
+
 var sht = excel.ActiveWorkbook.ActiveSheet;
 if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表"); 
 if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
@@ -93,7 +95,7 @@ var rule_desp = {
 	[34] = "物料描述结尾是可选项,物料类型必须是KMAT";
 	[35] = "物料描述长度超过40";
 	[36] = "展开尺寸长度超过18";
-	[37] = "物料描述中间含有多余的空格";
+	[37] = "物料描述中间含有多余的空格或连字符";
 	[38] = "物料描述首尾含有多余的空格";
 	[39] = "喷粉件为未喷粉在前，已喷粉在后";
 	[40] = "物料描述有重复行";
@@ -139,7 +141,10 @@ var sapErr={
 	[34] = function(i){return (string.right(etab[i].物料描述,3,true)=="可选项" and etab[i].物料类型 !== "KMAT")}
 	[35] = function(i){return (string.len(etab[i].物料描述) > 40)}
 	[36] = function(i){if !!(etab[i].SAP展开尺寸) return (string.len(etab[i].SAP展开尺寸) > 18)}
-	[37] = function(i){return (string.indexOf(etab[i].物料描述,"  "))}
+	[37] = function(i){
+			//return (string.indexOf(etab[i].物料描述,"  "))
+			return ( string.keywords('  |--|- -|~~|~ ~').findOne(etab[i].物料描述)); 
+		}
 	[38] = function(i){return (string.trim(etab[i].物料描述) !== etab[i].物料描述)}
 	[39] = function(i){
 		if etab[i].SAP物料组 == "SC" 

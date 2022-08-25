@@ -80,8 +80,8 @@ winform.button2.oncommand = function(id,event){
 
 
 var update = function(winform, tab){
-	import console;
-	console.open();
+	//import console;
+	//console.open();
 	import win;
 	import com.excel;
 	import tarray;
@@ -101,9 +101,9 @@ var update = function(winform, tab){
 		tab[i].绑定到列 = listitems[i][2] : "";
 		
 	var key = tarray.mapAsItem(tab,  tab.fields[1], tab.fields[2]); //字段和列号对应起来
-	
+
 	var ucol =  winform.listview.checked;
-	
+
 	var keyCol = sht.range(key.物料 ++ sht.usedRange.rows[1].row + ":" ++ key.物料 ++ tCount).value2;
 
 	for (i=1; #keyCol){
