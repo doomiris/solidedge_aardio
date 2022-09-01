@@ -300,13 +300,19 @@ namespace DraftDocument{
 	       				succ = true; 
 	       			}
         		}
-        		case "bmp"{
-					var sw = owner.application.ActiveWindow;        			
+        		case "png"{
+					var sw = owner.application.ActiveWindow;
+					//import gdip;
         			for (i=1; owner.SheetGroups.Item(1).Sheets.Count){
         				owner.SheetGroups.Item(1).Sheets.Item(i).Activate();
         				sw.Fit();
-        				var branch_name = ..string.replace(fname,"bmp", i ++ ".bmp");
+        				var branch_name = ..string.replace(fname,"png", i ++ ".bmp");
 						sw.SaveAsImage(branch_name, 1600, 960, 1, 24, 3 /* seImageQualityHigh */, false);
+						var bmp = ..gdip.bitmap(branch_name);
+						bmp.save(..string.replace(branch_name,".bmp",".png"));
+						bmp.dispose();
+						bmp = null;
+						..io.remove(branch_name);
         			}
         			succ = true; 	
         		}

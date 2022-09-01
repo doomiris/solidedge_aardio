@@ -10,7 +10,6 @@ import key;
 import sqlite;
 import process;
 //import console;
-
 //user lib
 import config;
 import solidedge.application;
@@ -185,6 +184,7 @@ mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() loadcodex("\forms\SAP\do
 mainForm.popmenu2.add('下载订单BOM...', λ() loadcodex("\forms\SAP\下载订单BOM.aardio"));
 mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio"));
 mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('Teamcenter插件更新...', λ() loadcodex("\forms\Teamcenter\更新插件.aardio"));
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
 /*左侧导航按钮{{*/

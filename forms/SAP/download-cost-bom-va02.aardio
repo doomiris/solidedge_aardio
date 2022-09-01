@@ -24,6 +24,7 @@ static2={cls="static";text="校正行数 (当前屏幕页首行, 首页0,
 var createOrder = function(){
 	import SAP.session;
 	var session = SAP.session();
+	//session.RegisterROT();
 	session.findById("wnd[0]/tbar[0]/okcd").text = "VA01";
 	session.findById("wnd[0]").sendVKey(0);
 	session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "Y001";
@@ -41,6 +42,8 @@ var createOrder = function(){
 	session.findById("wnd[0]").sendVKey(0);
 	session.findById("wnd[0]/tbar[1]/btn[8]").press();
 */
+	session.clear();
+	
 }
 
 var filterRed = function(){
@@ -62,7 +65,7 @@ var filterRed = function(){
 	console.pause(false,"有问题请截图,按任意键继续");
 	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
 	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
-	
+	session.clear();
 	console.close();
 }
 
@@ -117,7 +120,7 @@ console.open();
     		//    session.findById("wnd[0]/tbar[0]/btn[0]").press();  // 确认时间 和上面不同时用
     	}
 
-    	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").press();ContextButton("&PRINT_BACK");
+    	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton("&PRINT_BACK");
     	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem("&PRINT_PREV_ALL");
     	session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select();
     	session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select()
@@ -131,7 +134,9 @@ console.open();
     	session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow(i + absline).Selected = false
 		winform.progress.pos = i
 	} 
+	//session.clear();
 	win.loopMessage();
+	//return winform; 
 }
 
 winform.button.oncommand = function(id,event){
@@ -155,7 +160,10 @@ winform.button2.oncommand = function(id,event){
 winform.button4.oncommand = function(id,event){
 	thread.invoke( 
 		function(winform){
-			//import console; 
+/*
+			import console; 
+			console.open();
+*/
 			import SAP.session;
 			var session = SAP.session();
 			var order = winform.edit4.text;
@@ -165,6 +173,7 @@ winform.button4.oncommand = function(id,event){
 			session.findById("wnd[0]").sendVKey(0);
 			//获取订单日期
 			var startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text;
+			startdate = tostring(time(startdate,"%Y.%m.%d").addday(-30));
 			session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select();
 			session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order;
 			session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate;
@@ -179,6 +188,7 @@ winform.button4.oncommand = function(id,event){
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+			session.clear();
 		}, winform
 	)
 }

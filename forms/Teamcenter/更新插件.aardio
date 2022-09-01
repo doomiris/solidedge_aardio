@@ -1,0 +1,103 @@
+import fonts.fontAwesome;
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="更新 - Teamcenter插件";right=759;bottom=279)
+winform.add(
+button2={cls="button";text='\uF0EE 更新';left=656;top=232;right=744;bottom=264;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=2};
+listview={cls="listview";left=0;top=32;right=760;bottom=224;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1}
+)
+/*}}*/
+
+import win.ui.grid;
+var grid = win.ui.grid(winform.listview);
+import fsys;
+import fsys.lnk;
+var tc_plugins = {
+	fields = {"名称", "当前版本", "目标版本", "当前文件", "目标文件" }
+}
+_plugins_keywords = {
+	"com.teamcenter.rac.kailicode_*.jar",
+	"com.teamcenter.rac.kailireport4_*.jar",
+	"com.teamcenter.rac.query_*.jar",
+	"com.teamcenter.rac.write_*.jar"
+}
+_plugins_parent = "com.teamcenter.rac.";
+_tc_install_path = string.trimright(fsys.lnk.searchLnk(,"Teamcenter 13", 0 /*_CSIDL_DESKTOP*/), "\portal\portal.bat");
+_plugins_folder = io.joinpath(_tc_install_path, "\portal\plugins");
+_plugins_server = "\\CCNSIA1A\SEPARTS\Admin\Software\TeamCenter安装文件\00-PLM二次开发安装包";
+_plugins_registry_cmd = io.joinpath(_tc_install_path, "\portal\registry\genregxml.bat");
+
+var nlist = fsys.list(_plugins_server,,_plugins_keywords);
+var flist = {};
+for (i=1; #_plugins_keywords){
+	var t = fsys.list(_plugins_folder,,_plugins_keywords[i]);
+	if #t>1
+		table.sort(t, lambda(a) tonumber(string.match(owner,"\.V(\d+)\.")) > tonumber(string.match(a,"\.V(\d+)\.")))
+	if #t>1
+		for (i=2;#t) io.remove(t[t[i]]);	//删除多余旧版本
+	table.push(flist, t[1]:"");
+}
+for (i=1; #nlist){
+	var t = {};
+	t.名称 = string.match(nlist[i], _plugins_parent ++ "(\w+)_\d");
+	t.当前版本 = string.match(flist[i],"\.(V\d+)\.")//#flist[i] ? string.match(flist[i],"\.(V\d+)\.") : null;
+	t.目标版本 = string.match(nlist[i],"\.(V\d+)\.");
+	t.当前文件 = flist[i];
+	t.目标文件 = nlist[i];
+	table.push(tc_plugins, t);
+}
+
+grid.setTable(tc_plugins);
+
+/*调整列宽{{*/
+winform.listview.setColumn({cx=75;	fmt=0x0/*_LVCFMT_LEFT*/},	1);
+winform.listview.setColumn({cx=75;	fmt=0x0/*_LVCFMT_LEFT*/},	2);
+winform.listview.setColumn({cx=75;	fmt=0x0/*_LVCFMT_LEFT*/},	3);
+winform.listview.setColumn({cx=250;	fmt=0x0/*_LVCFMT_LEFT*/},	4);
+winform.listview.setColumn({cx=250;	fmt=0x0/*_LVCFMT_LEFT*/},	5);
+/*}}*/
+
+/*更新图标{{*/
+var updateIcon = function(){
+	var ulist = {
+		[1] = {
+			sourceFile = _plugins_server ++ "\图标\customer.properties";
+			targetFolder = _plugins_folder ++ "\configuration_13000.1.0\";
+		},
+		[2] = {
+			sourceFile = _plugins_server ++ "\图标\Ob.png";
+			targetFolder = _plugins_folder ++ "\configuration_13000.1.0\images\";
+		}
+	}
+	for (i=1;#ulist)
+		if !io.exist(io.joinpath(ulist[i].targetFolder, io.splitpath(ulist[i].sourceFile).file))
+			fsys.copy(ulist[i].sourceFile,ulist[i].targetFolder,0x100/*_FOF_SIMPLEPROGRESS*/);
+}
+/*}}*/
+winform.button2.oncommand = function(id,event){
+	var succ = 0;
+	var getV = function(a){
+		if !#a return 0; 
+		return tonumber(string.split(string.upper(a),"V")[2]);
+	}
+	var updatePlugin = function(n){
+		io.remove(io.joinpath(_plugins_folder, tc_plugins[n].当前文件 ));
+		fsys.copy(io.joinpath(_plugins_server, tc_plugins[n].目标文件), _plugins_folder, 0x100/*_FOF_SIMPLEPROGRESS*/);
+		succ += 1;
+	}
+	for (i=1; #tc_plugins){
+		if tc_plugins[i].当前版本 == tc_plugins[i].目标版本 continue;
+		if getV(tc_plugins[i].当前版本) < getV(tc_plugins[i].目标版本)
+			updatePlugin(i);
+	}
+	
+	if succ 
+		raw.execute(_plugins_registry_cmd);
+	updateIcon();
+	
+	winform.close();
+}
+
+winform.show();
+win.loopMessage();
+return winform;

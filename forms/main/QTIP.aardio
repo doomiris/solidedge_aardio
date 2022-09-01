@@ -93,6 +93,7 @@ updatePopmenu();
 /*调整列宽{{*/
 var formatListView = function(){
 	winform.listview.clear(true)
+
 	grid.setTable( sapTab );
 	grid.readonlyColums = {
     	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
@@ -125,7 +126,7 @@ var searchSapDB = function(userinput){
     userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
     
     //分隔符号转换行
-	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`} 
+	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} 
 		userinput = string.replace(userinput, v,'\r\n');    
 
     var userinputArr = string.split(userinput, '\r\n');
@@ -138,7 +139,8 @@ var searchSapDB = function(userinput){
     for (i=1; #userinputArr; 1){
         if string.indexOf(userinputArr[i], '\t') userinputArr[i] = table.pop(string.split(userinputArr[i],'\t'));
 		userinput = string.trim(userinputArr[i]);
-		if (string.len(userinput)==0 ) continue;
+		if !#userinput continue;
+		
     	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
     	userinput=string.replace(userinput, string.fromUnicode('\u00A0') /* NO-BREAK SPACE */,"");
     	userinput=string.replace(userinput,"@%","\%");
@@ -146,7 +148,8 @@ var searchSapDB = function(userinput){
     	userinput=string.replace(userinput,"@*","%");
     	userinput=string.replace(userinput,"@?","_");
 
-		sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
+		//sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
+		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
 		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格`,`物料是可配置的` AS `配置`, `禁用` FROM `所有物料` WHERE ??" ;
 
     	var searchField = {};	
@@ -185,21 +188,22 @@ var searchSapDB = function(userinput){
 
 		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
 
-		if (#t==0)
-			if ( ! winform.chkHideUnknown.checked) 
-				table.push(t,{物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
+		if !#t
+			if !winform.chkHideUnknown.checked
+				table.push(t, {物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
 
 		if (winform.chkDisabled.checked)	
-			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 )
+			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 );
 
-		sapTab = table.concat(sapTab,t);
+		sapTab = table.concat(sapTab, t);
 		
 		import tarray;
-		sapTab = tarray.uniqueCol(sapTab, 1);
+		if #sapTab sapTab = tarray.uniqueCol(sapTab, 1);
 	}
-	if (#sapTab==0) {
+	
+	if !#sapTab {
 		if ( ! winform.chkHideUnknown.checked) 
-			table.push(sapTab,{物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
+			table.push(sapTab, {物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
 	}
 	else {
 
