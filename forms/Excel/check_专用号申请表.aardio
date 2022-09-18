@@ -10,10 +10,19 @@ _属性 = {"配置";"非配置";"委外加工"};
 import com.excel;
 var excel = com.excel(false);
 
+/*
+if excel.Visible == false and excel.WorkBooks.Count==0 {
+	import process.popen;
+	var prcs = process.popen.cmd(`taskkill /im EXCEL.EXE /f`);
+	sleep(300);
+	excel = com.excel(false);
+}
+*/
+
 import string.keywords;
 
 var sht = excel.ActiveWorkbook.ActiveSheet;
-if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表"); 
+if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表:"+ '\n\n' ++sht.parent.name +"$["+sht.name+"]"); 
 if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 var etab = (function(){
 		var fields = {

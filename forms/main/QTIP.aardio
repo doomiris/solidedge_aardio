@@ -446,7 +446,7 @@ subscribe("dok",function(...){
 				try{
 					excel.Run("initExportedBom"); //调用宏格式化样式
 				}
-		 		excel.WorkBooks(i).close(true /* _save_changes */);
+		 		if #ftab>4 excel.WorkBooks(i).close(true /* _save_changes */);
 			}
 	}
 

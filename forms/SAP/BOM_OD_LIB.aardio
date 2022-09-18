@@ -88,7 +88,7 @@ FROM 分类新;");
 db.exec("CREATE TABLE 特性汇总 AS
 SELECT DISTINCT 特性参数规划表新.特性, 特性参数规划表新.特性描述
 FROM 特性参数规划表新;");
-
+db.exec("DELETE FROM 特性参数规划表新 WHERE 特性 IS NULL;");
 db.close();
 
 console.log("完成")

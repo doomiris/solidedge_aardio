@@ -6,6 +6,8 @@ winform.add(
 button={cls="button";text="开始更新";left=160;top=328;right=296;bottom=352;db=1;dr=1;z=2};
 button2={cls="button";text='\uF0E2';left=264;top=8;right=296;bottom=40;color=255;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=3};
 button3={cls="button";text="H";left=8;top=328;right=32;bottom=352;z=5};
+edit={cls="edit";text="1";left=48;top=328;right=80;bottom=352;edge=1;z=6};
+edit2={cls="edit";text="2";left=96;top=328;right=160;bottom=352;edge=1;z=7};
 listview={cls="listview";left=0;top=48;right=304;bottom=320;ah=1;asel=false;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;msel=false;tabstop=1;z=1};
 static={cls="static";left=8;top=8;right=248;bottom=40;aw=1;dl=1;dr=1;dt=1;transparent=1;z=4}
 )
@@ -65,6 +67,8 @@ var refresh = function(){
 		if !match continue;
 		tab[i][fields[2]] = etip.toColName(match.col) ;
 		winform.titleRow := match.row;
+		winform.edit.text = winform.titleRow + 1;
+		winform.edit2.text = sht.usedrange.rows[sht.usedrange.rows.count].row;
 	}
 	grid.setTable(tab);
 /*
@@ -86,6 +90,10 @@ var update = function(winform, tab){
 	import com.excel;
 	import tarray;
 	import QHC;
+	
+	var start_row = winform.edit.text;
+	var end_row = winform.edit2.text;
+	
 	var excel = com.excel(false);
 	var sht = excel.ActiveWorkbook.ActiveSheet;
 	sht.AutoFilterMode = false;
@@ -106,7 +114,7 @@ var update = function(winform, tab){
 
 	var keyCol = sht.range(key.物料 ++ sht.usedRange.rows[1].row + ":" ++ key.物料 ++ tCount).value2;
 
-	for (i=1; #keyCol){
+	for (i = start_row; end_row){
 		var t={};
 		
 		if !keyCol[i][1] continue;	//如果title行之前有空行,string.startWith会报错

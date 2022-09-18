@@ -36,7 +36,7 @@ import string.keywords;
 
 for (i=1; excel.WorkBooks.Count) {
 	var wbname = excel.WorkBooks(i).Name;
-	if string.keywords('tc_|新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(wbname)
+	if string.keywords('ORDER_LIST_|tc_|新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(wbname)
 		winform.combobox2.add(wbname);
 }
 	
@@ -108,7 +108,12 @@ winform.button.oncommand = function(id,event){
 		winform.edit.print("专用号导入完成");
 	}
 	elseif string.startWith(winform.combobox2.selText, "tc_") {
-		var sht = excel.WorkBooks(winform.combobox2.text).sheets(1);
+		var sht = excel.WorkBooks(winform.combobox2.text).Sheets(1);
+		
+		sht.UsedRange.AutoFilter(1);
+		sht.AutoFilter.Sort.SortFields.Add(sht.Range("B:B"));
+		sht.AutoFilter.Sort.Apply();
+		
 		var ot = sht.range("B2:B"+sht.usedrange.rows.count).value2;
 		
 		var otab = {};
@@ -128,7 +133,9 @@ winform.button.oncommand = function(id,event){
 			})
 		}
 		//排序
-		table.sort(tarTab, lambda(a) tonumber(string.trimleft(owner[1],"H")) < tonumber(string.trimleft(a[1],"H")) );
+
+		
+		//if #tarTab>1 table.sort(tarTab, lambda(a) tonumber(string.trimleft(owner[1],"H")) < tonumber(string.trimleft(a[1],"H")) );
 		
 		var tar_b = itemCount + 1;
 		var tar_e = tar_b + #tarTab -1;
@@ -225,7 +232,11 @@ winform.button.oncommand = function(id,event){
 		}
 		winform.edit.print("图纸明细导入完成");
 	}
-	
+	elseif string.keywords('ORDER_LIST_').findOne(winform.combobox2.selText) {
+		var sht = excel.WorkBooks(winform.combobox2.text).sheets("Sheet1");
+		var itemMaster_order = itemMaster.parent.sheets("订单");
+		win.msgbox("TODO");
+	}
 	//console.dumpTable(tarTab)
 	//console.pause(true);
 	//winform.close();

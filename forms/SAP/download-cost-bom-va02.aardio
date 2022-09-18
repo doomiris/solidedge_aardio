@@ -22,121 +22,161 @@ static2={cls="static";text="校正行数 (当前屏幕页首行, 首页0,
 /*}}*/
 
 var createOrder = function(){
-	import SAP.session;
-	var session = SAP.session();
-	//session.RegisterROT();
-	session.findById("wnd[0]/tbar[0]/okcd").text = "VA01";
-	session.findById("wnd[0]").sendVKey(0);
-	session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "Y001";
-	session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "0841";
-	session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = "10";
-	session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = "10";
-	session.findById("wnd[0]/tbar[0]/btn[0]").press();
-	session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN").text = "TBM6666";
-	session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "20010";
-	session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "20010";
-	session.findById("wnd[0]").sendVKey(0);
-/*
-	session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,0]").text = "BG1T1000000"
-	session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtRV45A-KWMENG[3,0]").text = "1"
-	session.findById("wnd[0]").sendVKey(0);
-	session.findById("wnd[0]/tbar[1]/btn[8]").press();
-*/
-	session.clear();
-	
+    import web.script;
+    var vm = web.script("VBScript");
+    vm.addCode(`
+		If Not IsObject(application) Then
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
+		End If
+		If Not IsObject(connection) Then
+   			Set connection = application.Children(0)
+		End If
+		If Not IsObject(session) Then
+   			Set session    = connection.Children(0)
+		End If
+		If IsObject(WScript) Then
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
+		End If
+
+		session.findById("wnd[0]/tbar[0]/okcd").text = "VA01"
+		session.findById("wnd[0]").sendVKey 0
+		session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "Y001"
+		session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "0841"
+		session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = "10"
+		session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = "10"
+		session.findById("wnd[0]/tbar[0]/btn[0]").press
+		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN").text = "TBM6666"
+		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "20010"
+		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "20010"
+		session.findById("wnd[0]").sendVKey 0
+    `);
 }
 
 var filterRed = function(){
-	import console; 
-	import SAP.session;
-	var session = SAP.session();
-	console.open()
-	
-	//session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow(8).selected = true;
-	//session.findById("wnd[0]").sendVKey(31);
-	session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select();
-	session.findById("wnd[0]/tbar[0]/btn[0]").press();
-	session.findById("wnd[0]/tbar[1]/btn[20]").press();
-	//session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").currentCellRow = -1;
-	session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn ("CMF_LIGHTS");
-	session.findById("wnd[0]/tbar[1]/btn[38]").press();
-	session.findById("wnd[1]/usr/chkP_RED").selected = true;
-	session.findById("wnd[1]/tbar[0]/btn[0]").press();
-	console.pause(false,"有问题请截图,按任意键继续");
-	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
-	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
-	session.clear();
-	console.close();
+    import web.script;
+    var vm = web.script("VBScript") ;
+    vm.addCode(`
+		If Not IsObject(application) Then
+   		Set SapGuiAuto  = GetObject("SAPGUI")
+   		Set application = SapGuiAuto.GetScriptingEngine
+		End If
+		If Not IsObject(connection) Then
+   		Set connection = application.Children(0)
+		End If
+		If Not IsObject(session) Then
+   		Set session    = connection.Children(0)
+		End If
+		If IsObject(WScript) Then
+   		WScript.ConnectObject session,     "on"
+   		WScript.ConnectObject application, "on"
+		End If
+
+		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
+		session.findById("wnd[0]/tbar[0]/btn[0]").press
+		session.findById("wnd[0]/tbar[1]/btn[20]").press
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "CMF_LIGHTS"
+		session.findById("wnd[0]/tbar[1]/btn[38]").press
+		session.findById("wnd[1]/usr/chkP_RED").selected = true
+		session.findById("wnd[1]/tbar[0]/btn[0]").press
+		'session.findById("wnd[0]/tbar[0]/btn[12]").press
+		'session.findById("wnd[0]/tbar[0]/btn[12]").press
+    `);
 }
 
 
 var dcb = function(winform, absline, HT){
-	import win;
+
 /*
-import console;
-console.open();
+import console
+console.open()
+
 */
-	import SAP.session;
-	var session = SAP.session();
- 
+    import web.script;
+    var vm = web.script("VBScript") ;
+
     var h = string.indexOf(HT, "-") ? string.split(HT, "-")[[1]] - 1 : tonumber(HT) - 1;
     var t = string.indexOf(HT, "-") ? string.split(HT, "-")[[2]] - 1 : tonumber(HT) - 1;
     
 	winform.progress.pos = 0;
 	winform.progress.min = h;
 	winform.progress.max = t;
-	
-	for (i = h; t) {
-    	var pcode = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1," ++ i ++ "]").Text
-    	var pdesp = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[4," ++ i ++ "]").Text
-    	session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow(i + absline).Selected = True
-    	var costFilename = "cost_" ++ string.trim(pcode) ++ "_" ++ string.trim(pdesp) ++ ".xls"
-    	//Debug.Print costFilename
-    	session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select();
-    	var markcost = null; //不要在Try内声明变量.....
-    	//var productcost = null;
-    	try {
-    		markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1");
- //   		productcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
-		};	
-    	if  markcost
-        		markcost.press();  //使用标记成本
-	    else {
-	        //确认时间
-        	var tdstr = null;
-        	
-        	try {
-        		tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
-        	}
-        	if tdstr {
-        		session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
-        		session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
-        		session.findById("wnd[0]/tbar[0]/btn[0]").press();  // 确认时间 和上面不同时用
-			}
-    		//    session.findById("wnd[1]/usr/btnSPOP-VAROPTION2").press(); //产品成本按钮
-    		//    session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").Text = "Z086"
-    		//    session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").Text = "Z001"
-    		//    session.findById("wnd[0]/tbar[0]/btn[0]").press();  // 确认时间 和上面不同时用
-    		//    session.findById("wnd[0]/tbar[0]/btn[0]").press();  // 确认时间 和上面不同时用
-    	}
+	vm.script = /*
+			If Not IsObject(application) Then
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
+			End If
+			If Not IsObject(connection) Then
+   			Set connection = application.Children(0)
+			End If
+			If Not IsObject(session) Then
+   			Set session    = connection.Children(0)
+			End If
+			If IsObject(WScript) Then
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
+			End If
+	*/
 
-    	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton("&PRINT_BACK");
-    	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem("&PRINT_PREV_ALL");
-    	session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select();
-    	session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select()
-    	session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").SetFocus()
-    	session.findById("wnd[1]/tbar[0]/btn[0]").press();
-    	session.findById("wnd[1]/usr/ctxtDY_FILENAME").Text = costFilename;
-    	//session.findById("wnd[1]/usr/ctxtDY_FILENAME").caretPosition = 15
-    	session.findById("wnd[1]/tbar[0]/btn[11]").press();
-    	session.findById("wnd[0]/tbar[0]/btn[12]").press();
-    	session.findById("wnd[0]/tbar[0]/btn[12]").press();
-    	session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow(i + absline).Selected = false
-		winform.progress.pos = i
-	} 
-	//session.clear();
-	win.loopMessage();
-	//return winform; 
+	vm.script = /*
+	    	dim i
+	    	dim absline
+	 */
+	 vm.script.absline = absline;
+	 for (i=h; t) {
+	 	vm.script.i = i
+	 	
+	vm.script = /*
+
+    		pcode = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1," & i & "]").Text
+    		pdesp = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[4," & i & "]").Text
+
+    		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = True
+    		costFilename = "cost_" & trim(pcode) & "_" & trim(pdesp) & ".xls"
+
+    		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
+    		
+
+    		set markcost = nothing 
+
+    		on error resume next
+    			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1")
+			on error goto 0
+
+    		if not markcost is nothing then
+        			markcost.press
+			else 
+        		'set tdstr = nothing
+        		'on error resume next
+        		'	set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
+        		'on error goto 0
+        		'if not tdstr is nothing then
+        		'	msgbox(3)
+        		'	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
+        		'	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
+        		'	session.findById("wnd[0]/tbar[0]/btn[0]").press
+				'end if
+    		end if
+
+
+			session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton "&PRINT_BACK"
+			session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem "&PRINT_PREV_ALL"
+
+    		session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select
+    		session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select
+    		session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").SetFocus
+    		session.findById("wnd[1]/tbar[0]/btn[0]").press
+    		session.findById("wnd[1]/usr/ctxtDY_FILENAME").Text = costFilename
+
+    		session.findById("wnd[1]/tbar[0]/btn[11]").press
+    		session.findById("wnd[0]/tbar[0]/btn[12]").press
+    		session.findById("wnd[0]/tbar[0]/btn[12]").press
+    		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = false
+	*/
+			winform.progress.pos = i
+	}
+
 }
 
 winform.button.oncommand = function(id,event){
@@ -188,7 +228,6 @@ winform.button4.oncommand = function(id,event){
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
-			session.clear();
 		}, winform
 	)
 }

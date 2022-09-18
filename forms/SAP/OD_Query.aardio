@@ -46,6 +46,7 @@ bctrls[1].oncommand = function(id,event){
 	owner.parent.text="" 
 }
 var filterDeleted = function(t){
+	if !#t return t; 
 	var z = {};
 	if t.fields z.fields = t.fields;
 	for (i=1; #t) {
@@ -61,12 +62,14 @@ var filterDeleted = function(t){
 
 var searchClass = function(str){
 	if !str return null; 
-	var t = db.getTable("SELECT * FROM [分类新]", { 分类 = string.upper(str) });
+	str = string.upper(string.trim(str));
+	var t = db.getTable("SELECT * FROM `分类新`", { 分类 : str });
 	return filterDeleted(t);
 }
 var searchOption = function(str){
 	if !str return null; 
-	var t = db.getTable("SELECT * FROM [特性参数规划表新]", { 特性 = string.upper(str) });
+	str = string.upper(string.trim(str));
+	var t = db.getTable("SELECT * FROM `特性参数规划表新`", { 特性 : str });
 	return filterDeleted(t);
 }
 
@@ -108,17 +111,19 @@ winform.edit2.onChange = function(){
 	if tOpts	winform.listview2.setTable(tOpts);
 	if cType	winform.listview3.setTable(cType);
 }
-
+var lastOpt;//记住上次搜索项, 减少搜索频率
 winform.listview2.onnotify = function(id,code,ptr){
 	select(code) {
 		case 0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
 			var c = owner.getItemText(owner.getSelection(),1);
+			if c == lastOpt return ; 
 			if !c return; 
 			var t = searchOption(c)
 			if !#t return;
 			var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
 			winform.listview3.clear(true);
 			if cType	winform.listview3.setTable(cType);
+			lastOpt = c;
 		}
 	}
 }

@@ -2,7 +2,6 @@ import fonts.fontAwesome;
 import win.ui;
 import config;
 import fsys;
-
 /*DSG{{*/
 var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469)
 winform.add(
@@ -20,6 +19,7 @@ log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 winform.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
 
 /*Get获取数据{{*/
+/*
 var getFromSAP = function(winform){
 	import win;
 	import SAP.session;
@@ -43,9 +43,48 @@ var getFromSAP = function(winform){
 	} else {
 		winform.log.print("无法访问SAP, 尝试直接打开TXT...");
 	}
+	session = null;
+	collectgarbage("collect");
 	winform.publish("getFromSAP",true);
 	win.loopMessage();
 }
+*/
+var getFromSAP = function(winform){
+    import web.script;
+    var vm = web.script("VBScript") ;
+    vm.addCode(`
+If Not IsObject(application) Then
+   Set SapGuiAuto  = GetObject("SAPGUI")
+   Set application = SapGuiAuto.GetScriptingEngine
+End If
+If Not IsObject(connection) Then
+   Set connection = application.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session    = connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session,     "on"
+   WScript.ConnectObject application, "on"
+End If
+session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
+session.findById("wnd[0]/tbar[0]/btn[0]").press
+session.findById("wnd[0]/usr/chkBEWFLG").selected = False
+session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*"
+session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841"
+session.findById("wnd[0]/tbar[1]/btn[8]").press
+session.findById("wnd[0]/tbar[1]/btn[45]").press
+session.findById("wnd[1]/tbar[0]/btn[0]").press
+session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt"
+session.findById("wnd[1]/tbar[0]/btn[11]").press
+session.findById("wnd[0]/tbar[0]/btn[12]").press
+session.findById("wnd[0]/tbar[0]/btn[12]").press
+    `);
+
+	winform.publish("getFromSAP",true);
+}
+
+
 /*}}*/
 /*deal处理数据{{*/
 var dealWithTxt = function(winform){
