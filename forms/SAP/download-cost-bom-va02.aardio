@@ -55,23 +55,25 @@ var createOrder = function(){
 }
 
 var filterRed = function(){
+	import win;
     import web.script;
     var vm = web.script("VBScript") ;
     vm.addCode(`
 		If Not IsObject(application) Then
-   		Set SapGuiAuto  = GetObject("SAPGUI")
-   		Set application = SapGuiAuto.GetScriptingEngine
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
 		End If
 		If Not IsObject(connection) Then
-   		Set connection = application.Children(0)
+   			Set connection = application.Children(0)
 		End If
 		If Not IsObject(session) Then
-   		Set session    = connection.Children(0)
+	   		Set session    = connection.Children(0)
 		End If
 		If IsObject(WScript) Then
-   		WScript.ConnectObject session,     "on"
-   		WScript.ConnectObject application, "on"
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
 		End If
+
 
 		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
@@ -80,9 +82,18 @@ var filterRed = function(){
 		session.findById("wnd[0]/tbar[1]/btn[38]").press
 		session.findById("wnd[1]/usr/chkP_RED").selected = true
 		session.findById("wnd[1]/tbar[0]/btn[0]").press
-		'session.findById("wnd[0]/tbar[0]/btn[12]").press
-		'session.findById("wnd[0]/tbar[0]/btn[12]").press
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "MATNR"
+		
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").SelectContextMenuItemByPosition "0"
+		'加入clipboard
+		
+		session.findById("wnd[0]/tbar[0]/btn[12]").press
+		session.findById("wnd[0]/tbar[0]/btn[12]").press
     `);
+
+		
+		
 }
 
 
@@ -233,7 +244,10 @@ winform.button4.oncommand = function(id,event){
 }
 
 winform.button5.oncommand = function(id,event){
-	filterRed();
+	thread.invokeAndWait(filterRed)
+	import win.clip
+	var sss = win.clip.read();
+	winform.edit3.print(sss);
 }
 
 winform.show();

@@ -112,6 +112,9 @@ var rule_desp = {
 	[42] = "SH组不需要填写展开尺寸和基本物料";
 	[43] = "系统已存在同名物料";
 	[44] = "发泡组件需要SD";
+	[45] = "已喷物料应是SC组";
+	[46] = "'喷粉'请用'已喷粉'或'已喷'替代";
+	[47] = "没选择'用途'";
 }
 var sapErr={
 	[1] = function(i){return (etab[i].SAP物料组[[1]]=="S" and etab[i].物料类型 == "ROH")}
@@ -177,7 +180,19 @@ var sapErr={
 						return etab[i].SAP物料组!=="SD" ;
 
 	}
-	
+	[45] = function(i){
+		if string.indexOf(etab[i].物料描述, "已喷")
+			return etab[i].SAP物料组!=="SC"; 
+
+	}
+	[46] = function(i){
+		return string.indexOf(etab[i].物料描述, " 喷粉"); 
+
+	}
+	[47] = function(i){
+		return !#etab[i].用途; 
+
+	}
 };
 
 import console.progress;
@@ -189,8 +204,10 @@ for(i=1;#etab;1){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
 	for(j=1;#sapErr;1){
 		if sapErr[j](i)
-		table.push(getErr,{errRow=i; errRule=j})
+			table.push(getErr,{errRow=i; errRule=j});
+		
 	}
+
 }
 
 for(i=1;#getErr;1){

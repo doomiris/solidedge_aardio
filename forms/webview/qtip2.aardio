@@ -3,8 +3,37 @@ import win.ui;
 var winform = win.form(text="aardio form";right=759;bottom=469)
 winform.add()
 /*}}*/
+
 import web.view;
 var wb = web.view(winform);
+
+/*
+注意 wb.export 导出的函数被JS调用返回的值使用JSON自动转换为JS对象，
+而 wb.external 导出的函数JS调用返回的表对象会转换为 Proxy 代理对象，表的成员也会转换为 Proxy 对象。 
+*/	
+wb.export(
+	getData = function(msg){
+		import config;
+		import sqlite;
+		
+		var sapdb = config.dbServer.path + "\qhcsap.db";
+		var db = sqlite(sapdb);
+		var sapTab={};
+		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
+		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格`,`物料是可配置的` AS `配置`, `禁用` FROM `所有物料` WHERE ??" ;
+		var searchField = {};	
+		var userinput = msg;
+		table.assign (searchField, {物料描述 = userinput});
+		sqlstr = sqlite.format(sqlstr, {searchField});
+		sqlstr = string.replace(sqlstr,"=","LIKE");	
+		
+		var t= db.getTable(sqlstr);
+		sapTab = table.concat(sapTab, t);
+		return sapTab; 
+	};
+)
+import wsock.tcp.simpleHttpServer; 
+wb.go("\forms\webview\qtip.html")
 
 winform.show();
 win.loopMessage();

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <!-- 必须的 meta 标签 -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 的 CSS 文件 -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Hello, world!</title>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/vue/dist/vue.global.js"></script>
+    <script src="node_modules/vue3-table-lite/index.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="sap number" aria-label="sap number" aria-describedby="button-addon2" v-model= "message">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="dataIni(this.text)">搜索SAP</button>
+      </div>
+
+      <table-lite
+        :is-loading="table.isLoading"
+        :columns="table.columns"
+        :rows="table.rows"
+        :total="table.totalRecordCount"
+        :sortable="table.sortable"
+        @do-search="doSearch"
+        @is-finished="tableLoadingFinish"
+      /></table-lite>
+
+      <!-- <table class="table table-light table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">物料</th>
+            <th scope="col">物料描述</th>
+            <th scope="col">价格</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item,index) in items">
+            <th scope="row">{{ index+1 }}</th>
+            <td>{{ item.物料 }}</td>
+            <td>{{ item.物料描述 }}</td>
+            <td>{{ item.价格 }}</td>
+          </tr>
+        </tbody>
+      </table> -->
+
+    </div>
+
+    <script>
+    const { createApp } = Vue
+
+    createApp({
+        data() {
+            return {
+                message: '',
+                items:[]
+            }
+        },
+        components: { TableLite },
+        setup() {
+          // Init Your table settings
+          const table = reactive({
+            isLoading: false,
+            columns: [
+              {
+                label: "ID",
+                field: "id",
+                width: "3%",
+                sortable: true,
+                isKey: true,
+              },
+              {
+                label: "Name",
+                field: "name",
+                width: "10%",
+                sortable: true,
+              },
+              {
+                label: "Email",
+                field: "email",
+                width: "15%",
+                sortable: true,
+              },
+            ],
+            rows: [],
+            totalRecordCount: 0,
+            sortable: {
+              order: "id",
+              sort: "asc",
+            },
+          });
+      
+          /**
+           * Table search event
+           */
+          const doSearch = (offset, limit, order, sort) => {
+            table.isLoading = true;
+      
+            // Start use axios to get data from Server
+            let url = 'https://www.example.com/api/some_endpoint?offset=' + offset + '&limit=' + limit + '&order=' + order + '&sort=' + sort;
+            axios.get(url)
+            .then((response) => {
+              // Point: your response is like it on this example.
+              //   {
+              //   rows: [{
+              //     id: 1,
+              //     name: 'jack',
+              //     email: 'example@example.com'
+              //   },{
+              //     id: 2,
+              //     name: 'rose',
+              //     email: 'example@example.com'
+              //   }],
+              //   count: 2,
+              //   ...something
+              // }
+              
+              // refresh table rows
+              table.rows = response.rows;
+              table.totalRecordCount = response.count;
+              table.sortable.order = order;
+              table.sortable.sort = sort;
+            });
+            // End use axios to get data from Server
+          };
+      
+          /**
+           * Table search finished event
+           */
+          const tableLoadingFinish = (elements) => {
+            table.isLoading = false;
+          };
+
+          // Get data first
+          doSearch(0, 10, 'id', 'asc');
+      
+          return {
+            table,
+            doSearch,
+            tableLoadingFinish,
+          };
+        },
+        methods: {
+          say(message) {
+            alert(message)
+          },
+          dataIni(){
+            (async ()=> {
+              var ds = await getData(this.message);
+              this.items = ds
+              //alert(ds.物料描述);
+					  })()
+          }
+        }
+    }).mount('#app')
+    </script>
+
+  </body>
+</html>
