@@ -18,26 +18,27 @@ console.open();
 /*DSG{{*/
 winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2};
-button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db=1;dl=1;flat=1;font=LOGFONT(h=-14;name='FontAwesome');z=9};
-button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=3};
-button4={cls="button";text='\uF085 ';left=192;top=8;right=227;bottom=42;dl=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=11};
-buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=4};
-chkDisabled={cls="checkbox";text="不显示禁用件";left=72;top=472;right=192;bottom=488;bgcolor=16777215;checked=1;db=1;dl=1;hide=1;z=8};
-chkHideUnknown={cls="checkbox";text="不显示没查到的";left=344;top=472;right=472;bottom=488;bgcolor=16777215;db=1;dl=1;hide=1;z=10};
-chkPaint={cls="checkbox";text="不显示已喷粉件";left=200;top=472;right=304;bottom=488;bgcolor=16777215;db=1;dl=1;hide=1;z=7};
-clLegacyType={cls="listbox";left=16;top=88;right=80;bottom=424;clipch=1;cp=1;db=1;disabled=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"BG";"01";"02";"03";"04";"05";"06";"07";"08";"09";"10";"14";"15";"16";"40";"53";"75"};msel=1;tabstop=1;z=14};
-clOrderType={cls="listbox";left=80;top=272;right=144;bottom=400;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"HALB";"ROH";"KMAT";"FERT"};msel=1;tabstop=1;z=16};
-clSapType={cls="listbox";left=152;top=88;right=224;bottom=448;clipch=1;db=1;dl=1;font=LOGFONT(h=-13);fullRow=1;gridLines=1;hide=1;items={"SA";"SB";"SC";"SD";"SE";"SG";"SH";"SI";"R01";"R02";"R03";"R04";"R15";"R05";"R06";"R07";"R08";"R10";"R14";"R40"};msel=1;tabstop=1;z=18};
-clUnit={cls="listbox";left=80;top=88;right=136;bottom=216;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"ZA";"KG";"M";"BOT";"L"};msel=1;tabstop=1;z=15};
-edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=17};
-editUser3={cls="plus";left=255;top=10;right=520;bottom=40;align="left";autohscroll=false;aw=1;border={color=-16777216;radius=2;width=1};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-15);iconStyle={align="right";font=LOGFONT(h=-11;name='FontAwesome');padding={right=2;bottom=2};valign="bottom"};iconText='\uF078';paddingRight=20;wrap=1;z=20};
-listview={cls="listview";left=0;top=56;right=637;bottom=467;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=1};
-rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=272;top=352;right=400;bottom=368;db=1;dl=1;hide=1;z=6};
-rdBG={cls="radiobutton";text="仅查询成品: BG";left=272;top=320;right=384;bottom=336;db=1;dl=1;group=1;hide=1;z=5};
-rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=272;top=288;right=416;bottom=304;checked=1;db=1;dl=1;hide=1;z=12};
-static={cls="syslink";text="<a>清空选择</a>";left=16;top=432;right=72;bottom=448;db=1;dl=1;hide=1;notify=1;z=19};
-static2={cls="static";text="筛选条件 (按CTRL多选)";left=8;top=64;right=232;bottom=456;bgcolor=16777215;db=1;disabled=1;dl=1;edge=1;frame=1;hide=1;z=13}
+button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=3};
+button2={cls="button";text='\uF03C 过滤';left=0;top=464;right=56;bottom=504;db=1;dl=1;flat=1;font=LOGFONT(h=-14;name='FontAwesome');z=10};
+button3={cls="button";text='\uF053 ';left=9;top=7;right=44;bottom=41;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=4};
+button4={cls="button";text='\uF085 ';left=192;top=8;right=227;bottom=42;dl=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=12};
+buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=5};
+chkDisabled={cls="checkbox";text="不显示禁用件";left=72;top=472;right=192;bottom=488;bgcolor=16777215;checked=1;db=1;dl=1;hide=1;z=9};
+chkHideUnknown={cls="checkbox";text="不显示没查到的";left=344;top=472;right=472;bottom=488;bgcolor=16777215;db=1;dl=1;hide=1;z=11};
+chkPaint={cls="checkbox";text="不显示已喷粉件";left=200;top=472;right=304;bottom=488;bgcolor=16777215;db=1;dl=1;hide=1;z=8};
+clLegacyType={cls="listbox";left=16;top=88;right=80;bottom=424;clipch=1;cp=1;db=1;disabled=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"BG";"01";"02";"03";"04";"05";"06";"07";"08";"09";"10";"14";"15";"16";"40";"53";"75"};msel=1;tabstop=1;z=15};
+clOrderType={cls="listbox";left=80;top=272;right=144;bottom=400;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"HALB";"ROH";"KMAT";"FERT"};msel=1;tabstop=1;z=17};
+clSapType={cls="listbox";left=152;top=88;right=224;bottom=448;clipch=1;db=1;dl=1;font=LOGFONT(h=-13);fullRow=1;gridLines=1;hide=1;items={"SA";"SB";"SC";"SD";"SE";"SG";"SH";"SI";"R01";"R02";"R03";"R04";"R15";"R05";"R06";"R07";"R08";"R10";"R14";"R40"};msel=1;tabstop=1;z=19};
+clUnit={cls="listbox";left=80;top=88;right=136;bottom=216;clipch=1;cp=1;db=1;dl=1;font=LOGFONT(h=-13);hide=1;items={"ZA";"KG";"M";"BOT";"L"};msel=1;tabstop=1;z=16};
+edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=18};
+editUser3={cls="plus";left=255;top=10;right=520;bottom=40;align="left";autohscroll=false;aw=1;border={color=-16777216;radius=2;width=1};dl=1;dr=1;dt=1;editable=1;font=LOGFONT(h=-15);iconStyle={align="right";font=LOGFONT(h=-11;name='FontAwesome');padding={right=2;bottom=2};valign="bottom"};iconText='\uF078';paddingRight=20;wrap=1;z=21};
+listview={cls="listview";left=0;top=56;right=637;bottom=467;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=2};
+listview2={cls="listview";left=0;top=56;right=637;bottom=467;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;hide=1;z=1};
+rdAsm={cls="radiobutton";text="仅查询组件: 08,09";left=272;top=352;right=400;bottom=368;db=1;dl=1;hide=1;z=7};
+rdBG={cls="radiobutton";text="仅查询成品: BG";left=272;top=320;right=384;bottom=336;db=1;dl=1;group=1;hide=1;z=6};
+rdPart={cls="radiobutton";text="仅查询物料: 01,02, ......";left=272;top=288;right=416;bottom=304;checked=1;db=1;dl=1;hide=1;z=13};
+static={cls="syslink";text="<a>清空选择</a>";left=16;top=432;right=72;bottom=448;db=1;dl=1;hide=1;notify=1;z=20};
+static2={cls="static";text="筛选条件 (按CTRL多选)";left=8;top=64;right=232;bottom=456;bgcolor=16777215;db=1;disabled=1;dl=1;edge=1;frame=1;hide=1;z=14}
 )
 /*}}*/
 
@@ -51,6 +52,7 @@ winform.static2.orphanWindow();
 /*}}*/
 
 var grid = win.ui.grid(winform.listview); //创建数据视图
+var grid2 = win.ui.grid(winform.listview2); //创建数据视图
 
 var sapTab;
 /*sqliteDB{{*/
@@ -217,12 +219,13 @@ var searchDocument = function (filenumber){
     filenumber :=  winform.editUser3.text;
 
 	winform.edit2.text = "";
-    winform.listview.tag = 2;
-    winform.listview.clear(true);
+    winform.listview.hide = 1;
+    winform.listview2.hide = 0;
+    winform.listview2.clear(true);
     
     if !#filenumber return ; 
     
-    winform.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
+    winform.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 
 	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
@@ -242,25 +245,26 @@ var searchDocument = function (filenumber){
 		}
 	}
 	if (#flist > 0) fileTab = table.concat(fileTab, flist);	
-	winform.listview.clear(true);
-	grid.setTable(fileTab);
-	grid.readonlyColums = {
+	winform.listview2.clear(true);
+	grid2.setTable(fileTab);
+	grid2.readonlyColums = {
     	[1] = true; [2] = true; [3] = true; [4] = true;
     };
 //调整列宽		
-	winform.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
-	winform.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
-	winform.listview.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
-	winform.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
-	winform.listview.adjust = function(cx,cy){
-    	winform.listview.fillParent(1);
-    	winform.listview.fillParent(3);
+	winform.listview2.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+	winform.listview2.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
+	winform.listview2.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
+	winform.listview2.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
+	winform.listview2.adjust = function(cx,cy){
+    	winform.listview2.fillParent(1);
+    	winform.listview2.fillParent(3);
 	} 	
 }
 /*}}*/
 /*搜索按钮事件{{*/
 winform.button.oncommand = function(id,event){
 	//owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="搜索中..."};
+	if !winform.listview winform.redraw();
 	if winform.button2.tag winform.button2.oncommand();
 	
 	if (winform.button3.hide){		
@@ -291,17 +295,10 @@ winform.listview.onnotify = function(id,code,ptr){
     var pcode = owner.getItemText(selectedRow,1);
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    		if (owner.tag == 1) {
-    			winform.button3.hide = false;
-				winform.button3.tag  = selectedRow;
-				searchDocument(pcode); 
-				winform.button.text = '\uF002  搜索图纸';
-			}else{
-				var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
-				if io.exist(fullName) {
-					process.execute(fullName);
-				}
-			}
+    		winform.button3.hide = false;
+			winform.button3.tag  = selectedRow;
+			searchDocument(pcode); 
+			winform.button.text = '\uF002  搜索图纸';
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/  {
     	    if !winform.button3.hide return ; //搜索图纸时不显示右键
@@ -315,7 +312,18 @@ winform.listview.onnotify = function(id,code,ptr){
     	}
     }
 }
-
+winform.listview2.onnotify = function(id,code,ptr){
+    var selectedRow = owner.getSelection();
+    if !selectedRow return ; 
+    var pcode = owner.getItemText(selectedRow,1);
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+			var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
+			if io.exist(fullName) 
+				process.execute(fullName);
+    	}
+    }
+}
 
 /*}}*/
 /*CTRLC复制模块{{*/
@@ -332,39 +340,23 @@ winform.listview.translateAccelerator = function( msg ){
                 table.push(tab,string.join(owner.items[owner.selected[i]],'\t'))
             }           
 			win.clip.write(string.join(tab,'\n'))
-		}else{
-			var tab = table.array();
-			for (i=1; owner.count; 1){
-
-				if (table.find(owner.selected,i)){
-					table.push(tab, owner.getItemText(i, 2) ++ owner.getItemText(i, 1));
-				}
-			}
-
-			
-/*
-import dotNet; 
-var appDomain = dotNet.appDomain();
-var system = appDomain.load("System");
-var Clipboard = system.import("Clipboard")
-var FileCollection = system.new("System.Collections.Specialized.StringCollection");
-
-var tab = {
-	[1] = "D:\users\CCL100100\workspaces\E6\0080291071.dft";
-	[2] = "D:\users\CCL100100\workspaces\E6\ccaabbcc.txt";
-}
-for (k,v in tab) {
-	FileCollection.Add(tab[k]);
-}
-
-
-Clipboard.SetFileDropList(FileCollection);
-*/
-
-			
-			if io.exist(tab[[1]])
-				win.clip.file.write(tab[[1]],"copy")	//TODO: 多文件copy
 		}
+        return true;
+    }
+}
+winform.listview2.translateAccelerator = function( msg ){ 
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+    var vk = msg.wParam ;
+    if( ( vk == 'C'# ) && ctrl  ){
+		var tab = table.array();
+		for (i=1; owner.count; 1){
+
+			if (table.find(owner.selected,i)){
+				table.push(tab, owner.getItemText(i, 2) ++ owner.getItemText(i, 1));
+			}
+		}     
+		if io.exist(tab[[1]])
+			win.clip.file.write(tab[[1]],"copy")	//TODO: 多文件copy
         return true;
     }
 }
@@ -377,7 +369,9 @@ winform.onClose = function(hwnd,message,wParam,lParam){
 /*后退返回搜索结果{{*/
 winform.button3.oncommand = function(id,event){
     formatListView();
-	winform.listview.setSelected(owner.tag)
+    winform.listview.hide = 0;
+    winform.listview2.hide = 1;
+	winform.listview.setSelected(owner.tag);
 	winform.listview.tag=1;
 	owner.hide=true;
 	winform.edit2.text = "";
@@ -446,7 +440,8 @@ subscribe("dok",function(...){
 				try{
 					excel.Run("initExportedBom"); //调用宏格式化样式
 				}
-		 		if #ftab>4 excel.WorkBooks(i).close(true /* _save_changes */);
+		 		if #ftab>4 excel.WorkBooks(i).Close(true /* _save_changes */);
+		 		else excel.WorkBooks(i).Save();
 			}
 	}
 
@@ -509,6 +504,7 @@ winform.editUser3.oncommand = function(id,event){
 	
 	if (owner.checked){
 		winform.listview.top += 60;
+		winform.listview2.top += 60;
 		owner.height += 60;
 		owner.paddingBottom = 15;
 		owner.paddingRight = 1;
@@ -523,6 +519,7 @@ winform.editUser3.oncommand = function(id,event){
 
 	}else{
 		winform.listview.top -= 60;
+		winform.listview2.top -= 60;
 		owner.height -= 60;
 		owner.paddingBottom = 0;
 		owner.paddingRight = 20;

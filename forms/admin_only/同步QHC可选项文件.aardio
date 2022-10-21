@@ -1,0 +1,29 @@
+import console; 
+_qhc_path = "\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理"
+_local_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)"
+//_local_path = "d:\temp\testod"
+_skip_dir_name = "归档|存档|副本|旧版本|操作手册"
+import fsys;
+import string.keywords;
+fsys.enum( _qhc_path, "*.xlsx",
+	function(dirname,filename,fullpath,findData){ 
+		if(filename){
+			if !string.startWith(filename,"~") { //忽略excel临时文件
+				var newname = string.replace(fullpath, "@"+_qhc_path, _local_path)
+				console.log(newname)
+           		fsys.copy(fullpath, newname, 0x200/*_FOF_NOCONFIRMMKDIR*/ + 0x100/*_FOF_SIMPLEPROGRESS*/ + 0x4/*_FOF_SILENT*/ )
+           	}
+		}
+/*
+		else{
+			io.print( "发现目录：" + dirname )
+		}
+*/
+	},
+	function(dirpath,dirname){ //忽略子目录
+		if string.keywords(_skip_dir_name).findOne(dirname) return false; 
+		else return true;
+	} 
+);
+
+console.pause(true);

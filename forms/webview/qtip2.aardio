@@ -11,8 +11,13 @@ var wb = web.view(winform);
 注意 wb.export 导出的函数被JS调用返回的值使用JSON自动转换为JS对象，
 而 wb.external 导出的函数JS调用返回的表对象会转换为 Proxy 代理对象，表的成员也会转换为 Proxy 对象。 
 */	
+/*
+wb.external = {
+
+};
+*/
 wb.export(
-	getData = function(msg){
+	getData = function(userinput){
 		import config;
 		import sqlite;
 		
@@ -22,7 +27,14 @@ wb.export(
 		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
 		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格`,`物料是可配置的` AS `配置`, `禁用` FROM `所有物料` WHERE ??" ;
 		var searchField = {};	
-		var userinput = msg;
+		
+    	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
+    	userinput=string.replace(userinput, string.fromUnicode('\u00A0') /* NO-BREAK SPACE */,"");
+    	userinput=string.replace(userinput,"@%","\%");
+    	userinput=string.replace(userinput,"@_","\_");
+    	userinput=string.replace(userinput,"@*","%");
+    	userinput=string.replace(userinput,"@?","_");
+    	
 		table.assign (searchField, {物料描述 = userinput});
 		sqlstr = sqlite.format(sqlstr, {searchField});
 		sqlstr = string.replace(sqlstr,"=","LIKE");	
@@ -31,6 +43,10 @@ wb.export(
 		sapTab = table.concat(sapTab, t);
 		return sapTab; 
 	};
+	vueAppMounted = function(app){
+		//win.msgbox(app.message)
+		//app.visible = true;//在aardio中控制vue组件
+	}
 )
 import wsock.tcp.simpleHttpServer; 
 wb.go("\forms\webview\qtip.html")

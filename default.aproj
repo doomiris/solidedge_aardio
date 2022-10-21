@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.233" ProductVersion="1.5.0.233" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.245" ProductVersion="1.5.0.245" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -47,6 +47,7 @@
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
 			<file name="SAP-GETLIST.aardio" path="forms\admin_only\SAP-GETLIST.aardio" comment="forms\admin_only\SAP-GETLIST.aardio"/>
+			<file name="同步QHC可选项文件.aardio" path="forms\admin_only\同步QHC可选项文件.aardio" comment="forms\admin_only\同步QHC可选项文件.aardio"/>
 		</folder>
 		<folder name="TEST" path="forms\TEST" comment="forms\TEST" local="false" embed="false" ignored="true">
 			<file name="BOM_FILL_FROM_BASE.aardio" path="forms\TEST\BOM_FILL_FROM_BASE.aardio" comment="forms\TEST\BOM_FILL_FROM_BASE.aardio"/>
@@ -76,7 +77,7 @@
 		<folder name="Teamcenter" path="forms\Teamcenter" embed="true" comment="目录" local="false" ignored="false">
 			<file name="更新插件.aardio" path="forms\Teamcenter\更新插件.aardio" comment="forms\Teamcenter\更新插件.aardio"/>
 		</folder>
-		<folder name="webview" path="forms\webview" embed="true" comment="目录" local="false" ignored="true">
+		<folder name="webview" path="forms\webview" embed="false" comment="目录" local="true" ignored="true">
 			<file name="package-lock.json" path="forms\webview\package-lock.json" comment="forms\webview\package-lock.json"/>
 			<file name="package.json" path="forms\webview\package.json" comment="forms\webview\package.json"/>
 			<file name="qtip.html" path="forms\webview\qtip.html" comment="forms\webview\qtip.html"/>

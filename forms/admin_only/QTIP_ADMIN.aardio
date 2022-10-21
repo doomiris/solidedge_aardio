@@ -15,6 +15,7 @@ button4={cls="button";text="更新图号库 from Excel";left=336;top=96;right=60
 button5={cls="button";text="更新";left=16;top=128;right=288;bottom=176;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="从图纸下发库更新图号";z=10};
 button6={cls="button";text="更新";left=16;top=16;right=288;bottom=64;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新共享目录库";z=2};
 button7={cls="button";text='\uF084 \r 加密';left=424;top=8;right=520;bottom=40;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=3};
+button8={cls="button";text="同步QHC可选项...";left=424;top=392;right=600;bottom=432;hide=1;z=16};
 button9={cls="button";text="admin数据库操作...";left=432;top=200;right=608;bottom=240;hide=1;z=11};
 edit={cls="edit";text="CCL100100";left=424;top=48;right=520;bottom=72;hide=1;multiline=1;z=4};
 edit2={cls="edit";left=152;top=360;right=312;bottom=384;edge=1;tabstop=1;z=7};
@@ -141,6 +142,10 @@ winform.button13.oncommand = function(id,event){
 		}
 	)
 	
+}
+
+winform.button8.oncommand = function(id,event){	
+	loadcodex("\forms\admin_only\同步QHC可选项文件.aardio");
 }
 
 winform.show();

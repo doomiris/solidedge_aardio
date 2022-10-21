@@ -10,7 +10,7 @@ button4={cls="button";text="导出订单清单";left=624;top=168;right=712;botto
 button5={cls="button";text="查找错误";left=440;top=64;right=648;bottom=112;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=12};
 edit={cls="edit";text="0";left=80;top=112;right=296;bottom=144;edge=1;z=2};
 edit2={cls="edit";text="1-17";left=80;top=216;right=296;bottom=256;edge=1;multiline=1;z=3};
-edit3={cls="edit";left=448;top=232;right=720;bottom=376;dr=1;dt=1;edge=1;multiline=1;z=8};
+edit3={cls="edit";left=72;top=272;right=720;bottom=408;dr=1;dt=1;edge=1;multiline=1;z=8};
 edit4={cls="edit";left=448;top=168;right=608;bottom=200;edge=1;multiline=1;z=10};
 progress={cls="progress";left=72;top=424;right=488;bottom=454;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
@@ -83,7 +83,7 @@ var filterRed = function(){
 		session.findById("wnd[1]/usr/chkP_RED").selected = true
 		session.findById("wnd[1]/tbar[0]/btn[0]").press
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "MATNR"
-		
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "CMF_TEXT"
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").SelectContextMenuItemByPosition "0"
 		'加入clipboard
@@ -129,7 +129,7 @@ console.open()
    			WScript.ConnectObject application, "on"
 			End If
 	*/
-
+	/* 通过 vm.script 访问变量前需要先声明 */
 	vm.script = /*
 	    	dim i
 	    	dim absline
@@ -211,34 +211,62 @@ winform.button2.oncommand = function(id,event){
 winform.button4.oncommand = function(id,event){
 	thread.invoke( 
 		function(winform){
+    		import web.script;
+    		var vm = web.script("VBScript") ;
 /*
 			import console; 
 			console.open();
 */
-			import SAP.session;
-			var session = SAP.session();
-			var order = winform.edit4.text;
-			session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
-			session.findById("wnd[0]").sendVKey(0);
-			session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order;
-			session.findById("wnd[0]").sendVKey(0);
-			//获取订单日期
-			var startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text;
-			startdate = tostring(time(startdate,"%Y.%m.%d").addday(-30));
-			session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select();
-			session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order;
-			session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate;
-			session.findById("wnd[0]/tbar[0]/btn[0]").press();
-			session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu();
-			session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem("&XXL");
-			session.findById("wnd[1]/tbar[0]/btn[0]").press();
-			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" + order+ ".XLSX";
-			session.findById("wnd[1]/tbar[0]/btn[11]").press();
-			//返回
-			session.findById("wnd[0]/tbar[0]/btn[12]").press();
-			session.findById("wnd[0]/tbar[0]/btn[12]").press();
-			session.findById("wnd[0]/tbar[0]/btn[12]").press();
-			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+
+			
+			vm.script = /*
+					If Not IsObject(application) Then
+   					Set SapGuiAuto  = GetObject("SAPGUI")
+   					Set application = SapGuiAuto.GetScriptingEngine
+					End If
+					If Not IsObject(connection) Then
+   					Set connection = application.Children(0)
+					End If
+					If Not IsObject(session) Then
+   					Set session    = connection.Children(0)
+					End If
+					If IsObject(WScript) Then
+   					WScript.ConnectObject session,     "on"
+   					WScript.ConnectObject application, "on"
+					End If
+			*/
+			
+			/* 通过 vm.script 访问变量前需要先声明 */
+			vm.script = /*
+	    			dim order
+	    			dim startdate
+	 		*/
+			vm.script.order = winform.edit4.text;
+			vm.script = /*
+				session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
+				session.findById("wnd[0]").sendVKey 0
+				session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order
+				session.findById("wnd[0]").sendVKey 0
+				'获取订单日期
+				startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
+			*/
+			vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-30))
+			vm.script = /*
+				session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select
+				session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order
+				session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate
+				session.findById("wnd[0]/tbar[0]/btn[0]").press
+				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
+				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
+				session.findById("wnd[1]/tbar[0]/btn[0]").press
+				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" & order & ".XLSX"
+				session.findById("wnd[1]/tbar[0]/btn[11]").press
+				'返回
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+			*/
 		}, winform
 	)
 }

@@ -21,7 +21,7 @@ var etab = osht.UsedRange.value2;
 var ts_count = #etab;
 //console.dump(etab);
 //console.pause(true);
-for(j = 10 /* J */; 13 /* M */){
+for(j = 10 /* J */; 17 /* Q */){
     if !#etab[2][j] continue;
 
     excel.alerts = false;
@@ -45,7 +45,8 @@ for(j = 10 /* J */; 13 /* M */){
     	
     	if string.indexOf(bun, "\") {
     		var arr = string.split(bun,"\");
-    		if #arr==2 arr = table.concat(arr,arr,arr,arr); // TODO: 125_188重复方式不好
+    		if #arr==2 
+    		    arr = {arr[1],arr[1],arr[2],arr[2],arr[1],arr[1],arr[2],arr[2]}; // TODO:     		
     		if #arr==4 arr = table.concat(arr,arr);
     		bun = arr[j - 10 /* J */ + 1];
     	}
@@ -69,7 +70,7 @@ for(j = 10 /* J */; 13 /* M */){
       	table.push(tar, hitem ? hitem.BUn : "");	//列名： 单位
       	table.push(tar, "");	//列名:排序文本
       	table.push(tar, hitem ? hitem.MTyp : ""); //列名:物料类型
-      	table.push(tar, #etab[i][8 /* H */]  ?  etab[i][8 /* H */] : ""); //列名: 相关性语句
+      	table.push(tar, #etab[i][7 /* G */]  ?  etab[i][7 /* G */] : ""); //列名: 相关性语句
       	
       	if !#tar[1 /* A */] or !#tar[4 /* D */] continue; //跳过 无层级 和 无专用号的行
       	
