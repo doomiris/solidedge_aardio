@@ -95,7 +95,7 @@ updatePopmenu();
 /*调整列宽{{*/
 var formatListView = function(){
 	winform.listview.clear(true)
-
+	if !sapTab.fields sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
 	grid.setTable( sapTab );
 	grid.readonlyColums = {
     	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
@@ -121,6 +121,7 @@ var getSelectedText = function(listCtrl){
 
 var searchSapDB = function(userinput){
     userinput := winform.editUser3.text;
+    if !#userinput return ; 
     winform.button3.hide=true;
     winform.listview.tag=1;
     winform.listview.clear(true);
@@ -197,7 +198,7 @@ var searchSapDB = function(userinput){
 		if (winform.chkDisabled.checked)	
 			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 );
 
-		sapTab = table.concat(sapTab, t);
+		if #t sapTab = table.concat(sapTab, t);
 		
 		import tarray;
 		if #sapTab sapTab = tarray.uniqueCol(sapTab, 1);
@@ -284,9 +285,8 @@ var downloadbom = function(){
             table.push(tab,  bg);
     }  
     if !#tab return ;
-	import SAP.session;
-	var session = SAP.session();
-	session.downloadBOM(winform, tab);
+	import SAP
+	SAP.downloadBOM(winform, tab);
 }
 /*双击打开事件{{*/
 winform.listview.onnotify = function(id,code,ptr){

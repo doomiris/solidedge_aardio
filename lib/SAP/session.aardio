@@ -1,4 +1,4 @@
-//SAP 支持库
+//SAP com 支持库
 import com;
 
 var table = ..table;

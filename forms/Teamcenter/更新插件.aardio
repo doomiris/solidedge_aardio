@@ -4,7 +4,8 @@ import win.ui;
 var winform = win.form(text="更新 - Teamcenter插件";right=759;bottom=279)
 winform.add(
 button2={cls="button";text='\uF0EE 更新';left=656;top=232;right=744;bottom=264;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=2};
-listview={cls="listview";left=0;top=32;right=760;bottom=224;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1}
+listview={cls="listview";left=0;top=32;right=760;bottom=224;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
+static={cls="static";text="更新前需要关闭退出Teamcenter";left=24;top=240;right=304;bottom=264;color=255;transparent=1;z=3}
 )
 /*}}*/
 
@@ -19,7 +20,8 @@ _plugins_keywords := {
 	"com.teamcenter.rac.kailicode_*.jar",
 	"com.teamcenter.rac.kailireport4_*.jar",
 	"com.teamcenter.rac.query_*.jar",
-	"com.teamcenter.rac.write_*.jar"
+	"com.teamcenter.rac.write_*.jar",
+	"com.teamcenter.rac.kailiB2C_*.jar"
 }
 _plugins_parent := "com.teamcenter.rac.";
 _tc_install_path := string.trimright(fsys.lnk.searchLnk(,"Teamcenter 13", 0 /*_CSIDL_DESKTOP*/), "\portal\portal.bat");

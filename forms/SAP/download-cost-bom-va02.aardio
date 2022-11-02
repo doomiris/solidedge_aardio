@@ -158,16 +158,16 @@ console.open()
     		if not markcost is nothing then
         			markcost.press
 			else 
-        		'set tdstr = nothing
-        		'on error resume next
-        		'	set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
-        		'on error goto 0
-        		'if not tdstr is nothing then
-        		'	msgbox(3)
-        		'	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
-        		'	session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
-        		'	session.findById("wnd[0]/tbar[0]/btn[0]").press
-				'end if
+        		set tdstr = nothing
+        		on error resume next
+        			set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
+        		on error goto 0
+        		if not tdstr is nothing then
+        			'msgbox(3)
+        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
+        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
+        			session.findById("wnd[0]/tbar[0]/btn[0]").press
+				end if
     		end if
 
 

@@ -1,0 +1,85 @@
+//SAP vbs 支持库
+
+var table = ..table;
+var string = ..string;
+
+namespace SAP;
+
+
+downloadBOM = function(winform, etab){
+	import QHC;
+    import web.script;
+    var vm = web.script("VBScript") ;
+    
+	vm.script = /*
+			If Not IsObject(application) Then
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
+			End If
+			If Not IsObject(connection) Then
+   			Set connection = application.Children(0)
+			End If
+			If Not IsObject(session) Then
+   			Set session    = connection.Children(0)
+			End If
+			If IsObject(WScript) Then
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
+			End If
+	*/
+	
+	vm.script = /*
+		do while session.findById("wnd[0]/tbar[0]/btn[12]").Changeable
+			session.findById("wnd[0]/tbar[0]/btn[12]").press
+			on error resume next
+				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+			on error goto 0
+		loop
+	*/
+	vm.script = /*
+		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001"
+		session.findById("wnd[0]").sendVKey 0
+	*/
+	
+	/* 通过 vm.script 访问变量前需要先声明 */
+	vm.script = /*
+	    	dim filename
+	    	dim etab_item
+	*/
+	var ftab = {}
+	for (i = 1; #etab){
+		vm.script.etab_item = etab[i]
+		
+		vm.script = /*
+    		session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab_item
+    		session.findById("wnd[0]/tbar[1]/btn[8]").press
+	 	*/
+
+    	var filename;
+    	var vt = QHC.getSapItem(etab[i]);
+ 		if vt filename = vt.物料描述; 			
+    	filename = string.replace(filename, " ", "_");
+    	filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
+    	vm.script.filename = filename;    		
+    	table.push(ftab, filename);
+    	
+    	vm.script = /*	
+    	session.findById("wnd[0]/tbar[1]/btn[9]").press	' //zmdm_001 里面的download
+    	session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
+    	session.findById("wnd[1]/tbar[0]/btn[11]").press
+    	session.findById("wnd[0]/tbar[0]/btn[12]").press	'//[x]取消
+    	*/
+    	
+    	..publish("bom_down",filename);
+
+	}
+	vm.script = /*	
+	session.findById("wnd[0]/tbar[0]/btn[12]").press
+	*/
+	winform.publish("dok", ftab);
+}
+
+/**intellisense()
+SAP = SAP支持库
+SAP.downloadBOM(arr) = 下载BOM
+end intellisense**/

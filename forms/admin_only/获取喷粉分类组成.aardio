@@ -1,0 +1,40 @@
+import console; 
+import com.excel
+var excel = com.excel(false)
+import etip;
+
+var sht = excel.ActiveWorkbook.ActiveSheet;
+var usedrange = sht.usedrange
+
+var br = usedrange.columns.item(1 /* A */).value2
+var dr = usedrange.columns.item(2 /* B */).value2
+
+table.shift(br)
+table.shift(dr)
+
+var tab = {}
+tab.title = "喷粉分类组成"
+tab.fields = {"喷粉类别","部位编号"}
+for (i=1; #br)
+	table.push(tab,{table.pop(br[i]),table.pop(dr[i])});
+
+
+//console.dump(tab)
+import config;
+import sqlite;
+var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+if db.existsTable(tab.title) db.exec("DROP table " ++ tab.title)
+
+db.exec( "CREATE TABLE [" ++ tab.title ++ "](" ++ string.join(tab.fields,", ") ++");");
+
+
+db.beginTrans();
+
+for(i=1; #tab){
+	var cmd = db.prepare("INSERT INTO [" ++ tab.title ++ "] VALUES(?,?);");
+	cmd.bind.parameters(table.unpack(tab[i])).step();
+}
+	db.commitTrans();
+
+db.close()
+console.pause(true);
