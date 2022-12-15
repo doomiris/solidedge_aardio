@@ -140,13 +140,26 @@ findValue = function(arr, what){
 		}
 	}
 }
+cNum = function(str){
+	select type(str) {
+		case "number" {
+			return str; 
+		}
+		case "string" {
+			var n = tonumber(str);
+			if #str !== ..string.len(tostring(n)) return null; 
+			return n; 
+		}
+		case "boolean" {
+			return tonumber(str);
+		}
+		else {
+			return null; 
+		}
+	}
 
 
-
-
-
-
-
+}
 
 
 /**intellisense()
@@ -164,6 +177,7 @@ tarray.drop(arr, index) = 删除指定列,返回新的arr
 tarray.pushFields(arr, tab) = 参考tab键名定义arr.fields,返回新的arr
 tarray.indexOfCol(arr, find, col) = 在指定col查找find所在的index值
 tarray.findValue(arr, what) = 查找值, 返加{row,col,value} \n!tFindItem.
+tarray.cNum(str) = 转为数值
 !tFindItem.row = 行
 !tFindItem.col = 列
 !tFindItem.value = 值 

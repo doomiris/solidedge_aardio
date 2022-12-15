@@ -1,24 +1,145 @@
-import console; 
+import fonts.fontAwesome;
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="获取默认值";right=743;bottom=527)
+winform.add(
+button2={cls="button";text="开始导入CCR...";left=40;top=56;right=248;bottom=104;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="SAP数据整理 - 开利研发部";z=2};
+button5={cls="button";text="开始导入QHC...";left=336;top=56;right=640;bottom=104;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="SAP数据整理 - QHC开发部(只读,仅用于参考)";z=3};
+edit3={cls="edit";left=0;top=136;right=744;bottom=504;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=1}
+)
+/*}}*/
 
-_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\";
-_remote_path = "\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\";
+//import console; 
+import fsys;
+import config
+import string.keywords;
+_skip_dir_name = "归档|存档|副本|旧版本|操作手册|Archieve"
+_skip_file = {
+	"岛柜系列产品默认配置2022.5.17 - 副本.xlsx",
+}
+_CCR_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\";
+_QHC_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\";
+_fieldsName = {"产品编码", "分类", "特性", "特性值"}; //, 
+_fieldsColumn = {"B", "C", "D", "F"}; //, 
+_testFields = {"SAP语句", "更改标记"};
+_testColumn = {"L", "M"};
+_title = "默认值";
+import com.excel;
+var excel = com.excel(false);
 
-var deepSearchFile = function(path,filter = "*.*"){
-	import fsys;
-	var arr = {};
-	fsys.enum( path, filter,
-		function(dirname,filename,fullpath,findData){ 
-			if(filename){ 
-           		//console.log("发现文件："+filename, /*"完整路径："+fullpath*/)
-           		table.push(arr, fullpath);
-			}
-		} 
-		,/*如果此参数为false则忽略子目录*/
+import sqlite;
+var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+
+if db.existsTable(_title) db.exec("DROP table " + _title);
+db.exec("CREATE TABLE "+ _title +"( " + string.join(_fieldsName,", ") + ");")
+
+/*获取当前excel数据getListFromXlsx{{*/
+var getListFromXlsx = function(_xlsx_path){
+	excel.alerts = false;
+	var wb = excel.WorkBooks.Open(
+		_xlsx_path /* filename */,
+		false /* UpdateLinks */,
+		true /* ReadOnly */,
+		/* Format */,
+		/* Password */,
+		/* WriteResPassword */,
+		/* IgnoreReadOnlyRecommended */,
+		/* Origin */,
+		/* Delimiter */,
+		/* Editable */,
+		/* Notify */,
+		/* Converter */,
+		/* AddToMru */,
+		/* Local */,
+		/* CorruptLoad */
 	);
-	if #arr return arr;
+	var sht = wb.Sheets.Item(1);
+	sht.AutoFilterMode = false;
+	if sht.ListObjects.Count
+		if sht.ListObjects("表1").AutoFilter
+			sht.ListObjects("表1").AutoFilter.ShowAllData();
+	var tab ={};
+	for (i=1; #_fieldsName)
+		tab[_fieldsName[i]] = sht.UsedRange.Columns(_fieldsColumn[i]).value2;
+	var testTab = {};	
+	for (i=1; #_testFields)
+		testTab[_testFields[i]] = sht.UsedRange.Columns(_testColumn[i]).value2;
+			
+	var rc = sht.usedRange.Rows.Count;
+	wb.close(false);
+	excel.alerts = true;
+	
+	db.beginTrans();
+	for (j=2; rc){
+		if tab[_fieldsName[1]][j] {
+			
+			var cmd = db.prepare("INSERT INTO [默认值] VALUES( " + "@" + string.join(_fieldsName, ", @") + ");");
+			var t={};
+			var st = {};
+			for(i=1;#_fieldsName)
+				t[_fieldsName[i]] = tab[_fieldsName[i]][j][1]; //行数据即使只有一个单元格也是按行列保存的,所有要有[1]
+			for(i=1;#_testFields)
+				st[_testFields[i]] = testTab[_testFields[i]][j][1];	
+			if !t["产品编码"] or !t["分类"] continue; //跳过无值的行
+			t["产品编码"] = string.trim(t["产品编码"]);
+			t["分类"] = string.trim(t["分类"]);	
+			t["特性"] = string.trim(t["特性"]);
+			t["特性值"] ?= tostring(math.modf(t["特性值"])); //去除结尾的0
+			st["SAP语句"] ?= string.replace(st["SAP语句"]," ","");
+			st["SAP语句"] ?= string.upper(st["SAP语句"]);
+			var checkod = "$SET_DEFAULT($SELF," + t["特性"] + ",'" + t["特性值"] + "'),";
+			if st["SAP语句"] !== checkod
+				winform.edit3.print("!!!语句不匹配:",checkod, st["SAP语句"]);
+			if st["更改标记"]
+				if string.indexOf(st["更改标记"],"删")
+					if !string.indexOf(st["更改标记"],"增")	//有些人先删又加烦死了
+						continue;
+			cmd.step(t);
+		}
+	}
+	db.commitTrans();
+}
+/*}}*/
+var deepSearchFile = function(path,filter = "*.*"){
+	
+	fsys.enum( path, filter,
+		function(dirname,filename,fullpath,findData){
+			if(filename){
+				if !string.startWith(filename,"~$"){	//跳过临时文件
+					if !table.find(_skip_file, filename){	//跳过指定文件
+           				winform.edit3.print("发现文件："+filename, /*"完整路径："+fullpath*/)
+           				getListFromXlsx(fullpath);
+           			}
+           		}   		
+			}
+		},
+		function(dirpath,dirname){ //忽略目录
+			if string.keywords(_skip_dir_name).findOne(dirname) return false; 
+			else return true;
+		} 
+	);
+	winform.edit3.print("完成")
 }
 
-console.log(time())
-console.dump(deepSearchFile(_path,"*默认*.xlsx"))
-console.log(time())
-console.pause(true);
+
+
+
+
+winform.onDestroy = function(){
+    if excel excel.alerts = true;    
+}
+
+winform.button2.oncommand = function(id,event){
+	deepSearchFile(_CCR_path,"*默认*.xlsx");
+}
+
+winform.button5.oncommand = function(id,event){
+	deepSearchFile(_QHC_path,"*默认*.xlsx");
+}
+
+winform.show();
+//deepSearchFile(_CCR_path,"*默认*.xlsx");
+//deepSearchFile(_QHC_path,"*默认*.xlsx");
+
+win.loopMessage();
+return winform;

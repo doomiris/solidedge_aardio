@@ -1,0 +1,11 @@
+import console; 
+import sqlite;
+import config;
+
+_title = "成品分类表";
+_fieldsName = {"成品编码","分类"};
+var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+if db.existsTable(_title) db.exec("DROP table " + _title);
+db.exec("CREATE TABLE "+ _title +"( " + string.join(_fieldsName,", ") + ");");
+var t = db.getTable("SELECT 成品编码, 分类 FROM [默认值]");
+console.pause(true);

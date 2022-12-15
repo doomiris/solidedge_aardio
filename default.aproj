@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.248" ProductVersion="1.5.0.248" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.273" ProductVersion="1.5.0.273" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -9,7 +9,12 @@
 			<file name="frmPage3.aardio" path="forms\main\frmPage3.aardio" comment="forms\main\frmPage3.aardio"/>
 			<file name="frmPage4.aardio" path="forms\main\frmPage4.aardio" comment="forms\main\frmPage4.aardio"/>
 			<file name="frmPage5.aardio" path="forms\main\frmPage5.aardio" comment="forms\main\frmPage5.aardio"/>
-			<file name="QTIP.aardio" path="forms\main\QTIP.aardio" comment="forms\main\QTIP.aardio"/>
+			<file name="QTIP.aardio" path="forms\main\QTIP.aardio" comment="forms\main\QTIP.aardio">
+				<file name="drawing_search.aardio" path="forms\main\drawing_search.aardio" comment="forms\main\drawing_search.aardio"/>
+				<file name="sap_search.aardio" path="forms\main\sap_search.aardio" comment="forms\main\sap_search.aardio"/>
+				<file name="qtip_list.aardio" path="forms\main\qtip_list.aardio" comment="forms\main\qtip_list.aardio"/>
+				<file name="qtip_filter.aardio" path="forms\main\qtip_filter.aardio" comment="forms\main\qtip_filter.aardio"/>
+			</file>
 			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" embed="true" comment="目录" local="false" ignored="false"/>
@@ -23,15 +28,16 @@
 			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
 			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
 			<file name="BOM-CALC.aardio" path="forms\Excel\BOM-CALC.aardio" comment="forms\Excel\BOM-CALC.aardio"/>
+			<file name="check_BOM更改单.aardio" path="forms\Excel\check_BOM更改单.aardio" comment="forms\Excel\check_BOM更改单.aardio"/>
 			<file name="check_专用号申请表.aardio" path="forms\Excel\check_专用号申请表.aardio" comment="forms\Excel\check_专用号申请表.aardio"/>
 			<file name="check_新BOM申请表.aardio" path="forms\Excel\check_新BOM申请表.aardio" comment="forms\Excel\check_新BOM申请表.aardio"/>
 			<file name="Excel_notify_selection.aardio" path="forms\Excel\Excel_notify_selection.aardio" comment="forms\Excel\Excel_notify_selection.aardio"/>
 			<file name="Excel_update_info.aardio" path="forms\Excel\Excel_update_info.aardio" comment="forms\Excel\Excel_update_info.aardio"/>
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
-			<file name="refresh_QHC_Drawing_Release_List.aardio" path="forms\Excel\refresh_QHC_Drawing_Release_List.aardio" comment="forms\Excel\refresh_QHC_Drawing_Release_List.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
 			<file name="提取原材料用量追加到物料后列.aardio" path="forms\Excel\提取原材料用量追加到物料后列.aardio" comment="forms\Excel\提取原材料用量追加到物料后列.aardio"/>
+			<file name="默认值view.aardio" path="forms\Excel\默认值view.aardio" comment="forms\Excel\默认值view.aardio"/>
 		</folder>
 		<folder name="SAP" path="forms\SAP" comment="forms\SAP" local="false" embed="true" ignored="false">
 			<file name="BOM_OD_LIB.aardio" path="forms\SAP\BOM_OD_LIB.aardio" comment="forms\SAP\BOM_OD_LIB.aardio"/>
@@ -39,9 +45,9 @@
 			<file name="download-cost-bom-va02.aardio" path="forms\SAP\download-cost-bom-va02.aardio" comment="forms\SAP\download-cost-bom-va02.aardio"/>
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="SAP-download-bom.aardio" path="forms\SAP\SAP-download-bom.aardio" comment="forms\SAP\SAP-download-bom.aardio"/>
-			<file name="sap-query.aardio" path="forms\SAP\sap-query.aardio" comment="forms\SAP\sap-query.aardio"/>
 			<file name="下载订单BOM.aardio" path="forms\SAP\下载订单BOM.aardio" comment="forms\SAP\下载订单BOM.aardio"/>
 			<file name="处理默认值表格.aardio" path="forms\SAP\处理默认值表格.aardio" comment="forms\SAP\处理默认值表格.aardio"/>
+			<file name="获取成品分类对应表.aardio" path="forms\SAP\获取成品分类对应表.aardio" comment="forms\SAP\获取成品分类对应表.aardio"/>
 		</folder>
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="true" ignored="false">
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
@@ -57,13 +63,15 @@
 			<file name="BOM_OD_LIB_COLOR.aardio" path="forms\TEST\BOM_OD_LIB_COLOR.aardio" comment="forms\TEST\BOM_OD_LIB_COLOR.aardio"/>
 			<file name="BOM_OD_默认值.aardio" path="forms\TEST\BOM_OD_默认值.aardio" comment="forms\TEST\BOM_OD_默认值.aardio"/>
 			<file name="BOM_Studio.aardio" path="forms\TEST\BOM_Studio.aardio" comment="forms\TEST\BOM_Studio.aardio"/>
-			<file name="check_QHC_Release.aardio" path="forms\TEST\check_QHC_Release.aardio" comment="forms\TEST\check_QHC_Release.aardio"/>
 			<file name="download_tif_from_EuroSap.aardio" path="forms\TEST\download_tif_from_EuroSap.aardio" comment="forms\TEST\download_tif_from_EuroSap.aardio"/>
+			<file name="EXCEL_get_cost_sum_from_bom.aardio" path="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio" comment="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio"/>
 			<file name="excel_get_pdf_from_lib.aardio" path="forms\TEST\excel_get_pdf_from_lib.aardio" comment="forms\TEST\excel_get_pdf_from_lib.aardio"/>
 			<file name="frmPage_XXX.aardio" path="forms\TEST\frmPage_XXX.aardio" comment="forms\TEST\frmPage_XXX.aardio"/>
 			<file name="odview.aardio" path="forms\TEST\odview.aardio" comment="forms\TEST\odview.aardio"/>
 			<file name="RENAME.aardio" path="forms\TEST\RENAME.aardio" comment="forms\TEST\RENAME.aardio"/>
 			<file name="shortcut.aardio" path="forms\TEST\shortcut.aardio" comment="forms\TEST\shortcut.aardio"/>
+			<file name="winform1.aardio" path="forms\TEST\winform1.aardio" comment="forms\TEST\winform1.aardio"/>
+			<file name="查找图号.aardio" path="forms\TEST\查找图号.aardio" comment="forms\TEST\查找图号.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">
 			<file name="BOM-CALC.aardio" path="forms\obsolete\BOM-CALC.aardio" comment="forms\obsolete\BOM-CALC.aardio"/>
@@ -78,6 +86,7 @@
 			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" embed="true" comment="目录" local="false" ignored="false">
+			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\Teamcenter\add_QHC_Drawing_Release_List.aardio" comment="forms\Teamcenter\add_QHC_Drawing_Release_List.aardio"/>
 			<file name="更新插件.aardio" path="forms\Teamcenter\更新插件.aardio" comment="forms\Teamcenter\更新插件.aardio"/>
 		</folder>
 		<folder name="webview" path="forms\webview" embed="false" comment="目录" local="true" ignored="true">
@@ -85,6 +94,10 @@
 			<file name="package.json" path="forms\webview\package.json" comment="forms\webview\package.json"/>
 			<file name="qtip.html" path="forms\webview\qtip.html" comment="forms\webview\qtip.html"/>
 			<file name="qtip2.aardio" path="forms\webview\qtip2.aardio" comment="forms\webview\qtip2.aardio"/>
+			<file name="vuegrid.vue" path="forms\webview\vuegrid.vue" comment="forms\webview\vuegrid.vue"/>
+			<folder name="api" path="forms\webview\api" comment="forms\webview\api">
+				<file name="index.aardio" path="forms\webview\api\index.aardio" comment="forms\webview\api\index.aardio"/>
+			</folder>
 			<folder name="node_modules" path="forms\webview\node_modules" comment="forms\webview\node_modules" local="false" embed="false" ignored="false">
 				<file name=".package-lock.json" path="forms\webview\node_modules\.package-lock.json" comment="forms\webview\node_modules\.package-lock.json"/>
 				<folder name="@babel" path="forms\webview\node_modules\@babel" comment="forms\webview\node_modules\@babel">
@@ -106,6 +119,7 @@
 						</folder>
 					</folder>
 				</folder>
+				<folder name="@interactjs" path="forms\webview\node_modules\@interactjs" comment="forms\webview\node_modules\@interactjs"/>
 				<folder name="@popperjs" path="forms\webview\node_modules\@popperjs" comment="forms\webview\node_modules\@popperjs">
 					<folder name="core" path="forms\webview\node_modules\@popperjs\core" comment="forms\webview\node_modules\@popperjs\core">
 						<file name="index.d.ts" path="forms\webview\node_modules\@popperjs\core\index.d.ts" comment="forms\webview\node_modules\@popperjs\core\index.d.ts"/>
@@ -1042,6 +1056,26 @@
 						<file name="index.js" path="forms\webview\node_modules\vue\server-renderer\index.js" comment="forms\webview\node_modules\vue\server-renderer\index.js"/>
 						<file name="index.mjs" path="forms\webview\node_modules\vue\server-renderer\index.mjs" comment="forms\webview\node_modules\vue\server-renderer\index.mjs"/>
 						<file name="package.json" path="forms\webview\node_modules\vue\server-renderer\package.json" comment="forms\webview\node_modules\vue\server-renderer\package.json"/>
+					</folder>
+				</folder>
+				<folder name="vue3-table-lite" path="forms\webview\node_modules\vue3-table-lite" comment="forms\webview\node_modules\vue3-table-lite">
+					<file name=".eslintrc.js" path="forms\webview\node_modules\vue3-table-lite\.eslintrc.js" comment="forms\webview\node_modules\vue3-table-lite\.eslintrc.js"/>
+					<file name="index.d.ts" path="forms\webview\node_modules\vue3-table-lite\index.d.ts" comment="forms\webview\node_modules\vue3-table-lite\index.d.ts"/>
+					<file name="index.js" path="forms\webview\node_modules\vue3-table-lite\index.js" comment="forms\webview\node_modules\vue3-table-lite\index.js"/>
+					<file name="LICENSE" path="forms\webview\node_modules\vue3-table-lite\LICENSE" comment="forms\webview\node_modules\vue3-table-lite\LICENSE"/>
+					<file name="package.json" path="forms\webview\node_modules\vue3-table-lite\package.json" comment="forms\webview\node_modules\vue3-table-lite\package.json"/>
+					<file name="README.md" path="forms\webview\node_modules\vue3-table-lite\README.md" comment="forms\webview\node_modules\vue3-table-lite\README.md"/>
+					<file name="sample.gif" path="forms\webview\node_modules\vue3-table-lite\sample.gif" comment="forms\webview\node_modules\vue3-table-lite\sample.gif"/>
+					<file name="ts.d.ts" path="forms\webview\node_modules\vue3-table-lite\ts.d.ts" comment="forms\webview\node_modules\vue3-table-lite\ts.d.ts"/>
+					<file name="ts.js" path="forms\webview\node_modules\vue3-table-lite\ts.js" comment="forms\webview\node_modules\vue3-table-lite\ts.js"/>
+					<folder name="src" path="forms\webview\node_modules\vue3-table-lite\src" comment="forms\webview\node_modules\vue3-table-lite\src">
+						<file name="index.ts" path="forms\webview\node_modules\vue3-table-lite\src\index.ts" comment="forms\webview\node_modules\vue3-table-lite\src\index.ts"/>
+						<file name="shims-vue.d.ts" path="forms\webview\node_modules\vue3-table-lite\src\shims-vue.d.ts" comment="forms\webview\node_modules\vue3-table-lite\src\shims-vue.d.ts"/>
+						<folder name="components" path="forms\webview\node_modules\vue3-table-lite\src\components" comment="forms\webview\node_modules\vue3-table-lite\src\components">
+							<file name="TableLite.vue" path="forms\webview\node_modules\vue3-table-lite\src\components\TableLite.vue" comment="forms\webview\node_modules\vue3-table-lite\src\components\TableLite.vue"/>
+							<file name="TableLiteTs.vue" path="forms\webview\node_modules\vue3-table-lite\src\components\TableLiteTs.vue" comment="forms\webview\node_modules\vue3-table-lite\src\components\TableLiteTs.vue"/>
+							<file name="Test.vue" path="forms\webview\node_modules\vue3-table-lite\src\components\Test.vue" comment="forms\webview\node_modules\vue3-table-lite\src\components\Test.vue"/>
+						</folder>
 					</folder>
 				</folder>
 			</folder>

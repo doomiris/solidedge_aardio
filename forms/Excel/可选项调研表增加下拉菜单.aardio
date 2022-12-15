@@ -36,6 +36,7 @@ var searchOption = function(str){
 
 var wb = excel.ActiveWorkbook;
 console.log("当前文档...", wb.name)
+/*设置可行项数据表{{*/
 var setdbsheet = function(wb){
 	var sht;
 	for (i=1; wb.sheets.count) {
@@ -51,6 +52,7 @@ var setdbsheet = function(wb){
 	else sht.usedrange.clear();
 	return sht; 
 }
+/*}}*/
 
 console.log("设置特性值数据表...", _od_list_sht)
 var odsht = setdbsheet(wb);
@@ -60,6 +62,8 @@ var odtab = table.create(,{ fields = {[1] = "特性", [2] = "特性描述", [3] 
 
 console.log("获取OD数据表...", _od_list_sht) 
 var od = {};
+
+/*从所有页获取特性列表{{*/
 for(i=1; wb.sheets.count){
 	var sht = wb.sheets(i);
 	if sht.name == _od_list_sht continue; 
@@ -72,16 +76,22 @@ for(i=1; wb.sheets.count){
 	}
 	
 }
+/*}}*/
+/* 特性列表去除重复项 */
 od = table.unique(od);
+
+/*根据特性列表查找所有特性值并生成总表{{*/
 for (i=1; #od){
 	var tab = searchOption(od[i]);
 	tab = tarray.sliceCol(tab,1,4);
 	table.append(odtab, tab);
 }
+/*}}*/
 console.log("获取颜色数据表...") 
 var colortab = db.getTable("SELECT * FROM [颜色分组]", { 颜色分组 = "1.0" });
 var ctab = {}
 ctab.fields = odtab.fields
+/*颜色名称去除开头的专用号{{*/
 var trimColorDesp = function(desp){
 	if #desp<11 return desp;
 	var d = string.match(desp, "^\d+");
@@ -95,7 +105,9 @@ var trimColorDesp = function(desp){
 	}
 	else return desp; 
 }
+/*}}*/
 
+/*生成颜色特性值总表{{*/
 for(i=1; #colortab){
 	table.push(ctab, { 
 		特性 = "1" , 
@@ -104,29 +116,48 @@ for(i=1; #colortab){
 		特性值描述 = trimColorDesp(colortab[i].特性值描述)
 	})
 }
+/*}}*/
 
-
+/* 特性值总表合并 */
 table.append(odtab, ctab);
-
+/* 特性值总表写入数据sheet */
 odsht.range("A1:D" ++ #odtab).value2 = tarray.serialize(odtab);
 odsht.Visible = 0 /* xlSheetHidden  */
 
-//从odsht获取地址填入下拉列表
+
+/*getRef从odsht获取地址填入下拉列表地址{{*/
 var getRef = function(code){
 	var t = table.filter(odtab,function(v, index){
 		return v.特性 == code;
 	});
-
-
 	var min = table.indexOf(odtab, t[1]);
 	var max = min + #t -1;
-	return "=" ++ _od_list_sht ++ "!$D$" ++ min ++ ":$D$" ++ max; 
+	return "$D$" ++ min ++ ":$D$" ++ max; 
+}
+/*}}*/
+
+var getDefaultConfig = function(classCode, productCode){
+	var t;
+	if !productCode
+		t = db.stepQuery("SELECT 产品编码 FROM [默认值]", {"分类":classCode});
+	if !t return null; //返回的是对象不是数据, 不要用#
+	productCode = t["产品编码"];
+	t = db.getTable("SELECT * FROM [默认值]", {"分类":classCode; "产品编码":productCode});
+	//console.dump(t) 
+	return t; 
 }
 
+var getDefaultValueText = function(tab,keyCode){
+	tarray.findValue(arr, what)
+}
 for(i=1; wb.sheets.count){
 	var sht = wb.sheets(i);
 	if sht.name == _od_list_sht continue; 
 	if (sht.Visible !== -1 /* xlSheetVisible  */) continue; 
+	
+	var classCode = string.trim(sht.cells(9,"A").text);
+	DefaultConfig = getDefaultConfig(classCode);
+
 	console.log("开始添加下拉菜单...", sht.name ) 
 	for (k=10; sht.usedrange.rows.count){
 		var code;
@@ -142,12 +173,21 @@ for(i=1; wb.sheets.count){
 		if !code continue;
         var ocell = sht.Cells(k, 3 /* C */);
         ocell.Validation.Delete();
+        var codeAddress = getRef(code);
         ocell.Validation.Add(
         	/* xlValidateList */ 3,
         	/* AlertStyle */ null,
         	/* Operator */ null,
-        	/* Formula1 */ getRef(code),
+        	/* Formula1 */ "=" ++ _od_list_sht + "!" + codeAddress,
         );
+        if DefaultConfig {
+            var index_code = tarray.indexOfCol(DefaultConfig, code, "特性");
+            if !index_code continue; //没发现默认值就跳过
+            var 此默认值 = DefaultConfig[index_code].特性值;
+            index_code = tarray.indexOfCol(odtab, code, "特性");
+            var 此默认值描述 = odtab[index_code].特性值描述;
+            ocell.value2 = 此默认值描述;
+        }
 	}
 }
 

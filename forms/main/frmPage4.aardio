@@ -5,8 +5,8 @@ import win.ui.menu;
 import solidedge.application;
 import solidedge.DraftDocument;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=783;bottom=471;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-winform.add(
+var spec_winform = win.form(text="aardio form";right=783;bottom=471;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+spec_winform.add(
 button={cls="button";text='\uF08B  插入图纸';left=688;top=424;right=776;bottom=464;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=5};
 button2={cls="button";text="关闭";left=592;top=424;right=680;bottom=464;db=1;dr=1;hide=1;z=6};
 checklist={cls="checklist";left=152;top=40;right=776;bottom=416;aw=1;border=1;db=1;dl=1;dr=1;dt=1;items={};z=2};
@@ -55,13 +55,13 @@ var dbRs = sqlite(dbpath);	//打开数据库连接
 /*loadLists{{*/
 var loadPromptList = function(){
 	var tab = dbRs.getTable("select * from SE_SPEC_TEMPLATE order by [ID]");
-	var hitem = winform.treeview.insertItem( text="模板清单" );
-	//winform.treeview.insertTable(tab);
+	var hitem = spec_winform.treeview.insertItem( text="模板清单" );
+	//spec_winform.treeview.insertTable(tab);
 	//var hSubItem;
 	for (i=1; #tab; 1) {
-		winform.treeview.insertItem( { text=tab[i].tName },hitem/*父节点*/); 
+		spec_winform.treeview.insertItem( { text=tab[i].tName },hitem/*父节点*/); 
 	}
-	winform.treeview.expandAll();
+	spec_winform.treeview.expandAll();
 }
 /*}}*/
 
@@ -73,31 +73,31 @@ var replacePara = function (str){
 }
 
 /*控件事件{{*/
-winform.treeview.onnotify = function(id,code,ptr){
+spec_winform.treeview.onnotify = function(id,code,ptr){
     select(code) {
     	case 0xFFFFFE3D/*_TVN_SELCHANGEDW*/ {
-			winform.checklist.clear();
-			var hItem = winform.treeview.getSelection();
-			if(hItem and winform.treeview.getParentItem(hItem)){
+			spec_winform.checklist.clear();
+			var hItem = spec_winform.treeview.getSelection();
+			if(hItem and spec_winform.treeview.getParentItem(hItem)){
 				var tab;
-				tab = dbRs.stepQuery("select tCombine,tSelect from SE_SPEC_TEMPLATE", { tName = winform.treeview.getItemText(hItem) } );
+				tab = dbRs.stepQuery("select tCombine,tSelect from SE_SPEC_TEMPLATE", { tName = spec_winform.treeview.getItemText(hItem) } );
 				var v = string.split(tab.tCombine,",")
 				var vs = string.split(tab.tSelect,",")
 				
 				for (i=1; #v){
 					tab = dbRs.stepQuery("select sTxt from SE_SPEC_ITEM", { ID = v[i] } );
-					winform.checklist.addItem(replacePara(tab.sTxt));
-					winform.checklist.setChecked(i, (vs[i]==1) );
+					spec_winform.checklist.addItem(replacePara(tab.sTxt));
+					spec_winform.checklist.setChecked(i, (vs[i]==1) );
 				}
 			}
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/  {
 			var x,y = win.getMessagePos();
-			var hItem,tvht = winform.treeview.hitTest(x,y,true);
-			var menu = win.ui.popmenu(winform)
+			var hItem,tvht = spec_winform.treeview.hitTest(x,y,true);
+			var menu = win.ui.popmenu(spec_winform)
 			menu.add("删除",
 				function(){
-					winform.treeview.delItem(hItem)
+					spec_winform.treeview.delItem(hItem)
 				}
 			)
 			menu.popup(x,y,true);
@@ -106,12 +106,12 @@ winform.treeview.onnotify = function(id,code,ptr){
     }
 }
 
-winform.button2.oncommand = function(id,event){
+spec_winform.button2.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
 	
 }
 
-winform.button.oncommand = function(id,event){
+spec_winform.button.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd)
@@ -129,9 +129,9 @@ winform.button.oncommand = function(id,event){
     	txt.Text = txt.Text ++ " " ++ '\r';
 
     	var n = 1;	//编号
-    	for (i = 1 ; winform.checklist.count){
-        	if (winform.checklist.getChecked(i)) {
-            	txt.Text = txt.Text ++ n ++ ". " ++ winform.checklist.getItemText(i) ++ '\r';
+    	for (i = 1 ; spec_winform.checklist.count){
+        	if (spec_winform.checklist.getChecked(i)) {
+            	txt.Text = txt.Text ++ n ++ ". " ++ spec_winform.checklist.getItemText(i) ++ '\r';
             	n += 1;
         	}
     	}
@@ -142,14 +142,14 @@ winform.button.oncommand = function(id,event){
 	key.combine("CTRL","V");
 }
 /*}}*/
-winform.show();
+spec_winform.show();
 initDeclare();
 loadPromptList();	//读取提示列表
 
 subscribe("refresh",function(){
-//		winform.redraw();
+//		spec_winform.redraw();
 	}
 );
 
 win.loopMessage();
-return winform;
+return spec_winform;

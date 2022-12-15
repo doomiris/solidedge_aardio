@@ -1,30 +1,36 @@
-import fonts.fontAwesome;
 import win.ui;
-import fsys.table;
+import fonts.fontAwesome;
 import config;
+import fsys.table;
 /*DSG{{*/
-winform = win.form(text="qtip Admin";right=638;bottom=502)
-winform.add(
-button={cls="button";text='\uF09C \r 解密';left=536;top=8;right=632;bottom=40;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=5};
-button11={cls="button";text="更新";left=16;top=72;right=288;bottom=120;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新图纸下发库";z=13};
-button12={cls="button";text="更新";left=16;top=184;right=288;bottom=232;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新OD库";z=14};
-button13={cls="button";text="bom_export";left=432;top=248;right=608;bottom=288;hide=1;z=15};
-button2={cls="button";text="euro tif download";left=424;top=456;right=600;bottom=496;z=12};
+winform_admin = win.form(text="qtip Admin";right=638;bottom=502)
+winform_admin.add(
+button={cls="button";text='\uF09C \r 解密';left=536;top=8;right=632;bottom=40;dr=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=5};
+button11={cls="button";text="更新";left=16;top=72;right=288;bottom=120;align="left";color=14120960;disabled=1;dl=1;dt=1;flat=1;font=LOGFONT(h=-14);note="更新图纸下发库";z=13};
+button12={cls="button";text="更新";left=16;top=184;right=288;bottom=232;align="left";color=14120960;dl=1;dt=1;flat=1;font=LOGFONT(h=-14);note="更新OD库";z=14};
+button13={cls="button";text="bom_export";left=432;top=248;right=608;bottom=288;db=1;dr=1;hide=1;z=15};
+button2={cls="button";text="euro tif download";left=424;top=456;right=600;bottom=496;db=1;dr=1;z=12};
 button3={cls="button";text="手动映射图号";left=24;top=360;right=120;bottom=456;color=10789024;db=1;dl=1;flat=1;z=6};
-button4={cls="button";text="更新图号库 from Excel";left=336;top=96;right=608;bottom=128;align="left";color=10789024;db=1;dl=1;flat=1;z=1};
-button5={cls="button";text="更新";left=16;top=128;right=288;bottom=176;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="从图纸下发库更新图号";z=10};
-button6={cls="button";text="更新";left=16;top=16;right=288;bottom=64;align="left";color=14120960;db=1;dl=1;flat=1;font=LOGFONT(h=-14);note="更新共享目录库";z=2};
-button7={cls="button";text='\uF084 \r 加密';left=424;top=8;right=520;bottom=40;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=3};
-button8={cls="button";text="同步QHC可选项...";left=424;top=392;right=600;bottom=432;hide=1;z=16};
-button9={cls="button";text="admin数据库操作...";left=432;top=200;right=608;bottom=240;hide=1;z=11};
-edit={cls="edit";text="CCL100100";left=424;top=48;right=520;bottom=72;hide=1;multiline=1;z=4};
-edit2={cls="edit";left=152;top=360;right=312;bottom=384;edge=1;tabstop=1;z=7};
-edit3={cls="edit";left=152;top=384;right=312;bottom=456;autohscroll=false;edge=1;multiline=1;tabstop=1;z=8};
-static2={cls="static";text="结尾回车换行";left=152;top=464;right=280;bottom=480;transparent=1;z=9}
+button4={cls="button";text="更新图号库 from Excel";left=336;top=96;right=608;bottom=128;align="left";color=10789024;dr=1;dt=1;flat=1;z=1};
+button5={cls="button";text="更新";left=16;top=128;right=288;bottom=176;align="left";color=14120960;dl=1;dt=1;flat=1;font=LOGFONT(h=-14);note="从图纸下发库更新图号";z=10};
+button6={cls="button";text="更新";left=16;top=16;right=288;bottom=64;align="left";color=14120960;dl=1;dt=1;flat=1;font=LOGFONT(h=-14);note="更新共享目录库";z=2};
+button7={cls="button";text='\uF084 \r 加密';left=424;top=8;right=520;bottom=40;dr=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=3};
+button8={cls="button";text="同步QHC可选项...";left=424;top=392;right=600;bottom=432;db=1;dr=1;hide=1;z=16};
+button9={cls="button";text="admin数据库操作...";left=432;top=200;right=608;bottom=240;db=1;dr=1;hide=1;z=11};
+edit={cls="edit";text="CCL100100";left=424;top=48;right=520;bottom=72;dr=1;dt=1;hide=1;multiline=1;z=4};
+edit2={cls="edit";left=152;top=360;right=312;bottom=384;db=1;dl=1;edge=1;tabstop=1;z=7};
+edit3={cls="edit";left=152;top=384;right=312;bottom=456;autohscroll=false;db=1;dl=1;edge=1;multiline=1;tabstop=1;z=8};
+static2={cls="static";text="结尾回车换行";left=152;top=464;right=280;bottom=480;db=1;dl=1;transparent=1;z=9}
 )
 /*}}*/
 
+var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");
+winform_admin.button9.hide = !adminSession;
+winform_admin.button13.hide = !adminSession;
+
+winform_admin.show();
 /*加密{{*/
+/*
 var dbmm = function(dbpath, old_password, new_password){
 	import sqlite;
 	var mm = sqlite(dbpath, old_password)
@@ -33,16 +39,17 @@ var dbmm = function(dbpath, old_password, new_password){
 	win.msgbox("加密成功, 即将退出")
 	win.quitMessage()
 }
+*/
 /*}}*/
 //TODO: 单独录入图纸map记录
 /*生成文件清单{{*/
-winform.button4.oncommand = function(id,event){
+winform_admin.button4.oncommand = function(id,event){
     import fsys.dlg;
     import win.inputBox;
     
-	var path = fsys.dlg.open('Excel文件|*.xlsx',,,winform);
+	var path = fsys.dlg.open('Excel文件|*.xlsx',,,winform_admin);
 	if !(path) return ;
-	var inputbox = win.inputBox(winform.hwnd,false);
+	var inputbox = win.inputBox(winform_admin.hwnd,false);
 	inputbox.text = "输入要分析的Sheet名称"
 	inputbox.info.text = "请输入Sheet表名称, 此表内必须包含[专用号]和[图号]列"
 	inputbox.input.text = "part list"
@@ -52,66 +59,64 @@ winform.button4.oncommand = function(id,event){
     getList.appendDrawingMapFromExcel(path, sht);
 
 }
-winform.button6.oncommand = function(id,event){
-	winform.button6.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "wait..."}
+winform_admin.button6.oncommand = function(id,event){
+	winform_admin.button6.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "wait..."}
 	thread.invoke( 
-		function(winform){
+		function(winform_admin){
     		import getList;
     		getList.saveFolderDB();
-    		winform.button6.disabledText = null;
-		}, winform
+    		winform_admin.button6.disabledText = null;
+		}, winform_admin
 	)
 }
 /*}}*/
-winform.button7.oncommand = function(id,event){
+
+
+winform_admin.button7.oncommand = function(id,event){
     import fsys.dlg;
-	var path = fsys.dlg.open('DB文件|*.db',"打开",config.dbServer.path, winform);
+	var path = fsys.dlg.open('DB文件|*.db',"打开",config.dbServer.path, winform_admin);
 	if !(path) return ;
-	dbmm(path, "", winform.edit.text);	
+	dbmm(path, "", winform_admin.edit.text);	
 }
 
-winform.button.oncommand = function(id,event){
+winform_admin.button.oncommand = function(id,event){
     import fsys.dlg;
-	var path = fsys.dlg.open('DB文件|*.db',"打开",config.dbServer.path, winform);
+	var path = fsys.dlg.open('DB文件|*.db',"打开",config.dbServer.path, winform_admin);
 	if !(path) return ;
-	dbmm(path, winform.edit.text, "");	
+	dbmm(path, winform_admin.edit.text, "");	
 }
 
-winform.button3.oncommand = function(id,event){
-	var prtLists = string.split(winform.edit3.text, '\r\n');
+winform_admin.button3.oncommand = function(id,event){
+	var prtLists = string.split(winform_admin.edit3.text, '\r\n');
 	import getList;
-    getList.appendDrawingMapFromTable(winform.edit2.text, prtLists)
+    getList.appendDrawingMapFromTable(winform_admin.edit2.text, prtLists)
 }
 
-winform.button5.oncommand = function(id,event){
-	winform.button5.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "wait..."}
+winform_admin.button5.oncommand = function(id,event){
+	winform_admin.button5.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "wait..."}
 	thread.invoke( 
-		function(winform){
+		function(winform_admin){
 			import getList;
     		getList.appendDrawingMapFromQHC();
-    		winform.button5.disabledText = null;
-		}, winform
+    		winform_admin.button5.disabledText = null;
+		}, winform_admin
 	)
 }
 
 
-winform.button9.oncommand = function(id,event){
+winform_admin.button9.oncommand = function(id,event){
 	loadcodex("\forms\admin_only\SAP-GETLIST.aardio");
-	winform.close();
 }
-var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");
-winform.button9.hide = !adminSession;
-winform.button13.hide = !adminSession;
 
-
-
-winform.button2.oncommand = function(id,event){
+winform_admin.button2.oncommand = function(id,event){
+/*
 	import SAP.session;
 	var session = SAP.session() ; 
 	session.downloadEuroTif();
+*/
 }
 
-winform.button11.oncommand = function(id,event){
+winform_admin.button11.oncommand = function(id,event){
     _dw_path = "\\ccnqia05\开发部共享文件-\01.2022Y图纸&技术通知及BOM\2022年开发部图纸下发台账-以此为准.xlsx";
 	if !io.exist(_dw_path) return error("找不到开发部共享文件: " ++ _dw_path)
 	thread.invoke( 
@@ -122,7 +127,7 @@ winform.button11.oncommand = function(id,event){
 	
 }
 
-winform.button12.oncommand = function(id,event){
+winform_admin.button12.oncommand = function(id,event){
 	if io.exist("\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表2022.06.01.xlsx")
 		if io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx")
 			thread.invoke( 
@@ -135,7 +140,7 @@ winform.button12.oncommand = function(id,event){
 			
 }
 
-winform.button13.oncommand = function(id,event){
+winform_admin.button13.oncommand = function(id,event){
 	thread.invoke( 
 		function(){
 			loadcodex("\forms\admin_only\BOM_export.aardio");
@@ -144,9 +149,10 @@ winform.button13.oncommand = function(id,event){
 	
 }
 
-winform.button8.oncommand = function(id,event){	
+winform_admin.button8.oncommand = function(id,event){	
 	loadcodex("\forms\admin_only\同步QHC可选项文件.aardio");
 }
 
-winform.show();
+
 win.loopMessage();
+return winform_admin; 

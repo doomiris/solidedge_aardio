@@ -2,8 +2,8 @@ import fonts.fontAwesome;
 import win.ui;
 import tarray;
 /*DSG{{*/
-var winform = win.form(text="分类和特性查询";right=999;bottom=751)
-winform.add(
+var winform_od_query = win.form(text="分类和特性查询";right=999;bottom=751)
+winform_od_query.add(
 button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;color=255;db=1;dl=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
 button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;db=1;dl=1;z=9};
 edit={cls="edit";left=8;top=32;right=216;bottom=64;dl=1;dt=1;edge=1;z=6};
@@ -11,7 +11,8 @@ edit2={cls="edit";left=232;top=32;right=528;bottom=64;dl=1;dt=1;edge=1;z=8};
 listview1={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;items={};msel=false;z=1};
 listview2={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;items={};z=2};
 listview3={cls="listview";left=536;top=88;right=992;bottom=728;ah=1;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
-splitter={cls="splitter";left=216;top=88;right=224;bottom=384;ah=1;db=1;dt=1;frame=1;z=4};
+listview4={cls="listview";left=8;top=232;right=216;bottom=632;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=13};
+splitter={cls="splitter";left=216;top=88;right=224;bottom=624;ah=1;db=1;dt=1;frame=1;z=4};
 splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;frame=1;z=5};
 static={cls="static";text="分类";left=8;top=72;right=88;bottom=88;dl=1;dt=1;transparent=1;z=10};
 static2={cls="static";text="特性";left=224;top=72;right=304;bottom=88;dl=1;dt=1;transparent=1;z=11};
@@ -30,13 +31,13 @@ if err win.msgbox(err);
 
 /*}}*/
 
-winform.edit.translateCommand();
-winform.edit2.translateCommand();
+winform_od_query.edit.translateCommand();
+winform_od_query.edit2.translateCommand();
 
-var actrls  = winform.edit.addCtrl({ 
+var actrls  = winform_od_query.edit.addCtrl({ 
 	{cls="button";text="r";font=LOGFONT(name='Marlett';charset=2/*_SYMBOL_CHARSET*/);hide=1;width=16;height=16;marginTop=0.2/*垂直居中*/;marginRight=5 } 
 })
-var bctrls  = winform.edit2.addCtrl({ 
+var bctrls  = winform_od_query.edit2.addCtrl({ 
 	{cls="button";text="r";font=LOGFONT(name='Marlett';charset=2/*_SYMBOL_CHARSET*/);hide=1;width=16;height=16;marginTop=0.2/*垂直居中*/;marginRight=5 } 
 })
 actrls[1].oncommand = function(id,event){
@@ -66,6 +67,13 @@ var searchClass = function(str){
 	var t = db.getTable("SELECT * FROM `分类新`", { 分类 : str });
 	return filterDeleted(t);
 }
+var searchClassByBG = function(str){
+	if !str return null; 
+	str = string.upper(string.trim(str));
+	var t = db.stepQuery("SELECT * FROM `默认值`", { 产品编码 : str });
+	return t["分类"];
+}
+
 var searchOption = function(str){
 	if !str return null; 
 	str = string.upper(string.trim(str));
@@ -73,34 +81,43 @@ var searchOption = function(str){
 	return filterDeleted(t);
 }
 
-winform.edit.onChange = function(){ 
-	if(owner.onModified)owner.onModified(true);
+winform_od_query.edit.onChange = function(){ 
+	if(owner.onModified) owner.onModified(true);
 	
 	actrls[1].hide = !#owner.text;
 	owner.redraw();
+	//if !#owner.text return; 
 	
-	winform.listview1.clear(true);
-	winform.listview2.clear(true);
-	winform.listview3.clear(true);
+	winform_od_query.listview1.clear(true);
+	winform_od_query.listview2.clear(true);
+	winform_od_query.listview3.clear(true);
+	winform_od_query.listview4.clear(true);
 	
-	var t = searchClass(owner.text);
-	if !#t return ;
+	var t;
+	var bt
+	if #owner.text==11 and string.startWith(owner.text, "BG",true) {
+		bt = searchClassByBG(owner.text);
+		t = searchClass(bt);
+	}else{
+		t = searchClass(owner.text);
+	}
+		if !#t return ;
+		var tClass = tarray.uniqueCol(tarray.sliceCol(t,1,2));
+		var tOpts = tarray.uniqueCol(tarray.sliceCol(t,4,5));
 
-	var tClass = tarray.uniqueCol(tarray.sliceCol(t,1,2));
-	var tOpts = tarray.uniqueCol(tarray.sliceCol(t,4,5));
-
-	if tClass	winform.listview1.setTable(tClass);
-	if tOpts	winform.listview2.setTable(tOpts);
+		winform_od_query.listview4.addItem(bt,1);
+		if tClass	winform_od_query.listview1.setTable(tClass);
+		if tOpts	winform_od_query.listview2.setTable(tOpts);
 }
-winform.edit2.onChange = function(){ 
+winform_od_query.edit2.onChange = function(){ 
 	if(owner.onModified)owner.onModified(true);
 	
 	bctrls[1].hide = !#owner.text;
 	owner.redraw();
 	
-	winform.listview1.clear(true);
-	winform.listview2.clear(true);
-	winform.listview3.clear(true);
+	winform_od_query.listview1.clear(true);
+	winform_od_query.listview2.clear(true);
+	winform_od_query.listview3.clear(true);
 	
 	var t = searchOption(owner.text);
 	if !#t return ;
@@ -108,11 +125,11 @@ winform.edit2.onChange = function(){
 	var tOpts = tarray.uniqueCol(tarray.sliceCol(t,1,2));
 	var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
 
-	if tOpts	winform.listview2.setTable(tOpts);
-	if cType	winform.listview3.setTable(cType);
+	if tOpts	winform_od_query.listview2.setTable(tOpts);
+	if cType	winform_od_query.listview3.setTable(cType);
 }
 var lastOpt;//记住上次搜索项, 减少搜索频率
-winform.listview2.onnotify = function(id,code,ptr){
+winform_od_query.listview2.onnotify = function(id,code,ptr){
 	select(code) {
 		case 0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
 			var c = owner.getItemText(owner.getSelection(),1);
@@ -121,14 +138,14 @@ winform.listview2.onnotify = function(id,code,ptr){
 			var t = searchOption(c)
 			if !#t return;
 			var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
-			winform.listview3.clear(true);
-			if cType	winform.listview3.setTable(cType);
+			winform_od_query.listview3.clear(true);
+			if cType	winform_od_query.listview3.setTable(cType);
 			lastOpt = c;
 		}
 	}
 }
 
-winform.button.oncommand = function(id,event){
+winform_od_query.button.oncommand = function(id,event){
 	if io.exist("\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表2022.06.01.xlsx")
 		if io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx")
 			loadcodex("\forms\SAP\BOM_OD_LIB.aardio");
@@ -136,7 +153,7 @@ winform.button.oncommand = function(id,event){
 
 /*CtrlC复制模块{{*/
 import win.clip;
-winform.listview1.translateAccelerator = function( msg ){ 
+winform_od_query.listview1.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam ;    
     if( ( vk == 'C'# ) && ctrl  ){
@@ -148,7 +165,7 @@ winform.listview1.translateAccelerator = function( msg ){
         return true;
     }
 }
-winform.listview2.translateAccelerator = function( msg ){ 
+winform_od_query.listview2.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam ;    
     if( ( vk == 'C'# ) && ctrl  ){
@@ -160,7 +177,7 @@ winform.listview2.translateAccelerator = function( msg ){
         return true;
     }
 }
-winform.listview3.translateAccelerator = function( msg ){ 
+winform_od_query.listview3.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam ;    
     if( ( vk == 'C'# ) && ctrl  ){
@@ -174,17 +191,17 @@ winform.listview3.translateAccelerator = function( msg ){
 }
 /*}}*/
 
-winform.button2.oncommand = function(id,event){	
+winform_od_query.button2.oncommand = function(id,event){	
 	loadcodex("\forms\Excel\可选项调研表增加下拉菜单.aardio");
 }
 
 
-winform.splitter.split(winform.listview1, winform.listview2);
-winform.splitter2.split(winform.listview2, winform.listview3);
+winform_od_query.splitter.split(winform_od_query.listview1, winform_od_query.listview2);
+winform_od_query.splitter2.split(winform_od_query.listview2, winform_od_query.listview3);
 
 
 
 
-winform.show();
+winform_od_query.show();
 win.loopMessage();
-return winform;
+return winform_od_query;

@@ -34,7 +34,7 @@ for(i=1; #tab){
 	var cmd = db.prepare("INSERT INTO [" ++ tab.title ++ "] VALUES(?,?);");
 	cmd.bind.parameters(table.unpack(tab[i])).step();
 }
-	db.commitTrans();
+db.commitTrans();
 
 db.close()
 console.pause(true);

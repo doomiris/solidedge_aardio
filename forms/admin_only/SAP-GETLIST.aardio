@@ -3,101 +3,82 @@ import win.ui;
 import config;
 import fsys;
 /*DSG{{*/
-var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469)
-winform.add(
+var winform_getlist = win.form(text="admin数据库刷新工具";right=759;bottom=469)
+winform_getlist.add(
 button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;z=1};
 button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;z=3};
 button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;z=4};
 button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;z=5};
 button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;font=LOGFONT(h=-16;name='FontAwesome');z=7};
+button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;z=8};
 edit={cls="edit";left=72;top=24;right=568;bottom=56;edge=1;z=6};
 log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 )
 /*}}*/
 
 /* 无法把对象传进线程 */
-winform.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
+winform_getlist.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
 
 /*Get获取数据{{*/
-/*
-var getFromSAP = function(winform){
-	import win;
-	import SAP.session;
-	var session = SAP.session();
-	if session {
-		//session.findById("wnd[0]").maximize();
-		winform.log.print("开始从SAP获取数据...");
-		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60";
-		session.findById("wnd[0]/tbar[0]/btn[0]").press();
-		session.findById("wnd[0]/usr/chkBEWFLG").selected = false;
-		session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*";
-		session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841";
-		session.findById("wnd[0]/tbar[1]/btn[8]").press();
-		session.findById("wnd[0]/tbar[1]/btn[45]").press();
-		session.findById("wnd[1]/tbar[0]/btn[0]").press();
-		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt";
-		session.findById("wnd[1]/tbar[0]/btn[11]").press();
-		session.findById("wnd[0]/tbar[0]/btn[12]").press();
-		session.findById("wnd[0]/tbar[0]/btn[12]").press();
-		winform.log.print("数据已经保存到txt...");
-	} else {
-		winform.log.print("无法访问SAP, 尝试直接打开TXT...");
-	}
-	session = null;
-	collectgarbage("collect");
-	winform.publish("getFromSAP",true);
-	win.loopMessage();
-}
-*/
-var getFromSAP = function(winform){
+
+var getFromSAP = function(winform_getlist){
     import web.script;
     var vm = web.script("VBScript") ;
     vm.addCode(`
-If Not IsObject(application) Then
-   Set SapGuiAuto  = GetObject("SAPGUI")
-   Set application = SapGuiAuto.GetScriptingEngine
-End If
-If Not IsObject(connection) Then
-   Set connection = application.Children(0)
-End If
-If Not IsObject(session) Then
-   Set session    = connection.Children(0)
-End If
-If IsObject(WScript) Then
-   WScript.ConnectObject session,     "on"
-   WScript.ConnectObject application, "on"
-End If
-session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
-session.findById("wnd[0]/tbar[0]/btn[0]").press
-session.findById("wnd[0]/usr/chkBEWFLG").selected = False
-session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*"
-session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841"
-session.findById("wnd[0]/tbar[1]/btn[8]").press
-session.findById("wnd[0]/tbar[1]/btn[45]").press
-session.findById("wnd[1]/tbar[0]/btn[0]").press
-session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt"
-session.findById("wnd[1]/tbar[0]/btn[11]").press
-session.findById("wnd[0]/tbar[0]/btn[12]").press
-session.findById("wnd[0]/tbar[0]/btn[12]").press
+		If Not IsObject(application) Then
+   		Set SapGuiAuto  = GetObject("SAPGUI")
+   		Set application = SapGuiAuto.GetScriptingEngine
+		End If
+		If Not IsObject(connection) Then
+   		Set connection = application.Children(0)
+		End If
+		If Not IsObject(session) Then
+   		Set session    = connection.Children(0)
+		End If
+		If IsObject(WScript) Then
+   		WScript.ConnectObject session,     "on"
+   		WScript.ConnectObject application, "on"
+		End If
+		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
+		session.findById("wnd[0]/tbar[0]/btn[0]").press
+		session.findById("wnd[0]/usr/chkBEWFLG").selected = False
+		session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*"
+		session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841"
+		session.findById("wnd[0]/tbar[1]/btn[8]").press
+		
+		'session.findById("wnd[0]/tbar[1]/btn[45]").press
+		'session.findById("wnd[1]/tbar[0]/btn[0]").press
+		'session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt"
+		
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").contextMenu
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").selectContextMenuItem "&XXL"
+		
+		session.findById("wnd[1]/tbar[0]/btn[0]").press
+		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.XLSX"
+		
+		session.findById("wnd[1]/tbar[0]/btn[11]").press
+		session.findById("wnd[0]/tbar[0]/btn[12]").press
+		session.findById("wnd[0]/tbar[0]/btn[12]").press
     `);
 
-	winform.publish("getFromSAP",true);
+	winform_getlist.publish("getFromSAP",true);
 }
 
 
 /*}}*/
 /*deal处理数据{{*/
-var dealWithTxt = function(winform){
+/**
+var dealWithTxt = function(winform_getlist){
 	import win;
 	import fsys;
-	winform.log.print("开始处理数据");
+	winform_getlist.log.print("开始处理数据");
 	_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.txt";
 	var file = io.exist(_path) ? io.open(_path,"r") : null;
 	if !file error("文件不存在: " ++ _path);
-	if file winform.log.print("开始处理多余行", _path);
+	if file winform_getlist.log.print("开始处理多余行", _path);
 	import config;
 	import sqlite;
-	var db = sqlite(winform.stepDBpath);
+	var db = sqlite(winform_getlist.stepDBpath);
 	if !db error("dberror");
 	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
 	db.exec("VACUUM");
@@ -133,23 +114,65 @@ var dealWithTxt = function(winform){
 	db.commitTrans();
 	file.close();
 	db.close();
-	winform.log.print("完成, 已加入数据库");
-	winform.publish("sentSAPtoDB",true);
-	winform.button.disabledText = null;
+	winform_getlist.log.print("完成, 已加入数据库");
+	winform_getlist.publish("sentSAPtoDB",true);
+	winform_getlist.button.disabledText = null;
+}
+**/
+var dealWithXlsx = function(winform_getlist){
+	winform_getlist.log.print("开始处理数据");
+	//_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.xlsx";
+	import com.excel;
+	var excel = com.excel(false);
+	winform_getlist.log.print("获取workbook...");
+	var wb = excel.WorkBooks("allcost.xlsx");
+	var sht = wb.sheets(1);
+	var rng = sht.usedrange.value2;
+	winform_getlist.log.print("打开step_db...");
+	import config;
+	import sqlite;
+	var db = sqlite(winform_getlist.stepDBpath);
+	if !db error("dberror");
+	winform_getlist.log.print("删除旧数据 ...");
+	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
+	db.exec("VACUUM");
+	db.exec("CREATE TABLE [all_cost](物料 TEXT collate nocase,物料描述 TEXT collate nocase,MTyp TEXT,物料组 TEXT,BUn TEXT,价格 NUMERIC,PGr TEXT);")  
+	winform_getlist.log.print("写入新数据 ...");
+	db.beginTrans();
+	for (i=2; #rng) {
+		var cmd = db.prepare("INSERT INTO [all_cost] VALUES(@pcode,@textDesp,@mtype,@mgroup,@bun,@price,@pgr);");
+		var nl = rng[i];
+		cmd.step(
+			pcode = nl[1];
+			textDesp = nl[2];
+			mtype = nl[3];
+			mgroup = nl[4];
+			bun = nl[5];
+			price = tonumber(string.replace(nl[6],",",""));
+			pgr = nl[7]
+		)
+	}
+	
+	db.commitTrans();
+
+	db.close();
+	winform_getlist.log.print("完成, 已加入数据库");
+	winform_getlist.publish("sentSAPtoDB",true);
+	winform_getlist.button.disabledText = null;
 }
 /*}}*/
 subscribe("getFromSAP",function(...){
-	thread.invoke(dealWithTxt, winform)
+	thread.invoke(dealWithXlsx, winform_getlist)
 } )
 
-winform.button.oncommand = function(id,event){
+winform_getlist.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
-	thread.invoke(getFromSAP, winform);
-	//thread.invoke(dealWithTxt, winform);
+	thread.invoke(getFromSAP, winform_getlist);
+	//thread.invoke(dealWithTxt, winform_getlist);
 }
 
 /*importFromQHC{{*/
-var importFromQHC = function(winform, path){
+var importFromQHC = function(winform_getlist, path){
 	import win;	
 	import com.excel;
 	var excel = com.excel(true);
@@ -180,7 +203,7 @@ var importFromQHC = function(winform, path){
 	qTab.fields = tarray.replaceValue(qTab.fields,"物料描述", "物料描述 TEXT collate nocase");
 	import config;
 	import sqlite;
-	var db = sqlite(winform.stepDBpath);
+	var db = sqlite(winform_getlist.stepDBpath);
 	if db.existsTable("qhc_export") db.exec("DROP table qhc_export;")
 	db.exec("VACUUM");
 	var fields = string.join(qTab.fields,", ");
@@ -199,27 +222,27 @@ var importFromQHC = function(winform, path){
 	}
 	db.commitTrans();
 	db.close();
-	winform.log.print("Excel导入完成");
-	winform.button2.disabledText = null;
+	winform_getlist.log.print("Excel导入完成");
+	winform_getlist.button2.disabledText = null;
 }
 
 /*}}*/
 
-winform.button2.oncommand = function(id,event){
+winform_getlist.button2.oncommand = function(id,event){
 
-	var path = winform.edit.text;
+	var path = winform_getlist.edit.text;
 	if !io.exist(path) return ; 
 	
 	config.admin.lastWorkingFolder = fsys.getParentDir(path);
 	config.admin.save();
 	
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
-	winform.log.print("打开 " ++ path );
-	thread.invoke(importFromQHC, winform, path);
+	winform_getlist.log.print("打开 " ++ path );
+	thread.invoke(importFromQHC, winform_getlist, path);
 }
 /*mergeDb{{*/
 
-var mergeDb = function(winform){
+var mergeDb = function(winform_getlist){
 	import win;
 	import config;
 	import sqlite;
@@ -227,8 +250,8 @@ var mergeDb = function(winform){
 import console
 console.open();
 */
-	var step_db = sqlite(winform.stepDBpath);
-	winform.log.print("合并临时数据...");	
+	var step_db = sqlite(winform_getlist.stepDBpath);
+	winform_getlist.log.print("合并临时数据...");	
 	if step_db.existsTable("所有物料")
 		step_db.exec("DROP table 所有物料;");
 	step_db.exec(`
@@ -252,13 +275,13 @@ console.open();
 	step_db.close();
 	var db = sqlite(config.dbServer.path + "qhcsap.db");
 
-	winform.log.print("备份数据...");
+	winform_getlist.log.print("备份数据...");
 	if (db.existsTable("所有物料") and db.existsTable("备份所有物料"))
 		db.exec("DROP table 备份所有物料;");
 	if db.existsTable("所有物料") db.exec("ALTER TABLE 所有物料 RENAME TO 备份所有物料;");
 	
-	winform.log.print("挂接新数据...");
-	db.exec("ATTACH DATABASE '" + winform.stepDBpath + "' as 'stepDB';")
+	winform_getlist.log.print("挂接新数据...");
+	db.exec("ATTACH DATABASE '" + winform_getlist.stepDBpath + "' as 'stepDB';")
 	db.exec(`
 		CREATE TABLE 所有物料 (
 			物料 TEXT UNIQUE COLLATE NOCASE,
@@ -279,16 +302,16 @@ console.open();
 		INSERT INTO main.所有物料 SELECT * FROM stepDB.所有物料;
 	`);
 	
-	winform.log.print("合并完成, 卸载挂接数据...");
+	winform_getlist.log.print("合并完成, 卸载挂接数据...");
 	db.exec("DETACH DATABASE 'stepDB';")
 	
-	winform.log.print("删除备份...");
+	winform_getlist.log.print("删除备份...");
 	if (db.existsTable("所有物料") and db.existsTable("备份所有物料"))
 		db.exec("DROP table 备份所有物料;");
-	winform.log.print("VACUUM...");
+	winform_getlist.log.print("VACUUM...");
 	db.exec("VACUUM");
 	
-	winform.log.print("更新索引...");
+	winform_getlist.log.print("更新索引...");
 	/*  https://stackoverflow.com/questions/44947414/sqlite-speed-up-select-with-collate-nocase
 		An index can be used to speed up a search only if it uses the same collation as the query.
 		By default, an index takes the collation from the table column, 
@@ -316,27 +339,27 @@ console.open();
 	//	db.exec("CREATE INDEX 禁用 on 所有物料 (禁用);")
 	}
 	db.close();
-	winform.button3.disabledText = null;
-	winform.log.print("合并数据完成.");
+	winform_getlist.button3.disabledText = null;
+	winform_getlist.log.print("合并数据完成.");
 }
 
 /*}}*/
-winform.button3.oncommand = function(id,event){
+winform_getlist.button3.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."};
-	thread.invoke(mergeDb, winform);
+	thread.invoke(mergeDb, winform_getlist);
 }
 
-winform.button4.oncommand = function(id,event){
-	var copyfolder = function(winform, tart, dest){
+winform_getlist.button4.oncommand = function(id,event){
+	var copyfolder = function(winform_getlist, tart, dest){
 		import fsys;
-		winform.log.print("...正在复制到" + dest);
+		winform_getlist.log.print("...正在复制到" + dest);
 		fsys.copy(tart, dest, 0x4/*_FOF_SILENT*/ + 0x10/*_FOF_NOCONFIRMATION*/);
-		winform.log.print("完成:" + dest);
+		winform_getlist.log.print("完成:" + dest);
 		
 	}
-	if !io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\") winform.log.print("无法访问:" + "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
-	else thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.db", "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
-	thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.db", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
+	if !io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\") winform_getlist.log.print("无法访问:" + "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
+	else thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
+	thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
 getXlsxDbPath = function(){
 	import fsys;
@@ -346,12 +369,16 @@ getXlsxDbPath = function(){
 		return list[list[#list]]; 
 }
 
-winform.button5.oncommand = function(id,event){
+winform_getlist.button5.oncommand = function(id,event){
 	import fsys.dlg;
-	winform.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件",config.admin.lastWorkingFolder,owner);
+	winform_getlist.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件",config.admin.lastWorkingFolder,owner);
 }
 
-winform.edit.text = getXlsxDbPath();
-winform.show();
+winform_getlist.button6.oncommand = function(id,event){
+	thread.invoke(dealWithXlsx, winform_getlist);
+}
+
+winform_getlist.edit.text = getXlsxDbPath();
+winform_getlist.show();
 win.loopMessage();
-return winform;
+return winform_getlist;

@@ -99,5 +99,26 @@ winform.listview.translateAccelerator = function( msg ){
     }
 }
 
+winform.listview.onnotify = function(id,code,ptr){
+    select(code) {
+    	case 0xFFFFFFFB/*_NM_RCLICK*/  {
+			var x,y = win.getMessagePos();
+			var menu = win.ui.popmenu(winform);			
+			menu.add("全部", λ() winform.listview.setChecked(0));
+			menu.add("取消全选", λ() winform.listview.setChecked(0,false));
+			menu.add("反向选择", function(){
+				if winform.listview.count {
+					var t = {};
+					for (i=1; winform.listview.count)
+						if !table.find(winform.listview.checked, i) table.push(t, i)
+					winform.listview.checked = t;
+				}
+			})
+			
+			menu.popup(x,y,true);
+    	}
+    }
+}
+
 win.loopMessage();
 return winform;

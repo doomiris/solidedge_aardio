@@ -276,10 +276,22 @@ namespace DraftDocument{
 		}
 		var fileExt = ..string.lower(..table.pop(..string.split(fname,".")));
 		var succ;
+		
 //		try{
     		select (fileExt){
         		case "dwg","pdf"{        		
         			owner.SaveCopyAs(fname);  //savecopyas 和 saveas 效果一样
+        			if fileExt=="pdf" and owner.application.useQhcNameRule
+        				..thread.invoke( 
+        					function(fname){
+        						import fsys;
+        						import config;
+        						if config.printingCenter.AllowSentToPdfLib
+       								if io.exist(config.__pdfLib)
+       									if !io.exist(io.joinpath(config.__pdfLib, fname))
+        									fsys.copy(fname, config.__pdfLib, 0x614/*_FOF_NO_UI*/ + 0x10/*_FOF_NOCONFIRMATION*/);
+        					}, fname
+        				);
         			succ = true; 
         		}
         		case "stp"{

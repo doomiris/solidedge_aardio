@@ -102,7 +102,6 @@ mainForm.onMinimize = function(lParam){
 	if !mainForm.tray and config.settings.closeToTray
 		mainForm.tray = win.util.tray(mainForm);
 //	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
-	publish("main_window_hide"); //通知qtip窗口中的 orphanWindow 隐藏
 	if config.settings.closeToTray {
 		mainForm.show(false); 
 		return true; 
@@ -177,6 +176,7 @@ mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Exc
 mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('检查新BOM申请表', λ() loadcodex("\forms\Excel\check_新BOM申请表.aardio"));
+mainForm.popmenu2.add('检查新BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单.aardio"));
 mainForm.popmenu2.add('原材料用量计算...', λ() loadcodex("\forms\Excel\BOM-CALC.aardio"));
 mainForm.popmenu2.add('打开分类查询窗口...', λ() loadcodex("\forms\SAP\OD_Query.aardio"));
 mainForm.popmenu2.add();//分隔线
@@ -367,13 +367,13 @@ mainForm.tbutton7.oncommand = function(id,event){
 
 mainForm.tbutton8.oncommand = function(id,event){
 	var tlist = {
-		_path = "\\CCNSIF0G\sRdc\CCR\A05-Design\Structure Design\QHC\";
+		_path = "\\CCNSIF0G\SRDC\CCR\A05-Design\Structure Design\QHC\";
 		[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
-		[2] = "申请表-专用号-维护主数据.xlsx";		
+		[2] = "工单更改申请.xlsx";		
 		[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
 		[4] = "新产品BOM申请单模板-姓名-日期.xlsx";		
 		[5] = "新增--产成品申请-型号-姓名-申请日期.xlsx";		
-		[6] = "图纸明细需求-姓名-日期.xlsx";
+		[6] = "B2C_BOM_批量更改单.xls";
 	}
 	var opent = function(n){
 		import com.excel;
@@ -390,11 +390,11 @@ mainForm.tbutton8.oncommand = function(id,event){
 	mainForm.popmenu1.addTable({
 		{ "新建申请表"; {
     			{ "专用号申请表";		function(){opent(1)}};
-    			{ "维护主数据申请表";	function(){opent(2)}};
+    			{ "工单更改申请";	function(){opent(2)}};
     			{ "BOM更改申请表";		function(){opent(3)}};
     			{ "新产品BOM申请表";	function(){opent(4)}};
     			{ "产成品编码申请表";	function(){opent(5)}};
-    			{ "图纸明细需求表";		function(){opent(6)}};
+    			{ "B2C BOM 批量更改单";		function(){opent(6)}};
 			}
 		};
 		{"格式"; {
@@ -506,7 +506,7 @@ subscribe("checkupdate",function(...){
 */
 
 tbs.onSelchange = function(idx,strip,form){
-	form.publish("refresh");
+	//form.publish("refresh");
 	tbs.currentTab = idx;
 } 
 /*处理异常的excel进程{{*/
@@ -521,6 +521,7 @@ thread.invoke(
 	}
 )
 /*}}*/
+/*
 return win.loopMessage(function(msg){
 	if !msg return ;
 	if msg.message == 123 {
@@ -529,3 +530,6 @@ return win.loopMessage(function(msg){
 	}
 }
 );
+*/
+win.loopMessage();
+return mainForm;

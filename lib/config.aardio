@@ -8,6 +8,8 @@ namespace config {
 	__appVersion = "1.5.22.01";
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/";
+	__sapDownload = ..io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\";
+	__pdfLib = "\\CCNSIA1A\SEPARTS\Cabinet\PDF图纸库\";
 
 }
 if !config.dbServer.path
@@ -30,11 +32,17 @@ if config.settings.closeToTray === null
 	config.settings.closeToTray = true;
 if !config.admin.lastWorkingFolder
 	config.admin.lastWorkingFolder = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/);
+if !config.printingCenter.AllowSentToPdfLib
+	config.printingCenter.AllowSentToPdfLib = true;
+
 /**intellisense(config)
 __appName = 应用程序名
 __appVersion = 应用程序内部版本号
 __appDescription = 程序说明
 __website = 官方网站
+__sapDownload = sap下载目录
+__pdfLib = 研发PDF存档库
 dbServer.path = 数据库位置
+setbm.workingDir = 打印工作目录
 ? = 配置文件名,\n读写配置并序列化为一个表对象,\n表的成员值可以是支持序列化的普通变量,支持table对象\n配置文件在首次使用时自动加载,退出程序时自动保存\n!fsys_table.
 end intellisense**/

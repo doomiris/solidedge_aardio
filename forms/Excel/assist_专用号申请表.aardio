@@ -11,7 +11,17 @@ _属性 = {"配置";"非配置";"委外加工"};
 */
 import com.excel;
 var excel,err = com.excel(false);
-
+com.enumRunning( 
+	function(displayName,object){
+		try{
+			var s = com.GetTypeInfo(object).GetDocumentation().name;
+			if s = "_Workbook"
+			//console.log(s, object.Application.ActiveWorkbook.Name, object.Application.ActiveWindow.hwnd  )
+				if object.Application.hwnd > excel.Application.hwnd
+					excel = object.Application;
+		}
+	}
+)
 /*
 if excel.Visible == false and excel.WorkBooks.Count==0 {
 	import process.popen;
@@ -57,6 +67,9 @@ _metal_sys = '铝合金|不锈钢板|焊接件|焊接件';
 _metal = '铝合金|不锈钢|焊接件|铆接件';
 _cooper = '管|TP2M|蒸发器|冷凝器|阀';
 _cooper_sys = '铜管|铜管|蒸发器|冷凝器|阀';
+
+console.log(sht.parent.name)
+
 for(i=1; #etab){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
     
@@ -90,7 +103,7 @@ for(i=1; #etab){
 		ePush({"SG","HALB","配置","08","总装"});
 		
 	elseif string.keywords('组件').findOne(str)	
-		ePush({"SA","HALB","非配置","08","总装"});
+		ePush({"SA","HALB","非配置","08","系统、组件、部件类"});
 		
 	elseif string.keywords('已喷').findOne(str)	
 		ePush({"SC","HALB","非配置","01","喷粉件"});

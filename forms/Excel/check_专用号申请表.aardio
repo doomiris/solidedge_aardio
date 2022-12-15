@@ -9,7 +9,17 @@ _属性 = {"配置";"非配置";"委外加工"};
 */
 import com.excel;
 var excel = com.excel(false);
-
+com.enumRunning( 
+	function(displayName,object){
+		try{
+			var s = com.GetTypeInfo(object).GetDocumentation().name;
+			if s = "_Workbook"
+			//console.log(s, object.Application.ActiveWorkbook.Name, object.Application.ActiveWindow.hwnd  )
+				if object.Application.hwnd > excel.Application.hwnd
+					excel = object.Application;
+		}
+	}
+)
 /*
 if excel.Visible == false and excel.WorkBooks.Count==0 {
 	import process.popen;
@@ -197,7 +207,7 @@ var sapErr={
 
 import console.progress;
 var bar = console.progress();
-
+console.log(sht.parent.name)
 var getErr = {};
 
 for(i=1;#etab;1){

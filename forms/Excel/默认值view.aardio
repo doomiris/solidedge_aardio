@@ -1,0 +1,83 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=1087;bottom=839)
+winform.add(
+button={cls="button";text="Button";left=16;top=8;right=88;bottom=48;db=1;dr=1;z=3};
+edit={cls="edit";left=104;top=16;right=328;bottom=48;edge=1;z=5};
+listview={cls="listview";left=8;top=56;right=480;bottom=832;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;gridLines=1;msel=false;z=1};
+listview2={cls="listview";left=488;top=56;right=1080;bottom=832;db=1;dr=1;dt=1;edge=1;gridLines=1;msel=false;z=2};
+splitter={cls="splitter";left=480;top=56;right=488;bottom=832;frame=1;z=4}
+)
+/*}}*/
+import config;
+import tarray;
+
+import sqlite;
+import win.ui;
+import win.ui.grid;
+import QHC;
+
+winform.splitter.ltControl = winform.listview;
+winform.splitter.rbControl = winform.listview2;
+
+var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+
+
+/*getProduct获取产品和分类{{*/
+var getProduct = function(pcode){
+	var t = db.getTable("SELECT 产品编码, 分类 FROM [默认值]", {产品编码:pcode})
+	var tOpts = tarray.uniqueCol(t);
+
+	var despCol={};
+	for(i=1; #tOpts){
+		var item = QHC.getSapItem(tOpts[i].产品编码);
+		if item despCol[i] = item.物料描述;
+	}
+	tOpts = tarray.transpose(tOpts);
+	table.reverse(tOpts);
+	table.push(tOpts,despCol)
+
+	tOpts = tarray.transpose(tOpts);
+
+	tOpts.fields = {[1] = "分类"; [2]="物料"; [3] = "描述"}
+	tOpts = tarray.mapfields(tOpts);
+	winform.listview.setTable(tOpts);
+	winform.listview.setColumn({cx = 50}, 1);
+	winform.listview.setColumn({cx = 100}, 2);
+	winform.listview.setColumn({cx = 300}, 3);
+}
+/*}}*/
+
+var lastOpt;//记住上次搜索项, 减少搜索频率
+var grid = win.ui.grid(winform.listview2);
+
+winform.listview.onnotify = function(id,code,ptr){
+	select(code) {
+		case 0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
+			var c = owner.getItemText(owner.getSelection(), 2);
+			if c == lastOpt return ; 
+			if !c return; 
+			var t = db.getTable("SELECT * FROM [表]",{产品编码 = string.trim(c)})
+			if !#t return;
+			var fields = t.fields;
+			t = table.filter(t, lambda(v,index) !string.find(v.更改标记,"删"));	//丢失fields
+			t.fields = fields;
+			//table.sort(z, lambda(a) tonumber((owner.特性)) < tonumber(a.特性));
+			var cType = tarray.sliceCol(t,4,7);
+			grid.clear();
+			//winform.listview2.clear(true);
+			if cType grid.setTable(cType);
+			lastOpt = c;
+		}
+	}
+}
+
+winform.show();
+
+
+winform.button.oncommand = function(id,event){
+	
+}
+
+win.loopMessage();
+return winform;

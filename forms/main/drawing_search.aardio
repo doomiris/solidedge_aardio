@@ -1,0 +1,102 @@
+import win.ui;
+/*DSG{{*/
+var winform_drawing = win.form(text="aardio form";right=639;bottom=359)
+winform_drawing.add(
+edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=2};
+listview2={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
+)
+/*}}*/
+
+import config;
+import process;
+import win.clip;
+import win.clip.file;
+import sqlite;
+import win.ui.accelerator;
+/*sqliteDB{{*/
+	var flistDB = sqlite(config.dbServer.path + "\drawing_lists.db");	//打开数据库连接
+/*}}*/
+/*查找图纸{{*/
+var searchDocument = function (filenumber){
+    //filenumber :=  winform_drawing.editUser0.text;
+
+	winform_drawing.edit2.text = "";
+
+    winform_drawing.listview2.clear(true);
+    
+    if !#filenumber return ; 
+    
+    winform_drawing.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
+	var searchFor = string.trimleft(filenumber,"H");
+
+	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
+
+	var sql = "SELECT `文件名`, `路径` FROM `Lib` WHERE ??";
+	sql = sqlite.format(sql, {[1]={文件名 = "%" + searchFor + "%"}});
+	sql = string.replace(sql, "=", "LIKE");
+	
+	var flist = flistDB.getTable(sql);
+	if (#flist == 0){
+		var maptab = flistDB.getTable("SELECT * FROM `Map`", { 专用号  =  searchFor });
+		if (#maptab > 0) {
+			if #maptab[1].图号 winform_drawing.edit2.text = maptab[1].图号;
+			winform_drawing.edit2.hide = !(#maptab[1].图号);
+			sql = string.replace(sql, searchFor, maptab[1].图号);
+			flist = flistDB.getTable(sql);
+		}
+	}
+	if (#flist > 0) fileTab = table.concat(fileTab, flist);	
+	winform_drawing.listview2.clear(true);
+	winform_drawing.listview2.setTable(fileTab);
+
+//调整列宽		
+	winform_drawing.listview2.setColumn({cx=300;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+	winform_drawing.listview2.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
+	winform_drawing.listview2.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
+	winform_drawing.listview2.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
+	winform_drawing.listview2.adjust = function(cx,cy){
+    	winform_drawing.listview2.fillParent(1);
+    	winform_drawing.listview2.fillParent(3);
+	} 	
+}
+/*}}*/
+
+winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return ; 
+    		var pcode = owner.getItemText(selectedRow,1);
+			var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
+			if io.exist(fullName) 
+				process.execute(fullName);
+    	}
+    }
+}
+
+winform_drawing.listview2.translateAccelerator = function( msg ){ 
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+    var vk = msg.wParam ;
+    if( ( vk == 'C'# ) && ctrl  ){
+		var tab = table.array();
+		for (i=1; owner.count; 1){
+
+			if (table.find(owner.selected,i)){
+				table.push(tab, owner.getItemText(i, 2) ++ owner.getItemText(i, 1));
+			}
+		}     
+		if io.exist(tab[[1]])
+			win.clip.file.write(tab[[1]],"copy")	//TODO: 多文件copy
+        return true;
+    }
+}
+
+subscribe("qtip_search",function(...){
+	var pcode = ...
+	if pcode
+		searchDocument(pcode);
+} )
+
+winform_drawing.show();
+win.loopMessage();
+return winform_drawing;

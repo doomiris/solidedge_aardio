@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="插入变更记录";right=663;bottom=303;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-winform.add(
+var rev_winform = win.form(text="插入变更记录";right=663;bottom=303;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+rev_winform.add(
 button={cls="button";text="OK";left=584;top=256;right=656;bottom=296;db=1;dr=1;z=11};
 button2={cls="button";text="Cancel";left=504;top=256;right=576;bottom=296;db=1;dr=1;z=12};
 button3={cls="button";text='\uF062';left=416;top=24;right=440;bottom=47;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=14};
@@ -48,30 +48,30 @@ var initDeclare = function(){
 
 var savesetting = function(){
 	var t = config.revmgr.desp;
-	var txt = winform.cb_desp.text;
+	var txt = rev_winform.cb_desp.text;
 	table.unshift(t, txt);
 	t = table.unique(t);
 	if #t > 20 table.pop(t);
-	winform.cb_desp.items = t;
-	winform.cb_desp.text = txt;
+	rev_winform.cb_desp.items = t;
+	rev_winform.cb_desp.text = txt;
 	config.revmgr.desp = t;
 	config.revmgr.save();
 }
 
 var loadDefaults = function(){
-	winform.cb_designer.text = config.tbm.Designer;
-	winform.cb_approver.text = config.tbm.Approver;
-	winform.cb_design_date.text = time(,"%Y.%m.%d");
-	winform.cb_approve_date.text = time(,"%Y.%m.%d");
+	rev_winform.cb_designer.text = config.tbm.Designer;
+	rev_winform.cb_approver.text = config.tbm.Approver;
+	rev_winform.cb_design_date.text = time(,"%Y.%m.%d");
+	rev_winform.cb_approve_date.text = time(,"%Y.%m.%d");
 	if seDFT var mark = seDFT.getTopRecordMark(seSht);
-	if mark winform.cb_mark.text = string.pack(mark[1] + 1);
+	if mark rev_winform.cb_mark.text = string.pack(mark[1] + 1);
 }
 
 /*}}*/
 /*loadLists{{*/
-var loadPromptList = function(winform){
+var loadPromptList = function(rev_winform){
 	import config;
-	winform.cb_desp.items = config.revmgr.desp;
+	rev_winform.cb_desp.items = config.revmgr.desp;
 	
 	import sqlite;
 	var dbpath = config.dbServer.path + "tbm.db"
@@ -85,22 +85,22 @@ var loadPromptList = function(winform){
 			}) , "Title"
 		)
 	}
-	addlist(winform.cb_designer, "designer");
-	addlist(winform.cb_approver, "approver");
+	addlist(rev_winform.cb_designer, "designer");
+	addlist(rev_winform.cb_approver, "approver");
 	dbRs.close();
 }
 /*}}*/
 /*其它基础函数{{*/
 var writeToRec = function(Lbs){
-    Lbs["标记"].Value = winform.cb_mark.text;
-    Lbs["变更描述"].Value = winform.cb_desp.text;
-    Lbs["设计"].Value = winform.cb_designer.text;
-    Lbs["批准"].Value = winform.cb_approver.text ;
-    Lbs["设计日期"].Value = winform.cb_design_date.text;
-    Lbs["审核日期"].Value = winform.cb_approve_date.text; //日期重名问题,此处使用审核日期
+    Lbs["标记"].Value = rev_winform.cb_mark.text;
+    Lbs["变更描述"].Value = rev_winform.cb_desp.text;
+    Lbs["设计"].Value = rev_winform.cb_designer.text;
+    Lbs["批准"].Value = rev_winform.cb_approver.text ;
+    Lbs["设计日期"].Value = rev_winform.cb_design_date.text;
+    Lbs["审核日期"].Value = rev_winform.cb_approve_date.text; //日期重名问题,此处使用审核日期
 }
 var writeToTB = function(Lbs){
-	Lbs["版本"].Value = winform.version.text;
+	Lbs["版本"].Value = rev_winform.version.text;
 }
 var writeToCCRV = function(Lbs){
     var v = tonumber(Lbs["版本"].value);
@@ -122,69 +122,69 @@ var addBalloon = function(txt,txtColor,bShape){
 /*}}*/
 /*loadFromTab{{*/
 var loadFromTab = function(_blk){
-	winform.version.text = _blk["版本"];
+	rev_winform.version.text = _blk["版本"];
 }
 
 
 /*}}*/
 
 /*界面控件事件{{*/
-winform.button.oncommand = function(id,event){
+rev_winform.button.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
 	
 	win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd)
 	
 	initDeclare();
-	if #winform.cb_desp.text savesetting()
+	if #rev_winform.cb_desp.text savesetting()
 	//写入记录表
 	writeToRec(seDFT.getLabelObjectTable(seDFT.insertRecordTabLine(seSht))); 
 	//写入CCR版本
-	if (winform.chkCCRV.checked)
+	if (rev_winform.chkCCRV.checked)
 		if seDFT.getBlkByName("Version_CCR 2020",seSht)
 			writeToCCRV(seDFT.getLabelObjectTable(seDFT.getBlkByName("Version_CCR 2020",seSht)));
 	//写入QHC版本
-	if (winform.version.changed) 
+	if (rev_winform.version.changed) 
 		writeToTB(seDFT.getLabelObjectTable(seDFT.getTitleBlock(seSht)));
 	//写入球标
-	if ( winform.cbAddBalloon.checked ){
-		var b = addBalloon (winform.cb_mark.text);
+	if ( rev_winform.cbAddBalloon.checked ){
+		var b = addBalloon (rev_winform.cb_mark.text);
 		b.Cut();
 		win.delay(0.1*1000);
 		key.combine("CTRL","V"); 
 	}
 
 }
-winform.button2.oncommand = function(id,event){
+rev_winform.button2.oncommand = function(id,event){
     if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 }
-winform.button3.oncommand = function(id,event){
-    winform.version.changed = true
+rev_winform.button3.oncommand = function(id,event){
+    rev_winform.version.changed = true
     var v = 0;
-    if #winform.version.text v = tonumber(winform.version.text);
+    if #rev_winform.version.text v = tonumber(rev_winform.version.text);
 	v += 1;
-	winform.version.text =  (v >= 10) ? v : "0" ++ v;
+	rev_winform.version.text =  (v >= 10) ? v : "0" ++ v;
 }
 /*}}*/
 
-winform.show();
+rev_winform.show();
 var frmReLoad = function(){
     var initSucc = initDeclare()
 	if  (initSucc){
 		loadFromTab(seLbs);	//读取当前内容
-		winform.cb_desp.setFocus();
+		rev_winform.cb_desp.setFocus();
 		loadDefaults();	//读取默认值(新图纸)
 	}
-//	winform.redraw();
+//	rev_winform.redraw();
 }
 
-winform.button4.oncommand = function(id,event){
+rev_winform.button4.oncommand = function(id,event){
     var pcode = seDFT ? string.match(seDFT.FullName,"\d+") : null;
 	loadcodex("\forms\main\check_QHC_Release.aardio", pcode);
 }
 
 subscribe("refresh",frmReLoad);
-thread.invoke(loadPromptList, winform)	
+thread.invoke(loadPromptList, rev_winform)	
 win.loopMessage();
-return winform;
+return rev_winform;

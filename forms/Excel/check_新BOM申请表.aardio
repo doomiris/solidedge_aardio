@@ -3,7 +3,17 @@ console.open();
 import com.excel;
 import tarray;
 var excel = com.excel(false);
-if !excel.ActiveWorkbook excel.Quit();
+com.enumRunning( 
+	function(displayName,object){
+		try{
+			var s = com.GetTypeInfo(object).GetDocumentation().name;
+			if s = "_Workbook"
+			//console.log(s, object.Application.ActiveWorkbook.Name, object.Application.ActiveWindow.hwnd  )
+				if object.Application.hwnd > excel.Application.hwnd
+					excel = object.Application;
+		}
+	}
+)
 
 var sht = excel.ActiveSheet;
 if !sht console.pause("需要重新执行");
@@ -204,7 +214,7 @@ var sapErr = {
 
 import console.progress;
 var bar = console.progress();
-
+console.log(sht.parent.name)
 var getErr = {};
 
 for(i=1; etab_count){

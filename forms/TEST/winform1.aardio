@@ -1,0 +1,37 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
+edit={cls="edit";text="Edit";left=152;top=16;right=560;bottom=40;edge=1;z=3};
+listview={cls="listview";left=152;top=48;right=560;bottom=464;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
+splitter={cls="splitter";left=152;top=40;right=560;bottom=48;bgcolor=15780518;dl=1;dr=1;dt=1;horz=1;z=1}
+)
+/*}}*/
+
+winform.splitter.ltControl = winform.edit;
+winform.splitter.rbControl = winform.listview;
+winform.splitter.ltMin = 32;
+winform.splitter.rbMin = 64;
+
+winform.listview.addItem("test",1);
+
+winform.listview.onnotify = function(id,code,ptr){
+
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+			loadcodex("\forms\main\drawing_search.aardio", pcode);
+    	}
+    	case 0xFFFFFFFB/*_NM_RCLICK*/  {
+
+
+    	}
+    }
+}
+var n=0
+winform.splitter.oncommand = function(id,event){
+	winform.edit.text = n;
+	n=n+1
+}
+
+winform.show();
+win.loopMessage();

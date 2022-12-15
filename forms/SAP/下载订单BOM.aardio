@@ -1,12 +1,16 @@
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="下载订单BOM";right=759;bottom=469)
 winform.add(
-button={cls="button";text="下载";left=528;top=384;right=704;bottom=440;z=3};
-edit={cls="edit";text="D2205175S";left=72;top=72;right=312;bottom=104;edge=1;multiline=1;z=1};
-edit2={cls="edit";text="510";left=72;top=152;right=160;bottom=184;edge=1;multiline=1;z=2};
-static={cls="static";text="订单号";left=72;top=48;right=184;bottom=64;transparent=1;z=4};
-static2={cls="static";text="项目号";left=72;top=128;right=184;bottom=144;transparent=1;z=5}
+button={cls="button";text='\uF110 下载';left=592;top=72;right=752;bottom=112;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3};
+edit={cls="edit";left=16;top=72;right=160;bottom=104;dl=1;dt=1;edge=1;z=1};
+edit2={cls="edit";left=248;top=72;right=336;bottom=104;dl=1;dt=1;edge=1;num=1;z=2};
+edit3={cls="edit";left=392;top=72;right=480;bottom=104;dl=1;dt=1;edge=1;num=1;z=6};
+listview={cls="listview";left=0;top=128;right=760;bottom=424;edge=1;fullRow=1;vscroll=1;z=8};
+static={cls="static";text="订单号";left=16;top=48;right=128;bottom=64;dl=1;dt=1;transparent=1;z=4};
+static2={cls="static";text="项目号";left=248;top=48;right=360;bottom=64;dl=1;dt=1;transparent=1;z=5};
+static3={cls="static";text="-";left=344;top=80;right=384;bottom=96;align="center";dl=1;dt=1;transparent=1;z=7}
 )
 /*}}*/
 
@@ -14,40 +18,139 @@ static2={cls="static";text="项目号";left=72;top=128;right=184;bottom=144;tran
 import console;
 console.open();
 */
+import config;
+winform.bindConfig( config.orderBom, {	//绑定控件值
+    edit = "text";
+} );
 
 var dcb = function(winform){
-	import win;
+    import web.script;
+    var vm = web.script("VBScript");
 
-	import SAP.session;
-	var session = SAP.session();
- 
-    var order = winform.edit.text;
-    var item = winform.edit2.text;
-	session.findById("wnd[0]/tbar[0]/okcd").text = "CSK2";
-	session.findById("wnd[0]").sendVKey(0);
+    vm.script = /*
+		If Not IsObject(application) Then
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
+		End If
+		If Not IsObject(connection) Then
+   			Set connection = application.Children(0)
+		End If
+		If Not IsObject(session) Then
+   			Set session    = connection.Children(0)
+		End If
+		If IsObject(WScript) Then
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
+		End If
+    */
+	vm.script = /*
+		on error resume next
+		
+		Set testobj = Nothing
+		
+		Set testobj = session.findById("wnd[0]/tbar[0]/btn[12]")
+		If testobj Is Nothing Then Set testobj = session.findById("wnd[0]/tbar[0]/btn[3]")
+		
+		loopcount = 0
+		
+		If Not testobj Is Nothing Then
+			Do While testobj.Changeable				
+				testobj.press
+				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+				loopcount = loopcount + 1
+				If loopcount > 20 Then Exit Do
+			Loop
+		End If
 
-	session.findById("wnd[0]/usr/ctxtRC29L-VBELN").text = order
-	session.findById("wnd[0]/usr/txtRC29L-VBPOS").text = item
-	session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text= ""
-	session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01"
+		on error goto 0	
+	*/
+
+	/* 通过 vm.script 访问变量前需要先声明 */
+	vm.script = /*
+	    	dim order
+	    	dim item
+	    	dim code
+	 */ 
+	 
+	vm.script = /*
+	 	session.findById("wnd[0]/tbar[0]/okcd").text = "CSK2"
+		session.findById("wnd[0]").sendVKey 0
+	 */ 
+
+    vm.script.order = winform.edit.text;
+
+    
+    var itemStart = winform.edit2.text;
+    var itemEnd = !#winform.edit3.text ? 0 : winform.edit3.text;
+    itemEnd = (itemEnd<itemStart) ? itemStart : itemEnd;
+    
+    for (i = itemStart; itemEnd; 10){
+        vm.script.item = i;
+		vm.script = /*	
+		session.findById("wnd[0]/usr/ctxtRC29L-VBELN").text = order
+		session.findById("wnd[0]/usr/txtRC29L-VBPOS").text = item
+		session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text= ""
+		session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01"
+		
+		session.findById("wnd[0]").sendVKey 0
+		
+		code = session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text
+		
+		session.findById("wnd[0]/tbar[1]/btn[8]").press
+		
+		session.findById("wnd[0]/tbar[1]/btn[43]").press
 	
-	session.findById("wnd[0]").sendVKey(0);
-	var code = session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text;
-	
-	session.findById("wnd[0]/tbar[1]/btn[8]").press()
-	
-	session.findById("wnd[0]/tbar[1]/btn[43]").press()
-	session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = string.join({"ORDER", order, item, code}, "_") + ".xlsx";
-	session.findById("wnd[1]/tbar[0]/btn[0]").press()
-	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
-	session.findById("wnd[0]/tbar[0]/btn[12]").press()	
+		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = Join(Array("B2C", order, item, code), "_") + ".xlsx"
+		session.findById("wnd[1]/tbar[0]/btn[0]").press
+		session.findById("wnd[0]/tbar[0]/btn[12]").press
+		session.findById("wnd[0]/tbar[0]/btn[12]").press	
+	 	*/ 
+	}
+	vm.script = /*	
+		session.findById("wnd[0]/tbar[0]/btn[12]").press
+		session.findById("wnd[0]/tbar[0]/btn[12]").press	
+	 	*/ 
 	winform.button.disabledText = null;
-	win.loopMessage();
+
 	
 }
 winform.button.oncommand = function(id,event){
 	winform.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷",text = "下载中..."};
 	thread.invoke(dcb, winform);	
+}
+var getFolderList = function(){
+//	thread.invoke( 
+//		function(){
+			import console
+			//console.open()
+
+			import fsys;
+			import process;
+			var list = fsys.list(config.__sapDownload,,"B2C_*.xlsx");
+			//
+			var t = {};
+			t.fields = {[1] = "缓存"};
+			for (i=1; #list){
+				
+				table.push(t, {
+					"缓存" : list[i]
+				});
+			}
+			winform.listview.setTable(t)
+
+//		}, winform
+//	)
+}
+getFolderList()
+winform.listview.onnotify = function(id,code,ptr){
+    var selectedRow = owner.getSelection();
+    if !selectedRow return ; 
+    var pcode = owner.getItemText(selectedRow,1);
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+			process.execute(config.__sapDownload + pcode)
+    	}
+    }
 }
 
 winform.show();

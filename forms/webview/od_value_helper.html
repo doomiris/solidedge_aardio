@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <!-- 必须的 meta 标签 -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 的 CSS 文件 -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Hello, world!</title>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="node_modules/vue/dist/vue.global.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="sap number" aria-label="sap number" aria-describedby="button-addon2" v-model= "message">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="dataIni(this.text)">搜索SAP</button>
+      </div>
+
+      <table class="table table-light table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">物料</th>
+            <th scope="col">物料描述</th>
+            <th scope="col">价格</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item,index) in items">
+            <th scope="row">{{ index+1 }}</th>
+            <td>{{ item.物料 }}</td>
+            <td>{{ item.物料描述 }}</td>
+            <td>{{ item.价格 }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <script>
+    const { createApp } = Vue
+
+    createApp({
+        data() {
+            return {
+                message: '',
+                items:[]
+            }
+        },
+        methods: {
+          say(message) {
+            alert(message)
+          },
+          dataIni(){
+            (async ()=> {
+              var ds = await getData(this.message);
+              this.items = ds
+              //alert(ds.物料描述);
+					  })()
+          }
+        },
+        mounted: function(){
+          vueAppMounted(this)
+        }
+    }).mount('#app')
+    </script>
+
+  </body>
+</html>

@@ -113,6 +113,8 @@ getSapItem = function(hcode){
 	//import console;
 	//console.log(sap_db_path, hcode)
 	var db,err = openDb(sap_db_path);
+	if !hcode return null;
+	if type(hcode)!=="string" return null; 
     if string.len(hcode) > 11
     	hcode = string.trim(hcode);
 	var t = db.stepQuery("SELECT * FROM [所有物料]", { 物料 : hcode } )

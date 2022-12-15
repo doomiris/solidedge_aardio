@@ -6,12 +6,12 @@ winform.add(
 button={cls="button";text="开始下载";left=528;top=416;right=680;bottom=456;db=1;dr=1;z=1};
 button2={cls="button";text="创建虚拟订单";left=440;top=8;right=648;bottom=56;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
 button3={cls="button";text='\uF07C';left=688;top=416;right=726;bottom=454;color=16711680;db=1;dr=1;font=LOGFONT(h=-21;name='FontAwesome');z=7};
-button4={cls="button";text="导出订单清单";left=624;top=168;right=712;bottom=200;z=11};
+button4={cls="button";text="导出订单清单";left=624;top=168;right=712;bottom=200;dr=1;dt=1;z=11};
 button5={cls="button";text="查找错误";left=440;top=64;right=648;bottom=112;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=12};
 edit={cls="edit";text="0";left=80;top=112;right=296;bottom=144;edge=1;z=2};
 edit2={cls="edit";text="1-17";left=80;top=216;right=296;bottom=256;edge=1;multiline=1;z=3};
-edit3={cls="edit";left=72;top=272;right=720;bottom=408;dr=1;dt=1;edge=1;multiline=1;z=8};
-edit4={cls="edit";left=448;top=168;right=608;bottom=200;edge=1;multiline=1;z=10};
+edit3={cls="edit";left=72;top=272;right=720;bottom=408;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
+edit4={cls="edit";left=448;top=168;right=608;bottom=200;dr=1;dt=1;edge=1;multiline=1;z=10};
 progress={cls="progress";left=72;top=424;right=488;bottom=454;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
 的所在行数(仅限当前屏幕, 不可超出屏幕)
@@ -21,10 +21,12 @@ static2={cls="static";text="校正行数 (当前屏幕页首行, 首页0,
 )
 /*}}*/
 
+import config;
 var createOrder = function(){
     import web.script;
     var vm = web.script("VBScript");
-    vm.addCode(`
+
+    vm.script = /*
 		If Not IsObject(application) Then
    			Set SapGuiAuto  = GetObject("SAPGUI")
    			Set application = SapGuiAuto.GetScriptingEngine
@@ -39,7 +41,29 @@ var createOrder = function(){
    			WScript.ConnectObject session,     "on"
    			WScript.ConnectObject application, "on"
 		End If
+    */
+	vm.script = /*
+		on error resume next
+		
+		Set testobj = Nothing
+		
+		Set testobj = session.findById("wnd[0]/tbar[0]/btn[12]")
+		If testobj Is Nothing Then Set testobj = session.findById("wnd[0]/tbar[0]/btn[3]")
+		
+		loopcount = 0
+		
+		If Not testobj Is Nothing Then
+			Do While testobj.Changeable				
+				testobj.press
+				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+				loopcount = loopcount + 1
+				If loopcount > 20 Then Exit Do
+			Loop
+		End If
 
+		on error goto 0	
+	*/
+	vm.script = /*
 		session.findById("wnd[0]/tbar[0]/okcd").text = "VA01"
 		session.findById("wnd[0]").sendVKey 0
 		session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "Y001"
@@ -51,14 +75,14 @@ var createOrder = function(){
 		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "20010"
 		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "20010"
 		session.findById("wnd[0]").sendVKey 0
-    `);
+    */
 }
 
 var filterRed = function(){
 	import win;
     import web.script;
     var vm = web.script("VBScript") ;
-    vm.addCode(`
+    vm.script = /*
 		If Not IsObject(application) Then
    			Set SapGuiAuto  = GetObject("SAPGUI")
    			Set application = SapGuiAuto.GetScriptingEngine
@@ -90,10 +114,7 @@ var filterRed = function(){
 		
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
-    `);
-
-		
-		
+    */		
 }
 
 
@@ -201,7 +222,7 @@ winform.button.oncommand = function(id,event){
 
 winform.button3.oncommand = function(id,event){
 	import process;
-	process.explore(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\");	
+	process.explore(config.__sapDownload);	
 }
 
 winform.button2.oncommand = function(id,event){
@@ -275,7 +296,9 @@ winform.button5.oncommand = function(id,event){
 	thread.invokeAndWait(filterRed)
 	import win.clip
 	var sss = win.clip.read();
+	sss ?= string.trimright(sss, '\n');
 	winform.edit3.print(sss);
+	winform.edit3.print('\n');
 }
 
 winform.show();

@@ -1,6 +1,6 @@
 import console; 
 console.open();
-
+/*如果报错, 检查 是不是qhc的A1列名丢失了 */
 import console.progress;
 var bar = console.progress();
 
