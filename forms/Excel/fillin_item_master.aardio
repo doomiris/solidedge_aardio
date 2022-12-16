@@ -11,7 +11,7 @@ listview={cls="listview";left=0;top=120;right=760;bottom=360;edge=1;fullRow=1;gr
 
 import tarray;
 import com.excel;
-
+import string.keywords;
 import config;
 
 /*
@@ -29,23 +29,35 @@ winform.listview.setTable(fileTab);
 winform.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable之后, 否则失效
     listview = "selIndex"
 } );
-
-
 var excel = com.excel(false);
-if !excel.ActiveWorkbook win.msgbox("excel存在未完全退出的进程,需要手动处理");
-
-import string.keywords;
-
-for (i=1; excel.WorkBooks.Count) {
-	var wbname = excel.WorkBooks(i).Name;
-	if string.keywords('ORDER_LIST_|tc_|新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(wbname)
-		winform.combobox2.add(wbname);
+com.enumRunning( 
+	function(displayName,object){
+		try{
+			var s = com.GetTypeInfo(object).GetDocumentation().name;
+			if s = "_Workbook"
+				if string.keywords('ORDER_LIST_|tc_|新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(displayName)
+					winform.combobox2.add(displayName);
+		}
+	}
+)
+var get_excel = function(wbname){
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s == "_Workbook"
+					if displayName == wbname
+						return object.Application; 
+			}
+		}
+	)
 }
-	
+
 if winform.combobox2.count {
 	var findActiveWB = table.indexOf(winform.combobox2.items, excel.ActiveWorkbook.Name)
 	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
+
 winform.button.oncommand = function(id,event){
 	if !#winform.listview.selected return ; 
 	if !#winform.combobox2.selText return ; 
@@ -58,6 +70,7 @@ winform.button.oncommand = function(id,event){
 		return eArr; 	
 	}
 	/*}}*/
+	excel = get_excel(winform.listview.getItemText(winform.listview.selIndex, 2));
 	var itemMaster = excel.WorkBooks(
 			winform.listview.getItemText(winform.listview.selIndex, 2)
 		).Sheets(

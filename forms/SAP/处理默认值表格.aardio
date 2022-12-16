@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="获取默认值";right=743;bottom=527)
-winform.add(
+var winform_get_default = win.form(text="获取默认值";right=743;bottom=527)
+winform_get_default.add(
 button2={cls="button";text="开始导入CCR...";left=40;top=56;right=248;bottom=104;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="SAP数据整理 - 开利研发部";z=2};
 button5={cls="button";text="开始导入QHC...";left=336;top=56;right=640;bottom=104;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="SAP数据整理 - QHC开发部(只读,仅用于参考)";z=3};
 edit3={cls="edit";left=0;top=136;right=744;bottom=504;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=1}
@@ -89,7 +89,7 @@ var getListFromXlsx = function(_xlsx_path){
 			st["SAP语句"] ?= string.upper(st["SAP语句"]);
 			var checkod = "$SET_DEFAULT($SELF," + t["特性"] + ",'" + t["特性值"] + "'),";
 			if st["SAP语句"] !== checkod
-				winform.edit3.print("!!!语句不匹配:",checkod, st["SAP语句"]);
+				winform_get_default.edit3.print("!!!语句不匹配:",checkod, st["SAP语句"]);
 			if st["更改标记"]
 				if string.indexOf(st["更改标记"],"删")
 					if !string.indexOf(st["更改标记"],"增")	//有些人先删又加烦死了
@@ -107,7 +107,7 @@ var deepSearchFile = function(path,filter = "*.*"){
 			if(filename){
 				if !string.startWith(filename,"~$"){	//跳过临时文件
 					if !table.find(_skip_file, filename){	//跳过指定文件
-           				winform.edit3.print("发现文件："+filename, /*"完整路径："+fullpath*/)
+           				winform_get_default.edit3.print("发现文件："+filename, /*"完整路径："+fullpath*/)
            				getListFromXlsx(fullpath);
            			}
            		}   		
@@ -118,28 +118,28 @@ var deepSearchFile = function(path,filter = "*.*"){
 			else return true;
 		} 
 	);
-	winform.edit3.print("完成")
+	winform_get_default.edit3.print("完成")
 }
 
 
 
 
 
-winform.onDestroy = function(){
+winform_get_default.onDestroy = function(){
     if excel excel.alerts = true;    
 }
 
-winform.button2.oncommand = function(id,event){
+winform_get_default.button2.oncommand = function(id,event){
 	deepSearchFile(_CCR_path,"*默认*.xlsx");
 }
 
-winform.button5.oncommand = function(id,event){
+winform_get_default.button5.oncommand = function(id,event){
 	deepSearchFile(_QHC_path,"*默认*.xlsx");
 }
 
-winform.show();
+winform_get_default.show();
 //deepSearchFile(_CCR_path,"*默认*.xlsx");
 //deepSearchFile(_QHC_path,"*默认*.xlsx");
 
 win.loopMessage();
-return winform;
+return winform_get_default;

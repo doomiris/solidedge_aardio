@@ -11,12 +11,13 @@ console.open();
 /*DSG{{*/
 qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 qtip_winform.add(
-bkplus1={cls="plus";text="过滤";left=8;top=8;right=48;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
-bkplus2={cls="plus";text="SAP";left=48;top=8;right=88;bottom=40;bgcolor=12632256;border={bottom=5;color=-16729089};dl=1;dt=1;z=6};
-bkplus3={cls="plus";text="More";left=88;top=8;right=128;bottom=40;bgcolor=12632256;dl=1;dt=1;z=8};
-bkplus4={cls="plus";text="图纸";left=128;top=8;right=168;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7};
-bkplus5={cls="plus";text="版次";left=168;top=8;right=208;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9};
+bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
+bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16729089};dl=1;dt=1;z=6};
+bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;z=8};
+bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7};
+bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9};
 button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2};
+button2={cls="button";text='\uF053';left=0;top=8;right=24;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
 buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=3};
 custom={cls="custom";left=0;top=56;right=640;bottom=504;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
 edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=4};
@@ -25,6 +26,7 @@ splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z
 )
 /*}}*/
 
+/*拆分条{{*/
 with qtip_winform.splitter {
 	ltControl = ..qtip_winform.editUser3;
 	rbControl = ..qtip_winform.custom;
@@ -42,7 +44,7 @@ qtip_winform.splitter.wndproc = function(hwnd,message,wParam,lParam){
 		}
 	}
 }
-
+/*}}*/
 /*TABS{{*/
 qtbs = win.ui.tabs(
 	qtip_winform.bkplus1,
@@ -140,9 +142,6 @@ subscribe("filter_Changed",function(...){
 	updateColor(qtip_winform.bkplus1);
 })
 /*}}*/
-
-
-
 /*输入框切换单多行{{*/
 qtip_winform.custom.adjust = function( cx,cy,wParam ) {
 	var txt = qtip_winform.editUser3.text;
@@ -150,16 +149,23 @@ qtip_winform.custom.adjust = function( cx,cy,wParam ) {
 	var tb0 = {cls="edit";left=264;top=8;right=512;bottom=8+height;dl=1;dr=1;dt=1;edge=1;z=5;multiline=0;vscroll=0;hscroll=0};
 	var tb1 = {cls="edit";left=264;top=8;right=512;bottom=8+height;dl=1;dr=1;dt=1;edge=1;z=5;multiline=1;vscroll=1;hscroll=0};
     if height < 35	{
-    	qtip_winform.add({"editUser3" = tb0});
+    		qtip_winform.add({"editUser3" = tb0});
+			qtip_winform.editUser3.text=string.split(txt,'\n\r')[[1]];
     }else{
-    	qtip_winform.add({"editUser3" = tb1});
+        if qtip_winform.editUser3.lineCount==1 {
+    		qtip_winform.add({"editUser3" = tb1});
+			qtip_winform.editUser3.text = txt;
+    	}
     }
-    qtip_winform.splitter.ltControl = qtip_winform.editUser3;
-    qtip_winform.splitter.ltMin=32;
-	qtip_winform.editUser3.text=string.split(txt,'\n\r')[[1]];
+	qtip_winform.splitter.ltControl = qtip_winform.editUser3;
+	qtip_winform.splitter.ltMin=32;
 };
 /*}}*/
 
+qtip_winform.button2.oncommand = function(id,event){
+	if event == 0/*_BN_CLICKED*/
+		qtbs.selIndex = 2;
+}
 
 
 win.loopMessage();

@@ -64,7 +64,8 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 			menu.add("复制[专用号]", λ() win.clip.write(pcode));
 			menu.add("复制[专用号][物料描述]", λ() win.clip.write(pcode + '\t' + desp));
 			menu.add("打开详细信息...", λ() qtbs.open(3));
-			menu.add("查询图纸版次...", λ() qtbs.open(5));
+			menu.add("查找图纸...", λ() qtbs.open(4));
+			menu.add("查询图纸下发记录...", λ() qtbs.open(5));
 			menu.popup(x,y,true);
     	}
     }
@@ -159,8 +160,8 @@ var searchSapDB = function(userinput){
     	userinput=string.replace(userinput,"@?","_");
 
 		//sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
-		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
-		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格`,`物料是可配置的` AS `配置`, `禁用` FROM `所有物料` WHERE ??" ;
+		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";/*"配置";"禁用"*/}
+		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格` FROM `所有物料` WHERE ??" ;
 
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
@@ -202,8 +203,10 @@ var searchSapDB = function(userinput){
 			if !qtbs.forms[1].chkHideUnknown.checked
 				table.push(t, {物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
 
+/*
 		if (qtbs.forms[1].chkDisabled.checked)	
 			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 );
+*/
 
 		if #t sapTab = table.concat(sapTab, t);
 		
