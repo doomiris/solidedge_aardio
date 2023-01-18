@@ -9,7 +9,7 @@ var excel = com.excel(true);
 
 _sname = {"分类新", "特性参数规划表新", "分类新", "特性参数规划表新"}
 _wbname = {
-	{"D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\0.参数及分类汇总表2022.06.01.xlsx", false, true, null,"0000"},
+	{"D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\0.参数及分类汇总表2022.06.01以此为准.xlsx", false, true, null,"0000"},
 	{"D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx",false,true,null,null},
 }
 if !io.exist(_wbname[1][1]) console.log("找不到开发表", _wbname[1][1]);
@@ -37,16 +37,17 @@ var wb = {};
 var etab = {};
 for (i=1; #_wbname){
 	wb[i] = excel.WorkBooks.Open(table.unpack(_wbname[i]));
+	wb[i].Sheets(1).Cells(1,"A").value2="分类"
 	for (j=1; #table.unique(_sname))
 		table.push(etab, getTabFromRange(wb[i].Sheets(_sname[j]).UsedRange));
-	wb[i].Close();
+	wb[i].Close(false);
 }
 
 
 excel.Quit();
 import config;
 import sqlite;
-var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+var db = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));
 
 var fieldsName = {};
 var foam = {};
@@ -59,6 +60,8 @@ for (i=1; #etab){
 for (i=1; #table.unique(_sname)){
 	if db.existsTable(_sname[i])
 		db.exec("drop table " ++ _sname[i]);
+	console.log(_sname[i])
+	console.log(fieldsName[i])
 	db.exec( "CREATE TABLE [" ++ _sname[i] ++ "](" ++ fieldsName[i] ++");");
 }
 

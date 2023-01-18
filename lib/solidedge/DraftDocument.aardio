@@ -284,6 +284,7 @@ namespace DraftDocument{
         			if fileExt=="pdf" and owner.application.useQhcNameRule
         				..thread.invoke( 
         					function(fname){
+        					    import io;
         						import fsys;
         						import config;
         						if config.printingCenter.AllowSentToPdfLib

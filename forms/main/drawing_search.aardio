@@ -55,7 +55,7 @@ var searchDocument = function (filenumber){
 	winform_drawing.listview2.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
 	winform_drawing.listview2.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
 	winform_drawing.listview2.adjust = function(cx,cy){
-    	winform_drawing.listview2.fillParent(1);
+    	//winform_drawing.listview2.fillParent(1);
     	winform_drawing.listview2.fillParent(3);
 	} 	
 }
@@ -65,10 +65,10 @@ winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select�
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
     		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    		var pcode = owner.getItemText(selectedRow,1);
+    		if !selectedRow return;
+    		var pcode = owner.getItemText(selectedRow, 1);
 			var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
-			if io.exist(fullName) 
+			if io.exist(fullName)
 				process.execute(fullName);
     	}
     }
@@ -80,22 +80,21 @@ winform_drawing.listview2.translateAccelerator = function( msg ){
     if( ( vk == 'C'# ) && ctrl  ){
 		var tab = table.array();
 		for (i=1; owner.count; 1){
-
 			if (table.find(owner.selected,i)){
 				table.push(tab, owner.getItemText(i, 2) ++ owner.getItemText(i, 1));
 			}
 		}     
 		if io.exist(tab[[1]])
-			win.clip.file.write(tab[[1]],"copy")	//TODO: 多文件copy
+			win.clip.file.write(tab[[1]],"copy");	//TODO: 多文件copy
         return true;
     }
 }
 
-subscribe("qtip_search",function(...){
+subscribe("qtip_search_4", function(...){
 	var pcode = ...
 	if pcode
 		searchDocument(pcode);
-} )
+});
 
 winform_drawing.show();
 win.loopMessage();

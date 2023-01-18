@@ -55,7 +55,7 @@ winform_queryrev.button.oncommand = function(id,event){
 
 winform_queryrev.show();
 
-subscribe("qtip_search", function(...){
+subscribe("qtip_search_5", function(...){
 	var pd = ... ;
 	if(pd){
     	winform_queryrev.edit.text = pd;

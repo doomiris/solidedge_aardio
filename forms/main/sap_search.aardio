@@ -42,9 +42,8 @@ var showDetail = function(pnumber){
 	winform_search.listview.setColumn({cx=100 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
 }
 
-subscribe("qtip_search",function(...){
+subscribe("qtip_search_3",function(...){
 	var pcode = ...;
-
 	if pcode
 		showDetail(pcode);
 } )

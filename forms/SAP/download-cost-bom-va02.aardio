@@ -11,7 +11,7 @@ button5={cls="button";text="查找错误";left=440;top=64;right=648;bottom=112;c
 edit={cls="edit";text="0";left=80;top=112;right=296;bottom=144;edge=1;z=2};
 edit2={cls="edit";text="1-17";left=80;top=216;right=296;bottom=256;edge=1;multiline=1;z=3};
 edit3={cls="edit";left=72;top=272;right=720;bottom=408;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
-edit4={cls="edit";left=448;top=168;right=608;bottom=200;dr=1;dt=1;edge=1;multiline=1;z=10};
+edit4={cls="edit";left=448;top=168;right=608;bottom=200;dr=1;dt=1;edge=1;z=10};
 progress={cls="progress";left=72;top=424;right=488;bottom=454;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
 的所在行数(仅限当前屏幕, 不可超出屏幕)
@@ -125,6 +125,7 @@ import console
 console.open()
 
 */
+	import config;
     import web.script;
     var vm = web.script("VBScript") ;
 
@@ -154,8 +155,10 @@ console.open()
 	vm.script = /*
 	    	dim i
 	    	dim absline
+	    	dim lib_path
 	 */
 	 vm.script.absline = absline;
+	 vm.script.lib_path = config.__sapDownload;
 	 for (i=h; t) {
 	 	vm.script.i = i
 	 	
@@ -199,6 +202,7 @@ console.open()
     		session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select
     		session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").SetFocus
     		session.findById("wnd[1]/tbar[0]/btn[0]").press
+    		session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
     		session.findById("wnd[1]/usr/ctxtDY_FILENAME").Text = costFilename
 
     		session.findById("wnd[1]/tbar[0]/btn[11]").press
@@ -232,14 +236,13 @@ winform.button2.oncommand = function(id,event){
 winform.button4.oncommand = function(id,event){
 	thread.invoke( 
 		function(winform){
+			import config;
     		import web.script;
     		var vm = web.script("VBScript") ;
 /*
 			import console; 
 			console.open();
-*/
-
-			
+*/			
 			vm.script = /*
 					If Not IsObject(application) Then
    					Set SapGuiAuto  = GetObject("SAPGUI")
@@ -261,8 +264,10 @@ winform.button4.oncommand = function(id,event){
 			vm.script = /*
 	    			dim order
 	    			dim startdate
+	    			dim lib_path
 	 		*/
 			vm.script.order = winform.edit4.text;
+			vm.script.lib_path = config.__sapDownload;
 			vm.script = /*
 				session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
 				session.findById("wnd[0]").sendVKey 0
@@ -280,6 +285,7 @@ winform.button4.oncommand = function(id,event){
 				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
 				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
 				session.findById("wnd[1]/tbar[0]/btn[0]").press
+				session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
 				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" & order & ".XLSX"
 				session.findById("wnd[1]/tbar[0]/btn[11]").press
 				'返回

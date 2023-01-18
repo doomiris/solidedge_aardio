@@ -14,7 +14,6 @@ listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;e
 )
 /*}}*/
 
-var sapTab;
 /*sqliteDB{{*/
 var sapdb = config.dbServer.path + "\qhcsap.db";
 if !io.exist(sapdb) 
@@ -30,47 +29,6 @@ var saveInputList = function(str){
     	config.qTipLog.save();
     };
 };
-/*双击打开事件{{*/
-
-winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
-    select(code) {
-    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    		var pcode = owner.getItemText(selectedRow,1);
-    	    qtbs.selIndex = 4;
-    	    qtbs.forms[4].publish("qtip_search",pcode);
-    	}
-    	case 0xFFFFFFFB/*_NM_RCLICK*/  {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    		var pcode = owner.getItemText(selectedRow,1);
-    		var desp = owner.getItemText(selectedRow,2);
-			var x,y = win.getMessagePos();
-			//var hItem,tvht = winform_qlist.listview.hitTest(x,y,true);
-			var menu = win.ui.popmenu(winform_qlist);			
-			if string.startWith(pcode,"BG",true){
-				menu.add("下载BOM...", downloadbom);
-				var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
-				if #flist	{
-					var f = flist[flist[#flist]];
-					var t = fsys.file(f).lastModified().local();
-					menu.add(
-						"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
-						λ() process.execute(f)
-					);
-				}
-			}
-			menu.add("复制[专用号]", λ() win.clip.write(pcode));
-			menu.add("复制[专用号][物料描述]", λ() win.clip.write(pcode + '\t' + desp));
-			menu.add("打开详细信息...", λ() qtbs.open(3));
-			menu.add("查找图纸...", λ() qtbs.open(4));
-			menu.add("查询图纸下发记录...", λ() qtbs.open(5));
-			menu.popup(x,y,true);
-    	}
-    }
-}
-/*}}*/
 /*下载BOM{{*/
 var downloadbom = function(){
     var tab=table.array();
@@ -84,20 +42,60 @@ var downloadbom = function(){
 	SAP.downloadBOM(winform_qlist, tab);
 }
 /*}}*/
+/*双击打开事件{{*/
+winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return ; 
+    		var pcode = owner.getItemText(selectedRow, 1);
+    	    qtbs.selIndex = 4;
+    	    qtbs.forms[4].publish("qtip_search_4", pcode);
+    	}
+    	case 0xFFFFFFFB/*_NM_RCLICK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return ; 
+    		var pcode = owner.getItemText(selectedRow, 1);
+    		var desp = owner.getItemText(selectedRow, 2);
+			var x,y = win.getMessagePos();
+			//var hItem,tvht = winform_qlist.listview.hitTest(x,y,true);
+			var menu = win.ui.popmenu(winform_qlist);			
+			if string.startWith(pcode,"BG",true){
+				menu.add("下载BOM...", downloadbom);
+				var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
+				if #flist {
+					var f = flist[flist[#flist]];
+					var t = fsys.file(f).lastModified().local();
+					menu.add(
+						"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
+						λ() process.execute(f)
+					);
+				}
+			}
+			menu.add("复制[专用号]", λ() win.clip.write(pcode));
+			menu.add("复制[专用号][物料描述]", λ() win.clip.write(pcode + '\t' + desp));
+			menu.add("打开详细信息...", λ() qtbs.open(3,pcode));
+			menu.add("查找图纸...", λ() qtbs.open(4,pcode));
+			menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));
+			menu.popup(x,y,true);
+    	}
+    }
+}
+/*}}*/
+
 /*CTRLC复制模块{{*/
 winform_qlist.listview.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
 //    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
 //    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
 //    var selectedRow = owner.getSelection();
-    var vk = msg.wParam ;    
-    if( ( vk == 'C'# ) && ctrl  ){
+    var vk = msg.wParam;    
+    if( ( vk == 'C'# ) && ctrl ){
         if (owner.tag==1) {
             var tab=table.array();
-            for (i=1;#owner.selected;1){
-                table.push(tab,string.join(owner.items[owner.selected[i]],'\t'))
-            }           
-			win.clip.write(string.join(tab,'\n'))
+            for (i=1; #owner.selected)
+                table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
+			win.clip.write(string.join(tab,'\n'));
 		}
         return true;
     }
@@ -105,9 +103,10 @@ winform_qlist.listview.translateAccelerator = function( msg ){
 
 /*}}*/
 /*调整列宽{{*/
-var formatListView = function(){
+var formatListView = function(sapTab){
 	winform_qlist.listview.clear(true)
-	if !sapTab.fields sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
+	if !sapTab.fields
+		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
 	winform_qlist.listview.setTable( sapTab );
 	//grid.readonlyColums = {
     //	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
@@ -130,6 +129,7 @@ var getSelectedText = function(listCtrl){
 }
 
 var searchSapDB = function(userinput){
+	var sapTab;
     if !#userinput return ; 
     winform_qlist.listview.tag=1;
     winform_qlist.listview.clear(true);
@@ -222,14 +222,14 @@ var searchSapDB = function(userinput){
 
 	}
 
-	formatListView();
+	formatListView(sapTab);
 }
 /*}}*/
 /*格式化BOM{{*/
 subscribe("dok",function(...){
 	//winform_qlist.button6.disabledText = null;
 	win.delay(3*1000);
-	var ftab = ...
+	var ftab = ...;
 	if ftab {
 		import com.excel;
 		var excel = com.excel(false);
@@ -248,10 +248,10 @@ subscribe("dok",function(...){
 } )
 /*}}*/
 winform_qlist.show();
-subscribe("qtip_search",function(...){
+subscribe("qtip_search_2", function(...){
 	var txt = ...;
 	if txt searchSapDB(txt);
-} )
+})
 
 win.loopMessage();
 return winform_qlist;

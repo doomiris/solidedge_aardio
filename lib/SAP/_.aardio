@@ -8,6 +8,7 @@ namespace SAP;
 
 downloadBOM = function(winform, etab){
 	import QHC;
+	import config;
     import web.script;
     var vm = web.script("VBScript") ;
     
@@ -45,7 +46,9 @@ downloadBOM = function(winform, etab){
 	vm.script = /*
 	    	dim filename
 	    	dim etab_item
+	    	dim lib_path
 	*/
+	vm.script.lib_path = config.__sapDownload;
 	var ftab = {}
 	for (i = 1; #etab){
 		vm.script.etab_item = etab[i]
@@ -65,6 +68,7 @@ downloadBOM = function(winform, etab){
     	
     	vm.script = /*	
     	session.findById("wnd[0]/tbar[1]/btn[9]").press	' //zmdm_001 里面的download
+    	session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
     	session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
     	session.findById("wnd[1]/tbar[0]/btn[11]").press
     	session.findById("wnd[0]/tbar[0]/btn[12]").press	'//[x]取消

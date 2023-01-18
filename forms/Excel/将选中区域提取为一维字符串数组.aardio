@@ -1,0 +1,16 @@
+import console; 
+console.open()
+
+import com.excel;
+var excel = com.excel(false);
+
+var range = table.flat(excel.Application.Selection.Value2);
+
+var txt = "{" +  string.join(table.map(range, lambda(v,k) '"'+v+'"'),', ') + "}";
+
+console.log(txt);
+
+import win.clip;
+win.clip.write( txt )
+
+console.pause(true,"已写入剪切板");

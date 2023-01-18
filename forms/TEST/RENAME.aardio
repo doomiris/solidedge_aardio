@@ -2,6 +2,7 @@ import console;
 console.open();
 import fsys;
 
+/*
 var path = "L:\Monaxis"
 
 var dlist = fsys.list(path,,"*.DFT");
@@ -16,5 +17,19 @@ for (i=1; #dlist){
 		io.rename(oldName, newName);
 	console.log( newName )	
 }
+*/
+
+
+import fsys;
+var path = "C:\Users\ccl100100\Desktop\New folder (3)\MA";
+var list= fsys.list(path,,"*.docx");
+
+for (i=1; #list){
+	var oName = list[i];
+	var uName = string.replace(oName, " D ", " M ");
+	uName = string.replace(uName, " SS", " SS A");
+	io.rename(io.joinpath(path,oName), io.joinpath(path,uName))
+}
+
 
 console.pause(true);

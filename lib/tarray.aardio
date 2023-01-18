@@ -140,6 +140,11 @@ findValue = function(arr, what){
 		}
 	}
 }
+indexContains = function(arr, what){
+	for (i=1; #arr)
+		if string.indexOf(arr[i],str)
+			return i; 
+}
 cNum = function(str){
 	select type(str) {
 		case "number" {
@@ -161,7 +166,6 @@ cNum = function(str){
 
 }
 
-
 /**intellisense()
 tarray = array列操作扩展库
 tarray.serialize(arr) = 保留fields把index改为数字
@@ -178,6 +182,7 @@ tarray.pushFields(arr, tab) = 参考tab键名定义arr.fields,返回新的arr
 tarray.indexOfCol(arr, find, col) = 在指定col查找find所在的index值
 tarray.findValue(arr, what) = 查找值, 返加{row,col,value} \n!tFindItem.
 tarray.cNum(str) = 转为数值
+tarray.indexContains(single_lvl_arr, what) = 是单层字符串数组内查找指定字符, 返回索引
 !tFindItem.row = 行
 !tFindItem.col = 列
 !tFindItem.value = 值 

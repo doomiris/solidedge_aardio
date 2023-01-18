@@ -1,0 +1,55 @@
+import console; 
+console.open();
+console.log("下载list内指定订单的首行成本")
+import config
+import fsys;
+import tarray;
+var tflist = fsys.list(config.__sapDownload,,"cost__*.xls");
+import SAP.session;
+var session = SAP.session();
+var list = {"BG1XCF1255", "BG1XCG1255", "BG1VEK1255", "BG1VEL1255", "BG1VEM1255", "BG1VEN1255", "BG1VEJ1255", "BG1VRM1255", "BG1WJK1255", "BG1WJL1255", "BG1WJM1255", "BG1WJN1255", "BG1WL61255", "BG1XG31255", "BG1XG41255", "BG1VEP1255", "BG1VEQ1255", "BG1VER1255", "BG1VES1255", "BG1VWP1255", "BG1VWN1255", "BG1UQZ1255", "BG1UR11255", "BG1VW11255", "BG1VW21255", "BG1WJP1255", "BG1WJQ1255", "BG1WKT1255", "BG1WKU1255", "BG1XH41255", "BG1XH51255", "BG2AKH1255", "BG2AKJ1255", "BG2AKK1255", "BG2AKL1255", "BG2AKP1255", "BG2AKQ1255", "BG2AKR1255"};
+
+for (i=1; #list) {
+
+	 if tarray.indexContains(tflist, list[i]){
+		//关闭订单界面
+		console.log(i,list[i],"已存在")
+		continue
+	}
+	//查询订单号
+	session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = list[i]
+	session.findById("wnd[0]/tbar[0]/btn[0]").press()
+	
+	
+	pcode = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,0]").Text
+	pdesp = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[4,0]").Text
+	
+	session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( 0 ).Selected = true
+	costFilename = string.join({"cost_",list[i],pcode,pdesp,".xls"}, "_")
+	
+
+	//点击成本核算
+	session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select()
+	
+	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton("&PRINT_BACK")
+	session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem("&PRINT_PREV_ALL")
+	
+	session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select()
+	session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select()
+	
+	//点击保存
+	session.findById("wnd[1]/tbar[0]/btn[0]").press()
+	session.findById("wnd[1]/usr/ctxtDY_PATH").text = config.__sapDownload
+	session.findById("wnd[1]/usr/ctxtDY_FILENAME").Text = costFilename
+	
+	//点击保存
+	session.findById("wnd[1]/tbar[0]/btn[11]").press()
+	console.log(i,costFilename,"已保存")
+	//关闭清单界面
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()
+	//关闭成本界面
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()
+	//关闭订单界面
+	session.findById("wnd[0]/tbar[0]/btn[12]").press()
+}
+console.pause(true);

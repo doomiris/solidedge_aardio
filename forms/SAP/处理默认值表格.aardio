@@ -16,6 +16,7 @@ import string.keywords;
 _skip_dir_name = "归档|存档|副本|旧版本|操作手册|Archieve"
 _skip_file = {
 	"岛柜系列产品默认配置2022.5.17 - 副本.xlsx",
+	"冷风机默认配置.xlsx",
 }
 _CCR_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\";
 _QHC_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\";
@@ -84,7 +85,7 @@ var getListFromXlsx = function(_xlsx_path){
 			t["产品编码"] = string.trim(t["产品编码"]);
 			t["分类"] = string.trim(t["分类"]);	
 			t["特性"] = string.trim(t["特性"]);
-			t["特性值"] ?= tostring(math.modf(t["特性值"])); //去除结尾的0
+			t["特性值"] ?= tostring((math.modf(t["特性值"]))); //去除结尾的0
 			st["SAP语句"] ?= string.replace(st["SAP语句"]," ","");
 			st["SAP语句"] ?= string.upper(st["SAP语句"]);
 			var checkod = "$SET_DEFAULT($SELF," + t["特性"] + ",'" + t["特性值"] + "'),";

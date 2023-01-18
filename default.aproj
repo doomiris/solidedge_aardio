@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.274" ProductVersion="1.5.0.274" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\logo128.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.288" ProductVersion="1.5.0.288" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="main" path="forms\main" embed="true" comment="目录" local="false" ignored="false">
@@ -38,6 +38,7 @@
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
 			<file name="提取原材料用量追加到物料后列.aardio" path="forms\Excel\提取原材料用量追加到物料后列.aardio" comment="forms\Excel\提取原材料用量追加到物料后列.aardio"/>
 			<file name="默认值view.aardio" path="forms\Excel\默认值view.aardio" comment="forms\Excel\默认值view.aardio"/>
+			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\Excel\将选中区域提取为一维字符串数组.aardio" comment="forms\Excel\将选中区域提取为一维字符串数组.aardio"/>
 		</folder>
 		<folder name="SAP" path="forms\SAP" comment="forms\SAP" local="false" embed="true" ignored="false">
 			<file name="BOM_OD_LIB.aardio" path="forms\SAP\BOM_OD_LIB.aardio" comment="forms\SAP\BOM_OD_LIB.aardio"/>
@@ -46,14 +47,15 @@
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="SAP-download-bom.aardio" path="forms\SAP\SAP-download-bom.aardio" comment="forms\SAP\SAP-download-bom.aardio"/>
 			<file name="下载订单BOM.aardio" path="forms\SAP\下载订单BOM.aardio" comment="forms\SAP\下载订单BOM.aardio"/>
+			<file name="喷粉_Query.aardio" path="forms\SAP\喷粉_Query.aardio" comment="forms\SAP\喷粉_Query.aardio"/>
 			<file name="处理默认值表格.aardio" path="forms\SAP\处理默认值表格.aardio" comment="forms\SAP\处理默认值表格.aardio"/>
+			<file name="批量下载工厂生成的订单.aardio" path="forms\SAP\批量下载工厂生成的订单.aardio" comment="forms\SAP\批量下载工厂生成的订单.aardio"/>
 			<file name="获取成品分类对应表.aardio" path="forms\SAP\获取成品分类对应表.aardio" comment="forms\SAP\获取成品分类对应表.aardio"/>
 		</folder>
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="true" ignored="false">
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
 			<file name="SAP-GETLIST.aardio" path="forms\admin_only\SAP-GETLIST.aardio" comment="forms\admin_only\SAP-GETLIST.aardio"/>
-			<file name="同步QHC可选项文件.aardio" path="forms\admin_only\同步QHC可选项文件.aardio" comment="forms\admin_only\同步QHC可选项文件.aardio"/>
 			<file name="获取喷粉分类组成.aardio" path="forms\admin_only\获取喷粉分类组成.aardio" comment="forms\admin_only\获取喷粉分类组成.aardio"/>
 			<file name="获取喷粉调研表.aardio" path="forms\admin_only\获取喷粉调研表.aardio" comment="forms\admin_only\获取喷粉调研表.aardio"/>
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
@@ -81,9 +83,11 @@
 			<file name="Excel_notify_selection.aardio" path="forms\obsolete\Excel_notify_selection.aardio" comment="forms\obsolete\Excel_notify_selection.aardio"/>
 			<file name="Excel_update_info.aardio" path="forms\obsolete\Excel_update_info.aardio" comment="forms\obsolete\Excel_update_info.aardio"/>
 			<file name="printpaper.aardio" path="forms\obsolete\printpaper.aardio" comment="forms\obsolete\printpaper.aardio"/>
+			<file name="refresh_QHC_Drawing_Release_List.aardio" path="forms\obsolete\refresh_QHC_Drawing_Release_List.aardio" comment="forms\obsolete\refresh_QHC_Drawing_Release_List.aardio"/>
 			<file name="SAP-job.aardio" path="forms\obsolete\SAP-job.aardio" comment="forms\obsolete\SAP-job.aardio"/>
 			<file name="SAP-job2.aardio" path="forms\obsolete\SAP-job2.aardio" comment="forms\obsolete\SAP-job2.aardio"/>
 			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
+			<file name="同步QHC可选项文件.aardio" path="forms\obsolete\同步QHC可选项文件.aardio" comment="forms\obsolete\同步QHC可选项文件.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" embed="true" comment="目录" local="false" ignored="false">
 			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\Teamcenter\add_QHC_Drawing_Release_List.aardio" comment="forms\Teamcenter\add_QHC_Drawing_Release_List.aardio"/>
