@@ -19,9 +19,10 @@ import config;
 	console.open()
 */
 var fileTab = {
-	[1] = {"名称" = "service counter"; workbook = "Service Counter Item_Master.xlsx"; sheet = "part list"};
-	[2] = {"名称" = "Monaxis"; workbook = "变频平台_SAP_Item_Master.xlsx"; sheet = "part list"};
-	[3] = {"名称" = "Monaxis A"; workbook = "Monaxis_EP_Item_Master.xlsx"; sheet = "part list"};
+	[1] = {"名称" = "Service Counter"; workbook = "Service Counter Item_Master.xlsx"; sheet = "part list"};
+	[2] = {"名称" = "变频平台"; workbook = "变频平台_SAP_Item_Master.xlsx"; sheet = "part list"};
+	[3] = {"名称" = "Monaxis SS"; workbook = "Monaxis_EP_Item_Master.xlsx"; sheet = "part list"};
+	[4] = {"名称" = "SPI Inverter"; workbook = "SPI_Inverter_Item_Master.xlsx"; sheet = "part list"};
 	fields = { [1] = "名称"; [2] = "workbook"; [3]="sheet" };
 }
 winform.listview.setTable(fileTab);

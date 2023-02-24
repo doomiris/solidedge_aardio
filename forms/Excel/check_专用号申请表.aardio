@@ -114,7 +114,7 @@ var rule_desp = {
 	[34] = "物料描述结尾是可选项,物料类型必须是KMAT";
 	[35] = "物料描述长度超过40";
 	[36] = "展开尺寸长度超过18";
-	[37] = "物料描述中间含有多余的空格或连字符";
+	[37] = "物料描述中间含有多余的空格,连字符,引号";
 	[38] = "物料描述首尾含有多余的空格";
 	[39] = "喷粉件为未喷粉在前，已喷粉在后";
 	[40] = "物料描述有重复行";
@@ -165,7 +165,7 @@ var sapErr={
 	[36] = function(i){if !!(etab[i].SAP展开尺寸) return (string.len(etab[i].SAP展开尺寸) > 18)}
 	[37] = function(i){
 			//return (string.indexOf(etab[i].物料描述,"  "))
-			return ( string.keywords('  |--|- -|~~|~ ~').findOne(etab[i].物料描述)); 
+			return ( string.keywords('  |--|- -|~~|~ ~|&|“|”|"').findOne(etab[i].物料描述)); 
 		}
 	[38] = function(i){return (string.trim(etab[i].物料描述) !== etab[i].物料描述)}
 	[39] = function(i){

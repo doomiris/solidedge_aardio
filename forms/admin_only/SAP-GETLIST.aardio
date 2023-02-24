@@ -20,7 +20,6 @@ log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 winform_getlist.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
 
 /*Get获取数据{{*/
-
 var getFromSAP = function(winform_getlist){
     import web.script;
     var vm = web.script("VBScript") ;
@@ -60,65 +59,10 @@ var getFromSAP = function(winform_getlist){
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
     `);
-
 	winform_getlist.publish("getFromSAP",true);
 }
-
-
 /*}}*/
 /*deal处理数据{{*/
-/**
-var dealWithTxt = function(winform_getlist){
-	import win;
-	import fsys;
-	winform_getlist.log.print("开始处理数据");
-	_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.txt";
-	var file = io.exist(_path) ? io.open(_path,"r") : null;
-	if !file error("文件不存在: " ++ _path);
-	if file winform_getlist.log.print("开始处理多余行", _path);
-	import config;
-	import sqlite;
-	var db = sqlite(winform_getlist.stepDBpath);
-	if !db error("dberror");
-	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
-	db.exec("VACUUM");
-	db.exec("CREATE TABLE [all_cost](物料 TEXT collate nocase,物料描述 TEXT collate nocase,MTyp TEXT,物料组 TEXT,BUn TEXT,价格 NUMERIC,PGr TEXT);")  
-	db.beginTrans();
-	
-	var n = 1;
-	for line in io.lines(file){
-    	if ( n >= 3 ) {    //跳过标题行和制表符号
-			if string.startWith(line, "|") {
-				nl = string.split(line,"|");
-				table.pop(nl,1);
-				table.shift(nl,1);
-				var cmd = db.prepare("INSERT INTO [all_cost] VALUES(@pcode,@textDesp,@mtype,@mgroup,@bun,@price,@pgr);");
-				for (i=1;#nl){
-					nl[i]=string.trim(nl[i]);
-					nl[i]=string.trim(nl[i],'\t');
-				}
-				cmd.step(
-					pcode = nl[1];
-					textDesp = string.fromto(nl[2], 936 /* GB2312 */, 65001 /* UTF8 */);
-					mtype = nl[3];
-					mgroup = nl[4];
-					bun = nl[5];
-					price =  nl[6]===null ? null : nl[6]===0 ? price = nl[6] : tonumber((string.replace(nl[6],",","")));
-					pgr = nl[7]
-				)
-			}
-		}
-		n = n + 1 ;
-	}
-	
-	db.commitTrans();
-	file.close();
-	db.close();
-	winform_getlist.log.print("完成, 已加入数据库");
-	winform_getlist.publish("sentSAPtoDB",true);
-	winform_getlist.button.disabledText = null;
-}
-**/
 var dealWithXlsx = function(winform_getlist){
 	winform_getlist.log.print("开始处理数据");
 	//_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.xlsx";
@@ -156,6 +100,7 @@ var dealWithXlsx = function(winform_getlist){
 	db.commitTrans();
 
 	db.close();
+	wb.close(false);
 	winform_getlist.log.print("完成, 已加入数据库");
 	winform_getlist.publish("sentSAPtoDB",true);
 	winform_getlist.button.disabledText = null;
@@ -173,51 +118,55 @@ winform_getlist.button.oncommand = function(id,event){
 
 /*importFromQHC{{*/
 var importFromQHC = function(winform_getlist, path){
-	import win;	
+/*
+	import console
+	console.open();
+*/
+	//import etip;
+	import tarray;
 	import com.excel;
 	var excel = com.excel(true);
 
 	var qWb = excel.WorkBooks.Open(path);
 	var qSht = qWb.Sheets(1);
-
+	qSht.Rows(1).Replace("物料状态","禁用");
+	qSht.Rows(1).Replace("大小/量纲","设计展平尺寸");
+	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸");
 	var qTab = qSht.usedRange.Value2;
 	var rc = #qTab;
-
 	qWb.close(false);
 	qSht = null;
 	qWb = null;
 	excel.Quit();
 	
-	//import etip;
-	import tarray;
-	
-	qTab.fields = table.shift(qTab);
-	qTab.fields = tarray.replaceValue(qTab.fields,"大小/量纲", "设计展平尺寸");
-	qTab.fields = tarray.replaceValue(qTab.fields,"大小/量纲-开发", "设计展平尺寸");
-	qTab.fields = tarray.replaceValue(qTab.fields,"行业标准描述", "生产展平尺寸");
-	qTab.fields = tarray.replaceValue(qTab.fields,"行业标准描述-工艺", "生产展平尺寸");	
-	qTab.fields = tarray.replaceValue(qTab.fields,"禁用物料", "禁用");
-	qTab.fields = tarray.replaceValue(qTab.fields,"物料状态", "禁用");
-	//定义格式
-	qTab.fields = tarray.replaceValue(qTab.fields,"物料", "物料 TEXT collate nocase");
-	qTab.fields = tarray.replaceValue(qTab.fields,"物料描述", "物料描述 TEXT collate nocase");
+	qTab.fields = table.shift(qTab); /*提取第一行作为列名*/
+		
 	import config;
 	import sqlite;
 	var db = sqlite(winform_getlist.stepDBpath);
-	if db.existsTable("qhc_export") db.exec("DROP table qhc_export;")
+	if db.existsTable("qhc_export") db.exec("DROP table qhc_export")
 	db.exec("VACUUM");
-	var fields = string.join(qTab.fields,", ");
-	
+
+	var fields = qTab.fields;
+	fields= tarray.replaceValue(fields,"物料", "物料 TEXT collate nocase");
+	fields = tarray.replaceValue(fields,"物料描述", "物料描述 TEXT collate nocase");	
+	fields = string.join(fields,", ");
+
 	db.exec("CREATE TABLE [qhc_export](" ++ fields ++ ");")  
 
 	db.beginTrans();
-	var n = #qTab;
+	var n = rc-1;
 	var vl = string.join(table.array(#qTab.fields,"?"),", ");
 	
-	for(i=1;n){
+	for(i=1; n){
+
 		var cmd = db.prepare("INSERT INTO [qhc_export] VALUES(" ++ vl ++ ");");
+		var item = qTab[i];
+		for (x=1; #qTab.fields)
+			if !item[x]
+					item[x] = "";	/* 填充Null值, 否则展开后丢失参考*/
 		cmd.bind.parameters(
-			table.unpack(qTab[i])
+			table.unpack(item)
 		).step()
 	}
 	db.commitTrans();
@@ -225,7 +174,6 @@ var importFromQHC = function(winform_getlist, path){
 	winform_getlist.log.print("Excel导入完成");
 	winform_getlist.button2.disabledText = null;
 }
-
 /*}}*/
 
 winform_getlist.button2.oncommand = function(id,event){

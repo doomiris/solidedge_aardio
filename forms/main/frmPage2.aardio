@@ -131,7 +131,7 @@ var loadFromTab = function(_blk){
 /*界面控件事件{{*/
 rev_winform.button.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
-	
+	seApp := solidedge.application();
 	win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd)
 	

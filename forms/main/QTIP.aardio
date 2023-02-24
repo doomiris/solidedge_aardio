@@ -12,7 +12,7 @@ console.open();
 qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 qtip_winform.add(
 bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
-bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16729089};dl=1;dt=1;z=6};
+bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088};dl=1;dt=1;z=6};
 bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;notify=1;z=8};
 bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7};
 bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9};
@@ -76,16 +76,19 @@ _qfName = {
 	[5] = "\forms\main\check_QHC_Release.aardio";
 }
 for k,v in _qfName
-	qtbs.loadForm(k,v );
+	qtbs.loadForm(k, v);
 qtbs.preloadForm(1);
 qtbs.selIndex = 2; 
 qtbs.currentTab = 2;
+qtbs.lastTab = 2;
 qtbs.onSelchange = function(idx,strip,form){
+	if idx == qtbs.currentTab return ; 
+	qtbs.lastTab = qtbs.currentTab;
 	qtbs.currentTab = idx;
 } 
+
 qtbs.open = function(selIndex,pcode){
 	qtbs.selIndex = selIndex;
-	//var txt = qtip_winform.editUser3.text;
 	qtbs.forms[selIndex].publish("qtip_search_"++selIndex, pcode);
 }
 
@@ -93,16 +96,19 @@ qtbs.open = function(selIndex,pcode){
 
 qtip_winform.show();
 
+/*搜索按钮{{*/
 qtip_winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
 	var txt = qtip_winform.editUser3.text;
 	select(qtbs.currentTab) {
-		case 1 {
+		case 2 {}
+		else {
 			qtbs.selIndex = 2;
 		}
 	}
 	qtbs.forms[qtbs.currentTab].publish("qtip_search_2", txt);
 }
+/*}}*/
 
 /*onclose{{*/
 qtip_winform.onClose = function(hwnd,message,wParam,lParam){
@@ -132,7 +138,7 @@ qtip_winform.buttonD.oncommand = function(id,event){
 /*}}*/
 /*右键点击快速取消筛选{{*/
 qtip_winform.bkplus1.wndproc = function(hwnd,message,wParam,lParam){
-	if message == 0x205/*_WM_RBUTTONUP*/ qtbs.forms[1].syslink.onHyperlinkClick();
+	if message == 0x205 /* _WM_RBUTTONUP */ qtbs.forms[1].syslink.onHyperlinkClick();
 }
 var updateColor = function(btCtrl){
 	var t = #qtbs.forms[1].clSapType.selected + #qtbs.forms[1].clUnit.selected + #qtbs.forms[1].clOrderType.selected;
@@ -145,7 +151,6 @@ subscribe("filter_Changed",function(...){
 /*}}*/
 /*输入框切换单多行{{*/
 qtip_winform.custom.adjust = function( cx,cy,wParam ) {
-	
 	var txt = qtip_winform.editUser3.text;
 	var height = qtip_winform.editUser3.height;
 	var tb0 = {cls="edit";left=264;top=8;right=512;bottom=8+height;dl=1;dr=1;dt=1;edge=1;z=5;multiline=0;vscroll=0;hscroll=0};
@@ -164,20 +169,29 @@ qtip_winform.custom.adjust = function( cx,cy,wParam ) {
 };
 /*}}*/
 
+/*后退按钮{{*/
 qtip_winform.button2.oncommand = function(id,event){
 	if event == 0/*_BN_CLICKED*/
 		qtbs.selIndex = 2;
 }
-
-qtip_winform.bkplus3.skin(
-	background = { 
-		hover = "/res/images/btn-hover.png";
-		focus = "/res/images/btn-focus.jpg";
-		active = "/res/images/btn-active.png";
-		disabled = "/res/images/btn-disabled.png"; 
+/** 点击搜索后就失效了..怎么回事.
+import mouse.hook;
+var hook = mouse.hook();
+//录制回调函数
+hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
+    if( injected ) return; //模拟鼠标不处理
+    select(msg) {
+		case 0x20C /* _WM_XBUTTONUP */ {
+			var lastTab = qtbs.lastTab;
+			if ::HIWORD(mouseData) == 1	//后退
+       			qtbs.selIndex = 2;
+			else	//前进
+				qtbs.selIndex = lastTab;
+		}
 	}
-)
-
+}
+**/
+/*}}*/
 
 win.loopMessage();
 return qtip_winform;

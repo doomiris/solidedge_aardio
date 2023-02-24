@@ -2,18 +2,26 @@ import console;
 console.open();
 import com.excel;
 import tarray;
-var excel = com.excel(false);
+var excel;
+var w_index = 1
+var excel_app_tab={};
 com.enumRunning( 
 	function(displayName,object){
-		try{
-			var s = com.GetTypeInfo(object).GetDocumentation().name;
-			if s = "_Workbook"
-			//console.log(s, object.Application.ActiveWorkbook.Name, object.Application.ActiveWindow.hwnd  )
-				if object.Application.hwnd > excel.Application.hwnd
-					excel = object.Application;
-		}
+			if com.GetTypeInfo(object) {
+				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+					if !table.indexOf(excel_app_tab, object.FullName) {
+						if io.splitpath(displayName).ext == ".xlsx" or io.splitpath(displayName).ext == ".xls" {
+							console.log(w_index, io.splitpath(displayName).file);				
+							excel_app_tab[w_index] = object.FullName;
+							w_index++;
+						}
+					}
+				}
+			}
 	}
 )
+var getExcel_index = console.getNumber( "请输入序号:" );
+excel = com.GetObject(excel_app_tab[getExcel_index]);
 
 var sht = excel.ActiveSheet;
 if !sht console.pause("需要重新执行");

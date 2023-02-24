@@ -41,12 +41,16 @@ wb.export(
 		
 		var t= db.getTable(sqlstr);
 		sapTab = table.concat(sapTab, t);
+		//win.msgbox(sapTab)
 		return sapTab; 
+		
 	};
+/*
 	vueAppMounted = function(app){
 		//win.msgbox(app.message)
 		//app.visible = true;//在aardio中控制vue组件
 	}
+*/
 )
 import wsock.tcp.simpleHttpServer; 
 wb.go("\forms\webview\qtip.html")

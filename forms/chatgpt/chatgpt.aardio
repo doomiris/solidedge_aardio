@@ -1,0 +1,73 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="ChatGPT 桌面智能助理";right=661;bottom=721)
+winform.add()
+/*}}*/
+
+import web.view;
+var wb = web.view(winform);
+
+import web.rest.jsonClient;
+var http = web.rest.jsonClient(); 
+
+//参数请改成您的 API key（或者获取 API key 的网址也可以）。
+import config;
+http.setAuthToken(string.load(io.joinpath(config.dbServer.path,"chat_gpt_API_KEY.txt")));
+var ai = http.api("https://api.openai.com/v1/");
+    
+var conversation = {};
+var chatGptName = "桌面智能助理";
+var chatGptInfo = "是一个快乐的程序员，精通多种编程语言";
+
+wb.external = {
+    ask = function(q){
+        table.push(conversation,"用户:"+q);
+        
+        var prompt;
+        do{
+            prompt =  "提示:你叫"
+            + chatGptName + "，"
+            + chatGptInfo + "。<|endoftext|>"  
+            + "当前时间：" + tostring(time()) + "。<|endoftext|>"  
+            + string.join(conversation,"<|endoftext|>") 
+            + "<|endoftext|>"
+            + chatGptName + ":";
+            
+            if(#prompt < 2000) break; 
+            
+            table.shift(conversation);
+        }while(true);   
+        
+        var ret,err = ai.completions({
+            "prompt": prompt,//发送提示
+            "model": "text-davinci-003",//GPT 3.5 模型
+            "temperature": 0.8,//热度，0~1 之间。
+            "max_tokens": 2048,//最大允许的字符数量 
+            "stop": {"<|endoftext|>"}  
+        })
+        
+        if(ret){
+            var a = ret.choices[1].text; 
+            table.push(conversation,chatGptName+":"+a);
+            return a;
+        }
+        else {
+            if(err[1]=='{'#){
+                var errObject = web.json.tryParse(err)[["error"]];
+                if(errObject[["code"]]="invalid_api_key"){
+                    return "您的 API key 已经失效了！"; 
+                } 
+                
+                if(errObject[["message"]]) return errObject[["message"]];
+            }
+            
+            return err;
+        }
+    };  
+} 
+
+import wsock.tcp.simpleHttpServer; 
+wb.go("\forms\chatgpt\chatgpt.html");
+
+winform.show();
+win.loopMessage();

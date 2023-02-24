@@ -47,8 +47,6 @@ var atom,hwnd = mainForm.atom("domisoft.aardio.tbm");
 if(!atom){ 
 	win.showForeground(hwnd);
 	win.setActive(hwnd);
-	var thrdId = win.getThreadProcessId(hwnd);
-	::PostThreadMessage(thrdId,123,0,0);
 	win.quitMessage();	
 	return;
 }
@@ -124,7 +122,7 @@ mainForm.onDestroy = function(){
 }
 
 mainForm.onActivateApp = function(activated,threadId){
-	if(activated){
+	if(activated){ //窗口激活时重新连接SE(解决有时SE重启的问题)
 		var nse = solidedge.application();
 		mainForm.button.hide = !!nse;
 		if !nse return ; 
@@ -146,7 +144,9 @@ mainForm.wndproc =  function(hwnd,message,wParam,lParam){
 					}
 					case 0x202/*_WM_LBUTTONUP*/ {
 						win.setForeground(mainForm.hwnd); //弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失							
-						mainForm.show(!win.isVisible(mainForm.hwnd));					
+						mainForm.show(!win.isVisible(mainForm.hwnd));
+						if main_tbs.currentTab == 1
+							main_tbs.forms[1].publish("refresh");
 					}
 				}
 			}
@@ -176,7 +176,7 @@ mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Exc
 mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('检查新BOM申请表', λ() loadcodex("\forms\Excel\check_新BOM申请表.aardio"));
-mainForm.popmenu2.add('检查新BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单.aardio"));
+mainForm.popmenu2.add('检查BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单.aardio"));
 mainForm.popmenu2.add('原材料用量计算...', λ() loadcodex("\forms\Excel\BOM-CALC.aardio"));
 mainForm.popmenu2.add('打开分类查询窗口...', λ() loadcodex("\forms\SAP\OD_Query.aardio"));
 mainForm.popmenu2.add();//分隔线
@@ -185,11 +185,14 @@ mainForm.popmenu2.add('下载订单BOM...', λ() loadcodex("\forms\SAP\下载订
 mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() loadcodex("\forms\Teamcenter\更新插件.aardio"));
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('ChatGPT...', λ() loadcodex("\forms\chatgpt\chatgpt.aardio"));
+mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
 /*左侧导航按钮{{*/
-
-var tbs = win.ui.tabs( 
+//main_tbs不用var声明, 所有子项就都能直接访问了.
+main_tbs = win.ui.tabs( 
 	mainForm.nav1,
 	mainForm.nav2,
 	mainForm.nav3,
@@ -197,8 +200,7 @@ var tbs = win.ui.tabs(
 	mainForm.nav5,
 	mainForm.nav6,
 );
-
-tbs.skin({
+main_tbs.skin({
 	background={
 		active=0xFFFFFFFF;
 		default=0x00FFFFFF;
@@ -221,7 +223,7 @@ _frmName = {
 	[6] = "\forms\main\frmPage3.aardio";
 }
 for k,v in _frmName
-	tbs.loadForm(k,v );
+	main_tbs.loadForm(k,v );
 
 var navindex = 6;
 if (_ARGV.nav)
@@ -229,8 +231,12 @@ if (_ARGV.nav)
 elseif config.settings.simpleSAPmode
 	navindex = 3;
 
-tbs.selIndex = navindex;
-tbs.currentTab = navindex;
+main_tbs.selIndex = navindex;
+main_tbs.currentTab = navindex;
+main_tbs.onSelchange = function(idx,strip,form){
+	form.publish("refresh");
+	main_tbs.currentTab = idx;
+} 
 /*}}*/
 
 /*顶部按钮{{*/
@@ -439,15 +445,15 @@ mainForm.static2.oncommand = function(id,event){
     if (mainForm.static2.tag){
         mainForm.static2.text = '\uF03C';
     	mainForm.static2.tag = false;
-		tbs.show ( false );
-		tbs.dropButton.hide = true;
+		main_tbs.show ( false );
+		main_tbs.dropButton.hide = true;
 		mainForm.custom.left = 0;
 		
 	}else{
 		mainForm.static2.text = '\uF03B';
     	mainForm.static2.tag = true;
-		tbs.show ( true );
-		tbs.dropButton.hide = false;
+		main_tbs.show ( true );
+		main_tbs.dropButton.hide = false;
 		mainForm.custom.left = mainForm.static2.tag2;
 	}
 }
@@ -475,16 +481,18 @@ hk_SearchSelected = mainForm.reghotkey(
 hk_openTBM = mainForm.reghotkey(
 	function(id,mod,vk){
 		if !seApp return ; 
-		tbs.selIndex = 1;
+		main_tbs.selIndex = 1;
 		win.setForeground(mainForm.hwnd)
 		mainForm.show();
+		if main_tbs.currentTab == 1
+			main_tbs.forms[1].publish("refresh");
 	}	
 	,1/*_MOD_ALT*/, 'T'# 	
 );
 hk_openRevMgr = mainForm.reghotkey(
 	function(id,mod,vk){
 		if !seApp return ; 
-		tbs.selIndex = 2;
+		main_tbs.selIndex = 2;
 		win.setForeground(mainForm.hwnd)
 		mainForm.show();
 	}	
@@ -505,13 +513,10 @@ subscribe("checkupdate",function(...){
 } )
 */
 
-tbs.onSelchange = function(idx,strip,form){
-	//form.publish("refresh");
-	tbs.currentTab = idx;
-} 
+
 /*处理异常的excel进程{{*/
 thread.invoke( 
-	function(){
+	function(){//与SE无关
 		import com.excel;
 		var excel = com.excel(false);
 		if excel.Visible == false and excel.WorkBooks.Count==0 {
@@ -521,15 +526,5 @@ thread.invoke(
 	}
 )
 /*}}*/
-/*
-return win.loopMessage(function(msg){
-	if !msg return ;
-	if msg.message == 123 {
-//		console.log(mainForm.tbs.currentTab);
-		tbs.forms[tbs.currentTab].publish("refresh"); 
-	}
-}
-);
-*/
 win.loopMessage();
 return mainForm;

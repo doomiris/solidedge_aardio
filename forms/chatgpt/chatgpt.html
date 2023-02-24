@@ -1,0 +1,64 @@
+<!DOCTYPE html><html>
+<head>
+    <meta charset="utf-8" />
+    <title>ChatGPT 桌面智能助理</title> 
+    <script src="node_modules\react\umd\react.production.min.js"></script>
+    <script src="node_modules\react-dom\umd\react-dom.production.min.js"></script>
+    <script src="node_modules/chatui/core/dist/index.js"></script> 
+    <link rel="stylesheet" href="node_modules/chatui/core/dist/index.css"> 
+    <script src="node_modules\babel-standalone\babel.min.js"></script>
+    <style type="text/css">html,body,#app{height:100%}</style>
+</head>
+<body>
+<script type="text/babel"> 
+    const { useState,useEffect,useCallback,useRef } =  React;  
+    const { default: Chat, Bubble, useMessages } = ChatUI;  
+    
+    const App = () => {
+        const { messages, appendMsg, setTyping } = useMessages([{
+            type: 'text',
+            content: { text: '你好，我是AI智能助理' },
+            user: { avatar: 'AI-Icon-17-512.webp' },
+        }]);
+    
+        function handleSend(type, val) {
+            if (type === 'text' && val.trim()) {
+                appendMsg({
+                    type: 'text',
+                    content: { text: val },
+                    position: 'right',
+                });
+        
+                setTyping(true);
+                
+                aardio.ask(val).then( text=>{
+                    appendMsg({
+                        type: 'text',
+                        content: { text: text },
+                    }); 
+                }) 
+            }
+        }
+    
+        function renderMessageContent(msg) {
+            const { content } = msg;
+            return <Bubble content={content.text} />;
+        }
+    
+        return (
+            <Chat
+                navbar={{ title: '' }}
+                messages={messages}
+                renderMessageContent={renderMessageContent}
+                onSend={handleSend}
+            />
+        );
+    };
+    
+    const root = ReactDOM.createRoot(document.getElementById('app'));
+    root.render(<App />);
+    
+</script>
+<div id="app"></div>
+</body>
+</html>
