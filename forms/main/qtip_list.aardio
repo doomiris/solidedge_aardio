@@ -64,12 +64,16 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 				menu.add("下载BOM...", downloadbom);
 				var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
 				if #flist {
-					var f = flist[flist[#flist]];
-					var t = fsys.file(f).lastModified().local();
+					var fn = flist[flist[#flist]];
+					var f = fsys.file(fn);
+					var t = f.lastModified().local();
+					f.close();
+					f = null;
 					menu.add(
 						"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
-						λ() process.execute(f)
+						λ() process.execute(fn)
 					);
+					
 				}
 			}
 			menu.add("复制[专用号]", λ() win.clip.write(pcode));
@@ -241,7 +245,7 @@ subscribe("dok",function(...){
 					excel.Run("initExportedBom"); //调用宏格式化样式
 				}
 		 		if #ftab>4 excel.WorkBooks(i).Close(true /* _save_changes */);
-		 		else excel.WorkBooks(i).Save();
+		 		//else excel.WorkBooks(i).Save();
 			}
 	}
 

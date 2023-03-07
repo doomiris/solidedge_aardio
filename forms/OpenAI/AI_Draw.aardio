@@ -1,0 +1,64 @@
+import win.ui;
+import fonts.fontAwesome;
+/*DSG{{*/
+var winform = win.form(text="Open AI 绘图";right=759;bottom=469)
+winform.add(
+btnGen={cls="button";text="绘图";left=550;top=402;right=635;bottom=436;color=14120960;db=1;dr=1;font=LOGFONT(h=-14);z=4};
+btnSave={cls="button";text="保存";left=657;top=401;right=742;bottom=435;color=14120960;db=1;disabled=1;dr=1;font=LOGFONT(h=-14);z=5};
+edit={cls="edit";left=97;top=401;right=546;bottom=457;aw=1;db=1;dl=1;edge=1;multiline=1;z=2};
+plus={cls="plus";left=0;top=0;right=761;bottom=397;db=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-96;name='FontAwesome');repeat="scale";z=1};
+static={cls="static";text="文本提示：";left=14;top=401;right=95;bottom=427;align="right";db=1;dl=1;transparent=1;z=3}
+)
+/*}}*/
+
+winform.btnGen.oncommand = function(id,event){
+    winform.btnGen.disabled = true; 
+    winform.plus.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250';text=''}
+     
+    //创建线程
+    thread.invoke( 
+        function(winform){
+            import web.rest.jsonClient;
+            
+            //创建 API 客户端
+            var http = web.rest.jsonClient(); 
+            
+            //设置 Key 或者获取 Key 的网址。
+            import config;
+			http.setAuthToken(string.load(io.joinpath(config.dbServer.path,"chat_gpt_API_KEY.txt")));
+            //http.setAuthToken("http://api.aardio.com/demo/openai/token");
+            
+            
+            //引入 OpenAI 接口
+            var ai = http.api("https://api.openai.com/v1/");
+            
+            //调用 API 
+            var ret,err = ai.images.generations({
+                "prompt": winform.edit.text,
+                "n": 1,
+                "size": "1024x1024" 
+            })
+            if( err ) winform.msgboxErr(err)
+            else {
+                //显示图像
+                winform.plus.background = http._http.get(ret.data[1].url);
+            }
+            
+            winform.btnGen.disabled = false;
+            winform.btnSave.disabled = false;
+            winform.plus.disabledText = null; 
+        },winform
+    )   
+}
+
+import fsys.dlg;
+winform.btnSave.oncommand = function(id,event){
+    var bmp = winform.plus.background;
+    if(bmp){
+        var path = fsys.dlg.saveOp("PNG 图像|*.png||","请指定保存图像路径")
+        if(path) bmp.save(path);
+    }  
+}
+
+winform.show();
+win.loopMessage();

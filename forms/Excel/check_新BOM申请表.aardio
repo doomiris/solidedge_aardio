@@ -1,19 +1,21 @@
 import console; 
 console.open();
 //import com.excel;
-import com;
 import tarray;
-var excel;
+import QHC;
+
+import com;
 var w_index = 1
 var excel_app_tab={};
+
 com.enumRunning( 
 	function(displayName,object){
 			if com.GetTypeInfo(object) {
 				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-					if !table.indexOf(excel_app_tab, object.FullName) {
-						if io.splitpath(displayName).ext == ".xlsx" or io.splitpath(displayName).ext == ".xls" {
+					if !table.indexOf(excel_app_tab, object.FullName||displayName) {
+						if io.splitpath(displayName).ext !== ".xlam" {
 							console.log(w_index, io.splitpath(displayName).file);				
-							excel_app_tab[w_index] = object.FullName;
+							excel_app_tab[w_index] = object;
 							w_index++;
 						}
 					}
@@ -21,15 +23,13 @@ com.enumRunning(
 			}
 	}
 )
+
 var getExcel_index = console.getNumber( "请输入序号:" );
-excel = com.GetObject(excel_app_tab[getExcel_index]);
 
-//console.log(excel_app_tab[getExcel_index])
+var sht = excel_app_tab[getExcel_index].ActiveSheet;
+excel_app_tab = null;
 
-var sht = excel.ActiveSheet;
 if !sht console.pause("需要重新执行");
-
-import QHC;
 
 var getUpLevel = function(currentLevel){
 	return string.left(currentLevel, #currentLevel - 2) ++ string.right(currentLevel, 1) - 1;
@@ -222,10 +222,12 @@ var sapErr = {
 	}
 };
 
-console.clearScreen();
+
 import console.progress;
 var bar = console.progress();
-console.log(sht.parent.name)
+console.clearScreen();
+
+
 var getErr = {};
 
 for(i=1; etab_count){

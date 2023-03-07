@@ -17,9 +17,10 @@ import tarray;
 import win.ui.grid;
 var grid = win.ui.grid(winform.listview);//创建数据视图
 
-import domipub;
+import fsys.lnk;
 var aid;
-var apath = domipub.findPath({"AcroRd32.exe"});
+var apath = fsys.lnk.search("AcroRd32.exe");
+
 var tab;
 var renew = function(){
 	tab = {};	

@@ -7,31 +7,35 @@ _SAP物料组 = {
 _物料类型 = {"HALB";"ROH";"KMAT"};
 _属性 = {"配置";"非配置";"委外加工"};
 */
-import com.excel;
-var excel = com.excel(false);
+import com;
+var w_index = 1
+var excel_app_tab={};
+
 com.enumRunning( 
 	function(displayName,object){
-		try{
-			var s = com.GetTypeInfo(object).GetDocumentation().name;
-			if s = "_Workbook"
-			//console.log(s, object.Application.ActiveWorkbook.Name, object.Application.ActiveWindow.hwnd  )
-				if object.Application.hwnd > excel.Application.hwnd
-					excel = object.Application;
-		}
+			if com.GetTypeInfo(object) {
+				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+					if !table.indexOf(excel_app_tab, object.FullName||displayName) {
+						if io.splitpath(displayName).ext !== ".xlam" {
+							console.log(w_index, io.splitpath(displayName).file);				
+							excel_app_tab[w_index] = object;
+							w_index++;
+						}
+					}
+				}
+			}
 	}
 )
-/*
-if excel.Visible == false and excel.WorkBooks.Count==0 {
-	import process.popen;
-	var prcs = process.popen.cmd(`taskkill /im EXCEL.EXE /f`);
-	sleep(300);
-	excel = com.excel(false);
-}
-*/
+
+var getExcel_index = console.getNumber( "请输入序号:" );
+
+var sht = excel_app_tab[getExcel_index].ActiveSheet;
+excel_app_tab = null;
+
+if !sht console.pause("需要重新执行");
 
 import string.keywords;
 
-var sht = excel.ActiveWorkbook.ActiveSheet;
 if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表:"+ '\n\n' ++sht.parent.name +"$["+sht.name+"]"); 
 if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 var etab = (function(){
@@ -207,15 +211,15 @@ var sapErr={
 
 import console.progress;
 var bar = console.progress();
-console.log(sht.parent.name)
+console.clearScreen();
+
 var getErr = {};
 
 for(i=1;#etab;1){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
 	for(j=1;#sapErr;1){
 		if sapErr[j](i)
-			table.push(getErr,{errRow=i; errRule=j});
-		
+			table.push(getErr,{errRow=i; errRule=j});		
 	}
 
 }

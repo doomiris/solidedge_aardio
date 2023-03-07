@@ -1,4 +1,4 @@
-﻿//QHC DB LIB
+﻿//QHC原材料相关
 import sqlite;
 
 var table = ..table;

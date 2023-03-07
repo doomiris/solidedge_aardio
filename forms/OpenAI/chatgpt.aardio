@@ -7,6 +7,8 @@ winform.add()
 import web.view;
 var wb = web.view(winform);
 
+winform.show();
+
 import web.rest.jsonClient;
 var http = web.rest.jsonClient(); 
 
@@ -67,7 +69,7 @@ wb.external = {
 } 
 
 import wsock.tcp.simpleHttpServer; 
-wb.go("\forms\chatgpt\chatgpt.html");
+wb.go("\forms\OpenAI\chatgpt.html");
 
-winform.show();
+
 win.loopMessage();

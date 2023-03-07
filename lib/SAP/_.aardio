@@ -10,6 +10,8 @@ downloadBOM = function(winform, etab){
 	import QHC;
 	import config;
     import web.script;
+    import console;
+    
     var vm = web.script("VBScript") ;
     
 	vm.script = /*
@@ -65,6 +67,10 @@ downloadBOM = function(winform, etab){
     	filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
     	vm.script.filename = filename;    		
     	table.push(ftab, filename);
+    	var fn = ..io.joinpath(config.__sapDownload,filename);
+    	if ..io.exist(fn)
+    		if !..io.remove(fn)
+    			console.debug("删除失败", fn);
     	
     	vm.script = /*	
     	session.findById("wnd[0]/tbar[1]/btn[9]").press	' //zmdm_001 里面的download

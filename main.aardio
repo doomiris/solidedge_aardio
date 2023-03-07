@@ -186,7 +186,8 @@ mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() loadcodex("
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() loadcodex("\forms\Teamcenter\更新插件.aardio"));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('ChatGPT...', λ() loadcodex("\forms\chatgpt\chatgpt.aardio"));
+mainForm.popmenu2.add('ChatGPT...', λ() loadcodex("\forms\OpenAI\chatgpt.aardio"));
+mainForm.popmenu2.add('AI绘图...', λ() loadcodex("\forms\OpenAI\AI_Draw.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/

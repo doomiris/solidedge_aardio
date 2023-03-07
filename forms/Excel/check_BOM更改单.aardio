@@ -1,18 +1,19 @@
 import console; 
 console.open();
-import com.excel;
+
 import tarray;
-var excel;
+import com;
 var w_index = 1
 var excel_app_tab={};
+
 com.enumRunning( 
 	function(displayName,object){
 			if com.GetTypeInfo(object) {
 				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-					if !table.indexOf(excel_app_tab, object.FullName) {
-						if io.splitpath(displayName).ext == ".xlsx" or io.splitpath(displayName).ext == ".xls" {
+					if !table.indexOf(excel_app_tab, object.FullName||displayName) {
+						if io.splitpath(displayName).ext !== ".xlam" {
 							console.log(w_index, io.splitpath(displayName).file);				
-							excel_app_tab[w_index] = object.FullName;
+							excel_app_tab[w_index] = object;
 							w_index++;
 						}
 					}
@@ -20,10 +21,12 @@ com.enumRunning(
 			}
 	}
 )
-var getExcel_index = console.getNumber( "请输入序号:" );
-excel = com.GetObject(excel_app_tab[getExcel_index]);
 
-var sht = excel.ActiveSheet;
+var getExcel_index = console.getNumber( "请输入序号:" );
+
+var sht = excel_app_tab[getExcel_index].ActiveSheet;
+excel_app_tab = null;
+
 if !sht console.pause("需要重新执行");
 
 import QHC;
@@ -74,30 +77,33 @@ var rule_desp = {
 	[9] = "ROH不可有下级物料"; 
 	[10] = "单位用量错误: 非数字/没填/0值"; 
 	[11] = "给09组新增子项时确认是否有OD"; 
+	[12] = "父项物料被禁用, 请先申请解禁再更改BOM";
+	[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
+	[14] = "相同内容重复操作";  
 }
 
 var sapErr = {
 	[1] = function(i){
-		return etab[i].原父项!==etab[i].新父项; 
+		return etab[i][["原父项"]] !== etab[i][["新父项"]]; 
 	};
 	[2]=function(i){
-		return etab[i].项目类别!=="L"; 
+		return etab[i][["项目类别"]] !== "L"; 
 	};
 	[3]=function(i){
-		if etab[i].更改备注 == "新增子项" or etab[i].更改备注 == "新增BOM"
-			return #etab[i].原子项 and !#etab[i].新子项;
+		if etab[i][["更改备注"]] == "新增子项" or etab[i][["更改备注"]] == "新增BOM"
+			return #etab[i][["原子项"]] and !#etab[i][["新子项"]];
 	};
 	[4]=function(i){
-		if etab[i].更改备注=="删除BOM" or etab[i].更改备注=="删除子项"
-			return !#etab[i].原子项 and #etab[i].新子项;
+		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项"
+			return !#etab[i][["原子项"]] and #etab[i][["新子项"]];
 	};
 	[5]=function(i){
-		if etab[i].更改备注 == "更改用量"
-			return etab[i].原子项数量 == etab[i].新子项数量; 
+		if etab[i][["更改备注"]] == "更改用量"
+			return etab[i][["原子项数量"]] == etab[i][["新子项数量"]]; 
 	};
 	[6]=function(i){
-		if etab[i].更改备注=="删除BOM" or etab[i].更改备注=="删除子项" return;
-		var n = tarray.cNum(etab[i].新子项数量);
+		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+		var n = tarray.cNum(etab[i][["新子项数量"]]);
 		var x, y
 		if n
 			x, y = math.modf(n);
@@ -105,24 +111,48 @@ var sapErr = {
 			return string.len(tostring(y))>(3+2/* modf 小数部分是真的是小数 0.开头*/); 
 	};
 	[7]=function(i){
-		if etab[i].更改备注=="删除BOM" or etab[i].更改备注=="删除子项" return;
-		if etab[i].新子项单位  == "ZA"
-			if !string.indexOf(etab[i].新子项描述,"胶带")
-					return !math.isInteger(tarray.cNum(etab[i].新子项数量));  
+		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+		if etab[i][["新子项单位"]]  == "ZA"
+			if !string.indexOf(etab[i][["新子项描述"]],"胶带")
+					return !math.isInteger(tarray.cNum(etab[i][["新子项数量"]]));  
 	};
 	[8]=function(i){
+		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return; 
+		var item = QHC.getSapItem(etab[i][["新子项"]]);
+		return item[["MTyp"]] !== etab[i][["新子项类型"]] or item[["BUn"]] !== etab[i][["新子项单位"]]; 
 	};
 	[9]=function(i){
+		if etab[i][["更改备注"]]=="新增子项" or etab[i][["更改备注"]]=="新增BOM" {
+			var item = QHC.getSapItem(etab[i][["原父项"]]);
+			return item[["MTyp"]] == "ROH"; 
+		}
 	};
 	[10]=function(i){
-		if etab[i].更改备注=="删除BOM" or etab[i].更改备注=="删除子项" return;
-		if etab[i].新子项数量 return !(tarray.cNum(etab[i].新子项数量))
-		else return true; 
+		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+		return !(tarray.cNum(etab[i][["新子项数量"]]))
 	};
 	[11]=function(i){
-		if string.startWith(etab[i].原父项,"H00809")
-			return etab[i].是否有OD !== "√"
+		if string.startWith(etab[i][["原父项"]], "H00809")
+			return etab[i][["是否有OD"]] !== "√"
 	};
+	[12]=function(i){	//仅检查禁用状态, 忽略新号问题
+		var item = QHC.getSapItem(etab[i][["原父项"]]);
+		return item[["禁用"]]=="禁用"
+	};
+	[13]=function(i){	//仅检查禁用状态, 忽略新号问题
+		//if !#etab[i].新子项 return ; 
+		var item = QHC.getSapItem(etab[i][["新子项"]]);
+		return item[["禁用"]]=="禁用"
+	};
+	[14]=function(i){
+		if i==1 return ; 
+		for(j=1; i-1){
+			if etab[j][["原父项"]]==etab[i][["原父项"]] and 
+				etab[j][["原子项"]]==etab[i][["原子项"]] and
+					etab[j][["新子项"]]==etab[i][["新子项"]]
+						return true;
+		}
+	}
 };
 
 
@@ -130,7 +160,8 @@ import console.progress;
 var bar = console.progress();
 
 var getErr = {};
-console.log(sht.parent.name)
+console.clearScreen()
+
 for(i=1; etab_count){
 	bar.setProgress(math.round(i*100/etab_count), math.round(i*100/etab_count) + "% processing......");
 	if !#etab[i].原父项 continue;
