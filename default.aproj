@@ -1,61 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.303" ProductVersion="1.5.0.303" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.307" ProductVersion="1.5.0.307" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
-		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
+		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
+			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\admin_only\add_QHC_Drawing_Release_List.aardio" comment="forms\admin_only\add_QHC_Drawing_Release_List.aardio"/>
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
+			<file name="BOM_OD_LIB.aardio" path="forms\admin_only\BOM_OD_LIB.aardio" comment="forms\admin_only\BOM_OD_LIB.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
 			<file name="SAP-GETLIST.aardio" path="forms\admin_only\SAP-GETLIST.aardio" comment="forms\admin_only\SAP-GETLIST.aardio"/>
+			<file name="处理默认值表格.aardio" path="forms\admin_only\处理默认值表格.aardio" comment="forms\admin_only\处理默认值表格.aardio"/>
+			<file name="批量下载工厂生成的订单.aardio" path="forms\admin_only\批量下载工厂生成的订单.aardio" comment="forms\admin_only\批量下载工厂生成的订单.aardio"/>
 			<file name="获取喷粉分类组成.aardio" path="forms\admin_only\获取喷粉分类组成.aardio" comment="forms\admin_only\获取喷粉分类组成.aardio"/>
 			<file name="获取喷粉调研表.aardio" path="forms\admin_only\获取喷粉调研表.aardio" comment="forms\admin_only\获取喷粉调研表.aardio"/>
+			<file name="获取成品分类对应表.aardio" path="forms\admin_only\获取成品分类对应表.aardio" comment="forms\admin_only\获取成品分类对应表.aardio"/>
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
-		</folder>
-		<folder name="OpenAI" path="forms\OpenAI" comment="forms\chatgpt" local="false" embed="false" ignored="false">
-			<file name="AI-Icon-17-512.webp" path="forms\OpenAI\AI-Icon-17-512.webp" comment="forms\OpenAI\AI-Icon-17-512.webp"/>
-			<file name="AI_Draw.aardio" path="forms\OpenAI\AI_Draw.aardio" comment="forms\OpenAI\AIDRAW.aardio"/>
-			<file name="chatgpt.aardio" path="forms\OpenAI\chatgpt.aardio" comment="forms\OpenAI\chatgpt.aardio"/>
-			<file name="chatgpt.html" path="forms\OpenAI\chatgpt.html" comment="forms\OpenAI\chatgpt.html"/>
-			<folder name="node_modules" path="forms\OpenAI\node_modules" comment="forms\OpenAI\node_modules" local="false" embed="false" ignored="false">
-				<folder name="babel-standalone" path="forms\OpenAI\node_modules\babel-standalone" comment="forms\OpenAI\node_modules\babel-standalone">
-					<file name="babel.min.js" path="forms\OpenAI\node_modules\babel-standalone\babel.min.js" comment="forms\OpenAI\node_modules\babel-standalone\babel.min.js"/>
-				</folder>
-				<folder name="chatui" path="forms\OpenAI\node_modules\chatui" comment="forms\OpenAI\node_modules\chatui">
-					<folder name="core" path="forms\OpenAI\node_modules\chatui\core" comment="forms\OpenAI\node_modules\chatui\core">
-						<folder name="dist" path="forms\OpenAI\node_modules\chatui\core\dist" comment="forms\OpenAI\node_modules\chatui\core\dist">
-							<file name="index.css" path="forms\OpenAI\node_modules\chatui\core\dist\index.css" comment="forms\OpenAI\node_modules\chatui\core\dist\index.css"/>
-							<file name="index.js" path="forms\OpenAI\node_modules\chatui\core\dist\index.js" comment="forms\OpenAI\node_modules\chatui\core\dist\index.js"/>
-						</folder>
-					</folder>
-				</folder>
-				<folder name="react" path="forms\OpenAI\node_modules\react" comment="forms\OpenAI\node_modules\react">
-					<folder name="umd" path="forms\OpenAI\node_modules\react\umd" comment="forms\OpenAI\node_modules\react\umd">
-						<file name="react.production.min.js" path="forms\OpenAI\node_modules\react\umd\react.production.min.js" comment="forms\OpenAI\node_modules\react\umd\react.production.min.js"/>
-					</folder>
-				</folder>
-				<folder name="react-dom" path="forms\OpenAI\node_modules\react-dom" comment="forms\OpenAI\node_modules\react-dom">
-					<folder name="umd" path="forms\OpenAI\node_modules\react-dom\umd" comment="forms\OpenAI\node_modules\react-dom\umd">
-						<file name="react-dom.production.min.js" path="forms\OpenAI\node_modules\react-dom\umd\react-dom.production.min.js" comment="forms\OpenAI\node_modules\react-dom\umd\react-dom.production.min.js"/>
-					</folder>
-				</folder>
-			</folder>
+			<file name="同步QHC可选项文件.aardio" path="forms\admin_only\同步QHC可选项文件.aardio" comment="forms\admin_only\同步QHC可选项文件.aardio"/>
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
-			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
 			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
 			<file name="BOM-CALC.aardio" path="forms\Excel\BOM-CALC.aardio" comment="forms\Excel\BOM-CALC.aardio"/>
 			<file name="check_BOM更改单.aardio" path="forms\Excel\check_BOM更改单.aardio" comment="forms\Excel\check_BOM更改单.aardio"/>
 			<file name="check_专用号申请表.aardio" path="forms\Excel\check_专用号申请表.aardio" comment="forms\Excel\check_专用号申请表.aardio"/>
 			<file name="check_新BOM申请表.aardio" path="forms\Excel\check_新BOM申请表.aardio" comment="forms\Excel\check_新BOM申请表.aardio"/>
 			<file name="Excel_notify_selection.aardio" path="forms\Excel\Excel_notify_selection.aardio" comment="forms\Excel\Excel_notify_selection.aardio"/>
-			<file name="Excel_update_info.aardio" path="forms\Excel\Excel_update_info.aardio" comment="forms\Excel\Excel_update_info.aardio"/>
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
-			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\Excel\将选中区域提取为一维字符串数组.aardio" comment="forms\Excel\将选中区域提取为一维字符串数组.aardio"/>
-			<file name="提取原材料用量追加到物料后列.aardio" path="forms\Excel\提取原材料用量追加到物料后列.aardio" comment="forms\Excel\提取原材料用量追加到物料后列.aardio"/>
-			<file name="默认值view.aardio" path="forms\Excel\默认值view.aardio" comment="forms\Excel\默认值view.aardio"/>
 		</folder>
-		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
+		<folder name="login" path="forms\login" comment="forms\login"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
 			<file name="check_QHC_Release.aardio" path="forms\main\check_QHC_Release.aardio" comment="forms\main\check_QHC_Release.aardio"/>
 			<file name="drawing_search.aardio" path="forms\main\drawing_search.aardio" comment="forms\main\drawing_search.aardio"/>
@@ -82,7 +54,35 @@
 			<file name="SAP-job.aardio" path="forms\obsolete\SAP-job.aardio" comment="forms\obsolete\SAP-job.aardio"/>
 			<file name="SAP-job2.aardio" path="forms\obsolete\SAP-job2.aardio" comment="forms\obsolete\SAP-job2.aardio"/>
 			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
-			<file name="同步QHC可选项文件.aardio" path="forms\obsolete\同步QHC可选项文件.aardio" comment="forms\obsolete\同步QHC可选项文件.aardio"/>
+		</folder>
+		<folder name="OpenAI" path="forms\OpenAI" comment="forms\OpenAI" local="false" embed="false" ignored="false">
+			<file name="AI-Icon-17-512.webp" path="forms\OpenAI\AI-Icon-17-512.webp" comment="forms\OpenAI\AI-Icon-17-512.webp"/>
+			<file name="AI_Draw.aardio" path="forms\OpenAI\AI_Draw.aardio" comment="forms\OpenAI\AI_Draw.aardio"/>
+			<file name="chatgpt.aardio" path="forms\OpenAI\chatgpt.aardio" comment="forms\OpenAI\chatgpt.aardio"/>
+			<file name="chatgpt.html" path="forms\OpenAI\chatgpt.html" comment="forms\OpenAI\chatgpt.html"/>
+			<folder name="node_modules" path="forms\OpenAI\node_modules" comment="forms\OpenAI\node_modules">
+				<folder name="babel-standalone" path="forms\OpenAI\node_modules\babel-standalone" comment="forms\OpenAI\node_modules\babel-standalone">
+					<file name="babel.min.js" path="forms\OpenAI\node_modules\babel-standalone\babel.min.js" comment="forms\OpenAI\node_modules\babel-standalone\babel.min.js"/>
+				</folder>
+				<folder name="chatui" path="forms\OpenAI\node_modules\chatui" comment="forms\OpenAI\node_modules\chatui">
+					<folder name="core" path="forms\OpenAI\node_modules\chatui\core" comment="forms\OpenAI\node_modules\chatui\core">
+						<folder name="dist" path="forms\OpenAI\node_modules\chatui\core\dist" comment="forms\OpenAI\node_modules\chatui\core\dist">
+							<file name="index.css" path="forms\OpenAI\node_modules\chatui\core\dist\index.css" comment="forms\OpenAI\node_modules\chatui\core\dist\index.css"/>
+							<file name="index.js" path="forms\OpenAI\node_modules\chatui\core\dist\index.js" comment="forms\OpenAI\node_modules\chatui\core\dist\index.js"/>
+						</folder>
+					</folder>
+				</folder>
+				<folder name="react" path="forms\OpenAI\node_modules\react" comment="forms\OpenAI\node_modules\react">
+					<folder name="umd" path="forms\OpenAI\node_modules\react\umd" comment="forms\OpenAI\node_modules\react\umd">
+						<file name="react.production.min.js" path="forms\OpenAI\node_modules\react\umd\react.production.min.js" comment="forms\OpenAI\node_modules\react\umd\react.production.min.js"/>
+					</folder>
+				</folder>
+				<folder name="react-dom" path="forms\OpenAI\node_modules\react-dom" comment="forms\OpenAI\node_modules\react-dom">
+					<folder name="umd" path="forms\OpenAI\node_modules\react-dom\umd" comment="forms\OpenAI\node_modules\react-dom\umd">
+						<file name="react-dom.production.min.js" path="forms\OpenAI\node_modules\react-dom\umd\react-dom.production.min.js" comment="forms\OpenAI\node_modules\react-dom\umd\react-dom.production.min.js"/>
+					</folder>
+				</folder>
+			</folder>
 		</folder>
 		<folder name="printcenter" path="forms\printcenter" comment="forms\printcenter" local="false" embed="false" ignored="false">
 			<file name="bmp2png.aardio" path="forms\printcenter\bmp2png.aardio" comment="forms\printcenter\bmp2png.aardio"/>
@@ -91,26 +91,23 @@
 			<file name="psm2dxf.aardio" path="forms\printcenter\psm2dxf.aardio" comment="forms\printcenter\psm2dxf.aardio"/>
 		</folder>
 		<folder name="SAP" path="forms\SAP" comment="forms\SAP" local="false" embed="false" ignored="false">
-			<file name="BOM_OD_LIB.aardio" path="forms\SAP\BOM_OD_LIB.aardio" comment="forms\SAP\BOM_OD_LIB.aardio"/>
-			<file name="CS12查BOM.aardio" path="forms\SAP\CS12查BOM.aardio" comment="forms\SAP\CS12查BOM.aardio"/>
 			<file name="download-cost-bom-va02.aardio" path="forms\SAP\download-cost-bom-va02.aardio" comment="forms\SAP\download-cost-bom-va02.aardio"/>
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
-			<file name="SAP-download-bom.aardio" path="forms\SAP\SAP-download-bom.aardio" comment="forms\SAP\SAP-download-bom.aardio"/>
 			<file name="下载订单BOM.aardio" path="forms\SAP\下载订单BOM.aardio" comment="forms\SAP\下载订单BOM.aardio"/>
-			<file name="喷粉_Query.aardio" path="forms\SAP\喷粉_Query.aardio" comment="forms\SAP\喷粉_Query.aardio"/>
-			<file name="处理默认值表格.aardio" path="forms\SAP\处理默认值表格.aardio" comment="forms\SAP\处理默认值表格.aardio"/>
-			<file name="批量下载工厂生成的订单.aardio" path="forms\SAP\批量下载工厂生成的订单.aardio" comment="forms\SAP\批量下载工厂生成的订单.aardio"/>
-			<file name="获取成品分类对应表.aardio" path="forms\SAP\获取成品分类对应表.aardio" comment="forms\SAP\获取成品分类对应表.aardio"/>
+		</folder>
+		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="false">
+			<file name="loader.aardio" path="forms\side_loader\loader.aardio" comment="forms\side_loader\loader.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
-			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\Teamcenter\add_QHC_Drawing_Release_List.aardio" comment="forms\Teamcenter\add_QHC_Drawing_Release_List.aardio"/>
 			<file name="更新插件.aardio" path="forms\Teamcenter\更新插件.aardio" comment="forms\Teamcenter\更新插件.aardio"/>
 		</folder>
 		<folder name="TEST" path="forms\TEST" comment="forms\TEST" local="false" embed="false" ignored="true">
+			<file name="add_H_by_column.aardio" path="forms\TEST\add_H_by_column.aardio" comment="forms\TEST\add_H_by_column.aardio"/>
 			<file name="BOM_FILL_FROM_BASE.aardio" path="forms\TEST\BOM_FILL_FROM_BASE.aardio" comment="forms\TEST\BOM_FILL_FROM_BASE.aardio"/>
 			<file name="BOM_OD_LIB_COLOR.aardio" path="forms\TEST\BOM_OD_LIB_COLOR.aardio" comment="forms\TEST\BOM_OD_LIB_COLOR.aardio"/>
 			<file name="BOM_OD_默认值.aardio" path="forms\TEST\BOM_OD_默认值.aardio" comment="forms\TEST\BOM_OD_默认值.aardio"/>
 			<file name="BOM_Studio.aardio" path="forms\TEST\BOM_Studio.aardio" comment="forms\TEST\BOM_Studio.aardio"/>
+			<file name="CS12查BOM.aardio" path="forms\TEST\CS12查BOM.aardio" comment="forms\TEST\CS12查BOM.aardio"/>
 			<file name="download_tif_from_EuroSap.aardio" path="forms\TEST\download_tif_from_EuroSap.aardio" comment="forms\TEST\download_tif_from_EuroSap.aardio"/>
 			<file name="EXCEL_get_cost_sum_from_bom.aardio" path="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio" comment="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio"/>
 			<file name="excel_get_pdf_from_lib.aardio" path="forms\TEST\excel_get_pdf_from_lib.aardio" comment="forms\TEST\excel_get_pdf_from_lib.aardio"/>
@@ -120,7 +117,11 @@
 			<file name="shortcut.aardio" path="forms\TEST\shortcut.aardio" comment="forms\TEST\shortcut.aardio"/>
 			<file name="winform1.aardio" path="forms\TEST\winform1.aardio" comment="forms\TEST\winform1.aardio"/>
 			<file name="加减法.aardio" path="forms\TEST\加减法.aardio" comment="forms\TEST\加减法.aardio"/>
+			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\TEST\将选中区域提取为一维字符串数组.aardio" comment="forms\TEST\将选中区域提取为一维字符串数组.aardio"/>
+			<file name="提取原材料用量追加到物料后列.aardio" path="forms\TEST\提取原材料用量追加到物料后列.aardio" comment="forms\TEST\提取原材料用量追加到物料后列.aardio"/>
 			<file name="查找图号.aardio" path="forms\TEST\查找图号.aardio" comment="forms\TEST\查找图号.aardio"/>
+			<file name="默认值view.aardio" path="forms\TEST\默认值view.aardio" comment="forms\TEST\默认值view.aardio"/>
+			<file name="Excel_update_info.aardio" path="forms\TEST\Excel_update_info.aardio" comment="forms\TEST\Excel_update_info.aardio"/>
 		</folder>
 		<folder name="webview" path="forms\webview" comment="forms\webview" local="false" embed="false" ignored="true">
 			<file name="od_value_helper.html" path="forms\webview\od_value_helper.html" comment="forms\webview\od_value_helper.html"/>
@@ -133,7 +134,6 @@
 				<file name="index.aardio" path="forms\webview\api\index.aardio" comment="forms\webview\api\index.aardio"/>
 			</folder>
 		</folder>
-		<folder name="side_loader" path="forms\side_loader" embed="true" comment="目录" local="false" ignored="false"/>
 	</folder>
 	<folder name="res" path="res" comment="res" local="false" embed="false" ignored="true">
 		<file name="logo128.ico" path="res\logo128.ico" comment="res\logo128.ico"/>

@@ -26,7 +26,7 @@ _testFields = {"SAP语句", "更改标记"};
 _testColumn = {"L", "M"};
 _title = "默认值";
 import com.excel;
-var excel = com.excel(false);
+var excel = com.excel(true);
 
 import sqlite;
 var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
@@ -36,24 +36,31 @@ db.exec("CREATE TABLE "+ _title +"( " + string.join(_fieldsName,", ") + ");")
 
 /*获取当前excel数据getListFromXlsx{{*/
 var getListFromXlsx = function(_xlsx_path){
+	var wb = null;
+	try{
+			wb = excel.WorkBooks.Open(
+			_xlsx_path /* filename */,
+			false /* UpdateLinks */,
+			true /* ReadOnly */,
+			/* Format */,
+			/* Password */,
+			/* WriteResPassword */,
+			/* IgnoreReadOnlyRecommended */,
+			/* Origin */,
+			/* Delimiter */,
+			/* Editable */,
+			/* Notify */,
+			/* Converter */,
+			/* AddToMru */,
+			/* Local */,
+			/* CorruptLoad */
+		);
+	}
+	if !wb 
+		winform_get_default.edit3.print("无法打开文件: " + _xlsx_path, /*"完整路径："+fullpath*/)
+	if !wb
+		return ; 
 	excel.alerts = false;
-	var wb = excel.WorkBooks.Open(
-		_xlsx_path /* filename */,
-		false /* UpdateLinks */,
-		true /* ReadOnly */,
-		/* Format */,
-		/* Password */,
-		/* WriteResPassword */,
-		/* IgnoreReadOnlyRecommended */,
-		/* Origin */,
-		/* Delimiter */,
-		/* Editable */,
-		/* Notify */,
-		/* Converter */,
-		/* AddToMru */,
-		/* Local */,
-		/* CorruptLoad */
-	);
 	var sht = wb.Sheets.Item(1);
 	sht.AutoFilterMode = false;
 	if sht.ListObjects.Count
@@ -80,12 +87,19 @@ var getListFromXlsx = function(_xlsx_path){
 			for(i=1;#_fieldsName)
 				t[_fieldsName[i]] = tab[_fieldsName[i]][j][1]; //行数据即使只有一个单元格也是按行列保存的,所有要有[1]
 			for(i=1;#_testFields)
-				st[_testFields[i]] = testTab[_testFields[i]][j][1];	
-			if !t["产品编码"] or !t["分类"] continue; //跳过无值的行
+				st[_testFields[i]] = testTab[_testFields[i]][j][1];
+				
+
+			
+			if !t["产品编码"] or !t["分类"] continue; //跳过无值的行			
 			t["产品编码"] = string.trim(t["产品编码"]);
 			t["分类"] = string.trim(t["分类"]);	
-			t["特性"] = string.trim(t["特性"]);
-			t["特性值"] ?= tostring((math.modf(t["特性值"]))); //去除结尾的0
+			t["特性"] = string.trim(t["特性"]);			
+			if !#t["产品编码"] or !#t["分类"] continue; //跳过无值的行	
+			
+			if math.isFinite(t["特性值"])			
+				t["特性值"] ?= tostring((math.modf(t["特性值"]))); //去除结尾的0
+			
 			st["SAP语句"] ?= string.replace(st["SAP语句"]," ","");
 			st["SAP语句"] ?= string.upper(st["SAP语句"]);
 			var checkod = "$SET_DEFAULT($SELF," + t["特性"] + ",'" + t["特性值"] + "'),";

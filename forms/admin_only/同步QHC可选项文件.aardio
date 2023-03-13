@@ -1,5 +1,5 @@
 import console; 
-_qhc_path = "\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理"
+_qhc_path = "D:\users\CCL100100\Carrier Corporation\QHC开发部 - 3 SAP 数据整理"
 _local_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)"
 _skip_dir_name = "归档|存档|副本|旧版本|操作手册|毕延庆"
 import fsys;

@@ -1,12 +1,33 @@
 import console; 
 console.open();
 
-import com.excel;
-import etip;
 import tarray;
-console.log("正在打开Excel, 如果长时间无响应, 请在Excel中退出编辑模式")
-var excel = com.excel(false);
+import com;
+var w_index = 1
+var excel_app_tab={};
+
+com.enumRunning( 
+	function(displayName,object){
+			if com.GetTypeInfo(object) {
+				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+					if !table.indexOf(excel_app_tab, object.FullName||displayName) {						
+						if string.indexOf(io.splitpath(displayName).name, "调研表") {
+							console.log(w_index, io.splitpath(displayName).file);				
+							excel_app_tab[w_index] = object;
+							w_index++;
+						}
+					}
+				}
+			}
+	}
+)
+if !#excel_app_tab return; 
+var getExcel_index = console.getNumber( "请输入序号:" );
+var wb = excel_app_tab[getExcel_index];
+excel_app_tab = null;
+
 console.clearScreen();
+
 _od_list_sht = "_od_list_sht";
 
 console.log("打开数据库连接...")
@@ -34,7 +55,7 @@ var searchOption = function(str){
 	return filterDeleted(t);
 }
 
-var wb = excel.ActiveWorkbook;
+
 console.log("当前文档...", wb.name)
 /*设置可行项数据表{{*/
 var setdbsheet = function(wb){

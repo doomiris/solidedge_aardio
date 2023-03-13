@@ -103,7 +103,7 @@ for(i=1; #etab){
 		ePush({"SG","HALB","配置","08","总装"});
 		
 	elseif string.keywords('组件').findOne(str)	
-		ePush({"SA","HALB","非配置","08","系统、组件、部件类"});
+		ePush({"SA","HALB","非配置","08","总装"});
 		
 	elseif string.keywords('已喷').findOne(str)	
 		ePush({"SC","HALB","非配置","01","喷粉件"});

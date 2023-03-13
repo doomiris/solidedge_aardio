@@ -171,9 +171,9 @@ mainForm.popmenu2.add('检查专用号申请表', λ() loadcodex("\forms\Excel\c
 mainForm.popmenu2.add('智能填写专用号申请表', λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('专用号填入ItemMaster...', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
-mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
-mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Excel\Excel_update_info.aardio"));
-mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
+//mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
+//mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Excel\Excel_update_info.aardio"));
+//mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('检查新BOM申请表', λ() loadcodex("\forms\Excel\check_新BOM申请表.aardio"));
 mainForm.popmenu2.add('检查BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单.aardio"));
@@ -374,7 +374,7 @@ mainForm.tbutton7.oncommand = function(id,event){
 
 mainForm.tbutton8.oncommand = function(id,event){
 	var tlist = {
-		_path = "\\CCNSIF0G\SRDC\CCR\A05-Design\Structure Design\QHC\";
+		_path = "\\CCNSIA1O\srdc\CCR\A05-Design\Structure Design\QHC\";
 		[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
 		[2] = "工单更改申请.xlsx";		
 		[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
