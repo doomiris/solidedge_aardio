@@ -21,18 +21,22 @@ namespace getList{
 */
 	saveFolderDB = function(){
 		_searchLoc := {
-			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
-			"\\ccnsia1a\separts\Cabinet\QHC图纸库";
+			{"\\ccnsia1a\separts\Cabinet\PDF图纸库",	"*.*"};
+			{"\\ccnsia1a\separts\Cabinet\QHC图纸库",	"*.*"};
+			{"\\ccnsia1a\separts\Cabinet\Service_Counter",	"H*.dft"};
+			{"\\ccnsia1a\separts\Cabinet\Monaxis",	"H*.dft"};
+			{"\\ccnsia1a\separts\Cabinet\SPI_Inverter",	"H*.dft"};
+			{"\\ccnsia1a\separts\Cabinet\E6 SV\",	"H*.dft"};
 		};
 		import config;
 		import sqlite;
 		
 		var db = sqlite(config.dbServer.path + "drawing_lists.db");
 		_libName := "Lib";
-		var flist={
-			[1] = ..fsys.list(_searchLoc[1],,"*.*");
-			[2] = ..fsys.list(_searchLoc[2],,"*.*");
-		};
+		var flist={};
+		for (i=1; #_searchLoc)
+			..table.push(flist, ..fsys.list(_searchLoc[i][1],,_searchLoc[i][2]));
+
 		if (db.existsTable(_libName)) db.exec("DROP TABLE [" ++ _libName ++ "];");
 		db.exec("CREATE TABLE '" ++ _libName ++ "'('文件名' TEXT, '路径' TEXT);");
 

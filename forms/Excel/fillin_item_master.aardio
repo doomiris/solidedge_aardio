@@ -2,10 +2,10 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="专用号填入itemmaster";right=759;bottom=469)
 winform.add(
-button={cls="button";text="填入";left=552;top=368;right=752;bottom=408;z=1};
-combobox2={cls="combobox";left=136;top=40;right=728;bottom=64;edge=1;items={};mode="dropdownlist";z=3};
-edit={cls="edit";left=0;top=416;right=760;bottom=472;autohscroll=false;aw=1;db=1;dl=1;dr=1;edge=1;multiline=1;vscroll=1;z=4};
-listview={cls="listview";left=0;top=120;right=760;bottom=360;edge=1;fullRow=1;gridLines=1;msel=false;z=2}
+button={cls="button";text="填入";left=552;top=368;right=752;bottom=408;dr=1;dt=1;z=1};
+combobox2={cls="combobox";left=136;top=40;right=728;bottom=64;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
+edit={cls="edit";left=0;top=416;right=760;bottom=472;ah=1;autohscroll=false;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=4};
+listview={cls="listview";left=0;top=120;right=760;bottom=360;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;msel=false;z=2}
 )
 /*}}*/
 
@@ -95,7 +95,9 @@ winform.button.oncommand = function(id,event){
 		var otab = {};
 		for (i=1; #ot) {
 			var t = string.replace(ot[i][1], "-", '\t', 1);
-			table.push(otab, string.split(t, '\t', 2));
+			var tt = string.split(t, '\t', 2);
+			tt[1] = string.left(tt[1], 11)
+			table.push(otab, tt);
 		}
 				var tarTab = {};
 		for (i=1; #otab){

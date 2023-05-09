@@ -71,6 +71,19 @@ winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select�
 			if io.exist(fullName)
 				process.execute(fullName);
     	}
+    	case 0xFFFFFFFB/*_NM_RCLICK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return;
+    		var pcode = owner.getItemText(selectedRow, 1);
+			var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
+
+			var x,y = win.getMessagePos();
+			var menu = win.ui.popmenu(winform_drawing);
+			menu.add("打开详细信息...", λ() process.execute(fullName));
+			menu.add("下载BOM...", io.remove(fullName));
+			menu.popup(x,y,true);
+
+    	}
     }
 }
 

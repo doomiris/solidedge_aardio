@@ -21,13 +21,12 @@ for (i=1; #dlist){
 
 
 import fsys;
-var path = "C:\Users\ccl100100\Desktop\New folder (3)\MA";
-var list= fsys.list(path,,"*.docx");
+var path = "D:\users\CCL100100\bak\fan_rui_bu\render2";
+var list= fsys.list(path,,"*.png");
 
 for (i=1; #list){
 	var oName = list[i];
-	var uName = string.replace(oName, " D ", " M ");
-	uName = string.replace(uName, " SS", " SS A");
+	var uName = string.trimleft(oName, "Render_");
 	io.rename(io.joinpath(path,oName), io.joinpath(path,uName))
 }
 

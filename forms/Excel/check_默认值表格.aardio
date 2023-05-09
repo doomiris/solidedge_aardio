@@ -1,0 +1,78 @@
+import win.ui;
+/*DSG{{*/
+var winform_chkDefaultTab = win.form(text="aardio form";right=759;bottom=469)
+winform_chkDefaultTab.add(
+button={cls="button";text="Button";left=37;top=10;right=164;bottom=45;z=2};
+edit={cls="edit";left=1;top=61;right=760;bottom=470;edge=1;multiline=1;z=1}
+)
+/*}}*/
+
+_fieldsName = {"产品编码", "分类", "特性", "特性值"}; //, 
+_fieldsColumn = {"B", "C", "D", "F"}; //, 
+_testFields = {"SAP语句", "更改标记"};
+_testColumn = {"L", "M"};
+var log = function(...){
+	winform_chkDefaultTab.edit.print(...);
+}
+
+var 核查公式 = function(){
+	import com.excel;
+	var excel = com.excel( false );
+	var sht = excel.ActiveWorkbook.ActiveSheet;
+	
+	sht.AutoFilterMode = false;
+	var lObj = sht.ListObjects("表1");
+	
+	if sht.ListObjects.Count
+		if lObj.AutoFilter
+			lObj.AutoFilter.ShowAllData();
+	var rc = sht.usedRange.Rows.Count;
+	var tab ={};
+	for (i=1; #_fieldsName)
+		tab[_fieldsName[i]] = sht.UsedRange.Columns(_fieldsColumn[i]).value2;
+	var testTab = {};	
+	for (i=1; #_testFields)
+		testTab[_testFields[i]] = sht.UsedRange.Columns(_testColumn[i]).value2;
+			
+	
+	for (j=2; rc){
+		if tab[_fieldsName[1]][j] {			
+			var t={};
+			var st = {};
+			for(i=1;#_fieldsName)
+				t[_fieldsName[i]] = tab[_fieldsName[i]][j][1]; //行数据即使只有一个单元格也是按行列保存的,所有要有[1]
+			for(i=1;#_testFields)
+				st[_testFields[i]] = testTab[_testFields[i]][j][1];
+				
+			if !t["产品编码"] or !t["分类"] continue; //跳过无值的行			
+			t["产品编码"] = string.trim(t["产品编码"]);
+			t["分类"] = string.trim(t["分类"]);	
+			t["特性"] = string.trim(t["特性"]);			
+			if !#t["产品编码"] or !#t["分类"] continue; //跳过无值的行	
+			
+			if math.isFinite(t["特性值"])			
+				t["特性值"] ?= tostring((math.modf(t["特性值"]))); //去除结尾的0
+			
+			st["SAP语句"] ?= string.replace(st["SAP语句"]," ","");
+			st["SAP语句"] ?= string.upper(st["SAP语句"]);
+			var checkod = "$SET_DEFAULT($SELF," + t["特性"] + ",'" + t["特性值"] + "'),";
+			if st["SAP语句"] !== checkod
+				log("!!!语句不匹配:",checkod, st["SAP语句"]);
+/*
+			if st["更改标记"]
+				if string.indexOf(st["更改标记"],"删")
+					if !string.indexOf(st["更改标记"],"增")	//有些人先删又加烦死了
+						continue;
+*/
+		}
+	}
+	log("完成")
+}
+
+winform_chkDefaultTab.button.oncommand = function(id,event){
+	核查公式()
+}
+
+winform_chkDefaultTab.show();
+win.loopMessage();
+return winform_chkDefaultTab;

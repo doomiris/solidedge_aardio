@@ -21,6 +21,7 @@ var etab = osht.UsedRange.value2;
 var ts_count = #etab;
 //console.dump(etab);
 //console.pause(true);
+excel.Application.CutCopyMode = false;
 for(j = 10 /* J */; 17 /* Q */){
     if !#etab[2][j] continue;
 

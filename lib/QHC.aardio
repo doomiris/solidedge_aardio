@@ -48,6 +48,7 @@ class 下料尺寸{
 		this.powder = (m<0.001) ? 0.001 : ..math.round(m, precision);
 		this.powderItem =  rawTab["白色"] ;
 		/* 
+			钣金:
 			利用率93.31%标准计算，密度7.85，最终结果保留3位小数  2021.12.13 更新
 			原材料价格上涨 2021/12/30
 		 */

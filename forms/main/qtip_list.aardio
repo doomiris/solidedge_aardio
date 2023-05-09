@@ -7,6 +7,7 @@ import fsys;
 import fsys.file;
 import config;
 import process;
+//import godking.vlistEx;
 /*DSG{{*/
 var winform_qlist = win.form(text="aardio form";right=759;bottom=469)
 winform_qlist.add(
@@ -38,8 +39,9 @@ var downloadbom = function(){
             table.push(tab,  bg);
     }  
     if !#tab return ;
-	import SAP
-	SAP.downloadBOM(winform_qlist, tab);
+	import SAP.session
+	var session=SAP.session();
+	session.downloadBOM(winform_qlist, tab);
 }
 /*}}*/
 /*双击打开事件{{*/
@@ -240,8 +242,8 @@ subscribe("dok",function(...){
 		
 		for(i = excel.WorkBooks.Count; 1; -1) // 反向
 			if table.indexOf(ftab, excel.WorkBooks(i).Name) {
-				excel.WorkBooks(i).Activate();
 				try{
+					excel.WorkBooks(i).Activate();
 					excel.Run("initExportedBom"); //调用宏格式化样式
 				}
 		 		if #ftab>4 excel.WorkBooks(i).Close(true /* _save_changes */);

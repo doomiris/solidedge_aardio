@@ -129,9 +129,9 @@ var importFromQHC = function(winform_getlist, path){
 
 	var qWb = excel.WorkBooks.Open(path);
 	var qSht = qWb.Sheets(1);
-	qSht.Rows(1).Replace("物料状态","禁用");
-	qSht.Rows(1).Replace("大小/量纲","设计展平尺寸");
-	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸");
+	qSht.Rows(1).Replace("物料状态","禁用", 1 /* xlWhole */);
+	qSht.Rows(1).Replace("大小/量纲","设计展平尺寸", 1 /* xlWhole */);
+	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸", 1 /* xlWhole */);
 	var qTab = qSht.usedRange.Value2;
 	var rc = #qTab;
 	qWb.close(false);
@@ -140,7 +140,10 @@ var importFromQHC = function(winform_getlist, path){
 	excel.Quit();
 	
 	qTab.fields = table.shift(qTab); /*提取第一行作为列名*/
-		
+	if !tarray.findValue(qTab.fields, "禁用")
+		winform_getlist.log.print("[禁用]列不存在");
+	if !tarray.findValue(qTab.fields, "可配置")
+		winform_getlist.log.print("[可配置]列不存在");	
 	import config;
 	import sqlite;
 	var db = sqlite(winform_getlist.stepDBpath);
@@ -194,6 +197,7 @@ var mergeDb = function(winform_getlist){
 	import win;
 	import config;
 	import sqlite;
+	import console;
 /*
 import console
 console.open();
@@ -312,7 +316,7 @@ winform_getlist.button4.oncommand = function(id,event){
 getXlsxDbPath = function(){
 	import fsys;
 	if !io.exist(config.admin.lastWorkingFolder) return null; 
-	var list = fsys.list(config.admin.lastWorkingFolder,,"*所有物料*.xlsx");
+	var list = fsys.list(config.admin.lastWorkingFolder,,"SAP所有物料*.xlsx");
 	if #list 
 		return list[list[#list]]; 
 }

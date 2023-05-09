@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.307" ProductVersion="1.5.0.307" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.310" ProductVersion="1.5.0.310" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
@@ -26,6 +26,7 @@
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
+			<file name="check_默认值表格.aardio" path="forms\Excel\check_默认值表格.aardio" comment="forms\Excel\check_默认值表格.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
@@ -111,6 +112,7 @@
 			<file name="download_tif_from_EuroSap.aardio" path="forms\TEST\download_tif_from_EuroSap.aardio" comment="forms\TEST\download_tif_from_EuroSap.aardio"/>
 			<file name="EXCEL_get_cost_sum_from_bom.aardio" path="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio" comment="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio"/>
 			<file name="excel_get_pdf_from_lib.aardio" path="forms\TEST\excel_get_pdf_from_lib.aardio" comment="forms\TEST\excel_get_pdf_from_lib.aardio"/>
+			<file name="Excel_update_info.aardio" path="forms\TEST\Excel_update_info.aardio" comment="forms\TEST\Excel_update_info.aardio"/>
 			<file name="frmPage_XXX.aardio" path="forms\TEST\frmPage_XXX.aardio" comment="forms\TEST\frmPage_XXX.aardio"/>
 			<file name="odview.aardio" path="forms\TEST\odview.aardio" comment="forms\TEST\odview.aardio"/>
 			<file name="RENAME.aardio" path="forms\TEST\RENAME.aardio" comment="forms\TEST\RENAME.aardio"/>
@@ -120,8 +122,8 @@
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\TEST\将选中区域提取为一维字符串数组.aardio" comment="forms\TEST\将选中区域提取为一维字符串数组.aardio"/>
 			<file name="提取原材料用量追加到物料后列.aardio" path="forms\TEST\提取原材料用量追加到物料后列.aardio" comment="forms\TEST\提取原材料用量追加到物料后列.aardio"/>
 			<file name="查找图号.aardio" path="forms\TEST\查找图号.aardio" comment="forms\TEST\查找图号.aardio"/>
+			<file name="查找图号填入excel.aardio" path="forms\TEST\查找图号填入excel.aardio" comment="forms\TEST\查找图号填入excel.aardio"/>
 			<file name="默认值view.aardio" path="forms\TEST\默认值view.aardio" comment="forms\TEST\默认值view.aardio"/>
-			<file name="Excel_update_info.aardio" path="forms\TEST\Excel_update_info.aardio" comment="forms\TEST\Excel_update_info.aardio"/>
 		</folder>
 		<folder name="webview" path="forms\webview" comment="forms\webview" local="false" embed="false" ignored="true">
 			<file name="od_value_helper.html" path="forms\webview\od_value_helper.html" comment="forms\webview\od_value_helper.html"/>

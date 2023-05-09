@@ -142,8 +142,8 @@ findValue = function(arr, what){
 }
 indexContains = function(arr, what){
 	for (i=1; #arr)
-		if string.indexOf(arr[i],str)
-			return i; 
+			if ..string.indexOf(arr[i], what)
+				return i; 
 }
 cNum = function(str){
 	select type(str) {
