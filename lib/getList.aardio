@@ -1,32 +1,31 @@
 ﻿import fsys;
 import fsys.table;
-
+import string.keywords;
+//__skip_dir_name = "delete|obsolete|temp|ref"
 namespace getList{
-/*
-	saveFolderTable = function(){
-		_searchLoc = {
-			"\\ccnsia1a\separts\Cabinet\QHC图纸库2020";
-			"\\ccnsia1a\separts\Cabinet\PDF图纸库";
-			"\\ccnsia1a\separts\Cabinet\QHC图纸库";
-		};
-		var dlist = ..fsys.table("S:\temp\addon\qtip\drawing_lists.table");
-		dlist.load();
-		dlist.mixin(
-			a = ..fsys.list(_searchLoc[1],,"*.*");
-			b = ..fsys.list(_searchLoc[2],,"*.*");
-			c = ..fsys.list(_searchLoc[3],,"*.*")
+	deepSearchFile = function(path, filter = "H*.dft"){
+		var t = {};
+		..fsys.enum( path, filter,
+			function(dirname,filename,fullpath,findData){
+				if(filename){
+					..table.push(t,filename);
+					t[filename]=fullpath;
+				}
+			},
+			function(dirpath, dirname){ //忽略目录
+				if ..string.keywords("delete|obsolete|temp|ref").findOne(dirname) return false; 
+				else return true;
+			} 
 		);
-		dlist.save();
-	};
-*/
+		return t; 
+	}
 	saveFolderDB = function(){
+		import console
+		console.open()
 		_searchLoc := {
 			{"\\ccnsia1a\separts\Cabinet\PDF图纸库",	"*.*"};
 			{"\\ccnsia1a\separts\Cabinet\QHC图纸库",	"*.*"};
-			{"\\ccnsia1a\separts\Cabinet\Service_Counter",	"H*.dft"};
-			{"\\ccnsia1a\separts\Cabinet\Monaxis",	"H*.dft"};
-			{"\\ccnsia1a\separts\Cabinet\SPI_Inverter",	"H*.dft"};
-			{"\\ccnsia1a\separts\Cabinet\E6 SV\",	"H*.dft"};
+			{"\\ccnsia1a\separts\Cabinet",	"H*.dft"};
 		};
 		import config;
 		import sqlite;
@@ -35,7 +34,7 @@ namespace getList{
 		_libName := "Lib";
 		var flist={};
 		for (i=1; #_searchLoc)
-			..table.push(flist, ..fsys.list(_searchLoc[i][1],,_searchLoc[i][2]));
+			..table.push(flist, deepSearchFile(_searchLoc[i][1],_searchLoc[i][2]));
 
 		if (db.existsTable(_libName)) db.exec("DROP TABLE [" ++ _libName ++ "];");
 		db.exec("CREATE TABLE '" ++ _libName ++ "'('文件名' TEXT, '路径' TEXT);");
@@ -54,7 +53,9 @@ namespace getList{
 			db.commitTrans();
 		}	
 		db.close();
+		console.pause(true);
 	};
+
 	appendDrawingMapFromExcel = function(eFileLoc, shtName){
 		import com.excel;
 		import console;

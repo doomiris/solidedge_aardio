@@ -1,34 +1,46 @@
 import console; 
 console.open();
 import fsys;
+import string.keywords;
+_skip_dir_name = "归档|存档|副本|旧版本|操作手册|Archieve"
 
+var path = "S:\Cabinet\";
 /*
-var path = "L:\Monaxis"
-
-var dlist = fsys.list(path,,"*.DFT");
-
-for (i=1; #dlist){
-	if !string.startWith(dlist[i], "008") continue;
-	var oldName = io.joinpath(path, dlist[i]);
-	var newName = io.joinpath(path, "H" + dlist[i]);
-	if io.exist(newName)
-		io.remove(oldName);
-	else 
-		io.rename(oldName, newName);
-	console.log( newName )	
-}
-*/
-
-
-import fsys;
-var path = "D:\users\CCL100100\bak\fan_rui_bu\render2";
-var list= fsys.list(path,,"*.png");
+var list= fsys.list(path,,"008*.dft");
 
 for (i=1; #list){
 	var oName = list[i];
-	var uName = string.trimleft(oName, "Render_");
+	var uName = "H" ++ oName;
+	//console.log(uName)
 	io.rename(io.joinpath(path,oName), io.joinpath(path,uName))
 }
+*/
 
+var deepSearchFile = function(path, filter = "*.dft"){
+	
+	fsys.enum( path, filter,
+		function(dirname,filename,fullpath,findData){
+			if(filename){
+				var oName = filename;
+				var uName = "H" ++ oName;				
+				var uPath = io.splitpath(fullpath).dir ;
+				//console.log(io.joinpath(uPath,oName))
+				if io.exist(io.joinpath(uPath,uName))
+					var succ = io.rename(io.joinpath(uPath,oName), io.joinpath(uPath,"obsolete_" + uName));
+				else
+					var succ = io.rename(io.joinpath(uPath,oName), io.joinpath(uPath,uName));
+				if !succ
+					console.log(io.joinpath(uPath,oName),"失败")
+			}
+		},
+		function(dirpath,dirname){ //忽略目录
+			if string.keywords(_skip_dir_name).findOne(dirname) return false; 
+			else return true;
+		} 
+	); 
+	console.log("完成")
+}
+
+deepSearchFile(path, "008*.dft");
 
 console.pause(true);
