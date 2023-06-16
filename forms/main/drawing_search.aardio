@@ -13,6 +13,11 @@ import win.clip;
 import win.clip.file;
 import sqlite;
 import win.ui.accelerator;
+/*
+import console;
+console.open()
+*/
+
 /*sqliteDB{{*/
 	var flistDB = sqlite(config.dbServer.path + "\drawing_lists.db");	//打开数据库连接
 /*}}*/
@@ -29,7 +34,7 @@ var searchDocument = function (filenumber){
     winform_drawing.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 
-	var fileTab = table.create(,{fields={[1]="文件名";[2]="路径";[3]="日期";[4]="版本"}});
+	var fileTab = table.create(,{fields={[2]="文件名";[3]="路径";[1]="类型";[4]="版本"}});
 
 	var sql = "SELECT `文件名`, `路径` FROM `Lib` WHERE ??";
 	sql = sqlite.format(sql, {[1]={文件名 = "%" + searchFor + "%"}});
@@ -46,55 +51,81 @@ var searchDocument = function (filenumber){
 		}
 	}
 	if (#flist > 0) fileTab = table.concat(fileTab, flist);	
+	
+	for (i=1; #fileTab){
+		var item = fileTab[i];
+		var ext = string.right(item["文件名"], 3);
+		item["类型"] = string.upper(ext);
+		fileTab[i] = item;
+	}
+	table.unshift(fileTab.fields, "类型");
+	winform_drawing.listview2.header = fileTab.fields;
+	
+	
 	winform_drawing.listview2.clear(true);
 	winform_drawing.listview2.setTable(fileTab);
 
 //调整列宽		
-	winform_drawing.listview2.setColumn({cx=300;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
-	winform_drawing.listview2.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
-	winform_drawing.listview2.setColumn({cx=100;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
-	winform_drawing.listview2.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
+	winform_drawing.listview2.setColumn({cx=50;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+	winform_drawing.listview2.setColumn({cx=200;fmt=0x0/*_LVCFMT_LEFT*/},   2);
+	winform_drawing.listview2.setColumn({cx=300;fmt=0x0/*_LVCFMT_LEFT*/}, 3);
+	//winform_drawing.listview2.setColumn({cx=100 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
 	winform_drawing.listview2.adjust = function(cx,cy){
     	//winform_drawing.listview2.fillParent(1);
     	winform_drawing.listview2.fillParent(3);
-	} 	
+	} 
 }
 /*}}*/
-
+var refreshFiles = function(){
+	var t = winform_drawing.listview2.items;
+	var header = winform_drawing.listview2.header;
+	for (i=1; #t){
+		//console.log(io.joinpath(t[i][2/*路径*/],t[i][1/*文件名*/]))
+		if !io.exist(io.joinpath(t[i][table.indexOf(header,"路径")],t[i][table.indexOf(header,"文件名")]))
+			t[i] = null;
+	}
+	winform_drawing.listview2.items = t;
+}
 winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+    	    var header = owner.header;
     		var selectedRow = owner.getSelection();
     		if !selectedRow return;
-    		var pcode = owner.getItemText(selectedRow, 1);
-			var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
+    		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
+			var fullName = owner.getItemText(selectedRow, table.indexOf(header,"路径")) ++ pcode;
 			if io.exist(fullName)
 				process.execute(fullName);
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/ {
     		var selectedRow = owner.getSelection();
     		if !selectedRow return;
-    		var pcode = owner.getItemText(selectedRow, 1);
-			var fullName = owner.getItemText(selectedRow, 2) ++ pcode;
+    		var header = owner.header;
+    		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
+			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")), pcode);
 
 			var x,y = win.getMessagePos();
 			var menu = win.ui.popmenu(winform_drawing);
-			menu.add("打开详细信息...", λ() process.execute(fullName));
-			menu.add("下载BOM...", io.remove(fullName));
+			menu.add("打开文件...", λ() process.execute(fullName));
+			menu.add("删除文件...", λ() io.remove(fullName));
+			menu.add("刷新", λ() refreshFiles());
+			;
 			menu.popup(x,y,true);
 
     	}
     }
 }
 
+
 winform_drawing.listview2.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam ;
+    var header = owner.header;
     if( ( vk == 'C'# ) && ctrl  ){
 		var tab = table.array();
-		for (i=1; owner.count; 1){
+		for (i=1; owner.count){
 			if (table.find(owner.selected,i)){
-				table.push(tab, owner.getItemText(i, 2) ++ owner.getItemText(i, 1));
+				table.push(tab, owner.getItemText(i, table.indexOf(header,"路径")) ++ owner.getItemText(i, table.indexOf(header,"文件名")));
 			}
 		}     
 		if io.exist(tab[[1]])
@@ -107,8 +138,10 @@ subscribe("qtip_search_4", function(...){
 	var pcode = ...
 	if pcode
 		searchDocument(pcode);
+	refreshFiles();
 });
 
 winform_drawing.show();
+
 win.loopMessage();
 return winform_drawing;

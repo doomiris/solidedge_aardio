@@ -129,14 +129,17 @@ mapAsItem= function(tab, keyCol, vCol){
 		t[tab[i][keyCol]]=tab[i][vCol];
 	return t; 
 }
-findValue = function(arr, what){
+findValue = function(arr, what){ //一维数组不可用
 	for rowIndex, row in arr{
 		for colIndex, cellValue in row {
-			if ..string.indexOf(cellValue, what) return {
-				row = rowIndex;
-				col = colIndex;
-				value = cellValue;
-			}; 
+			if ..string.indexOf(cellValue, what)
+				return {
+					row = rowIndex;
+					col = colIndex;
+					value = cellValue;
+				} 
+			else
+				return null; 
 		}
 	}
 }

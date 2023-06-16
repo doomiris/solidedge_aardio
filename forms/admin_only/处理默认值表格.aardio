@@ -5,7 +5,7 @@ var winform_get_default = win.form(text="获取默认值";right=743;bottom=527)
 winform_get_default.add(
 button2={cls="button";text="开始导入CCR...";left=40;top=56;right=248;bottom=104;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="SAP数据整理 - 开利研发部";z=2};
 button5={cls="button";text="开始导入QHC...";left=336;top=56;right=640;bottom=104;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="SAP数据整理 - QHC开发部(只读,仅用于参考)";z=3};
-edit3={cls="edit";left=0;top=136;right=744;bottom=504;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=1}
+edit3={cls="edit";left=0;top=136;right=744;bottom=504;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=1}
 )
 /*}}*/
 

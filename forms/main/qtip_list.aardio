@@ -110,7 +110,8 @@ winform_qlist.listview.translateAccelerator = function( msg ){
 /*}}*/
 /*调整列宽{{*/
 var formatListView = function(sapTab){
-	winform_qlist.listview.clear(true)
+	winform_qlist.listview.clear(true);
+	winform_qlist.listview.enableDoubleBuffering();
 	if !sapTab.fields
 		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
 	winform_qlist.listview.setTable( sapTab );

@@ -15,6 +15,7 @@ var http = web.rest.jsonClient();
 //参数请改成您的 API key（或者获取 API key 的网址也可以）。
 import config;
 http.setAuthToken(string.load(io.joinpath(config.dbServer.path,"chat_gpt_API_KEY.txt")));
+
 var ai = http.api("https://api.openai.com/v1/");
     
 var conversation = {};

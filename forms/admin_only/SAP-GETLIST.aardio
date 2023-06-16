@@ -65,6 +65,7 @@ var getFromSAP = function(winform_getlist){
 /*deal处理数据{{*/
 var dealWithXlsx = function(winform_getlist){
 	winform_getlist.log.print("开始处理数据");
+	sleep(3000) //等待workbook打开
 	//_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.xlsx";
 	import com.excel;
 	var excel = com.excel(false);
@@ -140,10 +141,12 @@ var importFromQHC = function(winform_getlist, path){
 	excel.Quit();
 	
 	qTab.fields = table.shift(qTab); /*提取第一行作为列名*/
-	if !tarray.findValue(qTab.fields, "禁用")
+
+	if !table.find(qTab.fields, "禁用")
 		winform_getlist.log.print("[禁用]列不存在");
-	if !tarray.findValue(qTab.fields, "可配置")
+	if !table.find(qTab.fields, "物料是可配置的")
 		winform_getlist.log.print("[可配置]列不存在");	
+
 	import config;
 	import sqlite;
 	var db = sqlite(winform_getlist.stepDBpath);
@@ -197,7 +200,6 @@ var mergeDb = function(winform_getlist){
 	import win;
 	import config;
 	import sqlite;
-	import console;
 /*
 import console
 console.open();
