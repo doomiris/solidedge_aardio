@@ -117,27 +117,20 @@ winform_admin.button2.oncommand = function(id,event){
 }
 
 winform_admin.button11.oncommand = function(id,event){
-    _dw_path = "\\ccnqia05\开发部共享文件-\01.2022Y图纸&技术通知及BOM\2022年开发部图纸下发台账-以此为准.xlsx";
-	if !io.exist(_dw_path) return error("找不到开发部共享文件: " ++ _dw_path)
 	thread.invoke( 
 		function(){
-			loadcodex("\forms\Excel\refresh_QHC_Drawing_Release_List.aardio", _dw_path );
+			loadcodex("\forms\Excel\refresh_QHC_Drawing_Release_List.aardio");
 		}
 	)
 	
 }
 
 winform_admin.button12.oncommand = function(id,event){
-	if io.exist("\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表2022.06.01.xlsx")
-		if io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx")
-			thread.invoke( 
-				function(){
-					loadcodex("\forms\SAP\BOM_OD_LIB.aardio");
-				}
-			)
-		else win.msgbox("找不到研发表");
-	else win.msgbox("找不到QHC开发表");
-			
+	thread.invoke( 
+		function(){
+			loadcodex("\forms\admin_only\BOM_OD_LIB.aardio");
+		}
+	)			
 }
 
 winform_admin.button13.oncommand = function(id,event){

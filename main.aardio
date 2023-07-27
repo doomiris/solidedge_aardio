@@ -4,7 +4,6 @@ import win.ui.simpleWindow;
 import win.ui.atom;
 import win.ui.tabs;
 import win.ui.tooltip; 
-import win.inputBox;
 import win.util.tray;
 import key;
 import sqlite;
@@ -12,6 +11,7 @@ import process;
 //import console;
 //user lib
 import config;
+import domisoft;
 import solidedge.application;
 import solidedge.DraftDocument;
 /*DSG{{*/
@@ -254,12 +254,7 @@ mainForm.tbutton2.oncommand = function(id,event){
     var SelSet = seApp.ActiveDocument.SelectSet;
     if SelSet.Count !== 1 return; 
     if (SelSet(1).Type !== 488188096 /* igDimension */) return;
-
-    var inputBox=win.inputBox();
-    inputBox.info.text="input text to replace dimension";
-    inputBox.text="Edit Dim";
-    inputBox.input.text="L";
-    var s=inputBox.doModal();
+    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L", mainForm);
     if !s return; 
     if ..string.len(..string.trim(s)) == 0 return ; 
     SelSet(1).OverrideString = s;
@@ -278,11 +273,7 @@ mainForm.tbutton3.oncommand = function(id,event){
 	var BBS = seSht.Balloons;
 	var ee = seDFT.getTopRecordMark(seSht);
 	ee = ee ? string.pack( ee[1] + 1 ) : "a";
-	var inputBox=win.inputBox();
-	inputBox.info.text="What symbol change bolloons to ?";
-	inputBox.text = "Edit Balloon";
-	inputBox.input.text = ee ;
-	var e = inputBox.doModal();
+	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee, mainForm);
 	if !e return ; 
 	if (..string.len(..string.trim(e)) == 0) return ; 
 	for (i = 1 ; BBS.Count) {	
@@ -314,12 +305,7 @@ mainForm.tbutton4.oncommand = function(id,event){
         		ee = BBS.Item(i).BalloonText;
         		break;
 	}
-	
-	var inputBox=win.inputBox();
-	inputBox.info.text = "What symbol bolloons you want to delete ?";
-	inputBox.text = "delete Balloon";
-	inputBox.input.text = ee ;
-	var e = inputBox.doModal();
+	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee, mainForm);
 	if !e return ; 
 	if (..string.len(..string.trim(e)) == 0) return ; 
 	
@@ -513,19 +499,5 @@ subscribe("checkupdate",function(...){
 	fsys.update.simpleMain.checkUpdate(true);
 } )
 */
-
-
-/*处理异常的excel进程{{*/
-thread.invoke( 
-	function(){//与SE无关
-		import com.excel;
-		var excel = com.excel(false);
-		if excel.Visible == false and excel.WorkBooks.Count==0 {
-			import process.popen;
-			var prcs = process.popen.cmd(`taskkill /im EXCEL.EXE /f`)
-		}
-	}
-)
-/*}}*/
 win.loopMessage();
 return mainForm;

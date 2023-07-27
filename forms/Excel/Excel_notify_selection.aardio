@@ -7,8 +7,8 @@ import win.ui;
 
 import win.ui.grid;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=743;bottom=271;bgcolor=15780518;border="none";exmode="toolwindow";parent=...;topmost=1)
-winform.add(
+var notify_excel_form = win.form(text="aardio form";right=743;bottom=271;bgcolor=15780518;border="none";exmode="toolwindow";parent=...;topmost=1)
+notify_excel_form.add(
 button={cls="button";text="X";left=720;top=0;right=744;bottom=24;default=1;flat=1;z=1};
 edit={cls="edit";left=56;top=72;right=112;bottom=120;edge=1;hide=1;multiline=1;z=4};
 listview={cls="listview";left=0;top=24;right=744;bottom=272;bgcolor=12639424;border=1;z=3};
@@ -54,7 +54,7 @@ var searchSapDB = function(inarr){
 }
 /*}}*/
 
-var grid = win.ui.grid(winform.listview);//创建数据视图
+var grid = win.ui.grid(notify_excel_form.listview);//创建数据视图
 
 import win.clip;
 
@@ -67,8 +67,8 @@ if (excel and excel.ActiveWindow.WindowState !== -4140) {
     var st = sht.Application.Selection.value2;
     
     sht.Application.Selection.Copy();    
-    winform.edit.paste();    
-    var txt = winform.edit.text;
+    notify_excel_form.edit.paste();    
+    var txt = notify_excel_form.edit.text;
     txt = string.replace(txt, '\r', '\t');
     str = string.split(txt, '\t');
     
@@ -87,36 +87,36 @@ if #str {
   var tab = searchSapDB(str);
   grid.setTable(tab);
 //调整列宽		
-	winform.listview.setColumn({cx=85 ;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
-	winform.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
-	winform.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
-	winform.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
-	winform.listview.setColumn({cx=50 ;fmt=0x1/*_LVCFMT_RIGHT*/},  5);
-	winform.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 6);
+	notify_excel_form.listview.setColumn({cx=85 ;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+	notify_excel_form.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},   2);
+	notify_excel_form.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 3);
+	notify_excel_form.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
+	notify_excel_form.listview.setColumn({cx=50 ;fmt=0x1/*_LVCFMT_RIGHT*/},  5);
+	notify_excel_form.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/}, 6);
 /**
-	winform.listview.adjust = function(cx,cy){
-    	winform.listview.fillParent(1/*列序号*/);
+	notify_excel_form.listview.adjust = function(cx,cy){
+    	notify_excel_form.listview.fillParent(1/*列序号*/);
 	} 
-	winform.listview.adjust = function(cx,cy){
-    	winform.listview.fillParent(2/*列序号*/);
+	notify_excel_form.listview.adjust = function(cx,cy){
+    	notify_excel_form.listview.fillParent(2/*列序号*/);
 	}
 **/
 }
 
 import win.util.popup
 //使窗口在屏幕右下角弹出
-pop = win.util.popup(winform, 30*1000, true) 
+pop = win.util.popup(notify_excel_form, 30*1000, true) 
 
 pop.countdown = function(remaintime){
-	//winform.static.text = "内容已放入剪切板, " + remaintime  + "秒后关闭."
-	if (remaintime == 0) winform.close()
+	//notify_excel_form.static.text = "内容已放入剪切板, " + remaintime  + "秒后关闭."
+	if (remaintime == 0) notify_excel_form.close()
 }
 
-winform.button.oncommand = function(id,event){
-	winform.close();
+notify_excel_form.button.oncommand = function(id,event){
+	notify_excel_form.close();
 }
 
-winform.show(true) 
+notify_excel_form.show(true) 
 
 win.loopMessage();
-return winform;
+return notify_excel_form;

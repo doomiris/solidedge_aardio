@@ -104,11 +104,9 @@ var sapErr = {
 	[6]=function(i){
 		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
 		var n = tarray.cNum(etab[i][["新子项数量"]]);
-		var x, y
-		if n
-			x, y = math.modf(n);
-		if y
-			return string.len(tostring(y))>(3+2/* modf 小数部分是真的是小数 0.开头*/); 
+		var a = string.split(tostring(n),".");
+		if #a>1
+			return #a[2]>3; 
 	};
 	[7]=function(i){
 		if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;

@@ -1,20 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.312" ProductVersion="1.5.0.312" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.319" ProductVersion="1.5.0.319" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
-		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
+		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
 			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\admin_only\add_QHC_Drawing_Release_List.aardio" comment="forms\admin_only\add_QHC_Drawing_Release_List.aardio"/>
 			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
 			<file name="BOM_OD_LIB.aardio" path="forms\admin_only\BOM_OD_LIB.aardio" comment="forms\admin_only\BOM_OD_LIB.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
 			<file name="SAP-GETLIST.aardio" path="forms\admin_only\SAP-GETLIST.aardio" comment="forms\admin_only\SAP-GETLIST.aardio"/>
+			<file name="同步QHC可选项文件.aardio" path="forms\admin_only\同步QHC可选项文件.aardio" comment="forms\admin_only\同步QHC可选项文件.aardio"/>
+			<file name="处理产品技术数据表.aardio" path="forms\admin_only\处理产品技术数据表.aardio" comment="forms\admin_only\处理产品技术数据表.aardio"/>
 			<file name="处理默认值表格.aardio" path="forms\admin_only\处理默认值表格.aardio" comment="forms\admin_only\处理默认值表格.aardio"/>
 			<file name="批量下载工厂生成的订单.aardio" path="forms\admin_only\批量下载工厂生成的订单.aardio" comment="forms\admin_only\批量下载工厂生成的订单.aardio"/>
+			<file name="收集BOM.aardio" path="forms\admin_only\收集BOM.aardio" comment="forms\admin_only\收集BOM.aardio"/>
 			<file name="获取喷粉分类组成.aardio" path="forms\admin_only\获取喷粉分类组成.aardio" comment="forms\admin_only\获取喷粉分类组成.aardio"/>
 			<file name="获取喷粉调研表.aardio" path="forms\admin_only\获取喷粉调研表.aardio" comment="forms\admin_only\获取喷粉调研表.aardio"/>
 			<file name="获取成品分类对应表.aardio" path="forms\admin_only\获取成品分类对应表.aardio" comment="forms\admin_only\获取成品分类对应表.aardio"/>
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
-			<file name="同步QHC可选项文件.aardio" path="forms\admin_only\同步QHC可选项文件.aardio" comment="forms\admin_only\同步QHC可选项文件.aardio"/>
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
@@ -28,7 +30,7 @@
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
 			<file name="check_默认值表格.aardio" path="forms\Excel\check_默认值表格.aardio" comment="forms\Excel\check_默认值表格.aardio"/>
 		</folder>
-		<folder name="login" path="forms\login" comment="forms\login"/>
+		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
 			<file name="check_QHC_Release.aardio" path="forms\main\check_QHC_Release.aardio" comment="forms\main\check_QHC_Release.aardio"/>
 			<file name="drawing_search.aardio" path="forms\main\drawing_search.aardio" comment="forms\main\drawing_search.aardio"/>

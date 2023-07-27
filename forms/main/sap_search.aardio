@@ -41,11 +41,43 @@ var showDetail = function(pnumber){
 	
 	winform_search.listview.setColumn({cx=100 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
 }
+var showProductDetail = function(pnumber){
+	if !pnumber return ; 
+	var t = QHC.getProductInfo(pnumber);
+	if !t return; 
+	var fields = QHC.getProductDef();
+
+	var tab = {};	//可用列
+	var v = tarray.detachBy(t, fields);
+
+	table.push(tab, fields);
+	table.push(tab, v); //对应列号初始化
+
+
+/*
+	tab = tarray.replaceValue(tab, "MTyp", "物料类型");
+	tab = tarray.replaceValue(tab, "BUn", "单位");
+	tab = tarray.replaceValue(tab, "PGr", "采购组");
+*/
+	
+	tab = tarray.transpose(tab);
+
+	var fields = { [1] = "字段"; [2] = "值"};
+	tab = tarray.mapfields(tab, fields);
+	
+	grid.setTable(tab);
+	
+	winform_search.listview.setColumn({cx=150 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
+	winform_search.listview.fillParent(2);
+}
 
 subscribe("qtip_search_3",function(...){
 	var pcode = ...;
-	if pcode
+	if !pcode return ; 
+	if string.startWith(pcode, "H", true)
 		showDetail(pcode);
+	if string.startWith(pcode, "BG", true)
+		showProductDetail(pcode);
 } )
 win.loopMessage();
 return winform_search; 

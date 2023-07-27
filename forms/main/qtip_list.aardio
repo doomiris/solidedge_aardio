@@ -44,6 +44,7 @@ var downloadbom = function(){
 	session.downloadBOM(winform_qlist, tab);
 }
 /*}}*/
+
 /*双击打开事件{{*/
 winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
     select(code) {
@@ -63,7 +64,7 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 			//var hItem,tvht = winform_qlist.listview.hitTest(x,y,true);
 			var menu = win.ui.popmenu(winform_qlist);			
 			if string.startWith(pcode,"BG",true){
-				menu.add("下载BOM...", downloadbom);
+				menu.add("下载BOM...", downloadbom);				
 				var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
 				if #flist {
 					var fn = flist[flist[#flist]];
@@ -78,11 +79,40 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 					
 				}
 			}
+
 			menu.add("复制[专用号]", λ() win.clip.write(pcode));
 			menu.add("复制[专用号][物料描述]", λ() win.clip.write(pcode + '\t' + desp));
-			menu.add("打开详细信息...", λ() qtbs.open(3,pcode));
+			menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
 			menu.add("查找图纸...", λ() qtbs.open(4,pcode));
 			menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));
+    		var fav = config.qtip.fav;
+			var favTab = {
+	    			[1] = "添加进收藏"; 
+	    			[2] = { 
+	    					[1] = {
+	    						text = "+ 新的收藏...";
+	    						proc = function(id){
+	    						    table.push(fav,{
+	    						    	"title":"新收藏";
+	    						    	"list":{pcode}
+	    						    });
+	    						};
+	        				};
+	        				[2] = {/* ---- */};
+	    			}
+	    	}
+
+			for (i=1; #fav)	{
+				if !fav[i] continue;
+				table.push(favTab[2], {	
+						text = fav[i]["title"];
+						proc = function(id){
+							if !table.find(fav[i]["list"],pcode)
+    								table.push(fav[i]["list"],pcode);
+   						}
+    			})
+    		}
+			menu.addTable({favTab});
 			menu.popup(x,y,true);
     	}
     }
@@ -97,12 +127,10 @@ winform_qlist.listview.translateAccelerator = function( msg ){
 //    var selectedRow = owner.getSelection();
     var vk = msg.wParam;    
     if( ( vk == 'C'# ) && ctrl ){
-        if (owner.tag==1) {
-            var tab=table.array();
-            for (i=1; #owner.selected)
-                table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
-			win.clip.write(string.join(tab,'\n'));
-		}
+        var tab=table.array();
+        for (i=1; #owner.selected)
+            table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
+		win.clip.write(string.join(tab,'\n'));
         return true;
     }
 }
@@ -138,7 +166,7 @@ var getSelectedText = function(listCtrl){
 var searchSapDB = function(userinput){
 	var sapTab;
     if !#userinput return ; 
-    winform_qlist.listview.tag=1;
+
     winform_qlist.listview.clear(true);
     winform_qlist.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
     userinput = string.crlf(userinput,'\r\n' /* 默认值 */);

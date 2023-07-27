@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="下载订单BOM";right=759;bottom=469)
-winform.add(
+var order_down_form = win.form(text="下载订单BOM";right=759;bottom=469)
+order_down_form.add(
 button={cls="button";text='\uF110 下载';left=592;top=72;right=752;bottom=112;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3};
 button2={cls="button";text="刷新";left=8;top=432;right=48;bottom=464;z=9};
 button3={cls="button";text="删除选定文件";left=591;top=435;right=746;bottom=463;z=10};
@@ -21,11 +21,11 @@ import console;
 console.open();
 */
 import config;
-winform.bindConfig( config.orderBom, {	//绑定控件值
+order_down_form.bindConfig( config.orderBom, {	//绑定控件值
     edit = "text";
 } );
 
-var dcb = function(winform){
+var dcb = function(order_down_form){
 	import config;
     import web.script;
     var vm = web.script("VBScript");
@@ -87,11 +87,11 @@ var dcb = function(winform){
 		session.findById("wnd[0]").sendVKey 0
 	 */ 
 
-    vm.script.order = winform.edit.text;
+    vm.script.order = order_down_form.edit.text;
 	vm.script.lib_path = config.__sapDownload;
     
-    var itemStart =  tonumber(winform.edit2.text) ;
-    var itemEnd = winform.edit3.text ? tonumber(winform.edit3.text) : itemStart;
+    var itemStart =  tonumber(order_down_form.edit2.text) ;
+    var itemEnd = order_down_form.edit3.text ? tonumber(order_down_form.edit3.text) : itemStart;
     itemEnd = (itemEnd<itemStart) ? itemStart : itemEnd;
     //console.log(itemStart, itemEnd)
     
@@ -135,15 +135,15 @@ var dcb = function(winform){
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press	
 	 	*/ 
-	winform.button.disabledText = null;
-winform.getFolderList();
+	order_down_form.button.disabledText = null;
+order_down_form.getFolderList();
 	
 }
-winform.button.oncommand = function(id,event){
-	winform.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷",text = "下载中..."};
-	thread.invoke(dcb, winform);	
+order_down_form.button.oncommand = function(id,event){
+	order_down_form.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷",text = "下载中..."};
+	thread.invoke(dcb, order_down_form);	
 }
-winform.getFolderList = function(){
+order_down_form.getFolderList = function(){
 //	thread.invoke( 
 //		function(){
 			//import console
@@ -165,16 +165,16 @@ winform.getFolderList = function(){
 					"缓存文件" = list[i];
 				});
 			}
-			winform.listview.setTable(t);
-			winform.listview.setColumn({cx=80; fmt=0x2/*_LVCFMT_CENTER*/}, 1);
-			winform.listview.setColumn({cx=40; fmt=0x2/*_LVCFMT_CENTER*/}, 2);
-			winform.listview.setColumn({cx=100; fmt=0x2/*_LVCFMT_CENTER*/}, 3);
-			winform.listview.setColumn({cx=200; fmt=0x0/*_LVCFMT_LEFT*/}, 4);
-			//winform.listview.setColumn({cx=350; fmt=0x0/*_LVCFMT_LEFT*/}, 5);
+			order_down_form.listview.setTable(t);
+			order_down_form.listview.setColumn({cx=80; fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+			order_down_form.listview.setColumn({cx=40; fmt=0x2/*_LVCFMT_CENTER*/}, 2);
+			order_down_form.listview.setColumn({cx=100; fmt=0x2/*_LVCFMT_CENTER*/}, 3);
+			order_down_form.listview.setColumn({cx=200; fmt=0x0/*_LVCFMT_LEFT*/}, 4);
+			//order_down_form.listview.setColumn({cx=350; fmt=0x0/*_LVCFMT_LEFT*/}, 5);
 
-			winform.listview.fillParent(4);
+			order_down_form.listview.fillParent(4);
 
-//		}, winform
+//		}, order_down_form
 //	)
 }
 
@@ -183,12 +183,12 @@ import win.imageList;
 var iml = win.imageList(16, 15);
 iml.add('GIF\56\57a \0\15\0\x80\0\0\x80\x80\x80\xff\0\xff\33\xf9\4\0\0\0\0\0\44\0\0\0\0 \0\15\0\0\2\31\x8c
 \x8f\xa9\xcb\xed\15\xa3\x9c\xb4N\xf0\x80\xde\56k\xbfA\\\xd7\x84 \x97Y\xea\xca\xb6\xee\11\xc7F\1\0;', 0xff00ff);
-winform.listview.setColumnImageList(iml);
+order_down_form.listview.setColumnImageList(iml);
 */
 
 var reloadItemData = function(){
-	var sortColumn = winform.listview.itemSortColumn;
-	var itemData = winform.listview.items
+	var sortColumn = order_down_form.listview.itemSortColumn;
+	var itemData = order_down_form.listview.items
 	
 	if(sortColumn<0){
 		var i = math.abs(sortColumn)
@@ -204,12 +204,12 @@ var reloadItemData = function(){
 			table.sort(itemData,lambda(a) owner[sortColumn]<a[sortColumn])	
 	} 
 	
-	winform.listview.items = itemData;
+	order_down_form.listview.items = itemData;
 
-	winform.listview.clearColumnImage()
-	winform.listview.setColumnImage(math.abs(sortColumn), sortColumn<0 ? 1 : 0); 
+	order_down_form.listview.clearColumnImage()
+	order_down_form.listview.setColumnImage(math.abs(sortColumn), sortColumn<0 ? 1 : 0); 
 }
-winform.listview.onnotify = function(id,code,ptr){
+order_down_form.listview.onnotify = function(id,code,ptr){
 
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
@@ -219,12 +219,12 @@ winform.listview.onnotify = function(id,code,ptr){
 			process.execute(config.__sapDownload + pcode)
     	}
 		case 0xFFFFFF94/*_LVN_COLUMNCLICK*/ {
-			var notifyMsg = winform.listview.getNotifyMessage(code,ptr)
-			if(winform.listview.itemSortColumn = notifyMsg.iSubItem){
-				winform.listview.itemSortColumn = -notifyMsg.iSubItem; 
+			var notifyMsg = order_down_form.listview.getNotifyMessage(code,ptr)
+			if(order_down_form.listview.itemSortColumn = notifyMsg.iSubItem){
+				order_down_form.listview.itemSortColumn = -notifyMsg.iSubItem; 
 			}
 			else {
-				winform.listview.itemSortColumn = notifyMsg.iSubItem; 
+				order_down_form.listview.itemSortColumn = notifyMsg.iSubItem; 
 			}
 			
 			reloadItemData();
@@ -232,25 +232,25 @@ winform.listview.onnotify = function(id,code,ptr){
     }
 }
 
-winform.button2.oncommand = function(id,event){
+order_down_form.button2.oncommand = function(id,event){
 	//if event == 0/*_BN_CLICKED*/
-		winform.getFolderList();
+		order_down_form.getFolderList();
 }
 
-winform.button3.oncommand = function(id,event){
-	var flist = winform.listview.selected;
+order_down_form.button3.oncommand = function(id,event){
+	var flist = order_down_form.listview.selected;
 	if !#flist return ; 
 	for k, v in flist {
 		io.remove(
 			io.joinpath(
 				config.__sapDownload,
-				winform.listview.getItemText(v, 5)
+				order_down_form.listview.getItemText(v, 5)
 			)
 		);
 	}
-	winform.getFolderList();
+	order_down_form.getFolderList();
 }
 
-winform.show();
-winform.getFolderList()
+order_down_form.show();
+order_down_form.getFolderList()
 win.loopMessage();

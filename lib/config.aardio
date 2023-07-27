@@ -26,6 +26,8 @@ if !config.setbm.workingDir
 	config.setbm.workingDir = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces\");
 if !config.revmgr.desp
 	config.revmgr.desp = {};
+if !config.qtip.fav
+	config.qtip.fav = {};
 if !config.serverIndex.combobox
 	config.serverIndex.combobox = 1;
 if config.settings.closeToTray === null

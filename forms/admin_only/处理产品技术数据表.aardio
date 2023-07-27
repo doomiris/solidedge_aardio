@@ -1,0 +1,44 @@
+import console; 
+console.open();
+
+import com.excel;
+var excel = com.excel(false);
+var sht = excel.ActiveWorkbook.ActiveSheet;
+
+import config;
+import sqlite;
+var db = sqlite(io.joinpath(config.dbServer.path,"qhc_product_info_lib.db"));
+
+
+if sht.name !== "1.0 汇总" error("不是技术表")
+
+console.log(sht.name,"打开成功")
+
+var etab = {};
+
+var etab = sht.range("B5:BC1188").value2;
+etab.fields = {"产品大类", "系列", "名称", "成品编码", "标准型号", "外形尺寸", "产品描述", "气候类型", "M包分类", "工作温度", "蒸发温度", "实验室制冷负荷", "额定电压", "额定频率", "防触电保护类型", "工作电流", "导电膜工作电流", "加热管功率", "风机输入功率", "照明功率", "防凝露电热功率", "玻璃导电膜功率", "玻璃导电膜电压", "电压调节方式", "压缩机品牌型号", "压缩机输入功率", "整机柜制冷剂类型", "制冷剂充注量", "整机柜耗电量", "净重", "展示面积", "有效容积", "能效等级", "包装尺寸长", "包装尺寸宽", "包装尺寸高", "包装体积", "风机数量", "叶片直径", "叶片角度", "丹佛斯膨胀阀类型R22", "丹佛斯膨胀阀阀芯R22", "丹佛斯膨胀阀类型R404A", "丹佛斯膨胀阀阀芯R404A", "丹佛斯膨胀阀类型R410A", "丹佛斯膨胀阀阀芯R410A", "开利膨胀阀类型R22", "开利膨胀阀阀芯R22", "开利膨胀阀类型R404A", "开利膨胀阀阀芯R404A", "接管尺寸直径液管", "接管尺寸直径气管", "备注", "分组"};
+
+console.log(#etab,"数据获取成功")
+
+//处理前3列合并数据问题和之后空值问题
+for (i=2; #etab) {
+	for (j=1; 3)
+		etab[i][j] := etab[i-1][j];
+	for (j=4; #etab.fields)
+		etab[i][j] := "";
+}
+var _sname = "base";
+if db.existsTable(_sname)
+	db.exec("drop table " ++ _sname);
+db.exec( "CREATE TABLE [" ++ _sname ++ "](" ++ string.join(etab.fields,", ") ++");");
+			
+var _foam = string.join(table.array(#etab.fields,"?"),",");;
+
+db.beginTrans();
+for (i=1; #etab){
+	var cmd = db.prepare("INSERT INTO [" ++ _sname ++ "] VALUES (" ++ _foam ++ ");");
+	cmd.bind.parameters(table.unpack(etab[i])).step();
+};
+db.commitTrans();
+console.pause(true);

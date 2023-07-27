@@ -3,7 +3,11 @@ import win.ui;
 import win.ui.tabs;
 import win.ui.menu;
 import win.ui.accelerator;
+import win.ui.tooltip; 
 import color;
+import config;
+import domisoft;
+
 /*
 import console;
 console.open();
@@ -12,7 +16,7 @@ console.open();
 qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 qtip_winform.add(
 bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
-bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088};dl=1;dt=1;z=6};
+bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088};dl=1;dt=1;notify=1;z=6};
 bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;notify=1;z=8};
 bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7};
 bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9};
@@ -117,15 +121,78 @@ qtip_winform.onClose = function(hwnd,message,wParam,lParam){
 /*}}*/
 /*弹出历史记录菜单{{*/
 qtip_winform.buttonD.oncommand = function(id,event){
-	var historyMenu = win.ui.popmenu(qtip_winform)
-	historyMenu.add("输入历史:");
+	var historyMenu = win.ui.popmenu(qtip_winform);	
+	var getSelectedList = function(){
+		var lv = qtbs.forms[2].listview;		
+		var lst = lv.selected;
+		var tab = {};
+		for (i=1; #lv.items)
+			if table.indexOf(lst,i) or !#lst
+				table.push(tab, lv.getItemText(i,1));
+		return tab; 
+	}
+	var addFav = function(){
+		var fav = config.qtip.fav;
+		var favName = domisoft.showInputBox("收藏", "请为要收藏的清单命名:","", qtip_winform)
+		if	!favName return ;
+		if #table.filter(fav, lambda(v,index) favName == v[["title"]]) 
+			if !win.msgboxTest("点击确认覆盖相同名称收藏","覆盖确认")
+				return ;
+		for (i=1; #fav)
+			if fav[i][["title"]]==favName
+				fav[i] = null;
+
+		table.push(fav, {["title"] = favName; ["list"] = getSelectedList()});
+		config.qitp.save();		
+	}
+	
+	var favTab = {
+    	[1] = "★ 收藏夹"; 
+    	[2] = { 
+    			[1] = {
+    				[1] = "+ 添加到收藏夹...";
+    				[2] = addFav;
+        		};
+        		[2] = {/* ---- */};
+    	}
+    }; 
+    
+    var fav = config.qtip.fav;
+	for (i=1; #fav)	{
+		if !fav[i] continue;
+		table.push(favTab[2], {	
+				text = fav[i]["title"];
+				proc = function(id){
+					var shift = ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
+					var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
+					
+					if !shift and !ctrl	//无按钮时打开清单
+    					qtbs.forms[2].publish("qtip_search_2", string.join(fav[i]["list"],";"));
+    				if shift and !ctrl	//按shift时询问删除
+    					if win.msgboxTest("确认删除此条收藏?","删除收藏")
+    						fav[i] = null;
+    				if !shift and ctrl //按ctrl时替换为当前清单
+    					if win.msgboxTest("替换为当前选择的清单?","确认替换")
+    						fav[i]["list"] = getSelectedList();
+    				if shift and ctrl	//同时按询问修改名称
+    					fav[i]["title"] = domisoft.showInputBox("修改名称", "请输入新名称",fav[i]["title"] , qtip_winform);
+	
+    			}
+    	})
+    }
+	historyMenu.addTable({favTab})
 	historyMenu.add();//分隔线
 	for (i=1; #config.qTipLog){
+		if !config.qTipLog[i] continue;
     	historyMenu.add(
     		text = config.qTipLog[i];
     		proc = function(id){
+    		    var shift = ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
+				if !shift {
     			qtip_winform.editUser3.text = config.qTipLog[i];
     			qtip_winform.editUser3.setFocus();
+    			}else
+    				config.qTipLog[i] = null;
     		}
     	);
 	}
@@ -192,6 +259,25 @@ hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
 }
 **/
 /*}}*/
+
+/*
+qtip_winform.bkplus2.skin(
+	background = { 
+		hover = "/res/images/btn-hover.png";
+		focus = "/res/images/btn-focus.jpg";
+		active = "/res/images/btn-active.png";
+		disabled = "/res/images/btn-disabled.png"; 
+	}
+)
+*/
+var tooltipCtrl = win.ui.tooltip( qtip_winform );//在窗口上创建tooltip控件
+tooltipCtrl.addTool(qtip_winform.buttonD,`
+查看搜索历史记录和清单收藏夹
+> 创建清单时仅保存当前选择的物料, 无选择时保存整个清单
+- 按住SHIFT+点击:删除记录/收藏
+- 按住CTRL+点击:替换收藏内容为当前选择的清单
+- 同时按住SHIFT+CTRL+点击:修改收藏名称
+`)
 
 win.loopMessage();
 return qtip_winform;

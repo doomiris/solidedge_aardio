@@ -1,0 +1,61 @@
+import console; 
+console.open();
+
+import config;
+import sqlite;
+var db = sqlite(io.joinpath(config.dbServer.path,"BOM.db"));
+
+import tarray;
+
+import com.excel;
+var excel = com.excel(false);
+
+import fsys;
+import fsys.file;
+//增 - 使用命名参数示例 
+var cmd = db.prepare("REPLACE INTO log VALUES (@user,@date,@file,@filedate);" ) 
+cmd.step(  
+	user = "ccl100100";
+	date = time.now();
+	file = excel.ActiveWorkbook.FullName;
+	filedate = fsys.file(excel.ActiveWorkbook.FullName).getFileTime().creation.local(true);
+)
+var row_id = db.lastInsertRowid();
+
+var sht = excel.ActiveWorkbook.ActiveSheet;
+var etab = sht.usedRange.value2;
+//etab[1][4]="组件数量";
+etab[2][6] = 1;
+etab.fields = table.shift(etab);
+
+etab = tarray.mapfields(etab);
+
+
+for (i=1; #etab)
+	etab[i]["展开层"]= tonumber(string.trimleft(etab[i]["展开层"],"."))	//数字和字符会创建不同数组项
+
+
+//处理前3列合并数据问题和之后空值问题
+
+var _sname = "base";
+	
+
+db.beginTrans();
+var parent= {};
+
+parent[0] = etab[1]["对象标识"];
+
+for (i=2; #etab){
+	
+	parent[etab[i]["展开层"]] = etab[i]["对象标识"]; 
+	
+	var cmd = db.prepare("INSERT INTO [" ++ _sname ++ "] VALUES (@Node, @Child, @Usage, @log_id);");
+	cmd.step(
+    	Node = parent[etab[i]["展开层"]-1];
+    	Child = etab[i]["对象标识"];
+    	Usage = etab[i]["组件数量(CUn)"];
+    	log_id = row_id;
+	); 
+};
+db.commitTrans();
+console.pause(true);

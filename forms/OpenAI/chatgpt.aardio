@@ -1,13 +1,13 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="ChatGPT 桌面智能助理";right=661;bottom=721)
-winform.add()
+var gpt_form = win.form(text="ChatGPT 桌面智能助理";right=661;bottom=721)
+gpt_form.add()
 /*}}*/
 
 import web.view;
-var wb = web.view(winform);
+var wb = web.view(gpt_form);
 
-winform.show();
+gpt_form.show();
 
 import web.rest.jsonClient;
 var http = web.rest.jsonClient(); 

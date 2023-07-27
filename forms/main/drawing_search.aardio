@@ -84,7 +84,11 @@ var refreshFiles = function(){
 		if !io.exist(io.joinpath(t[i][table.indexOf(header,"路径")],t[i][table.indexOf(header,"文件名")]))
 			t[i] = null;
 	}
-	winform_drawing.listview2.items = t;
+	var nt = {}
+	for (i=1; #t)
+		if t[i]
+			table.push(nt, t[i])
+	winform_drawing.listview2.items = nt;
 }
 winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
     select(code) {

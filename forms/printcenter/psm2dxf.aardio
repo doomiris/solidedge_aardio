@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="psm2dxf";right=759;bottom=469;acceptfiles=1)
-winform.add(
+var psm2dxf_form = win.form(text="psm2dxf";right=759;bottom=469;acceptfiles=1)
+psm2dxf_form.add(
 button={cls="button";text="export DXF";left=648;top=424;right=752;bottom=456;db=1;dr=1;z=2};
 listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
 static={cls="static";text="把psm文件拖放进来";left=8;top=432;right=312;bottom=456;db=1;dl=1;transparent=1;z=3};
@@ -26,7 +26,7 @@ var renew = function(){
 renew();
 
 import tarray;
-winform.onDropFiles = function(files){
+psm2dxf_form.onDropFiles = function(files){
 	
 
 	var t = {}
@@ -44,31 +44,31 @@ winform.onDropFiles = function(files){
 					"output" = tf;
 			})
 	}
-	winform.listview.setTable(tab);
-	winform.listview.adjust = function(cx,cy){
-	    winform.listview.fillParent(1);
-	    winform.listview.fillParent(2);
-	    winform.listview.fillParent(3);
+	psm2dxf_form.listview.setTable(tab);
+	psm2dxf_form.listview.adjust = function(cx,cy){
+	    psm2dxf_form.listview.fillParent(1);
+	    psm2dxf_form.listview.fillParent(2);
+	    psm2dxf_form.listview.fillParent(3);
 	}
 }
 
-winform.button.oncommand = function(id,event){
-	for (i=1; winform.listview.count){
-		var fn = winform.listview.getItemText(i,2) ++ "\" ++ winform.listview.getItemText(i,1);
+psm2dxf_form.button.oncommand = function(id,event){
+	for (i=1; psm2dxf_form.listview.count){
+		var fn = psm2dxf_form.listview.getItemText(i,2) ++ "\" ++ psm2dxf_form.listview.getItemText(i,1);
 		var psm = seApp.Open(fn, false);
 		var sePSM = solidedge.SheetMetalDocument(psm);
-		sePSM.psm2dxf(winform.listview.getItemText(i,3));
+		sePSM.psm2dxf(psm2dxf_form.listview.getItemText(i,3));
 		sePSM.close(true /* SaveChanges */);
 	}
 	win.msgboxTimeout("done", "dxf", 5 * 1000);
 }
 
-winform.static2.onHyperlinkClick = function(nmSysLink,url,id){
-	winform.listview.clear(true);
+psm2dxf_form.static2.onHyperlinkClick = function(nmSysLink,url,id){
+	psm2dxf_form.listview.clear(true);
 	renew();
 }
 
 
-winform.show();
+psm2dxf_form.show();
 win.loopMessage();
-return winform;
+return psm2dxf_form;

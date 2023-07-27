@@ -1,4 +1,4 @@
-﻿//QHC原材料相关
+﻿//QHC
 import sqlite;
 
 var table = ..table;
@@ -10,6 +10,7 @@ import config;
 sap_db_path = config.dbServer.path + "\QHCSAP.db";
 od_db_path = config.dbServer.path + "\qhc_OD_lib.db";
 drw_rel_path = config.dbServer.path + "\qhc_dw_rel_list.db";
+product_info_path = config.dbServer.path + "\qhc_product_info_lib.db";
 var rawTab = {
 	[1] =	{["厚度"]=0.5; ["物料"] = "H0087500182-G"; ["物料描述"] = "定尺料组 热锌板 0.5*1250*C"; ["价格"] = 6.01};
 	[2] =	{["厚度"]=0.6; ["物料"] = "H0087500185-G"; ["物料描述"] = "定尺料组 热锌板 0.6*1250*C"; ["价格"] = 5.9};
@@ -110,6 +111,11 @@ getColDef =function(){
 	var t = db.prepare("SELECT * FROM [所有物料]");
 	return t.getColumns(); 
 }
+getProductDef =function(){
+	var db,err = openDb(product_info_path);
+	var t = db.prepare("SELECT * FROM [base]");
+	return t.getColumns(); 
+}
 getSapItem = function(hcode){
 	//import console;
 	//console.log(sap_db_path, hcode)
@@ -119,6 +125,15 @@ getSapItem = function(hcode){
     if string.len(hcode) > 11
     	hcode = string.trim(hcode);
 	var t = db.stepQuery("SELECT * FROM [所有物料]", { 物料 : hcode } )
+	return t; 
+};
+getProductInfo = function(hcode){
+	var db,err = openDb(product_info_path);
+	if !hcode return null;
+	if type(hcode)!=="string" return null; 
+    if string.len(hcode) > 11
+    	hcode = string.trim(hcode);
+	var t = db.stepQuery("SELECT * FROM [base]", { 成品编码 : hcode } )
 	return t; 
 };
 getSapItemByDesp = function(Desp){
@@ -230,6 +245,7 @@ formatBOM = function(){
 /**intellisense()
 QHC.openDb(sap_db_path) = 返回DB
 QHC.getSapItem(hcode) = 返回hitem\n!QHC_hitem.
+QHC.getProductInfo(hcode) = 返回ProductInfo
 QHC.getSapItemByDesp(desp) = 返回table
 QHC.getSapItem() = 返回hitem\n!QHC_hitem.
 QHC.getColDef() = 获取列名称数组
