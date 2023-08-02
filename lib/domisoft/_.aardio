@@ -1,0 +1,39 @@
+//domisoft
+namespace domisoft{
+	showInputBox = function(title, Msg,tips, winform){
+			import win.inputBox;
+			var inputBox = win.inputBox(winform)
+			inputBox.text = title;
+			inputBox.info.text = Msg;
+			inputBox.input.text = tips;
+			return inputBox.doModal();
+	}
+
+	clearExcelCorpse = function(){
+		thread.invoke( 
+			function(){//清理异常的excel进程
+				import com.excel;
+				var excel = com.excel(false);
+				if excel.Visible == false and excel.WorkBooks.Count==0 {
+					import process.popen;
+					var prcs = process.popen.cmd(`taskkill /im EXCEL.EXE /f`)
+				}
+			}
+		)
+	}
+	getComAppPath = function(keyword){
+		import com.shell;
+		import fsys.knownFolder
+		var s = com.shell.findApp("@"+ keyword);
+		var g = ..string.match(s.path,'%{}');		
+		return (..string.replace(s.path, "@"+g, fsys.knownFolder(g)));
+		string.replace(
+	}
+	
+}
+/**intellisense(domisoft)
+showInputBox(title, Msg,tips, winform) = 显示输入框
+clearExcelCorpse( ) = 清理异常的excel进程
+getComAppPath(keyword) = 查找com程序路径
+end intellisense**/
+
