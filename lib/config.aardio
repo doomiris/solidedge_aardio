@@ -7,7 +7,7 @@ namespace config {
 	__appName = "TBM";
 	__appVersion = "1.5.22.01";
 	__appDescription = "TBM";
-	__website = "https://github.com/doomiris/";
+	__website = "https://github.com/doomiris/solidedge_aardio";
 	__sapDownload = ..io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\";
 	__pdfLib = "\\CCNSIA1A\SEPARTS\Cabinet\PDF图纸库\";
 

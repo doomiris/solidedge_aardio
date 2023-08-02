@@ -1,18 +1,27 @@
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform_setting = win.form(text="aardio form";right=759;bottom=469)
 winform_setting.add(
-closeToTray={cls="checkbox";text="close to &tray";left=48;top=24;right=184;bottom=56;dl=1;dt=1;z=3};
-simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=48;top=88;right=184;bottom=120;dl=1;dt=1;z=2};
-startupMinimized={cls="checkbox";text="startup &minimized";left=48;top=56;right=184;bottom=88;dl=1;dt=1;z=1}
+button={cls="button";text="Save";left=159;top=320;right=203;bottom=354;z=1};
+checkbox_hidepass={cls="checkbox";text='\uF2A8';left=212;top=181;right=251;bottom=202;font=LOGFONT(name='FontAwesome');hide=1;z=10};
+closeToTray={cls="checkbox";text="close to &tray";left=48;top=24;right=184;bottom=56;dl=1;dt=1;group=1;tabstop=1;z=2};
+edit_SAP_client={cls="edit";text="220";left=55;top=256;right=202;bottom=279;edge=1;tabstop=1;z=8};
+edit_SAP_language={cls="edit";text="ZH";left=54;top=286;right=201;bottom=309;edge=1;tabstop=1;z=9};
+edit_SAP_pw={cls="edit";text="password";left=56;top=180;right=203;bottom=203;edge=1;tabstop=1;z=6};
+edit_SAP_system={cls="edit";text="P11";left=56;top=218;right=203;bottom=241;edge=1;tabstop=1;z=7};
+edit_SAP_user={cls="edit";text="username";left=55;top=146;right=202;bottom=169;edge=1;group=1;tabstop=1;z=5};
+simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=48;top=88;right=184;bottom=120;dl=1;dt=1;tabstop=1;z=4};
+startupMinimized={cls="checkbox";text="startup &minimized";left=48;top=56;right=184;bottom=88;dl=1;dt=1;tabstop=1;z=3}
 )
 /*}}*/
 
 import config;
 winform_setting.bindConfig( config.settings,{
 	checkbox = "checked";
-/*
 	edit = "text";
+/*
+
 	radiobutton = "checked";
 	combobox = "selIndex";
 	plus ={
@@ -22,6 +31,15 @@ winform_setting.bindConfig( config.settings,{
 */
 	
 } );
+
+winform_setting.button.oncommand = function(id,event){
+	config.settings.save();
+}
+
+winform_setting.checkbox_hidepass.oncommand = function(id,event){
+	winform_setting.edit_SAP_pw.password = owner.checked;
+}
+
 winform_setting.show();
 win.loopMessage();
 return winform_setting;
