@@ -1,0 +1,20 @@
+{
+  "name": "tbm",
+  "version": "1.0.0",
+  "description": "tbm chatgpt nodes",
+  "main": "chatgpt.html",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "tbm"
+  ],
+  "author": "Dominic Lan",
+  "license": "ISC",
+  "dependencies": {
+    "@chatui/core": "^2.4.2",
+    "babel-standalone": "^6.26.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

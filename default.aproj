@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.323" ProductVersion="1.5.0.323" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.324" ProductVersion="1.5.0.324" publishDir="dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -63,15 +63,781 @@
 			<file name="AI_Draw.aardio" path="forms\OpenAI\AI_Draw.aardio" comment="forms\OpenAI\AI_Draw.aardio"/>
 			<file name="chatgpt.aardio" path="forms\OpenAI\chatgpt.aardio" comment="forms\OpenAI\chatgpt.aardio"/>
 			<file name="chatgpt.html" path="forms\OpenAI\chatgpt.html" comment="forms\OpenAI\chatgpt.html"/>
-			<folder name="node_modules" path="forms\OpenAI\node_modules" comment="forms\OpenAI\node_modules">
-				<folder name="babel-standalone" path="forms\OpenAI\node_modules\babel-standalone" comment="forms\OpenAI\node_modules\babel-standalone">
+			<folder name="node_modules" path="forms\OpenAI\node_modules" comment="forms\OpenAI\node_modules" local="false" embed="false" ignored="false">
+				<folder name="babel-standalone" path="forms\OpenAI\node_modules\babel-standalone" comment="forms\OpenAI\node_modules\babel-standalone" local="false" embed="false" ignored="false">
 					<file name="babel.min.js" path="forms\OpenAI\node_modules\babel-standalone\babel.min.js" comment="forms\OpenAI\node_modules\babel-standalone\babel.min.js"/>
 				</folder>
-				<folder name="chatui" path="forms\OpenAI\node_modules\chatui" comment="forms\OpenAI\node_modules\chatui">
-					<folder name="core" path="forms\OpenAI\node_modules\chatui\core" comment="forms\OpenAI\node_modules\chatui\core">
-						<folder name="dist" path="forms\OpenAI\node_modules\chatui\core\dist" comment="forms\OpenAI\node_modules\chatui\core\dist">
-							<file name="index.css" path="forms\OpenAI\node_modules\chatui\core\dist\index.css" comment="forms\OpenAI\node_modules\chatui\core\dist\index.css"/>
-							<file name="index.js" path="forms\OpenAI\node_modules\chatui\core\dist\index.js" comment="forms\OpenAI\node_modules\chatui\core\dist\index.js"/>
+				<folder name="@chatui" path="forms\OpenAI\node_modules\@chatui" comment="forms\OpenAI\node_modules\chatui" local="false" embed="false" ignored="false">
+					<folder name="core" path="forms\OpenAI\node_modules\@chatui\core" comment="forms\OpenAI\node_modules\@chatui\core">
+						<file name="LICENSE" path="forms\OpenAI\node_modules\@chatui\core\LICENSE" comment="forms\OpenAI\node_modules\@chatui\core\LICENSE"/>
+						<file name="package.json" path="forms\OpenAI\node_modules\@chatui\core\package.json" comment="forms\OpenAI\node_modules\@chatui\core\package.json"/>
+						<file name="README.md" path="forms\OpenAI\node_modules\@chatui\core\README.md" comment="forms\OpenAI\node_modules\@chatui\core\README.md"/>
+						<file name="README.zh-CN.md" path="forms\OpenAI\node_modules\@chatui\core\README.zh-CN.md" comment="forms\OpenAI\node_modules\@chatui\core\README.zh-CN.md"/>
+						<folder name="dist" path="forms\OpenAI\node_modules\@chatui\core\dist" comment="forms\OpenAI\node_modules\@chatui\core\dist">
+							<file name="index.css" path="forms\OpenAI\node_modules\@chatui\core\dist\index.css" comment="forms\OpenAI\node_modules\@chatui\core\dist\index.css"/>
+							<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\dist\index.js" comment="forms\OpenAI\node_modules\@chatui\core\dist\index.js"/>
+						</folder>
+						<folder name="es" path="forms\OpenAI\node_modules\@chatui\core\es" comment="forms\OpenAI\node_modules\@chatui\core\es">
+							<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\index.js"/>
+							<folder name="components" path="forms\OpenAI\node_modules\@chatui\core\es\components" comment="forms\OpenAI\node_modules\@chatui\core\es\components">
+								<folder name="Avatar" path="forms\OpenAI\node_modules\@chatui\core\es\components\Avatar" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Avatar">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Avatar\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Avatar\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Avatar\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Avatar\style.less"/>
+								</folder>
+								<folder name="BackBottom" path="forms\OpenAI\node_modules\@chatui\core\es\components\BackBottom" comment="forms\OpenAI\node_modules\@chatui\core\es\components\BackBottom">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\BackBottom\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\BackBottom\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\BackBottom\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\BackBottom\style.less"/>
+								</folder>
+								<folder name="Backdrop" path="forms\OpenAI\node_modules\@chatui\core\es\components\Backdrop" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Backdrop">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Backdrop\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Backdrop\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Backdrop\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Backdrop\style.less"/>
+								</folder>
+								<folder name="Bubble" path="forms\OpenAI\node_modules\@chatui\core\es\components\Bubble" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Bubble">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Bubble\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Bubble\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Bubble\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Bubble\style.less"/>
+								</folder>
+								<folder name="Button" path="forms\OpenAI\node_modules\@chatui\core\es\components\Button" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Button">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Button\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Button\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Button\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Button\style.less"/>
+								</folder>
+								<folder name="Card" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card">
+									<file name="Card.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\Card.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\Card.js"/>
+									<file name="CardActions.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardActions.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardActions.js"/>
+									<file name="CardContent.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardContent.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardContent.js"/>
+									<file name="CardMedia.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardMedia.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardMedia.js"/>
+									<file name="CardText.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardText.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardText.js"/>
+									<file name="CardTitle.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardTitle.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\CardTitle.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Card\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Card\style.less"/>
+								</folder>
+								<folder name="Carousel" path="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel\index.js"/>
+									<file name="Item.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel\Item.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel\Item.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Carousel\style.less"/>
+								</folder>
+								<folder name="Chat" path="forms\OpenAI\node_modules\@chatui\core\es\components\Chat" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Chat">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Chat\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Chat\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Chat\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Chat\style.less"/>
+								</folder>
+								<folder name="Checkbox" path="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox">
+									<file name="Checkbox.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox\Checkbox.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox\Checkbox.js"/>
+									<file name="CheckboxGroup.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox\CheckboxGroup.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox\CheckboxGroup.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Checkbox\index.js"/>
+								</folder>
+								<folder name="ClickOutside" path="forms\OpenAI\node_modules\@chatui\core\es\components\ClickOutside" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ClickOutside">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ClickOutside\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ClickOutside\index.js"/>
+								</folder>
+								<folder name="ComponentsProvider" path="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider">
+									<file name="ComponentsContext.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\ComponentsContext.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\ComponentsContext.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\index.js"/>
+									<file name="interface.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\interface.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\interface.js"/>
+									<file name="useComponents.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\useComponents.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ComponentsProvider\useComponents.js"/>
+								</folder>
+								<folder name="Composer" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer">
+									<file name="AccessoryWrap.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\AccessoryWrap.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\AccessoryWrap.js"/>
+									<file name="Action.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\Action.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\Action.js"/>
+									<file name="ComposerInput.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\ComposerInput.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\ComposerInput.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\index.js"/>
+									<file name="riseInput.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\riseInput.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\riseInput.js"/>
+									<file name="SendButton.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\SendButton.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\SendButton.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\style.less"/>
+									<file name="ToolbarItem.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\ToolbarItem.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Composer\ToolbarItem.js"/>
+								</folder>
+								<folder name="Divider" path="forms\OpenAI\node_modules\@chatui\core\es\components\Divider" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Divider">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Divider\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Divider\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Divider\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Divider\style.less"/>
+								</folder>
+								<folder name="Empty" path="forms\OpenAI\node_modules\@chatui\core\es\components\Empty" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Empty">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Empty\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Empty\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Empty\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Empty\style.less"/>
+								</folder>
+								<folder name="ErrorBoundary" path="forms\OpenAI\node_modules\@chatui\core\es\components\ErrorBoundary" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ErrorBoundary">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ErrorBoundary\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ErrorBoundary\index.js"/>
+								</folder>
+								<folder name="FileCard" path="forms\OpenAI\node_modules\@chatui\core\es\components\FileCard" comment="forms\OpenAI\node_modules\@chatui\core\es\components\FileCard">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\FileCard\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\FileCard\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\FileCard\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\FileCard\style.less"/>
+								</folder>
+								<folder name="Flex" path="forms\OpenAI\node_modules\@chatui\core\es\components\Flex" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Flex">
+									<file name="Flex.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\Flex.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\Flex.js"/>
+									<file name="FlexItem.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\FlexItem.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\FlexItem.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Flex\style.less"/>
+								</folder>
+								<folder name="Form" path="forms\OpenAI\node_modules\@chatui\core\es\components\Form" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Form">
+									<file name="Form.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Form\Form.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Form\Form.js"/>
+									<file name="FormActions.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Form\FormActions.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Form\FormActions.js"/>
+									<file name="FormItem.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Form\FormItem.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Form\FormItem.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Form\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Form\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Form\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Form\style.less"/>
+								</folder>
+								<folder name="Goods" path="forms\OpenAI\node_modules\@chatui\core\es\components\Goods" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Goods">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Goods\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Goods\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Goods\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Goods\style.less"/>
+								</folder>
+								<folder name="HelpText" path="forms\OpenAI\node_modules\@chatui\core\es\components\HelpText" comment="forms\OpenAI\node_modules\@chatui\core\es\components\HelpText">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\HelpText\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\HelpText\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\HelpText\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\HelpText\style.less"/>
+								</folder>
+								<folder name="Icon" path="forms\OpenAI\node_modules\@chatui\core\es\components\Icon" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Icon">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Icon\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Icon\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Icon\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Icon\style.less"/>
+								</folder>
+								<folder name="IconButton" path="forms\OpenAI\node_modules\@chatui\core\es\components\IconButton" comment="forms\OpenAI\node_modules\@chatui\core\es\components\IconButton">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\IconButton\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\IconButton\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\IconButton\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\IconButton\style.less"/>
+								</folder>
+								<folder name="Image" path="forms\OpenAI\node_modules\@chatui\core\es\components\Image" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Image">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Image\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Image\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Image\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Image\style.less"/>
+								</folder>
+								<folder name="InfiniteScroll" path="forms\OpenAI\node_modules\@chatui\core\es\components\InfiniteScroll" comment="forms\OpenAI\node_modules\@chatui\core\es\components\InfiniteScroll">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\InfiniteScroll\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\InfiniteScroll\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\InfiniteScroll\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\InfiniteScroll\style.less"/>
+								</folder>
+								<folder name="Input" path="forms\OpenAI\node_modules\@chatui\core\es\components\Input" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Input">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Input\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Input\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Input\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Input\style.less"/>
+								</folder>
+								<folder name="Label" path="forms\OpenAI\node_modules\@chatui\core\es\components\Label" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Label">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Label\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Label\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Label\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Label\style.less"/>
+								</folder>
+								<folder name="LazyComponent" path="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent\index.js"/>
+									<file name="interface.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent\interface.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent\interface.js"/>
+									<file name="SuspenseWrap.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent\SuspenseWrap.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LazyComponent\SuspenseWrap.js"/>
+								</folder>
+								<folder name="List" path="forms\OpenAI\node_modules\@chatui\core\es\components\List" comment="forms\OpenAI\node_modules\@chatui\core\es\components\List">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\List\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\List\index.js"/>
+									<file name="List.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\List\List.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\List\List.js"/>
+									<file name="ListItem.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\List\ListItem.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\List\ListItem.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\List\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\List\style.less"/>
+								</folder>
+								<folder name="Loading" path="forms\OpenAI\node_modules\@chatui\core\es\components\Loading" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Loading">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Loading\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Loading\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Loading\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Loading\style.less"/>
+								</folder>
+								<folder name="LocaleProvider" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\index.js"/>
+									<folder name="locales" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales">
+										<file name="ar_EG.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\ar_EG.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\ar_EG.js"/>
+										<file name="en_US.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\en_US.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\en_US.js"/>
+										<file name="fr_FR.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\fr_FR.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\fr_FR.js"/>
+										<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\index.js"/>
+										<file name="zh_CN.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\zh_CN.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\LocaleProvider\locales\zh_CN.js"/>
+									</folder>
+								</folder>
+								<folder name="MediaObject" path="forms\OpenAI\node_modules\@chatui\core\es\components\MediaObject" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MediaObject">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\MediaObject\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MediaObject\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\MediaObject\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MediaObject\style.less"/>
+								</folder>
+								<folder name="Message" path="forms\OpenAI\node_modules\@chatui\core\es\components\Message" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Message">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Message\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Message\index.js"/>
+									<file name="Message.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Message\Message.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Message\Message.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Message\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Message\style.less"/>
+									<file name="SystemMessage.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Message\SystemMessage.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Message\SystemMessage.js"/>
+								</folder>
+								<folder name="MessageContainer" path="forms\OpenAI\node_modules\@chatui\core\es\components\MessageContainer" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MessageContainer">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\MessageContainer\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MessageContainer\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\MessageContainer\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MessageContainer\style.less"/>
+								</folder>
+								<folder name="MessageStatus" path="forms\OpenAI\node_modules\@chatui\core\es\components\MessageStatus" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MessageStatus">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\MessageStatus\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MessageStatus\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\MessageStatus\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\MessageStatus\style.less"/>
+								</folder>
+								<folder name="Modal" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal">
+									<file name="Base.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Base.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Base.js"/>
+									<file name="Confirm.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Confirm.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Confirm.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\index.js"/>
+									<file name="Modal.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Modal.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Modal.js"/>
+									<file name="Popup.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Popup.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\Popup.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Modal\style.less"/>
+								</folder>
+								<folder name="Navbar" path="forms\OpenAI\node_modules\@chatui\core\es\components\Navbar" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Navbar">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Navbar\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Navbar\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Navbar\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Navbar\style.less"/>
+								</folder>
+								<folder name="Notice" path="forms\OpenAI\node_modules\@chatui\core\es\components\Notice" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Notice">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Notice\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Notice\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Notice\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Notice\style.less"/>
+								</folder>
+								<folder name="Popover" path="forms\OpenAI\node_modules\@chatui\core\es\components\Popover" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Popover">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Popover\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Popover\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Popover\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Popover\style.less"/>
+								</folder>
+								<folder name="Portal" path="forms\OpenAI\node_modules\@chatui\core\es\components\Portal" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Portal">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Portal\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Portal\index.js"/>
+								</folder>
+								<folder name="Price" path="forms\OpenAI\node_modules\@chatui\core\es\components\Price" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Price">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Price\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Price\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Price\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Price\style.less"/>
+								</folder>
+								<folder name="Progress" path="forms\OpenAI\node_modules\@chatui\core\es\components\Progress" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Progress">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Progress\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Progress\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Progress\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Progress\style.less"/>
+								</folder>
+								<folder name="PullToRefresh" path="forms\OpenAI\node_modules\@chatui\core\es\components\PullToRefresh" comment="forms\OpenAI\node_modules\@chatui\core\es\components\PullToRefresh">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\PullToRefresh\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\PullToRefresh\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\PullToRefresh\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\PullToRefresh\style.less"/>
+								</folder>
+								<folder name="QuickReplies" path="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies" comment="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\index.js"/>
+									<file name="QuickReplies.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\QuickReplies.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\QuickReplies.js"/>
+									<file name="QuickReply.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\QuickReply.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\QuickReply.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\QuickReplies\style.less"/>
+								</folder>
+								<folder name="Radio" path="forms\OpenAI\node_modules\@chatui\core\es\components\Radio" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Radio">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\index.js"/>
+									<file name="Radio.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\Radio.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\Radio.js"/>
+									<file name="RadioGroup.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\RadioGroup.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\RadioGroup.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Radio\style.less"/>
+								</folder>
+								<folder name="RateActions" path="forms\OpenAI\node_modules\@chatui\core\es\components\RateActions" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RateActions">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\RateActions\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RateActions\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\RateActions\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RateActions\style.less"/>
+								</folder>
+								<folder name="Recorder" path="forms\OpenAI\node_modules\@chatui\core\es\components\Recorder" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Recorder">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Recorder\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Recorder\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Recorder\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Recorder\style.less"/>
+								</folder>
+								<folder name="RichText" path="forms\OpenAI\node_modules\@chatui\core\es\components\RichText" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RichText">
+									<file name="configDOMPurify.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\RichText\configDOMPurify.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RichText\configDOMPurify.js"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\RichText\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RichText\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\RichText\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\RichText\style.less"/>
+								</folder>
+								<folder name="ScrollView" path="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\index.js"/>
+									<file name="Item.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\Item.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\Item.js"/>
+									<file name="ScrollView.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\ScrollView.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\ScrollView.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\ScrollView\style.less"/>
+								</folder>
+								<folder name="Search" path="forms\OpenAI\node_modules\@chatui\core\es\components\Search" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Search">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Search\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Search\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Search\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Search\style.less"/>
+								</folder>
+								<folder name="Select" path="forms\OpenAI\node_modules\@chatui\core\es\components\Select" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Select">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Select\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Select\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Select\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Select\style.less"/>
+								</folder>
+								<folder name="SendConfirm" path="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm" comment="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm\index.js"/>
+									<file name="SendConfirm.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm\SendConfirm.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm\SendConfirm.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\SendConfirm\style.less"/>
+								</folder>
+								<folder name="Stepper" path="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\index.js"/>
+									<file name="Step.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\Step.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\Step.js"/>
+									<file name="Stepper.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\Stepper.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\Stepper.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Stepper\style.less"/>
+								</folder>
+								<folder name="Tabs" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\style.less"/>
+									<file name="Tab.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\Tab.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\Tab.js"/>
+									<file name="Tabs.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\Tabs.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tabs\Tabs.js"/>
+								</folder>
+								<folder name="Tag" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tag" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tag">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tag\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tag\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tag\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tag\style.less"/>
+								</folder>
+								<folder name="Text" path="forms\OpenAI\node_modules\@chatui\core\es\components\Text" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Text">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Text\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Text\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Text\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Text\style.less"/>
+								</folder>
+								<folder name="Time" path="forms\OpenAI\node_modules\@chatui\core\es\components\Time" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Time">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Time\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Time\index.js"/>
+									<file name="parser.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Time\parser.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Time\parser.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Time\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Time\style.less"/>
+									<file name="Time.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Time\Time.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Time\Time.js"/>
+								</folder>
+								<folder name="Toast" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toast" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toast">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toast\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toast\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toast\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toast\style.less"/>
+									<file name="Toast.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toast\Toast.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toast\Toast.js"/>
+								</folder>
+								<folder name="Toolbar" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\style.less"/>
+									<file name="Toolbar.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\Toolbar.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\Toolbar.js"/>
+									<file name="ToolbarButton.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\ToolbarButton.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Toolbar\ToolbarButton.js"/>
+								</folder>
+								<folder name="Tooltip" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tooltip" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tooltip">
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tooltip\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tooltip\style.less"/>
+								</folder>
+								<folder name="Tree" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tree" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tree">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\style.less"/>
+									<file name="Tree.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\Tree.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\Tree.js"/>
+									<file name="TreeNode.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\TreeNode.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Tree\TreeNode.js"/>
+								</folder>
+								<folder name="Typing" path="forms\OpenAI\node_modules\@chatui\core\es\components\Typing" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Typing">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Typing\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Typing\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Typing\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Typing\style.less"/>
+									<file name="Typing.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Typing\Typing.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Typing\Typing.js"/>
+								</folder>
+								<folder name="Video" path="forms\OpenAI\node_modules\@chatui\core\es\components\Video" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Video">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\Video\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Video\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\Video\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\Video\style.less"/>
+								</folder>
+								<folder name="VisuallyHidden" path="forms\OpenAI\node_modules\@chatui\core\es\components\VisuallyHidden" comment="forms\OpenAI\node_modules\@chatui\core\es\components\VisuallyHidden">
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\components\VisuallyHidden\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\components\VisuallyHidden\index.js"/>
+									<file name="style.less" path="forms\OpenAI\node_modules\@chatui\core\es\components\VisuallyHidden\style.less" comment="forms\OpenAI\node_modules\@chatui\core\es\components\VisuallyHidden\style.less"/>
+								</folder>
+							</folder>
+							<folder name="hooks" path="forms\OpenAI\node_modules\@chatui\core\es\hooks" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks">
+								<file name="useClickOutside.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useClickOutside.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useClickOutside.js"/>
+								<file name="useForwardRef.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useForwardRef.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useForwardRef.js"/>
+								<file name="useMessages.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useMessages.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useMessages.js"/>
+								<file name="useMount.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useMount.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useMount.js"/>
+								<file name="useNextId.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useNextId.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useNextId.js"/>
+								<file name="useQuickReplies.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useQuickReplies.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useQuickReplies.js"/>
+								<file name="useWindowResize.js" path="forms\OpenAI\node_modules\@chatui\core\es\hooks\useWindowResize.js" comment="forms\OpenAI\node_modules\@chatui\core\es\hooks\useWindowResize.js"/>
+							</folder>
+							<folder name="styles" path="forms\OpenAI\node_modules\@chatui\core\es\styles" comment="forms\OpenAI\node_modules\@chatui\core\es\styles">
+								<file name="animation.less" path="forms\OpenAI\node_modules\@chatui\core\es\styles\animation.less" comment="forms\OpenAI\node_modules\@chatui\core\es\styles\animation.less"/>
+								<file name="index.less" path="forms\OpenAI\node_modules\@chatui\core\es\styles\index.less" comment="forms\OpenAI\node_modules\@chatui\core\es\styles\index.less"/>
+								<file name="root.less" path="forms\OpenAI\node_modules\@chatui\core\es\styles\root.less" comment="forms\OpenAI\node_modules\@chatui\core\es\styles\root.less"/>
+								<file name="utils.less" path="forms\OpenAI\node_modules\@chatui\core\es\styles\utils.less" comment="forms\OpenAI\node_modules\@chatui\core\es\styles\utils.less"/>
+								<file name="var.less" path="forms\OpenAI\node_modules\@chatui\core\es\styles\var.less" comment="forms\OpenAI\node_modules\@chatui\core\es\styles\var.less"/>
+							</folder>
+							<folder name="utils" path="forms\OpenAI\node_modules\@chatui\core\es\utils" comment="forms\OpenAI\node_modules\@chatui\core\es\utils">
+								<file name="canUse.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\canUse.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\canUse.js"/>
+								<file name="countLines.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\countLines.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\countLines.js"/>
+								<file name="getExtName.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\getExtName.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\getExtName.js"/>
+								<file name="getToBottom.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\getToBottom.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\getToBottom.js"/>
+								<file name="importScript.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\importScript.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\importScript.js"/>
+								<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\index.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\index.js"/>
+								<file name="isSafari.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\isSafari.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\isSafari.js"/>
+								<file name="lazyComponent.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\lazyComponent.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\lazyComponent.js"/>
+								<file name="mountComponent.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\mountComponent.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\mountComponent.js"/>
+								<file name="parseDataTransfer.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\parseDataTransfer.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\parseDataTransfer.js"/>
+								<file name="prettyBytes.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\prettyBytes.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\prettyBytes.js"/>
+								<file name="smoothScroll.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\smoothScroll.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\smoothScroll.js"/>
+								<file name="style.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\style.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\style.js"/>
+								<file name="throttle.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\throttle.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\throttle.js"/>
+								<file name="toggleClass.js" path="forms\OpenAI\node_modules\@chatui\core\es\utils\toggleClass.js" comment="forms\OpenAI\node_modules\@chatui\core\es\utils\toggleClass.js"/>
+							</folder>
+						</folder>
+						<folder name="lib" path="forms\OpenAI\node_modules\@chatui\core\lib" comment="forms\OpenAI\node_modules\@chatui\core\lib">
+							<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\index.d.ts"/>
+							<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\index.js"/>
+							<folder name="components" path="forms\OpenAI\node_modules\@chatui\core\lib\components" comment="forms\OpenAI\node_modules\@chatui\core\lib\components">
+								<folder name="Avatar" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Avatar" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Avatar">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Avatar\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Avatar\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Avatar\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Avatar\index.js"/>
+								</folder>
+								<folder name="BackBottom" path="forms\OpenAI\node_modules\@chatui\core\lib\components\BackBottom" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\BackBottom">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\BackBottom\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\BackBottom\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\BackBottom\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\BackBottom\index.js"/>
+								</folder>
+								<folder name="Backdrop" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Backdrop" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Backdrop">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Backdrop\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Backdrop\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Backdrop\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Backdrop\index.js"/>
+								</folder>
+								<folder name="Bubble" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Bubble" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Bubble">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Bubble\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Bubble\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Bubble\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Bubble\index.js"/>
+								</folder>
+								<folder name="Button" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Button" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Button">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Button\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Button\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Button\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Button\index.js"/>
+								</folder>
+								<folder name="Card" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card">
+									<file name="Card.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\Card.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\Card.d.ts"/>
+									<file name="Card.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\Card.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\Card.js"/>
+									<file name="CardActions.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardActions.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardActions.d.ts"/>
+									<file name="CardActions.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardActions.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardActions.js"/>
+									<file name="CardContent.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardContent.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardContent.d.ts"/>
+									<file name="CardContent.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardContent.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardContent.js"/>
+									<file name="CardMedia.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardMedia.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardMedia.d.ts"/>
+									<file name="CardMedia.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardMedia.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardMedia.js"/>
+									<file name="CardText.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardText.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardText.d.ts"/>
+									<file name="CardText.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardText.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardText.js"/>
+									<file name="CardTitle.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardTitle.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardTitle.d.ts"/>
+									<file name="CardTitle.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardTitle.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\CardTitle.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Card\index.js"/>
+								</folder>
+								<folder name="Carousel" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\index.js"/>
+									<file name="Item.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\Item.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\Item.d.ts"/>
+									<file name="Item.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\Item.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Carousel\Item.js"/>
+								</folder>
+								<folder name="Chat" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Chat" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Chat">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Chat\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Chat\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Chat\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Chat\index.js"/>
+								</folder>
+								<folder name="Checkbox" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox">
+									<file name="Checkbox.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\Checkbox.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\Checkbox.d.ts"/>
+									<file name="Checkbox.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\Checkbox.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\Checkbox.js"/>
+									<file name="CheckboxGroup.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\CheckboxGroup.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\CheckboxGroup.d.ts"/>
+									<file name="CheckboxGroup.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\CheckboxGroup.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\CheckboxGroup.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Checkbox\index.js"/>
+								</folder>
+								<folder name="ClickOutside" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ClickOutside" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ClickOutside">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ClickOutside\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ClickOutside\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ClickOutside\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ClickOutside\index.js"/>
+								</folder>
+								<folder name="ComponentsProvider" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider">
+									<file name="ComponentsContext.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\ComponentsContext.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\ComponentsContext.d.ts"/>
+									<file name="ComponentsContext.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\ComponentsContext.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\ComponentsContext.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\index.js"/>
+									<file name="interface.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\interface.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\interface.d.ts"/>
+									<file name="interface.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\interface.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\interface.js"/>
+									<file name="useComponents.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\useComponents.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\useComponents.d.ts"/>
+									<file name="useComponents.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\useComponents.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ComponentsProvider\useComponents.js"/>
+								</folder>
+								<folder name="Composer" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer">
+									<file name="AccessoryWrap.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\AccessoryWrap.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\AccessoryWrap.d.ts"/>
+									<file name="AccessoryWrap.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\AccessoryWrap.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\AccessoryWrap.js"/>
+									<file name="Action.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\Action.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\Action.d.ts"/>
+									<file name="Action.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\Action.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\Action.js"/>
+									<file name="ComposerInput.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ComposerInput.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ComposerInput.d.ts"/>
+									<file name="ComposerInput.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ComposerInput.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ComposerInput.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\index.js"/>
+									<file name="riseInput.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\riseInput.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\riseInput.d.ts"/>
+									<file name="riseInput.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\riseInput.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\riseInput.js"/>
+									<file name="SendButton.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\SendButton.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\SendButton.d.ts"/>
+									<file name="SendButton.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\SendButton.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\SendButton.js"/>
+									<file name="ToolbarItem.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ToolbarItem.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ToolbarItem.d.ts"/>
+									<file name="ToolbarItem.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ToolbarItem.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Composer\ToolbarItem.js"/>
+								</folder>
+								<folder name="Divider" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Divider" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Divider">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Divider\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Divider\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Divider\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Divider\index.js"/>
+								</folder>
+								<folder name="Empty" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Empty" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Empty">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Empty\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Empty\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Empty\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Empty\index.js"/>
+								</folder>
+								<folder name="ErrorBoundary" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ErrorBoundary" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ErrorBoundary">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ErrorBoundary\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ErrorBoundary\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ErrorBoundary\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ErrorBoundary\index.js"/>
+								</folder>
+								<folder name="FileCard" path="forms\OpenAI\node_modules\@chatui\core\lib\components\FileCard" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\FileCard">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\FileCard\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\FileCard\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\FileCard\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\FileCard\index.js"/>
+								</folder>
+								<folder name="Flex" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex">
+									<file name="Flex.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\Flex.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\Flex.d.ts"/>
+									<file name="Flex.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\Flex.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\Flex.js"/>
+									<file name="FlexItem.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\FlexItem.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\FlexItem.d.ts"/>
+									<file name="FlexItem.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\FlexItem.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\FlexItem.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Flex\index.js"/>
+								</folder>
+								<folder name="Form" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form">
+									<file name="Form.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\Form.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\Form.d.ts"/>
+									<file name="Form.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\Form.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\Form.js"/>
+									<file name="FormActions.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormActions.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormActions.d.ts"/>
+									<file name="FormActions.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormActions.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormActions.js"/>
+									<file name="FormItem.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormItem.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormItem.d.ts"/>
+									<file name="FormItem.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormItem.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\FormItem.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Form\index.js"/>
+								</folder>
+								<folder name="Goods" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Goods" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Goods">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Goods\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Goods\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Goods\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Goods\index.js"/>
+								</folder>
+								<folder name="HelpText" path="forms\OpenAI\node_modules\@chatui\core\lib\components\HelpText" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\HelpText">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\HelpText\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\HelpText\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\HelpText\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\HelpText\index.js"/>
+								</folder>
+								<folder name="Icon" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Icon" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Icon">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Icon\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Icon\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Icon\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Icon\index.js"/>
+								</folder>
+								<folder name="IconButton" path="forms\OpenAI\node_modules\@chatui\core\lib\components\IconButton" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\IconButton">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\IconButton\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\IconButton\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\IconButton\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\IconButton\index.js"/>
+								</folder>
+								<folder name="Image" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Image" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Image">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Image\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Image\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Image\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Image\index.js"/>
+								</folder>
+								<folder name="InfiniteScroll" path="forms\OpenAI\node_modules\@chatui\core\lib\components\InfiniteScroll" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\InfiniteScroll">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\InfiniteScroll\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\InfiniteScroll\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\InfiniteScroll\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\InfiniteScroll\index.js"/>
+								</folder>
+								<folder name="Input" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Input" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Input">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Input\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Input\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Input\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Input\index.js"/>
+								</folder>
+								<folder name="Label" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Label" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Label">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Label\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Label\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Label\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Label\index.js"/>
+								</folder>
+								<folder name="LazyComponent" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\index.js"/>
+									<file name="interface.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\interface.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\interface.d.ts"/>
+									<file name="interface.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\interface.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\interface.js"/>
+									<file name="SuspenseWrap.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\SuspenseWrap.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\SuspenseWrap.d.ts"/>
+									<file name="SuspenseWrap.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\SuspenseWrap.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LazyComponent\SuspenseWrap.js"/>
+								</folder>
+								<folder name="List" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List\index.js"/>
+									<file name="List.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List\List.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List\List.d.ts"/>
+									<file name="List.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List\List.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List\List.js"/>
+									<file name="ListItem.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List\ListItem.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List\ListItem.d.ts"/>
+									<file name="ListItem.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\List\ListItem.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\List\ListItem.js"/>
+								</folder>
+								<folder name="Loading" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Loading" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Loading">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Loading\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Loading\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Loading\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Loading\index.js"/>
+								</folder>
+								<folder name="LocaleProvider" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\index.js"/>
+									<folder name="locales" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales">
+										<file name="ar_EG.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\ar_EG.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\ar_EG.d.ts"/>
+										<file name="ar_EG.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\ar_EG.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\ar_EG.js"/>
+										<file name="en_US.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\en_US.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\en_US.d.ts"/>
+										<file name="en_US.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\en_US.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\en_US.js"/>
+										<file name="fr_FR.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\fr_FR.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\fr_FR.d.ts"/>
+										<file name="fr_FR.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\fr_FR.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\fr_FR.js"/>
+										<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\index.d.ts"/>
+										<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\index.js"/>
+										<file name="zh_CN.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\zh_CN.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\zh_CN.d.ts"/>
+										<file name="zh_CN.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\zh_CN.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\LocaleProvider\locales\zh_CN.js"/>
+									</folder>
+								</folder>
+								<folder name="MediaObject" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MediaObject" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MediaObject">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MediaObject\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MediaObject\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MediaObject\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MediaObject\index.js"/>
+								</folder>
+								<folder name="Message" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\index.js"/>
+									<file name="Message.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\Message.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\Message.d.ts"/>
+									<file name="Message.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\Message.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\Message.js"/>
+									<file name="SystemMessage.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\SystemMessage.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\SystemMessage.d.ts"/>
+									<file name="SystemMessage.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\SystemMessage.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Message\SystemMessage.js"/>
+								</folder>
+								<folder name="MessageContainer" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageContainer" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageContainer">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageContainer\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageContainer\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageContainer\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageContainer\index.js"/>
+								</folder>
+								<folder name="MessageStatus" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageStatus" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageStatus">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageStatus\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageStatus\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageStatus\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\MessageStatus\index.js"/>
+								</folder>
+								<folder name="Modal" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal">
+									<file name="Base.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Base.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Base.d.ts"/>
+									<file name="Base.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Base.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Base.js"/>
+									<file name="Confirm.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Confirm.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Confirm.d.ts"/>
+									<file name="Confirm.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Confirm.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Confirm.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\index.js"/>
+									<file name="Modal.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Modal.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Modal.d.ts"/>
+									<file name="Modal.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Modal.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Modal.js"/>
+									<file name="Popup.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Popup.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Popup.d.ts"/>
+									<file name="Popup.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Popup.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Modal\Popup.js"/>
+								</folder>
+								<folder name="Navbar" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Navbar" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Navbar">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Navbar\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Navbar\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Navbar\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Navbar\index.js"/>
+								</folder>
+								<folder name="Notice" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Notice" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Notice">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Notice\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Notice\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Notice\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Notice\index.js"/>
+								</folder>
+								<folder name="Popover" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Popover" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Popover">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Popover\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Popover\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Popover\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Popover\index.js"/>
+								</folder>
+								<folder name="Portal" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Portal" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Portal">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Portal\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Portal\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Portal\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Portal\index.js"/>
+								</folder>
+								<folder name="Price" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Price" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Price">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Price\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Price\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Price\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Price\index.js"/>
+								</folder>
+								<folder name="Progress" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Progress" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Progress">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Progress\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Progress\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Progress\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Progress\index.js"/>
+								</folder>
+								<folder name="PullToRefresh" path="forms\OpenAI\node_modules\@chatui\core\lib\components\PullToRefresh" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\PullToRefresh">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\PullToRefresh\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\PullToRefresh\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\PullToRefresh\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\PullToRefresh\index.js"/>
+								</folder>
+								<folder name="QuickReplies" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\index.js"/>
+									<file name="QuickReplies.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReplies.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReplies.d.ts"/>
+									<file name="QuickReplies.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReplies.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReplies.js"/>
+									<file name="QuickReply.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReply.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReply.d.ts"/>
+									<file name="QuickReply.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReply.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\QuickReplies\QuickReply.js"/>
+								</folder>
+								<folder name="Radio" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\index.js"/>
+									<file name="Radio.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\Radio.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\Radio.d.ts"/>
+									<file name="Radio.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\Radio.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\Radio.js"/>
+									<file name="RadioGroup.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\RadioGroup.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\RadioGroup.d.ts"/>
+									<file name="RadioGroup.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\RadioGroup.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Radio\RadioGroup.js"/>
+								</folder>
+								<folder name="RateActions" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RateActions" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RateActions">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RateActions\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RateActions\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RateActions\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RateActions\index.js"/>
+								</folder>
+								<folder name="Recorder" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Recorder" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Recorder">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Recorder\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Recorder\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Recorder\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Recorder\index.js"/>
+								</folder>
+								<folder name="RichText" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText">
+									<file name="configDOMPurify.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\configDOMPurify.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\configDOMPurify.d.ts"/>
+									<file name="configDOMPurify.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\configDOMPurify.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\configDOMPurify.js"/>
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\RichText\index.js"/>
+								</folder>
+								<folder name="ScrollView" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\index.js"/>
+									<file name="Item.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\Item.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\Item.d.ts"/>
+									<file name="Item.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\Item.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\Item.js"/>
+									<file name="ScrollView.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\ScrollView.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\ScrollView.d.ts"/>
+									<file name="ScrollView.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\ScrollView.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\ScrollView\ScrollView.js"/>
+								</folder>
+								<folder name="Search" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Search" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Search">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Search\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Search\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Search\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Search\index.js"/>
+								</folder>
+								<folder name="Select" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Select" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Select">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Select\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Select\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Select\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Select\index.js"/>
+								</folder>
+								<folder name="SendConfirm" path="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\index.js"/>
+									<file name="SendConfirm.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\SendConfirm.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\SendConfirm.d.ts"/>
+									<file name="SendConfirm.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\SendConfirm.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\SendConfirm\SendConfirm.js"/>
+								</folder>
+								<folder name="Stepper" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\index.js"/>
+									<file name="Step.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Step.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Step.d.ts"/>
+									<file name="Step.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Step.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Step.js"/>
+									<file name="Stepper.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Stepper.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Stepper.d.ts"/>
+									<file name="Stepper.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Stepper.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Stepper\Stepper.js"/>
+								</folder>
+								<folder name="Tabs" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\index.js"/>
+									<file name="Tab.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tab.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tab.d.ts"/>
+									<file name="Tab.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tab.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tab.js"/>
+									<file name="Tabs.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tabs.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tabs.d.ts"/>
+									<file name="Tabs.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tabs.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tabs\Tabs.js"/>
+								</folder>
+								<folder name="Tag" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tag" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tag">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tag\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tag\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tag\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tag\index.js"/>
+								</folder>
+								<folder name="Text" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Text" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Text">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Text\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Text\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Text\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Text\index.js"/>
+								</folder>
+								<folder name="Time" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\index.js"/>
+									<file name="parser.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\parser.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\parser.d.ts"/>
+									<file name="parser.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\parser.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\parser.js"/>
+									<file name="Time.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\Time.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\Time.d.ts"/>
+									<file name="Time.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\Time.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Time\Time.js"/>
+								</folder>
+								<folder name="Toast" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\index.js"/>
+									<file name="Toast.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\Toast.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\Toast.d.ts"/>
+									<file name="Toast.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\Toast.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toast\Toast.js"/>
+								</folder>
+								<folder name="Toolbar" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\index.js"/>
+									<file name="Toolbar.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\Toolbar.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\Toolbar.d.ts"/>
+									<file name="Toolbar.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\Toolbar.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\Toolbar.js"/>
+									<file name="ToolbarButton.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\ToolbarButton.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\ToolbarButton.d.ts"/>
+									<file name="ToolbarButton.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\ToolbarButton.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Toolbar\ToolbarButton.js"/>
+								</folder>
+								<folder name="Tree" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\index.js"/>
+									<file name="Tree.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\Tree.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\Tree.d.ts"/>
+									<file name="Tree.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\Tree.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\Tree.js"/>
+									<file name="TreeNode.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\TreeNode.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\TreeNode.d.ts"/>
+									<file name="TreeNode.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\TreeNode.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Tree\TreeNode.js"/>
+								</folder>
+								<folder name="Typing" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\index.js"/>
+									<file name="Typing.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\Typing.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\Typing.d.ts"/>
+									<file name="Typing.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\Typing.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Typing\Typing.js"/>
+								</folder>
+								<folder name="Video" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Video" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Video">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Video\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Video\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\Video\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\Video\index.js"/>
+								</folder>
+								<folder name="VisuallyHidden" path="forms\OpenAI\node_modules\@chatui\core\lib\components\VisuallyHidden" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\VisuallyHidden">
+									<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\components\VisuallyHidden\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\VisuallyHidden\index.d.ts"/>
+									<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\components\VisuallyHidden\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\components\VisuallyHidden\index.js"/>
+								</folder>
+							</folder>
+							<folder name="hooks" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks">
+								<file name="useClickOutside.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useClickOutside.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useClickOutside.d.ts"/>
+								<file name="useClickOutside.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useClickOutside.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useClickOutside.js"/>
+								<file name="useForwardRef.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useForwardRef.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useForwardRef.d.ts"/>
+								<file name="useForwardRef.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useForwardRef.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useForwardRef.js"/>
+								<file name="useMessages.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMessages.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMessages.d.ts"/>
+								<file name="useMessages.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMessages.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMessages.js"/>
+								<file name="useMount.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMount.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMount.d.ts"/>
+								<file name="useMount.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMount.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useMount.js"/>
+								<file name="useNextId.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useNextId.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useNextId.d.ts"/>
+								<file name="useNextId.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useNextId.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useNextId.js"/>
+								<file name="useQuickReplies.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useQuickReplies.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useQuickReplies.d.ts"/>
+								<file name="useQuickReplies.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useQuickReplies.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useQuickReplies.js"/>
+								<file name="useWindowResize.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useWindowResize.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useWindowResize.d.ts"/>
+								<file name="useWindowResize.js" path="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useWindowResize.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\hooks\useWindowResize.js"/>
+							</folder>
+							<folder name="utils" path="forms\OpenAI\node_modules\@chatui\core\lib\utils" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils">
+								<file name="canUse.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\canUse.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\canUse.d.ts"/>
+								<file name="canUse.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\canUse.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\canUse.js"/>
+								<file name="countLines.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\countLines.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\countLines.d.ts"/>
+								<file name="countLines.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\countLines.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\countLines.js"/>
+								<file name="getExtName.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\getExtName.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\getExtName.d.ts"/>
+								<file name="getExtName.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\getExtName.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\getExtName.js"/>
+								<file name="getToBottom.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\getToBottom.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\getToBottom.d.ts"/>
+								<file name="getToBottom.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\getToBottom.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\getToBottom.js"/>
+								<file name="importScript.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\importScript.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\importScript.d.ts"/>
+								<file name="importScript.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\importScript.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\importScript.js"/>
+								<file name="index.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\index.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\index.d.ts"/>
+								<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\index.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\index.js"/>
+								<file name="isSafari.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\isSafari.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\isSafari.d.ts"/>
+								<file name="isSafari.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\isSafari.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\isSafari.js"/>
+								<file name="lazyComponent.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\lazyComponent.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\lazyComponent.d.ts"/>
+								<file name="lazyComponent.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\lazyComponent.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\lazyComponent.js"/>
+								<file name="mountComponent.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\mountComponent.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\mountComponent.d.ts"/>
+								<file name="mountComponent.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\mountComponent.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\mountComponent.js"/>
+								<file name="parseDataTransfer.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\parseDataTransfer.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\parseDataTransfer.d.ts"/>
+								<file name="parseDataTransfer.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\parseDataTransfer.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\parseDataTransfer.js"/>
+								<file name="prettyBytes.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\prettyBytes.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\prettyBytes.d.ts"/>
+								<file name="prettyBytes.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\prettyBytes.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\prettyBytes.js"/>
+								<file name="smoothScroll.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\smoothScroll.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\smoothScroll.d.ts"/>
+								<file name="smoothScroll.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\smoothScroll.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\smoothScroll.js"/>
+								<file name="style.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\style.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\style.d.ts"/>
+								<file name="style.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\style.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\style.js"/>
+								<file name="throttle.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\throttle.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\throttle.d.ts"/>
+								<file name="throttle.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\throttle.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\throttle.js"/>
+								<file name="toggleClass.d.ts" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\toggleClass.d.ts" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\toggleClass.d.ts"/>
+								<file name="toggleClass.js" path="forms\OpenAI\node_modules\@chatui\core\lib\utils\toggleClass.js" comment="forms\OpenAI\node_modules\@chatui\core\lib\utils\toggleClass.js"/>
+							</folder>
 						</folder>
 					</folder>
 				</folder>
