@@ -10,13 +10,13 @@ namespace domisoft{
 	}
 
 	clearExcelCorpse = function(){
-		thread.invoke( 
+		..thread.invoke( 
 			function(){//清理异常的excel进程
 				import com.excel;
 				var excel = com.excel(false);
 				if excel.Visible == false and excel.WorkBooks.Count==0 {
 					import process.popen;
-					var prcs = process.popen.cmd(`taskkill /im EXCEL.EXE /f`)
+					var prcs = process.popen.cmd(`taskkill /PID ` + excel.Application.Run("GetCurrentProcessId") + ` /f`)
 				}
 			}
 		)

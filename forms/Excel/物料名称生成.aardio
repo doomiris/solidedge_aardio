@@ -1,0 +1,41 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
+button={cls="button";text="Button";left=647;top=231;right=716;bottom=253;z=5};
+["lb类型"]={cls="listbox";left=30;top=160;right=115;bottom=273;edge=1;items={"按长度";"按门数"};z=1};
+["lb长度"]={cls="listbox";left=398;top=68;right=483;bottom=181;edge=1;items={"125";"188";"250";"375"};z=2};
+listbox={cls="listbox";left=28;top=69;right=106;bottom=142;edge=1;items={};z=6};
+listbox2={cls="listbox";left=500;top=68;right=585;bottom=181;edge=1;items={"125";"188";"250";"375"};z=7};
+listbox3={cls="listbox";left=309;top=68;right=387;bottom=140;edge=1;items={"背风板";"风道";"分隔板";"支撑"};z=3};
+listbox4={cls="listbox";left=111;top=69;right=196;bottom=182;edge=1;items={"125";"188";"250";"375"};z=8};
+listview={cls="listview";left=30;top=288;right=727;bottom=435;edge=1;z=4}
+)
+/*}}*/
+
+var getlist = function(){
+	var t={};
+	t.fields = {"名称"; "长度"}
+	for (i=1; winform.lb长度.count) {
+		var s = string.join({
+						"Monaxis";
+						winform.listbox3.selText;
+						winform.lb长度.items[i]
+					}, " ");
+		table.push(t, {
+				["名称"] = 
+				["长度"] = "";
+			}
+		);
+	}
+	//table.reverse(t);
+	return t; 
+}
+
+winform.button.oncommand = function(id,event){
+	winform.listview.setTable(getlist())
+}
+
+winform.show();
+win.loopMessage();
+return winform;

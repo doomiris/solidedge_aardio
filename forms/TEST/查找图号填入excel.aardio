@@ -12,8 +12,8 @@ var getDrawingNumber = function(pcode){
 	else return null;
 }
 var getDrawingFile= function(pcode){
-	var t = db.stepQuery(`SELECT * FROM [Lib] WHERE 文件名 LIKE "%` ++ string.trimleft(pcode, "H") ++ `%"`)
-	if #t return pcode;
+	var t = db.stepQuery(`SELECT * FROM [Lib] WHERE 文件名 LIKE "%` ++ string.trimleft(pcode, "H") ++ `%"`);
+	if t return pcode;
 	else return null;
 }
 
@@ -32,14 +32,14 @@ var count = sht.usedRange.rows.count;
 //import fsys;
 
 _P_COL = 1 /* A */	//查找专用号所在列
-_D_COL = 4 /* D */	//图号填入列
+_D_COL = 8 /* H */	//图号填入列
 for (i=2; count){
 	progress.setProgress( i/count * 100 );
 	var p = sht.cells(i, _P_COL).value2;
 	if !p continue;
 	if !#p continue;
-	var d = getDrawingNumber(p);
-	if !d d = getDrawingFile(p);
+	
+	var d = getDrawingNumber(p) : getDrawingFile(p);
 	if d sht.cells(i, _D_COL).value2 = d;
 }
 excel.alerts = true;

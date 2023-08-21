@@ -34,11 +34,14 @@ winform_setting.bindConfig( config.settings,{
 
 winform_setting.button.oncommand = function(id,event){
 	config.settings.save();
+	mainForm.custom.loadForm("\forms\main\frmPage3.aardio");
 }
 
+/*
 winform_setting.checkbox_hidepass.oncommand = function(id,event){
 	winform_setting.edit_SAP_pw.password = owner.checked;
 }
+*/
 
 winform_setting.show();
 win.loopMessage();

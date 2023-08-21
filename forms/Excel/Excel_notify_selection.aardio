@@ -1,7 +1,33 @@
 //通知窗口 
+import console;
+import com;
+var w_index = 1
+var excel_app_tab={};
+import domisoft;
+domisoft.clearExcelCorpse();
+com.enumRunning( 
+	function(displayName,object){
+			if com.GetTypeInfo(object) {
+				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+					if !table.indexOf(excel_app_tab, object.FullName||displayName) {
+						if io.splitpath(displayName).ext !== ".xlam" {
+							//console.log(w_index, io.splitpath(displayName).file);				
+							excel_app_tab[w_index] = object;
+							w_index++;
+						}
+					}
+				}
+			}
+	}
+)
+if #excel_app_tab return; 
+var getExcel_index = 1;
 
-import com.excel;
-var excel = com.excel(false);
+var sht = excel_app_tab[getExcel_index].ActiveSheet;
+excel_app_tab = null;
+
+if !sht console.pause("需要重新执行");
+
 
 import win.ui;
 
@@ -60,12 +86,8 @@ import win.clip;
 
 var str={};
 
-if (excel and excel.ActiveWindow.WindowState !== -4140) {
-	var wb = excel.ActiveWorkbook;
-	var sht = wb.ActiveSheet;
-	sht.Activate();
+if (sht.parent.WindowState !== -4140) {
     var st = sht.Application.Selection.value2;
-    
     sht.Application.Selection.Copy();    
     notify_excel_form.edit.paste();    
     var txt = notify_excel_form.edit.text;
