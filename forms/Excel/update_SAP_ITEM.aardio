@@ -58,15 +58,17 @@ var refresh = function(){
 	sht = excel.ActiveWorkbook.ActiveSheet;
 	update_sap_item_form.static.text = sht.parent.Name ++ "![" ++ sht.name ++ "]";
 	
-	var titleRng = sht.range("A1:Z5").value2;	//查找范围前5行
-	
+	var titleRng = sht.range("A1:Z5");
+	update_sap_item_form.titleRow = titleRng.find("物料描述").row;
+	titleRng = titleRng.value2[[update_sap_item_form.titleRow]];	//查找范围前5行
 	titleRng = tarray.replaceValue(titleRng,"专用号", "物料"); //考虑其它命名方式
-	
+
 	for (i=1; #tab){
-		var match = tarray.findValue(titleRng, tab[i][fields[1]]);
+		var match = tarray.indexContains(titleRng, tab[i][fields[1]]);
+		//win.msgbox(tab[i][fields[1]])
 		if !match continue;
-		tab[i][fields[2]] = etip.toColName(match.col) ;
-		update_sap_item_form.titleRow := match.row;
+		tab[i][fields[2]] = etip.toColName(match) ;
+		update_sap_item_form.titleRow := update_sap_item_form.titleRow;
 		update_sap_item_form.edit.text = update_sap_item_form.titleRow + 1;
 		update_sap_item_form.edit2.text = sht.usedrange.rows[sht.usedrange.rows.count].row;
 	}

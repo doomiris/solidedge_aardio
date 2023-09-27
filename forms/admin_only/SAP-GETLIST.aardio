@@ -64,14 +64,15 @@ var getFromSAP = function(winform_getlist){
 /*}}*/
 /*deal处理数据{{*/
 var dealWithXlsx = function(winform_getlist){
-	winform_getlist.log.print("开始处理数据");
+	winform_getlist.log.print("等待3秒后开始处理数据...");
 	sleep(3000) //等待workbook打开
+	_allcost_file := "allcost.xlsx";
 	//_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.xlsx";
-	import com.excel;
-	var excel = com.excel(false);
-	winform_getlist.log.print("获取workbook...");
-	var wb = excel.WorkBooks("allcost.xlsx");
-	var sht = wb.sheets(1);
+	import domisoft;
+	winform_getlist.log.print("获取worksheet...");
+	var sht = domisoft.getRunningWorkSheet(_allcost_file);
+	if !sht return error("sht null"); 
+	winform_getlist.log.print("获取usedrange...");
 	var rng = sht.usedrange.value2;
 	winform_getlist.log.print("打开step_db...");
 	import config;
@@ -93,16 +94,16 @@ var dealWithXlsx = function(winform_getlist){
 			mtype = nl[3];
 			mgroup = nl[4];
 			bun = nl[5];
-			price = tonumber(string.replace(nl[6],",",""));
+			price = tonumber(..string.replace(nl[6],",",""));
 			pgr = nl[7]
 		)
 	}
-	
 	db.commitTrans();
-
+	winform_getlist.log.print("完成, 关闭数据库");
 	db.close();
-	wb.close(false);
-	winform_getlist.log.print("完成, 已加入数据库");
+	winform_getlist.log.print("关闭" + _allcost_file);
+	sht.parent.close(false);
+	winform_getlist.log.print("excel处理完成.");
 	winform_getlist.publish("sentSAPtoDB",true);
 	winform_getlist.button.disabledText = null;
 }

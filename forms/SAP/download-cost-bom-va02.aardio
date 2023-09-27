@@ -75,6 +75,10 @@ var createOrder = function(){
 		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "20010"
 		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "20010"
 		session.findById("wnd[0]").sendVKey 0
+		if session.findById("wnd[0]/sbar/pane[0]").Text = "编号为 TBM6666 的凭证已经存在" then
+			session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN").text = "TBM6667"
+			session.findById("wnd[0]").sendVKey 0
+		end if
     */
 }
 
@@ -176,11 +180,14 @@ console.open()
     		set markcost = nothing 
 
     		on error resume next
-    			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1")
+    			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
 			on error goto 0
 
     		if not markcost is nothing then
         			markcost.press
+        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
+        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
+        			session.findById("wnd[0]/tbar[0]/btn[0]").press
 			else 
         		set tdstr = nothing
         		on error resume next

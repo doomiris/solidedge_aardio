@@ -27,7 +27,26 @@ namespace domisoft{
 		var s = com.shell.findApp("@"+ keyword);
 		var g = ..string.match(s.path,'%{}');		
 		return (..string.replace(s.path, "@"+g, fsys.knownFolder(g)));
-		string.replace(
+	}
+	getRunningWorkSheet = function(workbookName,worksheetName){
+		import com;
+		var sht;
+		com.enumRunning( 
+			function(displayName,object){
+					if com.GetTypeInfo(object) {
+						if ..string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+								if ..string.endWith(displayName, workbookName, true) {		
+									if worksheetName
+										sht = object.Sheets(worksheetName) : null; 
+									else
+										sht = object.Sheets(1); 
+									return true; 
+								}
+						}
+					}
+			}
+		)
+		return sht; 
 	}
 	
 }
@@ -35,5 +54,6 @@ namespace domisoft{
 showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程
 getComAppPath(keyword) = 查找com程序路径
+getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指定worksheetName时返回sheets(1)
 end intellisense**/
 

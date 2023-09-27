@@ -13,19 +13,13 @@ import tarray;
 import com.excel;
 import string.keywords;
 import config;
+import fsys.table;
 
 /*
 	import console
 	console.open()
 */
-var fileTab = {
-	[1] = {"名称" = "Service Counter"; workbook = "Service Counter Item_Master.xlsx"; sheet = "part list"};
-	[2] = {"名称" = "变频平台"; workbook = "变频平台_SAP_Item_Master.xlsx"; sheet = "part list"};
-	[3] = {"名称" = "Monaxis SS"; workbook = "Monaxis_EP_Item_Master.xlsx"; sheet = "part list"};
-	[4] = {"名称" = "SPI Inverter"; workbook = "SPI_Inverter_Item_Master.xlsx"; sheet = "part list"};
-	[5] = {"名称" = "Monaxis SE"; workbook = "Monaxis_SE_Item_Master.xlsx"; sheet = "part list"};
-	fields = { [1] = "名称"; [2] = "workbook"; [3]="sheet" };
-}
+var fileTab = fsys.table(io.joinpath(config.dbServer.path,"itemmaster_lists.table")).default;
 fill_in_sap_item_form.listview.setTable(fileTab);
 
 fill_in_sap_item_form.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable之后, 否则失效

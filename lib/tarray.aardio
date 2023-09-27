@@ -144,9 +144,9 @@ findValue = function(arr, what){ //一维数组不可用
 	}
 }
 indexContains = function(arr, what){
-	for (i=1; #arr)
-			if ..string.indexOf(arr[i], what)
-				return i; 
+	for k, v in arr
+			if ..string.indexOf(v, what)
+				return k; 
 }
 cNum = function(str){
 	select type(str) {

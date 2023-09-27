@@ -3,12 +3,12 @@ import win.ui;
 var winform = win.form(text="aardio form";right=759;bottom=469)
 winform.add(
 button={cls="button";text="Button";left=647;top=231;right=716;bottom=253;z=5};
-["lb类型"]={cls="listbox";left=30;top=160;right=115;bottom=273;edge=1;items={"按长度";"按门数"};z=1};
-["lb长度"]={cls="listbox";left=398;top=68;right=483;bottom=181;edge=1;items={"125";"188";"250";"375"};z=2};
-listbox={cls="listbox";left=28;top=69;right=106;bottom=142;edge=1;items={};z=6};
-listbox2={cls="listbox";left=500;top=68;right=585;bottom=181;edge=1;items={"125";"188";"250";"375"};z=7};
-listbox3={cls="listbox";left=309;top=68;right=387;bottom=140;edge=1;items={"背风板";"风道";"分隔板";"支撑"};z=3};
-listbox4={cls="listbox";left=111;top=69;right=196;bottom=182;edge=1;items={"125";"188";"250";"375"};z=8};
+["lb类型"]={cls="listbox";left=611;top=53;right=696;bottom=166;edge=1;items={"按长度";"按门数"};z=1};
+["lb长度"]={cls="listbox";left=178;top=52;right=263;bottom=165;edge=1;items={"Monaxis";"CGL";"SGL"};z=2};
+listbox={cls="listbox";left=30;top=53;right=168;bottom=215;edge=1;items={"项目";"型号";"物料名称";"材质";"尺寸"};z=6};
+listbox2={cls="listbox";left=275;top=51;right=360;bottom=164;edge=1;items={"D/M";"SR/TR";"SP/TP";"EU/LU"};z=7};
+listbox3={cls="listbox";left=484;top=53;right=607;bottom=125;edge=1;items={"背风板";"风道";"分隔板";"支撑"};z=3};
+listbox4={cls="listbox";left=367;top=53;right=482;bottom=166;edge=1;items={"125/188/250/375";"2D/3D/4D/5D"};z=8};
 listview={cls="listview";left=30;top=288;right=727;bottom=435;edge=1;z=4}
 )
 /*}}*/
@@ -23,7 +23,7 @@ var getlist = function(){
 						winform.lb长度.items[i]
 					}, " ");
 		table.push(t, {
-				["名称"] = 
+				["名称"] = "";
 				["长度"] = "";
 			}
 		);
