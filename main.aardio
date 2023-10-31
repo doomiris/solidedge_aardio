@@ -86,7 +86,7 @@ mainForm.isDialogMessage = function(hwnd,msg){
 /*}}*/
 			
 win.ui.simpleWindow( mainForm );
-//mainForm.enableDpiScaling();
+mainForm.enableDpiScaling();
 var start_time = time();
 var seApp = solidedge.application();
 mainForm.button.hide = !!seApp;
@@ -158,7 +158,7 @@ mainForm.wndproc =  function(hwnd,message,wParam,lParam){
 
 	
 /*}}*/
- /*托盘右键菜单{{*/
+/*托盘右键菜单{{*/
 mainForm.popmenu2 = win.ui.popmenu(mainForm);//创建弹出菜单
 mainForm.popmenu2.add('&Open TBM', function(){
 	//在下面输入菜单响应代码
@@ -167,7 +167,7 @@ mainForm.popmenu2.add('&Open TBM', function(){
 	
 });
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('检查专用号申请表', λ() loadcodex("\forms\Excel\check_专用号申请表.aardio"));
+mainForm.popmenu2.add('检查专用号申请表', λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"));
 mainForm.popmenu2.add('智能填写专用号申请表', λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('专用号填入ItemMaster...', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
@@ -175,8 +175,8 @@ mainForm.popmenu2.add('专用号填入ItemMaster...', λ() loadcodex("\forms\Exc
 //mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Excel\Excel_update_info.aardio"));
 //mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('检查新BOM申请表', λ() loadcodex("\forms\Excel\check_新BOM申请表.aardio"));
-mainForm.popmenu2.add('检查BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单.aardio"));
+mainForm.popmenu2.add('检查新BOM申请表', λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio"));
+mainForm.popmenu2.add('检查BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio"));
 mainForm.popmenu2.add('原材料用量计算...', λ() loadcodex("\forms\Excel\BOM-CALC.aardio"));
 mainForm.popmenu2.add('打开分类查询窗口...', λ() loadcodex("\forms\SAP\OD_Query.aardio"));
 mainForm.popmenu2.add();//分隔线
@@ -278,17 +278,27 @@ mainForm.tbutton3.oncommand = function(id,event){
 	ee = ee ? string.pack( ee[1] + 1 ) : "a";
 	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee, mainForm);
 	if !e return ; 
-	if (..string.len(..string.trim(e)) == 0) return ; 
-	for (i = 1 ; BBS.Count) {	
-		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
-    		if !BBS.Item(i).Leader
-    			with BBS.Item(i){
-    				BalloonText = e;
-    				BalloonType = 1; /* DimBalloonTypeConstants.igDimBalloonCircle */
-    				BalloonSize = 2; /* 形状是字体几倍数 */
-    				Leader = false; 
-    				Style.DrivenColor = 255;	/* ColorConstants.seColorRed */;    				
-    			}
+	if (string.len(string.trim(e)) == 0) return ; 
+	var setBB = function(balloonItem, txt){
+    	with balloonItem {
+    		BalloonText = txt;
+    		BalloonType = 1; /* DimBalloonTypeConstants.igDimBalloonCircle */
+    		BalloonSize = 2; /* 形状是字体几倍数 */
+    		Leader = false; 
+    		Style.DrivenColor = 255;	/* ColorConstants.seColorRed */;    				
+    	}
+	}	
+	for (i = 1; BBS.Count) {
+		if BBS.Item(i).Leader continue; //跳过有引线的
+		select(BBS.Item(i).BalloonType) {
+			case 1 /* igDimBalloonCircle */ {
+    			setBB( BBS.Item(i), e);
+			}
+			case 7 /* igDimBalloonTriangle */ {
+				if table.indexOf({"F","S","X"},BBS.Item(i).BalloonText) continue;
+				setBB( BBS.Item(i), e);
+			}
+		}
 	}
     mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);

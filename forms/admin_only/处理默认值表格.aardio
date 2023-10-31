@@ -13,7 +13,7 @@ edit3={cls="edit";left=0;top=136;right=744;bottom=504;ah=1;aw=1;db=1;dl=1;dr=1;d
 import fsys;
 import config
 import string.keywords;
-_skip_dir_name = "归档|存档|副本|旧版本|操作手册|Archieve"
+_skip_dir_name = "归档|存档|副本|旧版本|操作手册|Archieve|oldVersion"
 _skip_file = {
 	"岛柜系列产品默认配置2022.5.17 - 副本.xlsx",
 	"冷风机默认配置.xlsx",
@@ -57,7 +57,7 @@ var getListFromXlsx = function(_xlsx_path){
 		);
 	}
 	if !wb 
-		winform_get_default.edit3.print("无法打开文件: " + _xlsx_path, /*"完整路径："+fullpath*/)
+		winform_get_default.edit3.print("无法打开文件: ", _xlsx_path, /*"完整路径："+fullpath*/)
 	if !wb
 		return ; 
 	excel.alerts = false;
@@ -91,7 +91,7 @@ var getListFromXlsx = function(_xlsx_path){
 				
 
 			
-			if !t["产品编码"] or !t["分类"] continue; //跳过无值的行			
+			if !t["产品编码"] or !t["分类"] or !t["特性"] continue; //跳过无值的行			
 			t["产品编码"] = string.trim(t["产品编码"]);
 			t["分类"] = string.trim(t["分类"]);	
 			t["特性"] = string.trim(t["特性"]);			
@@ -122,7 +122,7 @@ var deepSearchFile = function(path,filter = "*.*"){
 			if(filename){
 				if !string.startWith(filename,"~$"){	//跳过临时文件
 					if !table.find(_skip_file, filename){	//跳过指定文件
-           				winform_get_default.edit3.print("发现文件："+filename, /*"完整路径："+fullpath*/)
+           				winform_get_default.edit3.print("发现文件：", filename, /*"完整路径："+fullpath*/)
            				getListFromXlsx(fullpath);
            			}
            		}   		

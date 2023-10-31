@@ -95,12 +95,21 @@ var rule_desp = {
 	[15] = "原材料用量错误";  //TODO
 	[16] = "物料类型/单位与SAP内不一致"; 
 	[17] = "发泡料比例错误(黑料 = 1.15*白料)"; 
+	[18] = "原材料[厚度]与SAP内已维护的厚度不一致";
+	[19] = "原材料[用量]与SAP内已维护的展开尺寸不一致";
 	
 }
 var hasChild = function(z){
 	if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
 	else return false; 
 }
+var getParentIndex = function(current_index){
+	for (i= current_index-1 ; 1; -1) {
+		if etab[i].层级数 == (etab[current_index].层级数-1)
+			return i; 
+	}
+}
+
 var sapErr = {
 	[1] = function(i){
 		if (i == 1) return ; 
@@ -218,7 +227,39 @@ var sapErr = {
 		if etab[i].物料类型 !== sapItem.MTyp return true;
 	}
 	[17] = function(i){
-
+		if etab[i].物料号 !== "H0080300487" return;
+		var current_tree_lvl = etab[i].层级数;
+		var parent_index = getParentIndex(i);
+		if !parent_index return ; 
+		for (j=parent_index; etab_count){
+			if etab[j].层级数 !== current_tree_lvl continue;
+			if etab[j].物料号 !== "H0088200013" continue;
+			if etab[j].层级数 < current_tree_lvl break;
+			var material_w = etab[i].单位用量
+			var material_B = etab[j].单位用量;
+			//黑=1.15白
+			var tolerance = 0.05;
+			return material_B > (1+tolerance) * material_w or material_B < (1-tolerance) * material_w;
+		}		 
+	}
+	[18] = function(i){
+		if string.endWith(etab[i].物料号,"-G",true){
+			var sapItem = QHC.getSapItem(etab[i-1].物料号);
+			if sapItem
+				var f = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
+			var ot = QHC.getRawItem(f)[["物料"]];
+			return ot !== etab[i].物料号;
+		}
+	}
+	[19] = function(i){
+		if string.endWith(etab[i].物料号,"-G",true){
+			var sapItem = QHC.getSapItem(etab[i-1].物料号);
+			if sapItem
+				var f = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
+			var rawItem = QHC.下料尺寸(f);
+			var tolerance = 0.1;
+			return etab[i].单位用量 > (1+tolerance) * rawItem.metel or etab[i].单位用量 < (1-tolerance) * rawItem.metel; 
+		}
 	}
 };
 

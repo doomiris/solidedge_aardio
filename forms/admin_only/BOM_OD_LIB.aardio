@@ -7,9 +7,9 @@ var bar = console.progress();
 import com.excel;
 var excel = com.excel(true);
 
-_sname = {"分类新", "特性参数规划表新", "分类新", "特性参数规划表新"}
+_sname = {"分类", "特性参数规划表", "分类", "特性参数规划表"}
 _wbname = {
-	{"D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\0.参数及分类汇总表2023.03.16.xlsx", false, true, null,"0000"},
+	{"D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\0.参数及分类汇总表2023.08.31.xlsx", false, true, null,"0000"},
 	{"D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx",false,true,null,null},
 }
 if !io.exist(_wbname[1][1]) console.log("找不到开发表", _wbname[1][1]);

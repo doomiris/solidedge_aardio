@@ -1,0 +1,301 @@
+import win.ui;
+/*DSG{{*/
+var chk_excel_BOM_REV_form = win.form(text="检查BOM更改单";right=759;bottom=400)
+chk_excel_BOM_REV_form.add(
+button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1};
+combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
+listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
+progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4}
+)
+/*}}*/
+
+import tarray;
+import com.excel;
+import string.keywords;
+import config;
+import fsys.table;
+import QHC;
+import win.clip;
+
+/*
+	import console
+	console.open()
+*/
+
+var excel_0 = com.excel(false);
+var excel_2;
+var getErr = {};
+var etab = {};
+com.enumRunning( 
+	function(displayName,object){
+		try{
+			var s = com.GetTypeInfo(object).GetDocumentation().name;
+			if s = "_Workbook"
+				if string.keywords('BOM|更改|变更').findOne(displayName)
+					chk_excel_BOM_REV_form.combobox2.add(displayName);
+		}
+	}
+)
+
+var get_excel = function(wbname){
+	var e;
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s = "_Workbook"
+					if displayName == wbname
+						e = object.application; 
+			}
+		}
+	)
+	return e; 
+}
+
+if chk_excel_BOM_REV_form.combobox2.count {
+	var findActiveWB = table.indexOf(chk_excel_BOM_REV_form.combobox2.items, excel_0.ActiveWorkbook.Name)
+	chk_excel_BOM_REV_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
+}
+
+/*etab相关函数{{*/
+/*
+var getUpLevel = function(currentLevel){
+	return string.left(currentLevel, #currentLevel - 2) ++ string.right(currentLevel, 1) - 1;
+}
+
+var  getSubLevel = function(currentLevel){
+	return string.left(currentLevel, 1) ++ string.left(currentLevel, #currentLevel - 1) ++ string.right(currentLevel, 1) + 1
+}
+
+var hasChild = function(z){
+	if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
+	else return false; 
+}
+var getParentIndex = function(current_index){
+	for (i= current_index-1 ; 1; -1) {
+		if etab[i].层级数 == (etab[current_index].层级数-1)
+			return i; 
+	}
+}
+*/
+/*}}*/
+
+
+chk_excel_BOM_REV_form.button.oncommand = function(id,event){
+	if !#chk_excel_BOM_REV_form.combobox2.selText return ; 	
+	excel_2 = get_excel(chk_excel_BOM_REV_form.combobox2.selText);
+	sht = excel_2.ActiveWorkbook.ActiveSheet;
+
+
+	etab = (function(){
+			var fields = {
+				"原父项"; "原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"; "更改备注";
+				"新父项"; "BOM项目"; "项目类别"; "新子项"; "新子项描述"; "新子项数量"; "新子项单位"; "新子项类型";
+				"是否继承";	"继承生效日期";	"是否有OD";
+	
+			};
+	
+			var etr = function(){
+				var f = sht.usedrange.find("B2907F02");
+				return f.row - 1; 
+			};
+			
+			if !etr() return error("找不到边界");
+			
+			var tab = {};
+			var eArr = sht.Range("$B$9:$S$" ++ etr()).value2;
+			for(i=1; #eArr){    
+	    		var d = table.array();
+	    		for (j=1;#fields){
+	    			d[fields[j]] = eArr[i][j];
+				}		
+				table.push(tab,d);
+			}
+			return tab; 
+	})();
+	
+	var etab_count = #etab;
+
+/*RULES_DESP{{*/
+	var rule_desp = {
+		[1] = "前后父项物料不匹配(不要改变原有模版公式)";
+		[2] = "项目类别固定值:L";
+		[3] = "新增子项:子项需写在右侧";
+		[4] = "删除子项:子项需写在左侧";
+		[5] = "更改用量:前后相同";
+		[6] = "用量:小数位数不超过3位 (手动删除或使用round函数, 直接调整显示状态也不行)";
+		[7] = "ZA单位对应数量应该是整数";
+		[8] = "物料类型/单位与SAP内不一致/新号可能未生效请确认"; 
+		[9] = "ROH不可有下级物料"; 
+		[10] = "单位用量错误: 非数字/没填/0值"; 
+		[11] = "给09组新增子项时确认是否有OD"; 
+		[12] = "父项物料被禁用, 请先申请解禁再更改BOM";
+		[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
+		[14] = "相同内容重复操作";  
+	}
+/*}}*/
+	
+/*RULES{{*/
+	var sapErr = {
+		[1] = function(i){
+			if etab[i][["原父项"]]
+				return etab[i][["原父项"]] !== etab[i][["新父项"]]; 
+		};
+		[2]=function(i){
+			if etab[i].原父项
+				return etab[i][["项目类别"]] !== "L"; 
+		};
+		[3]=function(i){
+			if etab[i][["更改备注"]] == "新增子项" or etab[i][["更改备注"]] == "新增BOM"
+				return #etab[i][["原子项"]] and !#etab[i][["新子项"]];
+		};
+		[4]=function(i){
+			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项"
+				return !#etab[i][["原子项"]] and #etab[i][["新子项"]];
+		};
+		[5]=function(i){
+			if etab[i][["更改备注"]] == "更改用量"
+				return etab[i][["原子项数量"]] == etab[i][["新子项数量"]]; 
+		};
+		[6]=function(i){
+			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+			var n = tarray.cNum(etab[i][["新子项数量"]]);
+			var a = string.split(tostring(n),".");
+			if #a>1
+				return #a[2]>3; 
+		};
+		[7]=function(i){
+			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+			if etab[i][["新子项单位"]]  == "ZA"
+				if !string.indexOf(etab[i][["新子项描述"]],"胶带")
+						return !math.isInteger(tarray.cNum(etab[i][["新子项数量"]]));  
+		};
+		[8]=function(i){
+			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return; 
+			var item = QHC.getSapItem(etab[i][["新子项"]]);
+			return item[["MTyp"]] !== etab[i][["新子项类型"]] or item[["BUn"]] !== etab[i][["新子项单位"]]; 
+		};
+		[9]=function(i){
+			if etab[i][["更改备注"]]=="新增子项" or etab[i][["更改备注"]]=="新增BOM" {
+				var item = QHC.getSapItem(etab[i][["原父项"]]);
+				return item[["MTyp"]] == "ROH"; 
+			}
+		};
+		[10]=function(i){
+			if !etab[i][["更改备注"]] or etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+			return !(tarray.cNum(etab[i][["新子项数量"]]))
+		};
+		[11]=function(i){
+			
+			if etab[i][["原父项"]] and string.startWith(etab[i][["原父项"]], "H00809")
+				return etab[i][["是否有OD"]] !== "√"
+		};
+		[12]=function(i){	//仅检查禁用状态, 忽略新号问题
+			var item = QHC.getSapItem(etab[i][["原父项"]]);
+			return item[["禁用"]]=="禁用"
+		};
+		[13]=function(i){	//仅检查禁用状态, 忽略新号问题
+			//if !#etab[i].新子项 return ; 
+			var item = QHC.getSapItem(etab[i][["新子项"]]);
+			return item[["禁用"]]=="禁用"
+		};
+		[14]=function(i){
+			if i==1 return ; 
+			if !etab[i][["原父项"]] return ; 
+			for(j=1; i-1){
+				if etab[j][["原父项"]]==etab[i][["原父项"]] and 
+					etab[j][["原子项"]]==etab[i][["原子项"]] and
+						etab[j][["新子项"]]==etab[i][["新子项"]]
+							return true;
+			}
+		}
+	};
+	/*}}*/
+	
+	
+	var bar = chk_excel_BOM_REV_form.progress
+	bar.min = 0;
+	bar.max = etab_count;
+	getErr = {};
+	getErr.fields = {"行"; "相关物料号";"错误描述"}
+	for(i=1; etab_count){		
+		bar.pos = i;
+		for(j=1; #sapErr){
+			if sapErr[j](i)
+				table.push(getErr, {
+				"行":i+8;
+				"相关物料号": ""; /*etab[i].原父项;*/
+				"错误描述": rule_desp[j];
+			})
+		}
+	}
+	
+	
+	
+	chk_excel_BOM_REV_form.listview.setTable(getErr);
+	
+	chk_excel_BOM_REV_form.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
+	chk_excel_BOM_REV_form.listview.setColumn({cx=120 ;fmt=0x2/*_LVCFMT_CENTER*/},2);
+    chk_excel_BOM_REV_form.listview.fillParent(3);
+	
+}
+chk_excel_BOM_REV_form.onDestroy = function(){
+   	if excel excel.alerts = true;    //防止意外关闭后Excel假死
+}
+
+/*点击定位{{*/
+chk_excel_BOM_REV_form.listview.onSelChanged = function(selected,item,subItem,nmListView){
+	if !selected return ; 
+	if !item return ;
+	var row = owner.getItemText(item,1);
+	if row
+		excel_2.ActiveWindow.ScrollRow = row;
+}
+/*}}*/
+
+/*右键菜单{{*/
+chk_excel_BOM_REV_form.listview.onnotify = function(id,code,ptr){
+	select(code) {
+    	case 0xFFFFFFFB/*_NM_RCLICK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return ; 
+			var x,y = win.getMessagePos();
+		
+			var menu = win.ui.popmenu(chk_excel_BOM_REV_form);			
+			menu.add("隐藏可忽略项", function(){
+				var t = table.filter(getErr,
+					function(v,index){
+						return !string.indexOf(v["错误描述"], "可忽略"); 
+					}
+				);
+				t.fields = getErr.fields;
+				chk_excel_BOM_REV_form.listview.setTable(t);
+			});
+			menu.add("显示可忽略项", λ() chk_excel_BOM_REV_form.listview.setTable(getErr));
+			menu.popup(x,y,true);
+    	}
+    }
+}
+/*}}*/
+/*CTRLC复制模块{{*/
+chk_excel_BOM_REV_form.listview.translateAccelerator = function( msg ){ 
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
+//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
+//    var selectedRow = owner.getSelection();
+    var vk = msg.wParam;    
+    if( ( vk == 'C'# ) && ctrl ){
+        var tab=table.array();
+        for (i=1; #owner.selected)
+            table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
+		win.clip.write(string.join(tab,'\n'));
+        return true;
+    }
+}
+
+/*}}*/
+
+chk_excel_BOM_REV_form.show();
+
+win.loopMessage();
+return chk_excel_BOM_REV_form;

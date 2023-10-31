@@ -116,6 +116,29 @@ getProductDef =function(){
 	var t = db.prepare("SELECT * FROM [base]");
 	return t.getColumns(); 
 }
+getRawItem =function(size_str){
+		if !size_str return; 
+		size_str = ..string.replace(..string.lower(size_str),"x","*");
+		if !..string.indexOf(size_str,"*") return ; 
+
+		var s = ..string.split(size_str,"*");
+		
+		for (i=1; #s)
+			s[i] = tonumber(s[i]);
+			
+		table.sort(s);
+		table.reverse(s);
+
+		var rawItem = (function(t){
+			var tab = ..table.filter(rawTab,function(v,index){
+				return  (v.厚度==t);
+			})
+			
+			if !#tab return rawTab["X"] ; 
+			else return tab[1]; 
+		})(s[3]);
+		return rawItem;	
+}
 getSapItem = function(hcode){
 	//import console;
 	//console.log(sap_db_path, hcode)
@@ -249,6 +272,7 @@ QHC.getProductInfo(hcode) = 返回ProductInfo
 QHC.getSapItemByDesp(desp) = 返回table
 QHC.getSapItem() = 返回hitem\n!QHC_hitem.
 QHC.getColDef() = 获取列名称数组
+QHC.getRawItem(size_str) = 根据展开尺寸获取原材料项目\n!QHC_rawItem.
 !QHC_hitem.物料 = 物料
 !QHC_hitem.物料描述 = 物料描述
 !QHC_hitem.MTyp = 类型
@@ -257,6 +281,10 @@ QHC.getColDef() = 获取列名称数组
 !QHC_hitem.配置 = 配置
 !QHC_hitem.禁用 = 禁用
 !QHC_hitem.价格 = 价格
+!QHC_rawItem.厚度 = 厚度
+!QHC_rawItem.物料 = 物料
+!QHC_rawItem.物料描述 = 物料描述
+!QHC_rawItem.价格 = 价格
 end intellisense**/
 /**intellisense(QHC.下料尺寸("__")())
 l = 长

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.328" ProductVersion="1.5.0.328" publishDir="dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.330" ProductVersion="1.5.0.330" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -21,14 +21,14 @@
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
 			<file name="BOM-CALC.aardio" path="forms\Excel\BOM-CALC.aardio" comment="forms\Excel\BOM-CALC.aardio"/>
-			<file name="check_BOM更改单.aardio" path="forms\Excel\check_BOM更改单.aardio" comment="forms\Excel\check_BOM更改单.aardio"/>
-			<file name="check_专用号申请表.aardio" path="forms\Excel\check_专用号申请表.aardio" comment="forms\Excel\check_专用号申请表.aardio"/>
-			<file name="check_新BOM申请表.aardio" path="forms\Excel\check_新BOM申请表.aardio" comment="forms\Excel\check_新BOM申请表.aardio"/>
+			<file name="check_BOM更改单_GUI.aardio" path="forms\Excel\check_BOM更改单_GUI.aardio" comment="forms\Excel\check_BOM更改单_GUI.aardio"/>
+			<file name="check_专用号申请表_GUI.aardio" path="forms\Excel\check_专用号申请表_GUI.aardio" comment="forms\Excel\check_专用号申请表_GUI.aardio"/>
+			<file name="check_新BOM申请表_GUI.aardio" path="forms\Excel\check_新BOM申请表_GUI.aardio" comment="forms\Excel\check_新BOM申请表_GUI.aardio"/>
+			<file name="check_默认值表格.aardio" path="forms\Excel\check_默认值表格.aardio" comment="forms\Excel\check_默认值表格.aardio"/>
 			<file name="Excel_notify_selection.aardio" path="forms\Excel\Excel_notify_selection.aardio" comment="forms\Excel\Excel_notify_selection.aardio"/>
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
-			<file name="check_默认值表格.aardio" path="forms\Excel\check_默认值表格.aardio" comment="forms\Excel\check_默认值表格.aardio"/>
 			<file name="物料名称生成.aardio" path="forms\Excel\物料名称生成.aardio" comment="forms\Excel\物料名称生成.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
