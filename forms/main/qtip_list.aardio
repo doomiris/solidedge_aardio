@@ -42,7 +42,22 @@ var downloadbom = function(){
 	import SAP.session
 	var session=SAP.session();
 	session.downloadBOM(winform_qlist, tab);
+};
+var copyPartNo = function(withDesp){
+    var tab=table.array();
+    var listview = winform_qlist.listview;
+    for (k, v in listview.selected){
+    	var pcode = listview.getItemText(v, 1);
+    	var desp = listview.getItemText(v, 2);
+        if !withDesp
+            table.push(tab,  pcode);
+        else
+        	table.push(tab,  pcode + '\t' + desp);        
+    }  
+    if #tab
+    	return string.join(tab, '\n');
 }
+
 /*}}*/
 
 /*双击打开事件{{*/
@@ -80,8 +95,8 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 				}
 			}
 
-			menu.add("复制[专用号]", λ() win.clip.write(pcode));
-			menu.add("复制[专用号][物料描述]", λ() win.clip.write(pcode + '\t' + desp));
+			menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
+			menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
 			menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
 			menu.add("查找图纸...", λ() qtbs.open(4,pcode));
 			menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));

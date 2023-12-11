@@ -31,7 +31,7 @@ com.enumRunning(
 		try{
 			var s = com.GetTypeInfo(object).GetDocumentation().name;
 			if s = "_Workbook"
-				if string.keywords('BOM|更改|变更').findOne(displayName)
+				if string.keywords('更改|BOM|变更').findOne(displayName)
 					chk_excel_BOM_REV_form.combobox2.add(displayName);
 		}
 	}
@@ -124,14 +124,14 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 		[4] = "删除子项:子项需写在左侧";
 		[5] = "更改用量:前后相同";
 		[6] = "用量:小数位数不超过3位 (手动删除或使用round函数, 直接调整显示状态也不行)";
-		[7] = "ZA单位对应数量应该是整数";
+		[7] = "检查单位是否正确,ZA单位对应数量一般是整数, KG/M允许有小数";
 		[8] = "物料类型/单位与SAP内不一致/新号可能未生效请确认"; 
 		[9] = "ROH不可有下级物料"; 
 		[10] = "单位用量错误: 非数字/没填/0值"; 
 		[11] = "给09组新增子项时确认是否有OD"; 
 		[12] = "父项物料被禁用, 请先申请解禁再更改BOM";
 		[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
-		[14] = "相同内容重复操作";  
+		[14] = "相同内容重复操作";
 	}
 /*}}*/
 	
@@ -224,7 +224,7 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			if sapErr[j](i)
 				table.push(getErr, {
 				"行":i+8;
-				"相关物料号": ""; /*etab[i].原父项;*/
+				"相关物料号": " "; /*etab[i].原父项;*/
 				"错误描述": rule_desp[j];
 			})
 		}
@@ -240,7 +240,9 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	
 }
 chk_excel_BOM_REV_form.onDestroy = function(){
-   	if excel excel.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+
 }
 
 /*点击定位{{*/
@@ -287,7 +289,7 @@ chk_excel_BOM_REV_form.listview.translateAccelerator = function( msg ){
     if( ( vk == 'C'# ) && ctrl ){
         var tab=table.array();
         for (i=1; #owner.selected)
-            table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
+            table.push(tab, string.join(owner.items[owner.selected[i]],'\t'));
 		win.clip.write(string.join(tab,'\n'));
         return true;
     }

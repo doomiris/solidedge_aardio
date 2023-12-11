@@ -167,30 +167,31 @@ mainForm.popmenu2.add('&Open TBM', function(){
 	
 });
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('检查专用号申请表', λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"));
-mainForm.popmenu2.add('智能填写专用号申请表', λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio"));
+mainForm.popmenu2.add('检查专用号申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio")));
+mainForm.popmenu2.add('智能填写专用号申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio")));
+mainForm.popmenu2.add('物料名称生成器', λ() thread.invoke(λ() loadcodex("\forms\Excel\物料名称生成.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('专用号填入ItemMaster...', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
+mainForm.popmenu2.add('专用号填入ItemMaster...', λ() thread.invoke(λ() loadcodex("\forms\Excel\fillin_item_master.aardio")));
 //mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
 //mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Excel\Excel_update_info.aardio"));
 //mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('检查新BOM申请表', λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio"));
-mainForm.popmenu2.add('检查BOM更改单', λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio"));
-mainForm.popmenu2.add('原材料用量计算...', λ() loadcodex("\forms\Excel\BOM-CALC.aardio"));
-mainForm.popmenu2.add('打开分类查询窗口...', λ() loadcodex("\forms\SAP\OD_Query.aardio"));
+mainForm.popmenu2.add('检查新BOM申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio")));
+mainForm.popmenu2.add('检查BOM更改单', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio")));
+mainForm.popmenu2.add('原材料用量计算...', λ() thread.invoke(λ() loadcodex("\forms\Excel\BOM-CALC.aardio")));
+mainForm.popmenu2.add('打开分类查询窗口...', λ() thread.invoke(λ() loadcodex("\forms\SAP\OD_Query.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio"));
-mainForm.popmenu2.add('下载订单BOM...', λ() loadcodex("\forms\SAP\下载订单BOM.aardio"));
-mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio"));
+mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio")));
+mainForm.popmenu2.add('下载订单BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\下载订单BOM.aardio")));
+mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() thread.invoke(λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('Teamcenter插件更新...', λ() loadcodex("\forms\Teamcenter\更新插件.aardio"));
+mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('ChatGPT...', λ() loadcodex("\forms\OpenAI\chatgpt.aardio"));
-mainForm.popmenu2.add('AI绘图...', λ() loadcodex("\forms\OpenAI\AI_Draw.aardio"));
-mainForm.popmenu2.add('SAP一键登入', function(){
+mainForm.popmenu2.add('ChatGPT...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\chatgpt.aardio")));
+mainForm.popmenu2.add('AI绘图...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\AI_Draw.aardio")));
+mainForm.popmenu2.add('SAP一键登入', λ() thread.invoke(function(){
 	import SAP;	 SAP.sapQuickOpen();
-});
+}));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
@@ -339,7 +340,13 @@ mainForm.tbutton5.oncommand = function(id,event){
 	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
 	select(seAsm.SelectSet.Count) {
 		case 1 {
-			seAsm.openDummy(seAsm.SelectSet.Item(1));
+			if !seAsm.IsFileFamilyByDocument
+				seAsm.openDummy(seAsm.SelectSet.Item(1));
+			else {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);			
+			}
 		}
 		case 0 {
 			if seAsm.IsFileFamilyByDocument {

@@ -321,7 +321,8 @@ chk_excel_sht_form.button.oncommand = function(id,event){
 	
 }
 chk_excel_sht_form.onDestroy = function(){
-   	if excel excel.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
 }
 
 chk_excel_sht_form.listview.onSelChanged = function(selected,item,subItem,nmListView){

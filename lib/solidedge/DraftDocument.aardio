@@ -280,7 +280,7 @@ namespace DraftDocument{
 //		try{
     		select (fileExt){
         		case "dwg","pdf"{        		
-        			owner.SaveCopyAs(fname);  //savecopyas 和 saveas 效果一样
+        			owner.SaveAs(fname);  //savecopyas 和 saveas 效果一样
         			if fileExt=="pdf" and owner.application.useQhcNameRule
         				..thread.invoke( 
         					function(fname){

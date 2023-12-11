@@ -28,7 +28,7 @@ com.enumRunning(
 			}
 	}
 )
-
+if #excel_app_tab==0 return ; 
 var getExcel_index = (#excel_app_tab==1) ? 1 : console.getNumber( "请输入序号:" );
 
 var sht = excel_app_tab[getExcel_index].ActiveSheet;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.330" ProductVersion="1.5.0.330" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.341" ProductVersion="1.5.0.341" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -45,6 +45,7 @@
 			<file name="qtip_list.aardio" path="forms\main\qtip_list.aardio" comment="forms\main\qtip_list.aardio"/>
 			<file name="sap_search.aardio" path="forms\main\sap_search.aardio" comment="forms\main\sap_search.aardio"/>
 			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
+			<file name="frmclipboard.aardio" path="forms\main\frmclipboard.aardio" comment="forms\main\frmclipboard.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">
 			<file name="BOM-CALC.aardio" path="forms\obsolete\BOM-CALC.aardio" comment="forms\obsolete\BOM-CALC.aardio"/>

@@ -48,6 +48,22 @@ namespace domisoft{
 		)
 		return sht; 
 	}
+	taobaoURLsimple = function(url){
+		import inet.url;
+		import inet.urlpart;
+		var turl = inet.url.split(url ); 
+		var para = inet.urlpart.getQuery(url);
+		var s = inet.url.splitParameters(para);	
+		var n = inet.url.stringify(
+			scheme = turl.scheme;
+			host = turl.host;
+			path = turl.path;
+			extraInfo = {
+				id = s.id;
+			};
+		)
+		return n; 
+	}
 	
 }
 /**intellisense(domisoft)
@@ -55,5 +71,6 @@ showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程
 getComAppPath(keyword) = 查找com程序路径
 getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指定worksheetName时返回sheets(1)
+taobaoURLsimple(taobaoUrl) = 简化taobao链接
 end intellisense**/
 

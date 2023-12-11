@@ -1,0 +1,18 @@
+import console; 
+import domisoft;
+
+import com.excel;
+var excel = com.excel( false );
+
+var sht = excel.ActiveWorkbook.ActiveSheet;
+
+for (i=10;95){
+	var cell = sht.cells(i, "H");
+	var str = cell.value2;
+	if str
+		if string.startWith(str,"https",true)
+			cell.value2 = domisoft.taobaoURLsimple(str);
+}
+
+
+console.pause(true);

@@ -130,7 +130,8 @@ fill_in_sap_item_form.button.oncommand = function(id,event){
 	//fill_in_sap_item_form.close();
 }
 fill_in_sap_item_form.onDestroy = function(){
-   	if excel excel.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
 }
 fill_in_sap_item_form.show();
 

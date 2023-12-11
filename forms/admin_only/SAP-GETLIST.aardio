@@ -21,23 +21,35 @@ winform_getlist.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\S
 
 /*Get获取数据{{*/
 var getFromSAP = function(winform_getlist){
+	winform_getlist.log.print("连接SAP... ");
     import web.script;
     var vm = web.script("VBScript") ;
-    vm.addCode(`
+	vm.script = /*
+	    	dim session
+	 */
+	vm.script = /*
+	On Error Resume Next
 		If Not IsObject(application) Then
-   		Set SapGuiAuto  = GetObject("SAPGUI")
-   		Set application = SapGuiAuto.GetScriptingEngine
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
 		End If
 		If Not IsObject(connection) Then
-   		Set connection = application.Children(0)
+   			Set connection = application.Children(0)
 		End If
 		If Not IsObject(session) Then
-   		Set session    = connection.Children(0)
+   			Set session    = connection.Children(0)
 		End If
 		If IsObject(WScript) Then
-   		WScript.ConnectObject session,     "on"
-   		WScript.ConnectObject application, "on"
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
 		End If
+	On Error Goto 0
+	*/
+	if !vm.script.session
+		winform_getlist.log.print("无法连接, 检查SAP是否已经启动?");
+	if vm.script.session
+		winform_getlist.log.print("连开成功, 开始获取清单...");
+    vm.addCode(`
 		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
 		session.findById("wnd[0]/usr/chkBEWFLG").selected = False
