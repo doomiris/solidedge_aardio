@@ -4,50 +4,39 @@
     <!-- 必须的 meta 标签 -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <!-- Bootstrap 的 CSS 文件 -->
-    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../OpenAI/node_modules/element-plus/dist/css/index.min.css" rel="stylesheet">
 
     <title>Hello, world!</title>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="node_modules/vue/dist/vue.global.js"></script>
+    <script src="../OpenAI//node_modules/vue/dist/vue.global.min.js"></script>
+    <script src="../OpenAI/node_modules/element-plus/dist/js/index.full.min.js"></script>
+    <script src="../OpenAI/node_modules/element-plus-icons-vue/dist/index.min.js"></script>
   </head>
   <body>
     <div id="app">
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="sap number" aria-label="sap number" aria-describedby="button-addon2" v-model= "message">
-        <button class="btn btn-outline-secondary" type="button" id="button-addon2" @click="dataIni(this.text)">搜索SAP</button>
+      <div>
+        <el-input v-model="message" clearable placeholder="Please input" />
+        <el-button @click="dataIni">搜索SAP</el-button>
       </div>
-
-      <table class="table table-light table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">物料</th>
-            <th scope="col">物料描述</th>
-            <th scope="col">价格</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item,index) in items">
-            <th scope="row">{{ index+1 }}</th>
-            <td>{{ item.物料 }}</td>
-            <td>{{ item.物料描述 }}</td>
-            <td>{{ item.价格 }}</td>
-          </tr>
-        </tbody>
-      </table>
-
+      <div class="mt-4">
+        <el-table :data="items" style="width:100%" max-height="400">   
+              <el-table-column type="index" width="25" />
+              <el-table-column v-bind="column" v-for="column in columns" :key="column.prop" />
+        </el-table>
+      </div>
     </div>
 
     <script>
-    const { createApp } = Vue
-
-    createApp({
+    const App = {
         data() {
             return {
                 message: '',
-                items:[]
+                items:[],
+                columns: [
+                  { prop: "物料", label: "物料", width: "100" },
+                  { prop: "物料描述", label: "物料描述", width: "300" },
+                  { prop: "价格", label: "价格", width: "100" }
+                ]
             }
         },
         methods: {
@@ -63,9 +52,12 @@
           }
         },
         mounted: function(){
-          vueAppMounted(this)
+          //vueAppMounted(this)
         }
-    }).mount('#app')
+    }
+    const app = Vue.createApp(App);
+    app.use(ElementPlus);
+    app.mount('#app');
     </script>
 
   </body>

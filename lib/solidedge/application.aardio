@@ -72,6 +72,11 @@ namespace application{
 		seApp.Open(fPath);
 		seApp.DisplayAlerts = 1;
 	};
+	testConnection = function(){
+		//  打印时, 新实例报错
+		// 打印时, 列表和实例不同, 打错.
+	}
+	
 }
 
 /**intellisense()

@@ -1,0 +1,13 @@
+﻿namespace SAP.format{
+	
+}
+_i18n ={
+	[1] = {
+		lang = "EN",
+		str = {"Explosion level", "Component number", "Object description", "Comp. Qty (CUn)", "Component unit", "Material Type", "Bill of material", "Item category", "Procurement type", "Phantom item", "Sort String"}
+	},
+	[2] = {
+		lang = "CN",
+		str = {"展开层", "对象标识", "对象描述", "组件数量(CUn)", "组件单位", "物料类型", "物料清单", "项目类别", "采购类型", "虚拟项目", "排序字符串"}
+	}
+}

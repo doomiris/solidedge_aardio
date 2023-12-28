@@ -1,0 +1,88 @@
+import console; 
+import com.excel;
+var excel = com.excel( false );
+var sht = excel.ActiveWorkbook.ActiveSheet;
+var rng = sht.range("A1:G651");
+
+_start_lvl = 2;
+_Depth = 2;
+
+var rows = sht.UsedRange.Rows;
+
+try{
+	rows.UnGroup();
+	sht.UsedRange.Rows.EntireRow.Hidden = false;
+}
+
+
+//return;
+
+var lvl_Tab = sht.UsedRange.Columns("A").value2;
+
+lvl_Tab = table.map(lvl_Tab, lambda(v,k) tonumber(string.trimleft(v[[1]]||"",".")) )
+
+row_count = #lvl_Tab;
+
+
+//console.dump(lvl_Tab)
+var findGroup = function(target_lvl, baseRow = 2){
+	var group_start_row = null;
+	var group_end_row = null;
+	for (i=baseRow; row_count){
+		if !lvl_Tab[[i]] continue;
+		
+/*
+		if group_start_row and group_end_row
+			continue;
+*/
+		if lvl_Tab[i]==target_lvl
+			group_start_row := i+1;
+		if group_start_row
+			if lvl_Tab[i]<=target_lvl
+				group_end_row := i-1;
+	
+/*
+		select(lvl_Tab[[i]]) {
+			case =target_lvl {			
+				if !group_start_row { 
+					group_start_row := i+1;
+					continue;
+				}
+
+			}
+			case <target_lvl {
+				if !group_start_row continue;				
+				group_end_row := i-1;
+				break;				
+			}
+			case >target_lvl {
+				continue;
+			}
+		}
+*/
+	}
+	group_end_row := row_count;
+	return group_start_row, group_end_row; 
+}
+var toGroup = {};
+for (k=_start_lvl; _start_lvl + _Depth){
+	console.log("==========================>", k)
+	for(i=2; row_count){
+		if lvl_Tab[i] !== k continue;
+		var x, y = findGroup(k, i);
+		//if x=164 and y=168 console.log("@@@")
+		if !x or !y continue;
+		if !lvl_Tab[y] or !lvl_Tab[x] continue;
+
+		if x>y continue;
+		if x=y
+			if lvl_Tab[x+1]
+				if lvl_Tab[x+1]>lvl_Tab[x] continue;
+		if lvl_Tab[x]<k continue;
+		if lvl_Tab[y]<lvl_Tab[x] continue;
+		//rows(string.join({x,y},":")).Group();	
+		console.log("GROUP",x,y,"target",k)
+	}
+}
+
+console.pause(true);

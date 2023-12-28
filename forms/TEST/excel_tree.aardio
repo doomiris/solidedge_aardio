@@ -1,0 +1,55 @@
+import console; 
+import com.excel;
+var excel = com.excel( false );
+var sht = excel.ActiveWorkbook.ActiveSheet;
+
+
+_start_lvl = 2;
+_Depth = 2;
+
+var UG = sht.UsedRange.value2;
+
+var rows = sht.UsedRange.Rows;
+
+sht.UsedRange.Rows.Hidden = false;
+
+try{
+	rows.UnGroup();
+}
+
+//return;
+
+var lvl_Tab = sht.UsedRange.Columns("A").value2;
+
+lvl_Tab = table.map(lvl_Tab, lambda(v,k) tonumber(string.trimleft(v[[1]]||"",".")) )
+
+row_count = #lvl_Tab;
+
+
+UG.fields = table.shift(UG)
+
+//UG = table.map(UG, lambda(v,k) tonumber(string.trimleft(v[[1]]||"",".")) )
+
+nG = table.map(UG,function(v,k,result){
+	if k = "fields" return; 
+	
+	
+})
+UG = table.map(UG, function(v,k,result){
+	if k = "fields" return; 
+	else{
+		//result = v;
+		if v[1]
+			v[1] = tonumber(string.trimleft(v[[1]]||"","."));
+		return v; 
+	}
+})
+
+
+console.dump(UG)
+
+console.pause(true);
+
+
+//{row:i, code:"BG", desp:"SV", children={[1]={}}}
+
