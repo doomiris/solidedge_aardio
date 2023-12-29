@@ -9,6 +9,7 @@ _Depth = 2;
 
 var UG = sht.UsedRange.value2;
 
+/*
 var rows = sht.UsedRange.Rows;
 
 sht.UsedRange.Rows.Hidden = false;
@@ -17,35 +18,27 @@ try{
 	rows.UnGroup();
 }
 
+*/
 //return;
 
-var lvl_Tab = sht.UsedRange.Columns("A").value2;
-
-lvl_Tab = table.map(lvl_Tab, lambda(v,k) tonumber(string.trimleft(v[[1]]||"",".")) )
-
-row_count = #lvl_Tab;
-
+import tarray;
 
 UG.fields = table.shift(UG)
 
-//UG = table.map(UG, lambda(v,k) tonumber(string.trimleft(v[[1]]||"",".")) )
+UG = tarray.mapfields(UG);
 
-nG = table.map(UG,function(v,k,result){
-	if k = "fields" return; 
+for(i=1;#UG)
+	UG[i]["展开层"] = tonumber(string.trimleft(UG[i]["展开层"],"."));
+
+for(i=1;#UG){
+	UG[i]["hasChild"] = (UG[i+1]) ? (UG[i+1]["展开层"] > UG[i]["展开层"]) : false;
+}
+
+
+for(i=2; #UG){
+	var parent = UG[1]["对象标识"];
 	
-	
-})
-UG = table.map(UG, function(v,k,result){
-	if k = "fields" return; 
-	else{
-		//result = v;
-		if v[1]
-			v[1] = tonumber(string.trimleft(v[[1]]||"","."));
-		return v; 
-	}
-})
-
-
+}
 console.dump(UG)
 
 console.pause(true);
