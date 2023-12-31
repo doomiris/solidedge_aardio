@@ -5,9 +5,13 @@ var sht = excel.ActiveWorkbook.ActiveSheet;
 
 
 _start_lvl = 2;
-_Depth = 2;
+_Depth = 1;
 
 var UG = sht.UsedRange.value2;
+
+
+
+
 
 /*
 var rows = sht.UsedRange.Rows;
@@ -18,8 +22,10 @@ try{
 	rows.UnGroup();
 }
 
+
+return;
 */
-//return;
+
 
 import tarray;
 
@@ -27,22 +33,59 @@ UG.fields = table.shift(UG)
 
 UG = tarray.mapfields(UG);
 
-for(i=1;#UG)
-	UG[i]["展开层"] = tonumber(string.trimleft(UG[i]["展开层"],"."));
+UG = table.map(UG,function(v,k,result){
+	if k = "fields" return ; 
+	v.展开层 = tonumber(string.trimleft(v.展开层||"","."));
+	v.row = k+1;
+	return v; 
+})
 
 for(i=1;#UG){
 	UG[i]["hasChild"] = (UG[i+1]) ? (UG[i+1]["展开层"] > UG[i]["展开层"]) : false;
 }
 
 
-for(i=2; #UG){
-	var parent = UG[1]["对象标识"];
+
+var getParentIndex = function(index){
+	for(i=index-1; 1; -1)
+		if UG[i]["展开层"] == UG[index]["展开层"]-1
+			return i; 
 	
 }
-console.dump(UG)
+
+for(i=2;#UG){
+	UG[i]["parent"] = getParentIndex(i);
+}
+
+
+var getChildrenTab = function(index){
+	var parent = UG[index];
+	if !parent.hasChild return null;
+	return table.filter(UG, λ(v,k) v.parent==index );  
+}
+var getRangeMax = function(index){
+	for(i=index+1; #UG)
+		if UG[i].展开层 <= UG[index].展开层
+			return UG[i].row-1; 	
+	return UG[#UG].row; 
+	
+}
+for (i=_start_lvl; _start_lvl+_Depth){
+	for(j=1; #UG){
+		if UG[j].展开层==i {
+			if UG[j].hasChild {
+				var min = UG[j+1].row;
+				var max = getRangeMax(j);
+				console.log("group:", min, max)
+				sht.Rows(min ++ ":" ++ max).Group();
+				
+			}
+		}
+	}
+}
 
 console.pause(true);
 
 
-//{row:i, code:"BG", desp:"SV", children={[1]={}}}
+
 
