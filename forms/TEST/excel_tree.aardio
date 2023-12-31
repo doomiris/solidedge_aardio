@@ -1,36 +1,25 @@
 import console; 
 import com.excel;
+
 var excel = com.excel( false );
 var sht = excel.ActiveWorkbook.ActiveSheet;
 
-
 _start_lvl = 2;
-_Depth = 1;
+_Depth = 2;
 
 var UG = sht.UsedRange.value2;
 
-
-
-
-
-/*
-var rows = sht.UsedRange.Rows;
-
+/*取消隐藏行{{*/
 sht.UsedRange.Rows.Hidden = false;
-
 try{
-	rows.UnGroup();
+	for (i=1; 8)
+		sht.UsedRange.Rows.unGroup();
 }
-
-
-return;
-*/
-
+/*}}*/
 
 import tarray;
 
 UG.fields = table.shift(UG)
-
 UG = tarray.mapfields(UG);
 
 UG = table.map(UG,function(v,k,result){
@@ -41,7 +30,7 @@ UG = table.map(UG,function(v,k,result){
 })
 
 for(i=1;#UG){
-	UG[i]["hasChild"] = (UG[i+1]) ? (UG[i+1]["展开层"] > UG[i]["展开层"]) : false;
+	UG[i]["hasChild"] = UG[i+1] ? UG[i+1]["展开层"] > UG[i]["展开层"] : false;
 }
 
 
@@ -53,20 +42,22 @@ var getParentIndex = function(index){
 	
 }
 
-for(i=2;#UG){
+for(i=2; #UG){
 	UG[i]["parent"] = getParentIndex(i);
 }
 
 
+/*
 var getChildrenTab = function(index){
 	var parent = UG[index];
 	if !parent.hasChild return null;
 	return table.filter(UG, λ(v,k) v.parent==index );  
 }
+*/
 var getRangeMax = function(index){
 	for(i=index+1; #UG)
 		if UG[i].展开层 <= UG[index].展开层
-			return UG[i].row-1; 	
+			return UG[i].row - 1; 	//发现同级或上级则返回上一行
 	return UG[#UG].row; 
 	
 }
@@ -75,10 +66,10 @@ for (i=_start_lvl; _start_lvl+_Depth){
 		if UG[j].展开层==i {
 			if UG[j].hasChild {
 				var min = UG[j+1].row;
-				var max = getRangeMax(j);
-				console.log("group:", min, max)
-				sht.Rows(min ++ ":" ++ max).Group();
-				
+				var max = getRangeMax(j);				
+				var str = min ++ ":" ++ max;
+				//console.log("group:",str)
+				sht.Rows(str).Group();
 			}
 		}
 	}

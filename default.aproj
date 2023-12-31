@@ -116,6 +116,8 @@
 			<file name="download_tif_from_EuroSap.aardio" path="forms\TEST\download_tif_from_EuroSap.aardio" comment="forms\TEST\download_tif_from_EuroSap.aardio"/>
 			<file name="EXCEL_get_cost_sum_from_bom.aardio" path="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio" comment="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio"/>
 			<file name="excel_get_pdf_from_lib.aardio" path="forms\TEST\excel_get_pdf_from_lib.aardio" comment="forms\TEST\excel_get_pdf_from_lib.aardio"/>
+			<file name="excel_group_rows.aardio" path="forms\TEST\excel_group_rows.aardio" comment="forms\TEST\excel_group_rows.aardio"/>
+			<file name="excel_tree.aardio" path="forms\TEST\excel_tree.aardio" comment="forms\TEST\excel_tree.aardio"/>
 			<file name="Excel_update_info.aardio" path="forms\TEST\Excel_update_info.aardio" comment="forms\TEST\Excel_update_info.aardio"/>
 			<file name="frmPage_XXX.aardio" path="forms\TEST\frmPage_XXX.aardio" comment="forms\TEST\frmPage_XXX.aardio"/>
 			<file name="odview.aardio" path="forms\TEST\odview.aardio" comment="forms\TEST\odview.aardio"/>
@@ -127,6 +129,7 @@
 			<file name="提取原材料用量追加到物料后列.aardio" path="forms\TEST\提取原材料用量追加到物料后列.aardio" comment="forms\TEST\提取原材料用量追加到物料后列.aardio"/>
 			<file name="查找图号.aardio" path="forms\TEST\查找图号.aardio" comment="forms\TEST\查找图号.aardio"/>
 			<file name="查找图号填入excel.aardio" path="forms\TEST\查找图号填入excel.aardio" comment="forms\TEST\查找图号填入excel.aardio"/>
+			<file name="淘宝链接简化.aardio" path="forms\TEST\淘宝链接简化.aardio" comment="forms\TEST\淘宝链接简化.aardio"/>
 			<file name="默认值view.aardio" path="forms\TEST\默认值view.aardio" comment="forms\TEST\默认值view.aardio"/>
 		</folder>
 		<folder name="webview" path="forms\webview" comment="forms\webview" local="false" embed="false" ignored="true">
