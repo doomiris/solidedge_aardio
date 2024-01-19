@@ -87,7 +87,9 @@ mainForm.isDialogMessage = function(hwnd,msg){
 			
 win.ui.simpleWindow( mainForm );
 mainForm.enableDpiScaling();
-var start_time = time();
+
+//var start_time = time();
+
 var seApp = solidedge.application();
 mainForm.button.hide = !!seApp;
 var sePid;
@@ -107,8 +109,10 @@ mainForm.onMinimize = function(lParam){
 }
 
 mainForm.onClose = function(hwnd,message,wParam,lParam){
+/*
 	if time().diffday(start_time) > 1
 		win.quitMessage(); //如果程序启动超过1天则退出;
+*/
 	if config.settings.closeToTray {
 		mainForm.onMinimize();
 		return true;    

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.341" ProductVersion="1.5.0.341" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.343" ProductVersion="1.5.0.343" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -21,8 +21,11 @@
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
 			<file name="BOM-CALC.aardio" path="forms\Excel\BOM-CALC.aardio" comment="forms\Excel\BOM-CALC.aardio"/>
+			<file name="check_BOM更改单.aardio" path="forms\Excel\check_BOM更改单.aardio" comment="forms\Excel\check_BOM更改单.aardio"/>
 			<file name="check_BOM更改单_GUI.aardio" path="forms\Excel\check_BOM更改单_GUI.aardio" comment="forms\Excel\check_BOM更改单_GUI.aardio"/>
+			<file name="check_专用号申请表.aardio" path="forms\Excel\check_专用号申请表.aardio" comment="forms\Excel\check_专用号申请表.aardio"/>
 			<file name="check_专用号申请表_GUI.aardio" path="forms\Excel\check_专用号申请表_GUI.aardio" comment="forms\Excel\check_专用号申请表_GUI.aardio"/>
+			<file name="check_新BOM申请表.aardio" path="forms\Excel\check_新BOM申请表.aardio" comment="forms\Excel\check_新BOM申请表.aardio"/>
 			<file name="check_新BOM申请表_GUI.aardio" path="forms\Excel\check_新BOM申请表_GUI.aardio" comment="forms\Excel\check_新BOM申请表_GUI.aardio"/>
 			<file name="check_默认值表格.aardio" path="forms\Excel\check_默认值表格.aardio" comment="forms\Excel\check_默认值表格.aardio"/>
 			<file name="Excel_notify_selection.aardio" path="forms\Excel\Excel_notify_selection.aardio" comment="forms\Excel\Excel_notify_selection.aardio"/>
@@ -104,6 +107,7 @@
 			<file name="loader.aardio" path="forms\side_loader\loader.aardio" comment="forms\side_loader\loader.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
+			<file name="收集temp内的PDF文件放入PDF库.aardio" path="forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio" comment="forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio"/>
 			<file name="更新插件.aardio" path="forms\Teamcenter\更新插件.aardio" comment="forms\Teamcenter\更新插件.aardio"/>
 		</folder>
 		<folder name="TEST" path="forms\TEST" comment="forms\TEST" local="false" embed="false" ignored="true">
@@ -112,6 +116,7 @@
 			<file name="BOM_OD_LIB_COLOR.aardio" path="forms\TEST\BOM_OD_LIB_COLOR.aardio" comment="forms\TEST\BOM_OD_LIB_COLOR.aardio"/>
 			<file name="BOM_OD_默认值.aardio" path="forms\TEST\BOM_OD_默认值.aardio" comment="forms\TEST\BOM_OD_默认值.aardio"/>
 			<file name="BOM_Studio.aardio" path="forms\TEST\BOM_Studio.aardio" comment="forms\TEST\BOM_Studio.aardio"/>
+			<file name="COPY_指定类型文件.aardio" path="forms\TEST\COPY_指定类型文件.aardio" comment="forms\TEST\COPY_指定类型文件.aardio"/>
 			<file name="CS12查BOM.aardio" path="forms\TEST\CS12查BOM.aardio" comment="forms\TEST\CS12查BOM.aardio"/>
 			<file name="download_tif_from_EuroSap.aardio" path="forms\TEST\download_tif_from_EuroSap.aardio" comment="forms\TEST\download_tif_from_EuroSap.aardio"/>
 			<file name="EXCEL_get_cost_sum_from_bom.aardio" path="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio" comment="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio"/>

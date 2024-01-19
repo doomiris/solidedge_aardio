@@ -264,27 +264,32 @@ chk_excel_sht_form.button.oncommand = function(id,event){
 				if etab[j].层级数 !== current_tree_lvl continue;
 				if etab[j].物料号 !== "H0088200013" continue;
 				if etab[j].层级数 < current_tree_lvl break;
-				var material_w = etab[i].单位用量
+				var material_w = etab[i].单位用量;
 				var material_B = etab[j].单位用量;
-				//黑=1.15白
-				var tolerance = 0.05;
-				return material_B > (1+tolerance) * material_w or material_B < (1-tolerance) * material_w;
+			
+				var scale = 1.15; //黑=1.15白
+				var tolerance = 0.05; //允许误差
+				return (material_B > (1+tolerance) * scale * material_w) or (material_B < (1-tolerance) * scale * material_w);
 			}		 
 		}
 		[18] = function(i){
 			if string.endWith(etab[i].物料号,"-G",true){
 				var sapItem = QHC.getSapItem(etab[i-1].物料号);
-				if sapItem
-					var f = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
-				var ot = QHC.getRawItem(f)[["物料"]];
+				if sapItem {
+					var s = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
+				}
+				if !s return ; 
+				var ot = QHC.getRawItem(s)[["物料"]];
 				return ot !== etab[i].物料号;
 			}
 		}
 		[19] = function(i){
 			if string.endWith(etab[i].物料号,"-G",true){
 				var sapItem = QHC.getSapItem(etab[i-1].物料号);
-				if sapItem
+				if sapItem {
 					var f = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
+				}
+				if !f return ; 
 				var rawItem = QHC.下料尺寸(f);
 				var tolerance = 0.1;
 				return etab[i].单位用量 > (1+tolerance) * rawItem.metel or etab[i].单位用量 < (1-tolerance) * rawItem.metel; 

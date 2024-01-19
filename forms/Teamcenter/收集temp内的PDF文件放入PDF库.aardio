@@ -1,0 +1,49 @@
+import console; 
+
+import fsys;
+
+var tab = {}
+_path = "C:\Users\ccl100100\AppData\Local\Temp\"
+_toFolder = "\\CCNSIA1A\SEParts\Cabinet\QHC图纸库"
+fsys.enum( _path , "tc_*",
+	function(dir,filename,fullpath,findData){ 
+		if(filename){ 
+           	//io.print("发现文件："+filename,"完整路径："+fullpath,"当前目录完整路径"+dir)
+           	
+		}
+		else{
+			table.push(tab, dir);
+
+		}
+	} 
+	, true/*如果此参数为false则忽略子目录*/
+);
+var found = {}
+for k, v in tab {
+	var str = io.joinpath(_path, v)
+	fsys.enum( str, "H008*.*",
+		function(dir,filename,fullpath,findData){ 
+			if(filename){ 
+	           	//io.print("发现文件："+filename,"完整路径："+fullpath,"当前目录完整路径"+dir)
+	           	found[filename]=fullpath;	           	
+			} 
+			else{
+				//io.print( "发现目录，目录名称（非完整路径）：" + dir )
+			}
+		} 
+		,false /*如果此参数为false则忽略子目录*/
+	);
+	console.dump(found);	
+	//fsys.copy(str, _toFolder, 0x100/*_FOF_SIMPLEPROGRESS*/ + 0x4/*_FOF_SILENT*/);
+}
+
+if !io.exist(_toFolder) return ; 
+for k, v in found {
+	var fromFile = v;
+	var toFile = io.joinpath(_toFolder, k);
+	if !io.exist(toFile)
+		fsys.copy(fromFile, toFile);
+}
+
+
+console.pause(true);

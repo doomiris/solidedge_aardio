@@ -62,7 +62,7 @@ namespace domisoft{
 				id = s.id;
 			};
 		)
-		return n; 
+		return ..string.trimright(n,"?"); 
 	}
 	
 }

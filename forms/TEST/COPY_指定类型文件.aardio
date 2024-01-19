@@ -1,0 +1,86 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="COPY指定类型的文件";right=858;bottom=469)
+winform.add(
+button={cls="button";text="Start";left=67;top=375;right=221;bottom=415;z=3};
+button2={cls="button";text="选择SE相关";left=295;top=158;right=400;bottom=194;align="left";z=8};
+button3={cls="button";text="清空选择";left=295;top=117;right=360;bottom=153;align="left";z=9};
+button4={cls="button";text="刷新列表";left=296;top=79;right=361;bottom=115;align="left";z=10};
+edit2={cls="edit";left=338;top=385;right=816;bottom=413;edge=1;multiline=1;z=1};
+edit3={cls="edit";left=58;top=14;right=816;bottom=46;edge=1;multiline=1;z=4};
+listbox={cls="listbox";left=59;top=82;right=278;bottom=325;edge=1;items={};msel=1;vscroll=1;z=2};
+static={cls="static";text="From";left=10;top=17;right=51;bottom=38;align="right";transparent=1;z=5};
+static2={cls="static";text="To";left=284;top=390;right=325;bottom=411;align="right";transparent=1;z=6};
+static3={cls="static";text="指定要复制的扩展名:(多选)";left=62;top=57;right=238;bottom=78;transparent=1;z=7}
+)
+/*}}*/
+
+import config;
+winform.bindConfig( config.CopySpecTypeInFolder,{
+	edit = "text"
+} );
+var refresh = function(winform, path){
+	import fsys;				
+	fsys.enum( path, "*.*",
+		function(dir,filename,fullpath,findData){ 
+			if(filename){ 
+				var ext = io.splitpath(fullpath).ext;
+				if !winform.listbox.find(ext)
+					winform.listbox.add(ext);
+			}
+		}, false /*如果此参数为false则忽略子目录*/
+	);
+}
+winform.edit3.onChange = function(){ 
+	if(owner.onModified)owner.onModified(true);
+	var path = owner.text;
+	if io.exist(path)
+		thread.invoke(refresh, winform, path);
+}
+
+winform.button.oncommand = function(id,event){
+	var fromFolder = winform.edit3.text;
+	var toFolder = winform.edit2.text;
+	if !io.exist(toFolder) 
+		if win.msgboxTest("文件夹不存在, 创建?", "创建文件夹")
+			io.createDir(toFolder);
+		else
+			return ; 
+	var copyType = table.map(
+		winform.listbox.selected,
+		lambda(v,k)
+			io.joinpath(fromFolder, "*"+winform.listbox.items[v])
+	);
+	import win;
+	if !win.msgboxTest(copyType,"确认复制") return ; 
+	
+	winform.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="正在复制..."}
+	thread.invoke( 
+		function(winform,copyType, toFolder){
+			import fsys;	
+			fsys.copy(copyType, toFolder, 0x100/*_FOF_SIMPLEPROGRESS*/);
+			winform.button.disabledText = null;
+		}, winform, copyType, toFolder
+	)
+}
+
+winform.button4.oncommand = function(id,event){
+	winform.edit3.onChange();
+}
+
+winform.button3.oncommand = function(id,event){
+	winform.listbox.selected = null;
+}
+
+winform.button2.oncommand = function(id,event){
+	_SE_TYPE := {".par",".psm",".asm",".cfg",".dft"};
+	var t = {};
+	winform.listbox.selected = null;
+	for k, v in winform.listbox.items
+		if table.indexOf(_SE_TYPE, v)
+			table.push(t, k);
+	winform.listbox.selected = t;
+}
+
+winform.show();
+win.loopMessage();

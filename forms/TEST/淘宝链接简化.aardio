@@ -1,6 +1,7 @@
 import console; 
 import domisoft;
 
+/*
 import com.excel;
 var excel = com.excel( false );
 
@@ -13,6 +14,11 @@ for (i=10;95){
 		if string.startWith(str,"https",true)
 			cell.value2 = domisoft.taobaoURLsimple(str);
 }
+
+
+*/
+var str = `https://www.taobao.com/list/item/638801186761.htm?spm=a21wu.10013406.taglist-content.5.67836ca3zUaIEH`
+console.log(domisoft.taobaoURLsimple(str))
 
 
 console.pause(true);
