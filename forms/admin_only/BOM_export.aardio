@@ -22,7 +22,11 @@ var ts_count = #etab;
 //console.dump(etab);
 //console.pause(true);
 excel.Application.CutCopyMode = false;
-for(j = 10 /* J */; 17 /* Q */){
+
+_start_col = 9 /* I */;
+_col_count = 4;
+
+for(j = _start_col; _start_col + _col_count - 1 ){
     if !#etab[2][j] continue;
 
     excel.alerts = false;
@@ -33,12 +37,12 @@ for(j = 10 /* J */; 17 /* Q */){
     var tsht_tab = {};
     
     for(i=1; ts_count){
-        progress.setProgress( (i+(j-10)*ts_count)*100/(ts_count*8), "wait... ["++(j-9) ++ "/8]");
+        progress.setProgress( (i+(j-_start_col)*ts_count)*100/(ts_count*_col_count), "wait... ["++(j-_start_col+1) ++ "/" + _col_count + "]");
         
         if i == 1 continue; //跳过标题行
 
         if !#etab[i][1 /* A */] continue; //跳过层级为空的行
-        if etab[i][j] == "X" continue;	// 跳过X标记
+        if string.cmpMatch(etab[i][j], "X") continue;	// 跳过X标记
 
     	var bun = etab[i][4 /* D */]; 
     	
@@ -46,10 +50,32 @@ for(j = 10 /* J */; 17 /* Q */){
     	
     	if string.indexOf(bun, "\") {
     		var arr = string.split(bun,"\");
-    		if #arr==2 
-    		    arr = {arr[1],arr[1],arr[2],arr[2],arr[1],arr[1],arr[2],arr[2]}; // TODO:     		
-    		if #arr==4 arr = table.concat(arr,arr);
-    		bun = arr[j - 10 /* J */ + 1];
+    		
+    		if #arr==2 {
+    			select(_col_count) {
+    				case 2 {
+    				    //arr = arr;
+    				}
+    				case 4 {
+    				    arr = table.concat(arr,arr);
+    				}
+    				case 8 {
+    				    arr = {arr[1],arr[1],arr[2],arr[2],arr[1],arr[1],arr[2],arr[2]};
+    				}
+    			}
+    		}
+    		if #arr==4 {
+    			select(_col_count) {
+    				case 4 {
+    				    //arr = arr;
+    				}
+    				case 8 {
+    				    arr = table.concat(arr,arr);
+    				}
+    			}
+    		}
+    		
+    		bun = arr[j - _start_col + 1];
     	}
     	if !bun or bun=="0" continue; //跳过数量为0的行
     	

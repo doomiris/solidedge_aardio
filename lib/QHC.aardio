@@ -44,9 +44,22 @@ class 下料尺寸{
 		this.t = s[3];
 		
 		/* 粉末密度  2022/2/7 更新 */
+		/* 双面喷粉: 2  单面喷粉1.3 */
 		var m = this.l * this.w * 2 * 0.191 / 0.9 / 1E+6;
 		
+		/* FOAMING TODO 
 		
+		foam.m = foam.net * foam.density
+		foam.density = 42.7
+		foam.bscale = 1.15 
+		
+		foam.weight_white = m / (1 + bscale);
+		foam.weight_black = 1.15 * weight_white;
+		
+		foam.material_white ="H0080300487";
+		foam.material_black ="H0088200013";
+		
+		*/
 		this.powder = (m<0.001) ? 0.001 : ..math.round(m, precision);
 		this.powderItem =  rawTab["白色"] ;
 		/* 

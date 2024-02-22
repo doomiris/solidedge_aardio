@@ -83,6 +83,7 @@ var updateIcon = function(){
 /*}}*/
 winform_tc_plug.button2.oncommand = function(id,event){
 	var succ = 0;
+	var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
 	var getV = function(a){
 		if !#a return 0; 
 		return tonumber(string.split(string.upper(a),"V")[2]);
@@ -97,13 +98,13 @@ winform_tc_plug.button2.oncommand = function(id,event){
 		if getV(tc_plugins[i].当前版本) < getV(tc_plugins[i].目标版本)
 			updatePlugin(i);
 	}
-	
+
 	if winform_tc_plug.checkIcon.checked {
 		updateIcon();
 		succ += 1;
 	}
 	
-	if succ 
+	if succ || ctrl
 		raw.execute(_plugins_registry_cmd);
 	
 	

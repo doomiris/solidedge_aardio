@@ -31,7 +31,7 @@ com.enumRunning(
 		try{
 			var s = com.GetTypeInfo(object).GetDocumentation().name;
 			if s = "_Workbook"
-				if string.keywords('BOM|申请').findOne(displayName)
+				if string.keywords('BOM|申请|BG').findOne(displayName)
 					chk_excel_sht_form.combobox2.add(displayName);
 		}
 	}

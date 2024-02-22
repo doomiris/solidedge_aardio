@@ -15,14 +15,6 @@ listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;e
 )
 /*}}*/
 
-/*sqliteDB{{*/
-var sapdb = config.dbServer.path + "\qhcsap.db";
-if !io.exist(sapdb) 
-	win.msgboxErr("无法访问数据库!");
-var db,err = sqlite(sapdb);	//打开数据库连接
-
-if (err) error(err)
-/*}}*/
 var saveInputList = function(str){
     if !(table.find(config.qTipLog, str)){
     	table.unshift(config.qTipLog, str);
@@ -142,44 +134,39 @@ winform_qlist.listview.translateAccelerator = function( msg ){
 //    var selectedRow = owner.getSelection();
     var vk = msg.wParam;    
     if( ( vk == 'C'# ) && ctrl ){
+		var items = owner.items;
+		var selected = owner.selected; 
         var tab=table.array();
-        for (i=1; #owner.selected)
-            table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
+        for (i=1; #selected)
+            table.push(tab,string.join(items[selected[i]],'\t'));
 		win.clip.write(string.join(tab,'\n'));
         return true;
     }
 }
 
 /*}}*/
-/*调整列宽{{*/
-var formatListView = function(sapTab){
-	winform_qlist.listview.clear(true);
-	winform_qlist.listview.enableDoubleBuffering();
-	if !sapTab.fields
-		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
-	winform_qlist.listview.setTable( sapTab );
-	//grid.readonlyColums = {
-    //	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
-    //}
-	winform_qlist.listview.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
-//	winform_qlist.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
-	winform_qlist.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
-	winform_qlist.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
-	winform_qlist.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},5);
-	winform_qlist.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},6);
-    winform_qlist.listview.fillParent(2);
-}
-/*}}*/
-/*searchSapDB{{*/
-var getSelectedText = function(listCtrl){
-	var t = {}
-	for index, text in listCtrl.eachSelected()
-		table.unshift(t, text);
-	return t; 
-}
 
-var searchSapDB = function(userinput){
+/*searchSapDB{{*/
+
+var searchSapDB = function(userinput, winform_qlist, filter_form){
 	var sapTab;
+	var getSelectedText = function(listCtrl){
+		var t = {}
+		for index, text in listCtrl.eachSelected()
+			table.unshift(t, text);
+		return t; 
+	}
+	import config
+	import sqlite;
+	/*sqliteDB{{*/
+	var sapdb = config.dbServer.path + "\qhcsap.db";
+	if !io.exist(sapdb) 
+		win.msgboxErr("无法访问数据库!");
+	var db,err = sqlite(sapdb);	//打开数据库连接
+	
+	if (err) error(err)
+	/*}}*/
+
     if !#userinput return ; 
 
     winform_qlist.listview.clear(true);
@@ -193,7 +180,9 @@ var searchSapDB = function(userinput){
     var userinputArr = string.split(userinput, '\r\n');
     userinputArr = table.unique(userinputArr);
     
-    if (#userinputArr == 1) saveInputList(userinputArr[1]);
+    if (#userinputArr == 1)
+    	winform_qlist.publish("saveInput", userinputArr[1]);
+
  	table.clear(sapTab);
 	sapTab={};
 	
@@ -208,11 +197,15 @@ var searchSapDB = function(userinput){
     	userinput=string.replace(userinput,"@_","\_");
     	userinput=string.replace(userinput,"@*","%");
     	userinput=string.replace(userinput,"@?","_");
-
+		
+		//
 		//sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
-		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";/*"配置";"禁用"*/}
-		var sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格` FROM `所有物料` WHERE ??" ;
-
+		//sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";/*"配置";"禁用"*/}
+		var sqlstr;
+		if !filter_form.chkMoreCols.checked
+			sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格` FROM `所有物料` WHERE ??" ;
+		else
+			sqlstr = "SELECT * FROM `所有物料` WHERE ??" ;
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
 			table.assign(searchField, {物料 = userinput});
@@ -220,41 +213,42 @@ var searchSapDB = function(userinput){
 			table.assign (searchField, {物料描述 = userinput});
 
 /*
-    	if (string.startWith(userinput,"BG",true) || table.indexOf(qtbs.forms[1].clLegacyType.checked,"BG")){
+    	if (string.startWith(userinput,"BG",true) || table.indexOf(filter_form.clLegacyType.checked,"BG")){
 			sqlstr = sqlstr ++ " AND [MTyp] = 'FERT'" ++ " AND LENGTH([物料])=11"
 		}
 		
 */
 
 		//直接搜索物料时忽略filter
-			if #qtbs.forms[1].clSapType.selected
-				table.assign(searchField, {物料组 = getSelectedText(qtbs.forms[1].clSapType)});
-			if #qtbs.forms[1].clUnit.selected
-				table.assign(searchField, {单位 = getSelectedText(qtbs.forms[1].clUnit)});
-			if #qtbs.forms[1].clOrderType.selected
-				table.assign(searchField, {类型 = getSelectedText(qtbs.forms[1].clOrderType)});
+			if #filter_form.clSapType.selected
+				table.assign(searchField, {物料组 = getSelectedText(filter_form.clSapType)});
+			if #filter_form.clUnit.selected
+				table.assign(searchField, {单位 = getSelectedText(filter_form.clUnit)});
+			if #filter_form.clOrderType.selected
+				table.assign(searchField, {类型 = getSelectedText(filter_form.clOrderType)});
 		}		
 /*
 		if #winform_qlist.clLegacyType.checked
 			sqlstr +=  " AND [物料] LIKE `H008`";
 */
-
 		sqlstr = sqlite.format(sqlstr, {searchField});
 
 		var quickSearch = !string.indexOf(userinput,"%");
 		if !quickSearch sqlstr = string.replace(sqlstr,"=","LIKE");
 		
-		//if (qtbs.forms[1].chkDisabled.checked)	sqlstr += " AND `禁用` IS NULL"; //null 无法处理空值!!
-		if table.indexOf(getSelectedText(qtbs.forms[1].clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11";
-
+		if (filter_form.chkDisabled.checked)	sqlstr += " AND ifnull(`禁用`, '') = ''"; // 禁用列如果为空或null则是正常物料
+		
+		/*  预测用的-F物料已经全部禁用了
+		if table.indexOf(getSelectedText(filter_form.clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11"; 
+		*/
 		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
 
 		if !#t
-			if !qtbs.forms[1].chkHideUnknown.checked
+			if !filter_form.chkHideUnknown.checked
 				table.push(t, {物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
 
 /*
-		if (qtbs.forms[1].chkDisabled.checked)	
+		if (filter_form.chkDisabled.checked)	
 			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 );
 */
 
@@ -265,13 +259,30 @@ var searchSapDB = function(userinput){
 	}
 	
 	if !#sapTab {
-		if ( !qtbs.forms[1].chkHideUnknown.checked) 
+		if ( !filter_form.chkHideUnknown.checked) 
 			table.push(sapTab, {物料=userinputArr[1];物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
 	}
 	else {
 
 	}
+	/*调整列宽{{*/
+	var formatListView = function(sapTab){
+		winform_qlist.listview.clear(true);
+		winform_qlist.listview.enableDoubleBuffering();
 
+		winform_qlist.listview.setTable( sapTab );
+		//grid.readonlyColums = {
+    	//	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
+    	//}
+		winform_qlist.listview.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
+	//	winform_qlist.listview.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
+		winform_qlist.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
+		winform_qlist.listview.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
+		winform_qlist.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},5);
+		winform_qlist.listview.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},6);
+    	winform_qlist.listview.fillParent(2);
+	}
+	/*}}*/
 	formatListView(sapTab);
 }
 /*}}*/
@@ -300,8 +311,16 @@ subscribe("dok",function(...){
 winform_qlist.show();
 subscribe("qtip_search_2", function(...){
 	var txt = ...;
-	if txt searchSapDB(txt);
+	var filter_form = qtbs.forms[1];
+	if txt
+		thread.invoke( 
+			searchSapDB, txt, winform_qlist, filter_form
+		);
 })
+subscribe("saveInput",function(...){
+	var txt = ...;
+	saveInputList(txt);
+} )
 
 win.loopMessage();
 return winform_qlist;

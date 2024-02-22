@@ -21,7 +21,7 @@ fsys.enum( _path , "tc_*",
 var found = {}
 for k, v in tab {
 	var str = io.joinpath(_path, v)
-	fsys.enum( str, "H008*.*",
+	fsys.enum( str, "H008*.*",	// 如果是008开头的就检查不到怎么办?
 		function(dir,filename,fullpath,findData){ 
 			if(filename){ 
 	           	//io.print("发现文件："+filename,"完整路径："+fullpath,"当前目录完整路径"+dir)
@@ -38,11 +38,20 @@ for k, v in tab {
 }
 
 if !io.exist(_toFolder) return ; 
+
+_allow_overwrite = true;
+
 for k, v in found {
 	var fromFile = v;
 	var toFile = io.joinpath(_toFolder, k);
-	if !io.exist(toFile)
+	if _allow_overwrite {
+		if io.exist(toFile)
+				io.remove(toFile);
 		fsys.copy(fromFile, toFile);
+	}else{
+		if !io.exist(toFile)
+			fsys.copy(fromFile, toFile);
+	}
 }
 
 

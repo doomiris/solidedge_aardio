@@ -3,11 +3,11 @@ import win.ui;
 /*DSG{{*/
 var update_sap_item_form = win.form(text="选择需要更新的列...";right=303;bottom=359)
 update_sap_item_form.add(
-button={cls="button";text="开始更新";left=160;top=328;right=296;bottom=352;db=1;dr=1;z=2};
+button={cls="button";text="开始更新";left=160;top=328;right=296;bottom=352;db=1;dr=1;tabstop=1;z=2};
 button2={cls="button";text='\uF0E2';left=264;top=8;right=296;bottom=40;color=255;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=3};
 button3={cls="button";text="H";left=8;top=328;right=32;bottom=352;z=5};
-edit={cls="edit";text="1";left=48;top=328;right=80;bottom=352;edge=1;z=6};
-edit2={cls="edit";text="2";left=96;top=328;right=160;bottom=352;edge=1;z=7};
+edit={cls="edit";text="1";left=48;top=328;right=80;bottom=352;autohscroll=false;autovscroll=false;edge=1;hidesel=1;num=1;tabstop=1;z=6};
+edit2={cls="edit";text="2";left=96;top=328;right=160;bottom=352;autohscroll=false;autovscroll=false;edge=1;hidesel=1;num=1;tabstop=1;z=7};
 listview={cls="listview";left=0;top=48;right=304;bottom=320;ah=1;asel=false;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;msel=false;tabstop=1;z=1};
 static={cls="static";left=8;top=8;right=248;bottom=40;aw=1;dl=1;dr=1;dt=1;transparent=1;z=4}
 )
@@ -58,8 +58,9 @@ var refresh = function(){
 	sht = excel.ActiveWorkbook.ActiveSheet;
 	update_sap_item_form.static.text = sht.parent.Name ++ "![" ++ sht.name ++ "]";
 	
-	var titleRng = sht.range("A1:Z5");
-	update_sap_item_form.titleRow = titleRng.find("物料描述").row;
+	var titleRng = sht.range("A1:Z10");
+	var f = titleRng.find("物料描述") || titleRng.find("名称");
+	update_sap_item_form.titleRow = f.row;
 	titleRng = titleRng.value2[[update_sap_item_form.titleRow]];	//查找范围前5行
 	titleRng = tarray.replaceValue(titleRng,"专用号", "物料"); //考虑其它命名方式
 

@@ -142,17 +142,21 @@ var importFromQHC = function(winform_getlist, path){
 	var excel = com.excel(true);
 
 	var qWb = excel.WorkBooks.Open(path);
+	if qWb
+		winform_getlist.log.print("打开成功");
 	var qSht = qWb.Sheets(1);
 	qSht.Rows(1).Replace("物料状态","禁用", 1 /* xlWhole */);
 	qSht.Rows(1).Replace("大小/量纲","设计展平尺寸", 1 /* xlWhole */);
 	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸", 1 /* xlWhole */);
 	var qTab = qSht.usedRange.Value2;
 	var rc = #qTab;
+	if rc
+		winform_getlist.log.print("获取表格数据行数:", rc);
 	qWb.close(false);
 	qSht = null;
 	qWb = null;
 	excel.Quit();
-	
+	winform_getlist.log.print("退出excel...");
 	qTab.fields = table.shift(qTab); /*提取第一行作为列名*/
 
 	if !table.find(qTab.fields, "禁用")
@@ -162,7 +166,9 @@ var importFromQHC = function(winform_getlist, path){
 
 	import config;
 	import sqlite;
+	winform_getlist.log.print("打开数据为库...", winform_getlist.stepDBpath);
 	var db = sqlite(winform_getlist.stepDBpath);
+	winform_getlist.log.print("删除旧数据...");
 	if db.existsTable("qhc_export") db.exec("DROP table qhc_export")
 	db.exec("VACUUM");
 
@@ -170,7 +176,7 @@ var importFromQHC = function(winform_getlist, path){
 	fields= tarray.replaceValue(fields,"物料", "物料 TEXT collate nocase");
 	fields = tarray.replaceValue(fields,"物料描述", "物料描述 TEXT collate nocase");	
 	fields = string.join(fields,", ");
-
+	winform_getlist.log.print("开始写入数据...");
 	db.exec("CREATE TABLE [qhc_export](" ++ fields ++ ");")  
 
 	db.beginTrans();
@@ -190,7 +196,7 @@ var importFromQHC = function(winform_getlist, path){
 	}
 	db.commitTrans();
 	db.close();
-	winform_getlist.log.print("Excel导入完成");
+	winform_getlist.log.print("写入STEP完成");
 	winform_getlist.button2.disabledText = null;
 }
 /*}}*/

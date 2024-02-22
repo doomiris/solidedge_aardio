@@ -52,7 +52,7 @@ var filterDeleted = function(t){
 	if t.fields z.fields = t.fields;
 	for (i=1; #t) {
 		if !t[i].特性 continue;
-		if t[i].更改标记
+		if t[i].更改标记	//无标记不代表删除哦
 			if string.find(t[i].更改标记,"删") continue;
 		table.push(z, t[i])
 	}
@@ -64,7 +64,7 @@ var filterDeleted = function(t){
 var searchClass = function(str){
 	if !str return null; 
 	str = string.upper(string.trim(str));
-	var t = db.getTable("SELECT * FROM `分类新`", { 分类 : str });
+	var t = db.getTable("SELECT * FROM `分类`", { 分类 : str });
 	return filterDeleted(t);
 }
 var searchClassByBG = function(str){
@@ -77,7 +77,7 @@ var searchClassByBG = function(str){
 var searchOption = function(str){
 	if !str return null; 
 	str = string.upper(string.trim(str));
-	var t = db.getTable("SELECT * FROM `特性参数规划表新`", { 特性 : str });
+	var t = db.getTable("SELECT * FROM `特性参数规划表`", { 特性 : str });
 	return filterDeleted(t);
 }
 
@@ -146,8 +146,6 @@ winform_od_query.listview2.onnotify = function(id,code,ptr){
 }
 
 winform_od_query.button.oncommand = function(id,event){
-	if io.exist("\\ccnqia05\kaifa-\01 QHC产品资料汇总\3 SAP 数据整理\0.参数及分类汇总表2022.06.01.xlsx")
-		if io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx")
 			loadcodex("\forms\SAP\BOM_OD_LIB.aardio");
 }
 

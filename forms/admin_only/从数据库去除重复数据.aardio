@@ -1,0 +1,25 @@
+import console; 
+
+_tname = "qhc_dw_rel_list";
+import config;
+import sqlite;
+var db = sqlite(config.dbServer.path + "qhc_dw_rel_list.db");
+var sql = `
+delete   from qhc_dw_rel_list
+where    rowid not in
+         (
+         select  min(rowid)
+         from    qhc_dw_rel_list
+         group by
+                图纸下发时间
+         ,      图纸号
+         ,		物料号码
+         ,		图纸版次
+         )
+`
+db.exec(sql);
+
+console.log("更新完成");
+db.close();
+
+console.pause(true);

@@ -19,10 +19,10 @@ class session{
 	    	dim session
 	*/
 	vm.script = /*
-			If Not IsObject(application) Then
+			'If Not IsObject(application) Then
    			Set SapGuiAuto  = GetObject("SAPGUI")
    			Set application = SapGuiAuto.GetScriptingEngine
-			End If
+			'End If
 			If Not IsObject(connection) Then
    			Set connection = application.Children(0)
 			End If

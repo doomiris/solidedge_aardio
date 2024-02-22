@@ -3,14 +3,14 @@ console.open();
 
 import tarray;
 import com;
-var w_index = 1
+var w_index = 1;
 var excel_app_tab={};
 
 com.enumRunning( 
 	function(displayName,object){
 			if com.GetTypeInfo(object) {
 				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-					if !table.indexOf(excel_app_tab, object.FullName||displayName) {						
+					if !table.indexOf(excel_app_tab, object.FullName||displayName) {
 						if string.indexOf(io.splitpath(displayName).name, "调研表") {
 							console.log(w_index, io.splitpath(displayName).file);				
 							excel_app_tab[w_index] = object;
@@ -51,7 +51,7 @@ var filterDeleted = function(t){
 /*}}*/
 var searchOption = function(str){
 	if !str return null; 
-	var t = db.getTable("SELECT * FROM [特性参数规划表新]", { 特性 = string.upper(str) });
+	var t = db.getTable("SELECT * FROM [特性参数规划表]", { 特性 = string.upper(str) });
 	return filterDeleted(t);
 }
 
