@@ -149,28 +149,18 @@ winform_qlist.listview.translateAccelerator = function( msg ){
 /*searchSapDB{{*/
 
 var searchSapDB = function(userinput, winform_qlist, filter_form){
-	var sapTab;
-	var getSelectedText = function(listCtrl){
-		var t = {}
-		for index, text in listCtrl.eachSelected()
-			table.unshift(t, text);
-		return t; 
-	}
 	import config
 	import sqlite;
-	/*sqliteDB{{*/
-	var sapdb = config.dbServer.path + "\qhcsap.db";
-	if !io.exist(sapdb) 
-		win.msgboxErr("无法访问数据库!");
-	var db,err = sqlite(sapdb);	//打开数据库连接
-	
-	if (err) error(err)
-	/*}}*/
+	import QHC;
+	import domisoft;
 
+	var db = QHC.openDb(QHC.sap_db_path);
+	var sapTab;
     if !#userinput return ; 
 
     winform_qlist.listview.clear(true);
     winform_qlist.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
+
     userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
     
     //分隔符号转换行
@@ -198,14 +188,40 @@ var searchSapDB = function(userinput, winform_qlist, filter_form){
     	userinput=string.replace(userinput,"@*","%");
     	userinput=string.replace(userinput,"@?","_");
 		
-		//
-		//sapTab.fields = {[1]="物料";[2]="物料描述";[3]="单位";[4]="类型";[5]="物料组";[6]="价格";[7]="配置";[8]="禁用"}
-		//sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";/*"配置";"禁用"*/}
 		var sqlstr;
 		if !filter_form.chkMoreCols.checked
-			sqlstr = "SELECT `物料`, `物料描述`,`Bun` AS `单位`, `MTyp` AS `类型`,`物料组`,`价格` FROM `所有物料` WHERE ??" ;
+			sqlstr = "
+				SELECT
+					`物料`,
+					`物料描述`,
+					`Bun` AS `单位`,
+					`MTyp` AS `类型`,
+					`物料组`,
+					`价格` 
+			 	FROM
+			 		`所有物料`
+			 	WHERE
+			 		??
+			 " ;
 		else
-			sqlstr = "SELECT * FROM `所有物料` WHERE ??" ;
+			sqlstr = "
+				SELECT
+					`物料`,
+					`物料描述`,
+					`Bun` AS `单位`,
+					`MTyp` AS `类型`,
+					`物料组`,
+					`价格`,
+					`PGr` AS `采购组`,
+					`物料是可配置的` AS `可配置`,
+					`禁用`,
+					`设计展平尺寸`,
+					`生产展平尺寸`
+			 	FROM
+			 		`所有物料`
+			 	WHERE
+			 		??
+			 " ;
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
 			table.assign(searchField, {物料 = userinput});
@@ -221,11 +237,11 @@ var searchSapDB = function(userinput, winform_qlist, filter_form){
 
 		//直接搜索物料时忽略filter
 			if #filter_form.clSapType.selected
-				table.assign(searchField, {物料组 = getSelectedText(filter_form.clSapType)});
+				table.assign(searchField, {物料组 = domisoft.getSelectedText(filter_form.clSapType)});
 			if #filter_form.clUnit.selected
-				table.assign(searchField, {单位 = getSelectedText(filter_form.clUnit)});
+				table.assign(searchField, {单位 = domisoft.getSelectedText(filter_form.clUnit)});
 			if #filter_form.clOrderType.selected
-				table.assign(searchField, {类型 = getSelectedText(filter_form.clOrderType)});
+				table.assign(searchField, {类型 = domisoft.getSelectedText(filter_form.clOrderType)});
 		}		
 /*
 		if #winform_qlist.clLegacyType.checked
@@ -245,7 +261,7 @@ var searchSapDB = function(userinput, winform_qlist, filter_form){
 
 		if !#t
 			if !filter_form.chkHideUnknown.checked
-				table.push(t, {物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸";物料类型="";价格=""/*;禁用=""*/});
+				table.push(t, {物料=userinput;物料描述="没找到SAP物料, 双击可继续查找图纸"/*;物料类型="";价格="";禁用=""*/});
 
 /*
 		if (filter_form.chkDisabled.checked)	

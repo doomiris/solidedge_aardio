@@ -1,71 +1,77 @@
 //domisoft
-namespace domisoft{
-	showInputBox = function(title, Msg,tips, winform){
-			import win.inputBox;
-			var inputBox = win.inputBox(winform)
-			inputBox.text = title;
-			inputBox.info.text = Msg;
-			inputBox.input.text = tips;
-			return inputBox.doModal();
-	}
 
-	clearExcelCorpse = function(){
-		..thread.invoke( 
-			function(){//清理异常的excel进程
-				import com.excel;
-				var excel = com.excel(false);
-				if excel.Visible == false and excel.WorkBooks.Count==0 {
-					import process.popen;
-					var prcs = process.popen.cmd(`taskkill /PID ` + excel.Application.Run("GetCurrentProcessId") + ` /f`)
-				}
-			}
-		)
-	}
-	getComAppPath = function(keyword){
-		import com.shell;
-		import fsys.knownFolder
-		var s = com.shell.findApp("@"+ keyword);
-		var g = ..string.match(s.path,'%{}');		
-		return (..string.replace(s.path, "@"+g, fsys.knownFolder(g)));
-	}
-	getRunningWorkSheet = function(workbookName,worksheetName){
-		import com;
-		var sht;
-		com.enumRunning( 
-			function(displayName,object){
-					if com.GetTypeInfo(object) {
-						if ..string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-								if ..string.endWith(displayName, workbookName, true) {		
-									if worksheetName
-										sht = object.Sheets(worksheetName) : null; 
-									else
-										sht = object.Sheets(1); 
-									return true; 
-								}
-						}
-					}
-			}
-		)
-		return sht; 
-	}
-	taobaoURLsimple = function(url){
-		import inet.url;
-		import inet.urlpart;
-		var turl = inet.url.split(url ); 
-		var para = inet.urlpart.getQuery(url);
-		var s = inet.url.splitParameters(para);	
-		var n = inet.url.stringify(
-			scheme = turl.scheme;
-			host = turl.host;
-			path = turl.path;
-			extraInfo = {
-				id = s.id;
-			};
-		)
-		return ..string.trimright(n,"?"); 
-	}
-	
+namespace domisoft;
+showInputBox = function(title, Msg,tips, winform){
+	import win.inputBox;
+	var inputBox = win.inputBox(winform)
+	inputBox.text = title;
+	inputBox.info.text = Msg;
+	inputBox.input.text = tips;
+	return inputBox.doModal();
 }
+
+clearExcelCorpse = function(){
+	..thread.invoke( 
+		function(){//清理异常的excel进程
+			import com.excel;
+			var excel = com.excel(false);
+			if excel.Visible == false and excel.WorkBooks.Count==0 {
+				import process.popen;
+				var prcs = process.popen.cmd(`taskkill /PID ` + excel.Application.Run("GetCurrentProcessId") + ` /f`)
+			}
+		}
+	)
+}
+getComAppPath = function(keyword){
+	import com.shell;
+	import fsys.knownFolder
+	var s = com.shell.findApp("@"+ keyword);
+	var g = ..string.match(s.path,'%{}');		
+	return (..string.replace(s.path, "@"+g, fsys.knownFolder(g)));
+}
+getRunningWorkSheet = function(workbookName,worksheetName){
+	import com;
+	var sht;
+	com.enumRunning( 
+		function(displayName,object){
+				if com.GetTypeInfo(object) {
+					if ..string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+							if ..string.endWith(displayName, workbookName, true) {		
+								if worksheetName
+									sht = object.Sheets(worksheetName) : null; 
+								else
+									sht = object.Sheets(1); 
+								return true; 
+							}
+					}
+				}
+		}
+	)
+	return sht; 
+}
+taobaoURLsimple = function(url){
+	import inet.url;
+	import inet.urlpart;
+	var turl = inet.url.split(url ); 
+	var para = inet.urlpart.getQuery(url);
+	var s = inet.url.splitParameters(para);	
+	var n = inet.url.stringify(
+		scheme = turl.scheme;
+		host = turl.host;
+		path = turl.path;
+		extraInfo = {
+			id = s.id;
+		};
+	)
+	return ..string.trimright(n,"?"); 
+}
+getSelectedText = function(listCtrl){
+	var t = {}
+	for index, text in listCtrl.eachSelected()
+		..table.unshift(t, text);
+	return t; 
+}
+
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程

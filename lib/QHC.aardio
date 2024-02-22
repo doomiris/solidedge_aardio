@@ -1,12 +1,13 @@
 ﻿//QHC
 import sqlite;
-
+import config;
 var table = ..table;
 var string = ..string;
 var sqlite = ..sqlite;
+var config = ..config;
 
 namespace QHC;
-import config;
+
 sap_db_path = config.dbServer.path + "\QHCSAP.db";
 od_db_path = config.dbServer.path + "\qhc_OD_lib.db";
 drw_rel_path = config.dbServer.path + "\qhc_dw_rel_list.db";
