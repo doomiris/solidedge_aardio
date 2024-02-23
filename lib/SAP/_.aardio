@@ -115,6 +115,7 @@ downloadBOM = function(winform, etab){
 	}
 	vm.script = /*	
 	session.findById("wnd[0]/tbar[0]/btn[12]").press
+
 	*/
 	winform.publish("dok", ftab);
 }

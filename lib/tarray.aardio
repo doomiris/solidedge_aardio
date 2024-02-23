@@ -95,6 +95,19 @@ uniqueCol = function(arr,col = 1){
 				push(t, arr[i]:"");
 	return mapfields(t,fields); 
 }
+uniqueByCol = function(arr,col){
+	var t={};
+	var ct = getCol(arr, col);
+	ct = unique(ct);
+	for k, v in arr {
+		if !v	continue;//跳过空值
+		if indexOf(ct, v[col]){ //跳过重复值
+			push(t, v);
+			..table.removeByValue(ct,v[col]);
+		}
+	}
+	return t; 
+}
 getCol = function(arr, col){
 	var colindex = #arr.fields ? indexOf(arr.fields, col) : col;
 	return transpose0(arr)[colindex]; 
