@@ -146,7 +146,7 @@ winform_od_query.listview2.onnotify = function(id,code,ptr){
 }
 
 winform_od_query.button.oncommand = function(id,event){
-			loadcodex("\forms\SAP\BOM_OD_LIB.aardio");
+			loadcodex("\forms\admin_only\BOM_OD_LIB.aardio");
 }
 
 /*CtrlC复制模块{{*/

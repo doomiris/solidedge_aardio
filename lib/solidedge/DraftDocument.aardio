@@ -422,107 +422,104 @@ namespace DraftDocument{
     	if !topRec return null ; 
     	var lb = owner.getLabelTable(topRec);
     	return lb["标记"]; 
-	}
+	};
 	
-	
-  )
-}
-namespace DraftDocument{
+	/* 优化代码 : 不太理想,现在必须打开DFT才能用*/
+
 	replaceNewTitleBlock = function(DFT){
 		_tPath = "\\ccnsia1a\separts\Admin\Templates\Solidedge_Template\Template_2020\Draft.dft";
-		import solidedge.application;
-		var seApp = solidedge.application();
-		DFT := seApp.ActiveDocument;
-		var seDFT = ..solidedge.DraftDocument(DFT);	//当前文件
-		var Sht = seDFT.ActiveSheet;
-		var x,y = seDFT.getTitleBlockOrigin(Sht);
+		DFT := owner;
+		var Sht = DFT.ActiveSheet;
+		var x,y = DFT.getTitleBlockOrigin(Sht);
 		
 		// 从模版获取全部新的block定义;
-		var newDFT = seApp.Open(_tPath, true);	//模版文件
+		var newDFT = owner.application.Open(_tPath, true);	//模版文件
 		for (i = 1; newDFT.Blocks.Count; 1)
-			seDFT.Blocks.CopyBlock (newDFT.Blocks.item(i));		//todo:  旧图纸tb名称不规范, 背景名称不规范的处理
+			DFT.Blocks.CopyBlock (newDFT.Blocks.item(i));		//todo:  旧图纸tb名称不规范, 背景名称不规范的处理
 		newDFT.Close(false);
 		// 获取当前旧的title block定义;
 		//var oLbsTab={};
 		//var seBlkTab = {};
 		//var neBlkTab = {};
-	var oldBlockName;
-	for (j=1; seDFT.SheetGroups.Item(1).Sheets.Count){
-		var sesht = seDFT.SheetGroups.Item(1).Sheets.Item(j)
-		var seBlk = seDFT.getTitleBlock(sesht);
-		oldBlockName := seBlk.Block.Name;
-		//..table.push(seBlkTab, seBlk);
-		
-		var oLbs = seDFT.getLabelTable(seBlk); //获取旧Title Block数据
-		if !oLbs["版本"]{
-			oLbs["版本"], txtItem = seDFT.getVerFromShtCorner(sesht);
-			if txtItem txtItem.Delete();
-		}
-		//..table.push(oLbsTab, oLbs);
-		
-		var neBlk = sesht.BlockOccurrences.Add("Title 2020", x, y); // 插入新Title Block
-		//..table.push(neBlkTab, neBlk);
-		//解决名称合并后有多行的显示问题, TODO: 对齐方式改进
-		if oLbs{
-			oLbs["零件名称"] := (function(a,b){
-				if  b and ..string.len(..string.trim(b))>0 
-					return a ++ '\n' ++ b;	//旧模板命名问题
-				else 
-					return a;
-			})(oLbs["名称(中文)"], oLbs["名称(英文)"]);
+		var oldBlockName;
+		for (j=1; DFT.SheetGroups.Item(1).Sheets.Count){
+			var sesht = DFT.SheetGroups.Item(1).Sheets.Item(j)
+			var seBlk = DFT.getTitleBlock(sesht);
+			oldBlockName := seBlk.Block.Name;
+			//..table.push(seBlkTab, seBlk);
 			
-			if (#oLbs["零件名称"] && ..string.indexOf(oLbs["零件名称"], '\r')){
-				var newTitleBlockLableObject = seDFT.getLabelObjectTable(neBlk);
-				newTitleBlockLableObject["零件名称"].Style.Height = 3 / 1000
-    			newTitleBlockLableObject["零件名称"].OriginLocation = 7 /* igBlockLabelBottomCenter */
-    			newTitleBlockLableObject["零件名称"].BlockLabel.OriginLocation = 7 /* igBlockLabelBottomCenter */
+			var oLbs = DFT.getLabelTable(seBlk); //获取旧Title Block数据
+			if !oLbs["版本"]{
+				oLbs["版本"], txtItem = DFT.getVerFromShtCorner(sesht);
+				if txtItem txtItem.Delete();
 			}
-		}
-		seDFT.tabToBlk(oLbs, neBlk); //数据写入新Title Block
-		
-		//替换新图框
-		select (sesht.Background.Name) {
-			case "A3-Sheet", "A2-Sheet" {
-         		sesht.Background.ReplaceBackground(_tPath, sesht.Background.Name); 
+			//..table.push(oLbsTab, oLbs);
+			
+			var neBlk = sesht.BlockOccurrences.Add("Title 2020", x, y); // 插入新Title Block
+			//..table.push(neBlkTab, neBlk);
+			//解决名称合并后有多行的显示问题, TODO: 对齐方式改进
+			if oLbs{
+				oLbs["零件名称"] := (function(a,b){
+					if  b and ..string.len(..string.trim(b))>0 
+						return a ++ '\n' ++ b;	//旧模板命名问题
+					else 
+						return a;
+				})(oLbs["名称(中文)"], oLbs["名称(英文)"]);
+				
+				if (#oLbs["零件名称"] && ..string.indexOf(oLbs["零件名称"], '\r')){
+					var newTitleBlockLableObject = owner.getLabelObjectTable(neBlk);
+					newTitleBlockLableObject["零件名称"].Style.Height = 3 / 1000
+    				newTitleBlockLableObject["零件名称"].OriginLocation = 7 /* igBlockLabelBottomCenter */
+    				newTitleBlockLableObject["零件名称"].BlockLabel.OriginLocation = 7 /* igBlockLabelBottomCenter */
+				}
 			}
+			DFT.tabToBlk(oLbs, neBlk); //数据写入新Title Block
+			
+			//替换新图框
+			select (sesht.Background.Name) {
+				case "A3-Sheet", "A2-Sheet" {
+         			sesht.Background.ReplaceBackground(_tPath, sesht.Background.Name); 
+				}
+			}
+			// 检查如果有旧的变更记录就添加新格式变更记录block
+    		for (i = sesht.BlockOccurrences.Count; 1; -1 ) { //获取Titleblock
+        		select  (sesht.BlockOccurrences.Item(i).Block.Name){
+            		case "变更修改" {
+                		sesht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
+               			break;
+            		}
+        		}
+    		}
+    		//获取x修改记录block, 由于实时删除, 需要反向循环
+    		var gy = (48+6)/1000;	//变更记录y坐标
+    		for (i = sesht.BlockOccurrences.Count; 1;  -1 ) { 
+    			var xblk = sesht.BlockOccurrences.Item(i);
+        		select  (xblk.Block.Name){
+            		case "变更修改" {
+                		var xblklbs = owner.getLabelTable(xblk);
+               			var nxblk = sesht.BlockOccurrences.Add("变更记录 2020", x, y + gy);
+               			DFT.tabToBlk(xblklbs, nxblk);
+               			xblk.Delete();
+               			gy += 6/1000;
+            		}
+        		}
+    		}
 		}
-		// 检查如果有旧的变更记录就添加新格式变更记录block
-    	for (i = sesht.BlockOccurrences.Count; 1; -1 ) { //获取Titleblock
-        	select  (sesht.BlockOccurrences.Item(i).Block.Name){
-            	case "变更修改" {
-                	sesht.BlockOccurrences.Add("变更记录表格 2020", x, y + 48/1000);
-               		break;
-            	}
-        	}
-    	}
-    	//获取x修改记录block, 由于实时删除, 需要反向循环
-    	var gy = (48+6)/1000;	//变更记录y坐标
-    	for (i = sesht.BlockOccurrences.Count; 1;  -1 ) { 
-    		var xblk = sesht.BlockOccurrences.Item(i);
-        	select  (xblk.Block.Name){
-            	case "变更修改" {
-                	var xblklbs = seDFT.getLabelTable(xblk);
-               		var nxblk = sesht.BlockOccurrences.Add("变更记录 2020", x, y + gy);
-               		seDFT.tabToBlk(xblklbs, nxblk);
-               		xblk.Delete();
-               		gy += 6/1000;
-            	}
-        	}
-    	}
-	}
-		
+			
 		
 		//删除旧Title Block
 		try{
-			seDFT.Blocks.Item(oldBlockName).Delete();
+			DFT.Blocks.Item(oldBlockName).Delete();
 		}
 		
 		
 
-	}
-
-	
+	};
+	_topointer = lambda() owner.seDFT;	
+  )
 }
+	
+
 
 /**intellisense()
 solidedge.DraftDocument = DraftDocument 支持库

@@ -144,9 +144,9 @@ var importFromQHC = function(winform_getlist, path){
 	var qWb = excel.WorkBooks.Open(path);
 	if qWb
 		winform_getlist.log.print("打开成功");
-	var qSht = qWb.Sheets(1);
-	qSht.Rows(1).Replace("物料状态","禁用", 1 /* xlWhole */);
-	qSht.Rows(1).Replace("大小/量纲","设计展平尺寸", 1 /* xlWhole */);
+	var qSht = qWb.Sheets("Sheet1");
+	qSht.Rows(1).Replace("是否禁用","禁用", 1 /* xlWhole */);
+	//qSht.Rows(1).Replace("大小/量纲","设计展平尺寸", 1 /* xlWhole */);
 	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸", 1 /* xlWhole */);
 	var qTab = qSht.usedRange.Value2;
 	var rc = #qTab;
@@ -161,8 +161,10 @@ var importFromQHC = function(winform_getlist, path){
 
 	if !table.find(qTab.fields, "禁用")
 		winform_getlist.log.print("[禁用]列不存在");
+/*
 	if !table.find(qTab.fields, "物料是可配置的")
 		winform_getlist.log.print("[可配置]列不存在");	
+*/
 
 	import config;
 	import sqlite;
@@ -237,9 +239,7 @@ console.open();
 			all_cost.BUn, 
 			all_cost.价格, 
 			all_cost.PGr, 
-			qhc_export.物料是可配置的, 
 			qhc_export.禁用,
-			qhc_export.设计展平尺寸,
 			qhc_export.生产展平尺寸 
 		FROM all_cost
 			LEFT JOIN qhc_export
@@ -264,9 +264,7 @@ console.open();
 			BUn TEXT, 
 			价格 NUMERIC, 
 			PGr TEXT, 
-			物料是可配置的 TEXT, 
 			禁用 TEXT,
-			设计展平尺寸 TEXT,
 			生产展平尺寸 TEXT,
 			PRIMARY KEY(物料)
 		);
@@ -300,7 +298,6 @@ console.open();
 		db.exec("REINDEX MTyp;")
 		db.exec("REINDEX 物料组;")
 		db.exec("REINDEX BUn;")
-	//	db.exec("REINDEX 物料是可配置的;") //避免大量NULL值的索引
 	//	db.exec("REINDEX 禁用;")
 	}else{
 		db.exec("CREATE UNIQUE INDEX 物料 on 所有物料 (物料 collate nocase);")
@@ -308,7 +305,6 @@ console.open();
 		db.exec("CREATE INDEX MTyp on 所有物料 (MTyp);")
 		db.exec("CREATE INDEX 物料组 on 所有物料 (物料组);")
 		db.exec("CREATE INDEX BUn on 所有物料 (BUn);")
-	//	db.exec("CREATE INDEX 物料是可配置的 on 所有物料 (物料是可配置的);")
 	//	db.exec("CREATE INDEX 禁用 on 所有物料 (禁用);")
 	}
 	db.close();

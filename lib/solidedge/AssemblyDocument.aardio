@@ -88,10 +88,6 @@ namespace AssemblyDocument{
 	
   )
 }
-namespace AssemblyDocument{
-
-
-}
 
 /**intellisense()
 solidedge.AssemblyDocument = AssemblyDocument 支持库

@@ -33,7 +33,7 @@ import config;
 import key;
 var seApp, seDFT, seSht, seLbs;
 var initDeclare = function(){
-	seApp := solidedge.application();
+	seApp = solidedge.application();
 	if (! seApp) return false; 
 	if (seApp.Documents.Count==0) return false; 
 	if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return false; 

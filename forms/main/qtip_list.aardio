@@ -186,7 +186,6 @@ console.open();
 	fields = tarray.replaceValue(fields, "MTyp", "类型");
 	fields = tarray.replaceValue(fields, "BUn", "单位");
 	fields = tarray.replaceValue(fields, "PGr", "采购组");
-	fields = tarray.replaceValue(fields, "物料是可配置的", "可配置");
 	//console.dump(fields)
     for (i=1; #userinputArr; 1){
         if string.indexOf(userinputArr[i], '\t') userinputArr[i] = table.pop(string.split(userinputArr[i],'\t'));
@@ -227,7 +226,6 @@ console.open();
 					`物料组`,
 					`价格`,
 					`PGr` AS `采购组`,
-					`物料是可配置的` AS `可配置`,
 					`禁用`,
 					`设计展平尺寸`,
 					`生产展平尺寸`
@@ -236,7 +234,7 @@ console.open();
 			 	WHERE
 			 		??
 			 " ;
-			 fields = {"物料","物料描述","单位","类型","物料组","价格","可配置","禁用","设计展平尺寸","生产展平尺寸"};
+			 fields = {"物料","物料描述","单位","类型","物料组","价格","禁用","设计展平尺寸","生产展平尺寸"};
 		}
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
@@ -322,25 +320,25 @@ console.open();
 }
 /*}}*/
 /*格式化BOM{{*/
-subscribe("dok",function(...){
+subscribe("dok", function(...){
 	//winform_qlist.button6.disabledText = null;
 	win.delay(3*1000);
+	
 	var ftab = ...;
-	if ftab {
-		import com.excel;
-		var excel = com.excel(false);
-		
-		for(i = excel.WorkBooks.Count; 1; -1) // 反向
-			if table.indexOf(ftab, excel.WorkBooks(i).Name) {
-				try{
-					excel.WorkBooks(i).Activate();
-					excel.Run("initExportedBom"); //调用宏格式化样式
+	if !ftab return ; 
+	thread.invoke( 
+		function(ftab){
+			import com.excel;
+			import QHC;
+			var excel = com.excel(false);
+			for(i = excel.WorkBooks.Count; 1; -1) {// 反向
+				if ..table.indexOf(ftab, excel.WorkBooks(i).Name) {
+					QHC.formatBOM(excel.WorkBooks(i).WorkSheets(1))
+		 			excel.WorkBooks(i).Close(true /* _save_changes */);
 				}
-		 		if #ftab>4 excel.WorkBooks(i).Close(true /* _save_changes */);
-		 		//else excel.WorkBooks(i).Save();
 			}
-	}
-
+		}, ftab
+	)
 } )
 /*}}*/
 winform_qlist.show();

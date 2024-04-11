@@ -18,24 +18,31 @@ _skip_file = {
 	"岛柜系列产品默认配置2022.5.17 - 副本.xlsx",
 	"冷风机默认配置.xlsx",
 }
-_CCR_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\";
-_QHC_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\";
-_fieldsName = {"产品编码", "分类", "特性", "特性值"}; //, 
-_fieldsColumn = {"B", "C", "D", "F"}; //, 
-_testFields = {"SAP语句", "更改标记"};
-_testColumn = {"L", "M"};
-_title = "默认值";
-import com.excel;
-var excel = com.excel(true);
+
+var default_con = {
+	_CCR_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部\";
+	_QHC_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\";
+	_fieldsName = {"产品编码", "分类", "特性", "特性值"}; //, 
+	_fieldsColumn = {"B", "C", "D", "F"}; //, 
+	_testFields = {"SAP语句", "更改标记"};
+	_testColumn = {"L", "M"};
+	_title = "默认值";  
+}
 
 import sqlite;
 var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
 
-if db.existsTable(_title) db.exec("DROP table " + _title);
-db.exec("CREATE TABLE "+ _title +"( " + string.join(_fieldsName,", ") + ");")
+if db.existsTable(default_con._title) db.exec("DROP table " + default_con._title);
+db.exec("CREATE TABLE "+ default_con._title +"( " + string.join(default_con._fieldsName,", ") + ");")
 
 /*获取当前excel数据getListFromXlsx{{*/
-var getListFromXlsx = function(_xlsx_path){
+var getListFromXlsx = function(_xlsx_path, winform_get_default, default_con){
+	import com.excel;
+	var excel = com.excel(true);
+	
+	import console;
+	console.open();
+	
 	var wb = null;
 	try{
 			wb = excel.WorkBooks.Open(
@@ -67,28 +74,34 @@ var getListFromXlsx = function(_xlsx_path){
 		if sht.ListObjects("表1").AutoFilter
 			sht.ListObjects("表1").AutoFilter.ShowAllData();
 	var tab ={};
-	for (i=1; #_fieldsName)
-		tab[_fieldsName[i]] = sht.UsedRange.Columns(_fieldsColumn[i]).value2;
+	for (i=1; #default_con._fieldsName)
+		tab[default_con._fieldsName[i]] = sht.UsedRange.Columns(default_con._fieldsColumn[i]).value2;
 	var testTab = {};	
-	for (i=1; #_testFields)
-		testTab[_testFields[i]] = sht.UsedRange.Columns(_testColumn[i]).value2;
+	for (i=1; #default_con._testFields)
+		testTab[default_con._testFields[i]] = sht.UsedRange.Columns(default_con._testColumn[i]).value2;
 			
 	var rc = sht.usedRange.Rows.Count;
 	wb.close(false);
 	excel.alerts = true;
 	
+	import sqlite;
+	import config;
+	var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+	
+	import string;
+	import math;
+	
 	db.beginTrans();
 	for (j=2; rc){
-		if tab[_fieldsName[1]][j] {
+		if tab[default_con._fieldsName[1]][j] {
 			
-			var cmd = db.prepare("INSERT INTO [默认值] VALUES( " + "@" + string.join(_fieldsName, ", @") + ");");
+			var cmd = db.prepare("INSERT INTO [默认值] VALUES( " + "@" + string.join(default_con._fieldsName, ", @") + ");");
 			var t={};
 			var st = {};
-			for(i=1;#_fieldsName)
-				t[_fieldsName[i]] = tab[_fieldsName[i]][j][1]; //行数据即使只有一个单元格也是按行列保存的,所有要有[1]
-			for(i=1;#_testFields)
-				st[_testFields[i]] = testTab[_testFields[i]][j][1];
-				
+			for(i=1;#default_con._fieldsName)
+				t[default_con._fieldsName[i]] = tab[default_con._fieldsName[i]][j][1]; //行数据即使只有一个单元格也是按行列保存的,所有要有[1]
+			for(i=1;#default_con._testFields)
+				st[default_con._testFields[i]] = testTab[default_con._testFields[i]][j][1];			
 
 			
 			if !t["产品编码"] or !t["分类"] or !t["特性"] continue; //跳过无值的行			
@@ -113,6 +126,7 @@ var getListFromXlsx = function(_xlsx_path){
 		}
 	}
 	db.commitTrans();
+	db.close();
 }
 /*}}*/
 var deepSearchFile = function(path,filter = "*.*"){
@@ -123,7 +137,7 @@ var deepSearchFile = function(path,filter = "*.*"){
 				if !string.startWith(filename,"~$"){	//跳过临时文件
 					if !table.find(_skip_file, filename){	//跳过指定文件
            				winform_get_default.edit3.print("发现文件：", filename, /*"完整路径："+fullpath*/)
-           				getListFromXlsx(fullpath);
+           				thread.invokeAndWait(getListFromXlsx, fullpath, winform_get_default, default_con);
            			}
            		}   		
 			}
@@ -145,16 +159,16 @@ winform_get_default.onDestroy = function(){
 }
 
 winform_get_default.button2.oncommand = function(id,event){
-	deepSearchFile(_CCR_path,"*默认*.xlsx");
+	deepSearchFile(default_con._CCR_path,"*默认*.xlsx");
 }
 
 winform_get_default.button5.oncommand = function(id,event){
-	deepSearchFile(_QHC_path,"*默认*.xlsx");
+	deepSearchFile(default_con._QHC_path,"*默认*.xlsx");
 }
 
 winform_get_default.show();
-//deepSearchFile(_CCR_path,"*默认*.xlsx");
-//deepSearchFile(_QHC_path,"*默认*.xlsx");
+//deepSearchFile(default_con._CCR_path,"*默认*.xlsx");
+//deepSearchFile(default_con._QHC_path,"*默认*.xlsx");
 
 win.loopMessage();
 return winform_get_default;

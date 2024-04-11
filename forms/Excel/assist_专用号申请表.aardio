@@ -44,7 +44,8 @@ var etr = function(){
 		if (sht.cells(i,"E").value2) return i;
 	}
 }
-var tRng = sht.Range("A3:S" ++ etr());
+
+var tRng = sht.Range("A3:V" ++ etr());
 
 var etab = tRng.value;
 
@@ -75,7 +76,7 @@ console.log(sht.parent.name)
 for(i=1; #etab){
     bar.setProgress(math.round(i*100/#etab), math.round(i*100/#etab) +"% processing ......");
     
-	for(j=1; 19 /* S */)
+	for(j=1; 22 /* V */)
 		if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
 		
 	etab[i][1] = i;
@@ -91,7 +92,7 @@ for(i=1; #etab){
 	var str = etab[i][5 /* E */];
 	
 	var ePush = function(val, index){
-		index := {7 /* G */,9 /* I */,10 /* J */,11 /* K */,12 /* L */};
+		index := {7 /* G */,9 /* I */,10 /* J */,11 /* K */,12 /* L */, 22 /* V */};
 		for(k=1; #index)
 			if !#etab[i][index[k]] etab[i][index[k]] = val[k];
 		//TODO: 根据已经填写的信息计算空白内容
@@ -99,43 +100,43 @@ for(i=1; #etab){
 
 	
 	if string.keywords('可选项').findOne(str)
-		ePush({"SG","KMAT","配置","09","可选项"});
+		ePush({"SG","KMAT","配置","09","可选项","否"});
 		
 	elseif string.keywords('总装|组装').findOne(str)
-		ePush({"SG","HALB","配置","08","总装"});
+		ePush({"SG","HALB","配置","08","总装","否"});
 		
 	elseif string.keywords('组件').findOne(str)	
-		ePush({"SA","HALB","非配置","08","总装"});
+		ePush({"SA","HALB","非配置","08","总装","否"});
 		
 	elseif string.keywords('已喷').findOne(str)	
-		ePush({"SC","HALB","非配置","01","喷粉件"});
+		ePush({"SC","HALB","非配置","01","喷粉件","否"});
 		
 	elseif string.keywords(_plastics).findOne(str)
-		ePush({"R02","ROH","非配置","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)]});
+		ePush({"R02","ROH","非配置","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)],"否"});
 
 	elseif string.keywords('亚克力|EPS|尼龙|GFRP|GFK').findOne(str)
-		ePush({"R02","ROH","非配置","02","其他塑料件"});
+		ePush({"R02","ROH","非配置","02","其他塑料件","否"});
 
 	elseif string.keywords('底箱体|发泡板|发泡箱体').findOne(str)
-		ePush({"SD","HALB","非配置","08","发泡"});
+		ePush({"SD","HALB","非配置","08","发泡","否"});
 		
 	elseif string.keywords(_glass).findOne(str)		
-		ePush({"R14","ROH","非配置","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)]});
+		ePush({"R14","ROH","非配置","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)],"否"});
 		
 	elseif string.keywords('点焊').findOne(str)
-		ePush({"SH","HALB","非配置","01","焊接件"});
+		ePush({"SH","HALB","非配置","01","焊接件","否"});
 		
 	elseif string.keywords(_metal).findOne(str)
-		ePush({"R01","ROH","非配置","01", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)]});
+		ePush({"R01","ROH","非配置","01", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
 		
 	elseif string.keywords('木包装').findOne(str)
-		ePush({"R05","ROH","非配置","16","木包装"});
+		ePush({"R05","ROH","非配置","16","木包装","否"});
 		
 	elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
-		ePush({"SB","HALB","非配置","01","钣金"});
+		ePush({"SB","HALB","非配置","01","钣金","否"});
 		
 	elseif string.keywords(_cooper).findOne(str)
-		ePush({"R07","ROH","非配置","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)]});
+		ePush({"R07","ROH","非配置","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)],"否"});
 
 }
 //table.sort(etab, lambda(b) owner[12]>b[12]);

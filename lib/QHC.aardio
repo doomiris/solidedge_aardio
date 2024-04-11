@@ -182,79 +182,93 @@ getSapItemByDesp = function(Desp){
 	var t = db.getTable (sqlite.format( sqlstr, {Desp}));
 	return t; 
 };
-formatBOM = function(){
+GetBomColumn = function(sht){
+	
+}
+class ColDefType{
+	ctor( sht ){
+		import string.keywords;
+		import tarray;
+		var rng = sht.Range("A1:Z10").value2; //只从前10层里查找
+		var cell = tarray.findKeyWords(rng, "层级|层次|展开层");
+		this.DefRow = cell.row;
+		var rowArr = sht.Range("A" + cell.row + ":Z" + cell.row).value2;
+		rowArr = table.pop(rowArr);
+		this.LvlCol = cell.col;
+		this.codeCol = table.find(rowArr, string.keywords("子项物料代码|专用号|物料代码|对象标识|子项物料|物料号|物料").findOne);
+		this.DespCol = table.find(rowArr, string.keywords("物料名称|物料描述|对象描述").findOne);
+		this.TypeCol = table.find(rowArr, string.keywords("物料属性|属性|物料类型|类型").findOne);
+		this.QtyCol = table.find(rowArr, string.keywords("单位|组件单位").findOne);
+		this.UnitCol = table.find(rowArr, string.keywords( "数量|单位用量|用量|组件数量|组件数量(CUn)").findOne);
+	};
+}
+
+formatBOM = function(sht){
 	import com.excel;
-	var excel = com.excel(false);
-	var sht = excel.ActiveWorkbook.ActiveSheet;
-	
-	excel.Application.ScreenUpdating = false   //关闭屏幕刷新
-	excel.Application.EnableEvents = false //先禁止触发事件
-	excel.Application.Calculation = -4135 /* xlCalculationManual */    //手动重算
-  	
-
-    	//Call GetBomColumn(sht)
-    	
-    	sht.UsedRange.FormatConditions.Delete()   //清楚当前颜色
-	
-
-	
-	//if !isThisSheetRawBom(sht) return ; 
-	
-	//删除多余列
-
-    for (i = sht.UsedRange.Columns.Count; 1 ;  -1) {
-        select  sht.Cells(coldef.DefRow, i).Text {
-        	case "备注3", "备注2", "备注1", "备注", "是否禁用", "使用状态", "使用状态", "关键件标志", "使用状态", 
-            	"发料仓库", "工序", "工序号", "子项类型", "坯料数", "坯料尺寸", "位置号", "损耗率(%)", "计划百分比(%)", 
-            	"用量", "图号", "规格型号", "直接材料", "直接人工", "变动制造费用", "固定制造费用", "委外材料费", "委外加工费", "项目编号", "特定工厂的物料状态", 
-            	"固定数量", "特殊采购类", "排序字符串"
-             	{
-            		sht.Columns.Item(i).Delete();
-        	}
-    	}
+	var excel;
+	if !sht {
+		excel = com.excel(false);
+		excel = excel.Application;
+		sht = excel.ActiveWorkbook.ActiveSheet;
+	}else{
+		excel = sht.parent.Application;
 	}
-    	//Call GetBomColumn(sht)
-	
 
-	
+	if !sht return ; 
+	var coldef = ColDefType(sht);
+	if !coldef.DefRow return ; 
+
+	excel.ScreenUpdating = false   //关闭屏幕刷新
+	excel.EnableEvents = false //先禁止触发事件
+	excel.Calculation = -4135 /* xlCalculationManual */    //手动重算
+  	var UsedRange = sht.UsedRange;
+    UsedRange.FormatConditions.Delete();   //清楚当前颜色
+
+	//if !isThisSheetRawBom(sht) return ; 
 	
 	//设置表格线
 	import color;
-	sht.UsedRange.Borders.LineStyle = 1 /* xlContinuous */
-	sht.UsedRange.Borders.weight = 2 /* xlThin */
-	//sht.UsedRange.Borders.ColorIndex = 1
-	sht.UsedRange.Font.Name = "微软雅黑"
-	sht.UsedRange.Font.Size = 10
-	sht.UsedRange.Interior.Color = color.rgb(255, 255, 255);
+	UsedRange.Borders.LineStyle = 1 /* xlContinuous */
+	UsedRange.Borders.weight = 2 /* xlThin */
+	//UsedRange.Borders.ColorIndex = 1
+	UsedRange.Font.Name = "微软雅黑";
+	UsedRange.Font.Size = 10;
+	UsedRange.Interior.Color = color.rgb(255, 255, 255);
 	
 	//设置颜色
-	var fmtCds = sht.UsedRange.FormatConditions.Add( 2 /* xlExpression */, , "=($A1="".1"")")
-	fmtCds.Interior.Color = color.rgb(0, 176, 80)
-	fmtCds.StopIftrue = false
-	var fmtCds = sht.UsedRange.FormatConditions.Add( 2 /* xlExpression */, , "=($A1=""..2"")")
-	fmtCds.Interior.Color = color.rgb(79, 98, 40)
-	fmtCds.StopIftrue = false
-	var fmtCds = sht.UsedRange.FormatConditions.Add( 2 /* xlExpression */, , "=($A1=""...3"")")
-	fmtCds.Interior.Color = color.rgb(118, 147, 60)
-	fmtCds.StopIftrue = false
-	var fmtCds = sht.UsedRange.FormatConditions.Add( 2 /* xlExpression */, , "=($A1=""....4"")")
-	fmtCds.Interior.Color = color.rgb(196, 215, 155)
-	fmtCds.StopIftrue = false
-	var fmtCds = sht.UsedRange.FormatConditions.Add( 2 /* xlExpression */, , "=($A1="".....5"")")
-	fmtCds.Interior.Color = color.rgb(216, 228, 188)
-	fmtCds.StopIftrue = false
-	var fmtCds = sht.UsedRange.FormatConditions.Add( 2 /* xlExpression */, , "=($A1=""......6"")")
-	fmtCds.Interior.Color = color.rgb(235, 241, 222)
-	fmtCds.StopIftrue = false
+	var fConds = UsedRange.FormatConditions;
+	fConds.addCond = function(rule,rgb){		
+		var fmtCds = owner.Add( 2 /* xlExpression */, ,rule);
+		fmtCds.Interior.Color = color.rgb(..table.unpack(rgb));
+		fmtCds.StopIftrue = false;
+	}
+	
+	fConds.addCond("=($A1="".1"")",{0, 176, 80});
+	fConds.addCond("=($A1=""..2"")",{79, 98, 40});
+	fConds.addCond("=($A1=""...3"")",{118, 147, 60});
+	fConds.addCond("=($A1=""....4"")",{196, 215, 155});
+	fConds.addCond("=($A1="".....5"")",{216, 228, 188});
+	fConds.addCond("=($A1=""......6"")",{235, 241, 222});
 	
 	
-	sht.Columns(coldef.LvlCol).Replace("0.1", "'.1")
+
+	import tarray;
+	var cot = UsedRange.Columns(coldef.LvlCol).value2;
+	cot = tarray.transpose(cot);
+
+	if tarray.findString(cot, "0.1")
+		UsedRange.Columns(coldef.LvlCol).Replace("0.1", "'.1");
+	if tarray.findString(cot, "…")
+		UsedRange.Columns(coldef.LvlCol).Replace("…", "...");
 	
 	//调整列宽和对齐方式
 	sht.Columns(coldef.LvlCol).ColumnWidth = 6.5
 	sht.Columns(coldef.LvlCol).HorizontalAlignment = -4131 /* xlLeft */
 
-	if (coldef.LvlCol + 1 !== coldef.codeCol) sht.Columns(coldef.LvlCol + 1).ColumnWidth = 5.5
+/*
+	if (coldef.LvlCol + 1 !== coldef.codeCol)
+		sht.Columns(coldef.LvlCol + 1).ColumnWidth = 5.5;
+*/
 	
 	sht.Columns(coldef.codeCol).ColumnWidth = 14
 	sht.Columns(coldef.codeCol).HorizontalAlignment = -4108 /* xlCenter */
@@ -271,13 +285,22 @@ formatBOM = function(){
 	sht.Columns(coldef.UnitCol).ColumnWidth = 8
 	sht.Columns(coldef.UnitCol).HorizontalAlignment = -4108 /* xlCenter */	
 	
+/**
 	if (coldef.DefRow > 2) sht.Rows(coldef.DefRow - 2).HorizontalAlignment = -4108 /* xlCenter */
 	if (coldef.DefRow > 1) sht.Rows(coldef.DefRow - 1).HorizontalAlignment = -4131 /* xlLeft */
 	if (coldef.DefRow > 2) sht.Rows(coldef.DefRow - 2).Font.Bold = true
+**/
+	var range_addr = UsedRange.Address();
+	range_addr = string.replace(range_addr, "@$A$1", "$A$" ++ coldef.DefRow);
+	if sht.ListObjects("Table1")
+		sht.ListObjects("Table1").Unlist();
+	sht.ListObjects.Add(1 /* xlSrcRange */, sht.Range(range_addr), , 1 /* xlYes */).Name = "Table1";
+	sht.ListObjects("Table1").TableStyle = "";
+	sht.ListObjects("Table1").AutoFilter.ApplyFilter();
 
-	excel.Application.EnableEvents = true //恢复触发事件
-	excel.Application.Calculation = -4105 /* xlCalculationAutomatic */   //自动重算
-	excel.Application.ScreenUpdating = true   //开启屏幕刷新
+	excel.EnableEvents = true; //恢复触发事件
+	excel.Calculation = -4105; /* xlCalculationAutomatic */   //自动重算
+	excel.ScreenUpdating = true;   //开启屏幕刷新
 }
 
 /**intellisense()
@@ -287,13 +310,13 @@ QHC.getProductInfo(hcode) = 返回ProductInfo
 QHC.getSapItemByDesp(desp) = 返回table
 QHC.getSapItem() = 返回hitem\n!QHC_hitem.
 QHC.getColDef() = 获取列名称数组
+QHC.formatBOM(sheet) = 格式化SAP下载的BOM;
 QHC.getRawItem(size_str) = 根据展开尺寸获取原材料项目\n!QHC_rawItem.
 !QHC_hitem.物料 = 物料
 !QHC_hitem.物料描述 = 物料描述
 !QHC_hitem.MTyp = 类型
 !QHC_hitem.物料组 = 物料组
 !QHC_hitem.BUn = 单位
-!QHC_hitem.配置 = 配置
 !QHC_hitem.禁用 = 禁用
 !QHC_hitem.价格 = 价格
 !QHC_rawItem.厚度 = 厚度

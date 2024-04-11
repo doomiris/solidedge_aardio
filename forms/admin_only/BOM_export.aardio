@@ -24,7 +24,7 @@ var ts_count = #etab;
 excel.Application.CutCopyMode = false;
 
 _start_col = 9 /* I */;
-_col_count = 4;
+_col_count = 8;
 
 for(j = _start_col; _start_col + _col_count - 1 ){
     if !#etab[2][j] continue;
@@ -42,7 +42,8 @@ for(j = _start_col; _start_col + _col_count - 1 ){
         if i == 1 continue; //跳过标题行
 
         if !#etab[i][1 /* A */] continue; //跳过层级为空的行
-        if string.cmpMatch(etab[i][j], "X") continue;	// 跳过X标记
+        if #etab[i][j] and string.len(string.trim(etab[i][j])) == 1
+        	if string.cmpMatch(etab[i][j], "X") continue;	// 跳过X标记, 也会跳过含X的专用号
 
     	var bun = etab[i][4 /* D */]; 
     	
@@ -114,9 +115,12 @@ for(j = _start_col; _start_col + _col_count - 1 ){
 
     tsht.Activate();
     
+/*
 	try{
 		excel.Run("initExportedBom"); //调用宏格式化样式
 	}
+*/
+	QHC.formatBOM(tsht);
     
     excel.alerts = false;	//调用的宏重置了此状态    
     tbk.SaveAs( "d:\temp\"++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx");

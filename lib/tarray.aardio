@@ -145,16 +145,46 @@ mapAsItem= function(tab, keyCol, vCol){
 findValue = function(arr, what){ //一维数组不可用
 	for rowIndex, row in arr{
 		for colIndex, cellValue in row {
-			if ..string.indexOf(cellValue, what)
+			if !cellValue continue;
+			if type(cellValue) == "number"
+				cellValue = tostring(cellValue);
+			if ..string.find(cellValue, "@" + what)
+				return {
+					row = rowIndex;
+					col = colIndex;
+					value = cellValue;
+				} 	
+		}
+	}
+	return null; 
+}
+findString = function(arr, what){ //一维数组专用
+	for index, Value in arr {
+		if !Value continue;
+		if type(Value) == "number"
+			Value = tostring(Value);
+		if ..string.find(Value, "@" + what)
+			return {
+				index = index;
+				value = Value;
+			} 	
+	}
+	return null; 
+}
+findKeyWords = function(arr, what){ //一维数组不可用
+	import string.keywords;
+	for rowIndex, row in arr{
+		for colIndex, cellValue in row {
+			if !cellValue continue;
+			if string.keywords(what).findOne(cellValue)
 				return {
 					row = rowIndex;
 					col = colIndex;
 					value = cellValue;
 				} 
-			else
-				return null; 
 		}
 	}
+	return null; 
 }
 indexContains = function(arr, what){
 	for k, v in arr
@@ -196,10 +226,14 @@ tarray.replaceValue(arr,searchFor, replaceBy) = 替换指定值,返回新的arr
 tarray.drop(arr, index) = 删除指定列,返回新的arr
 tarray.pushFields(arr, tab) = 参考tab键名定义arr.fields,返回新的arr
 tarray.indexOfCol(arr, find, col) = 在指定col查找find所在的index值
-tarray.findValue(arr, what) = 查找值, 返加{row,col,value} \n!tFindItem.
+tarray.findValue(arr, what) = 查找值, 返回{row,col,value} \n!tFindItem.
 tarray.cNum(str) = 转为数值
 tarray.indexContains(single_lvl_arr, what) = 是单层字符串数组内查找指定字符, 返回索引
+tarray.findKeyWords(arr, keywords) = keywords用|分隔 \n!tFindItem.
+tarray.findString(arr, what) = 查找值, 返回{index, value} \n!tFindStrItem.
 !tFindItem.row = 行
 !tFindItem.col = 列
 !tFindItem.value = 值 
+!tFindStrItem.index = index
+!tFindStrItem.value = value
 end intellisense**/

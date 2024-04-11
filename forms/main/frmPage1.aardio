@@ -46,10 +46,11 @@ version={cls="edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1
 )
 /*}}*/
 
+tbm_winform.show();
 /*initDeclare{{*/
 var seApp, seDFT, seSht, seBlk, seLbs;
 var initDeclare = function(){
-	seApp := solidedge.application();
+	seApp = solidedge.application();
 	if (! seApp) return false; 
 	if (seApp.Documents.Count==0) return false; 
 	if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return false; 
@@ -282,7 +283,7 @@ tbm_winform.button2.oncommand = function(id,event){
 	
 	if (tbm_winform.chkReplaceTB.hide == 0){
 		if (tbm_winform.chkReplaceTB.checked){
-			solidedge.DraftDocument.replaceNewTitleBlock(seDFT);
+			seDFT.replaceNewTitleBlock();
 			seBlk = seDFT.getTitleBlock(seSht);
 		}
 	}
@@ -335,7 +336,7 @@ tbm_winform.cb_approver.onEditChange= function(){
 
 /*}}*/
 
-tbm_winform.show();
+
 var frmReLoad = function(){
     var initSucc = initDeclare();
     tbm_winform.seDocPath.text = initSucc;

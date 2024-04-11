@@ -152,6 +152,7 @@ var getRef = function(code){
 		return v.特性 == code;
 	});
 	var min = table.indexOf(odtab, t[1]);
+	if !min return null; 
 	var max = min + #t -1;
 	return "$D$" ++ min ++ ":$D$" ++ max; 
 }
@@ -185,6 +186,7 @@ for(i=1; wb.sheets.count){
 		select(sht.Cells(k, 4 /* D */).value2) {
 			case "SAP选项"  {
 				code = sht.Cells(k, 2 /* B */).value2;
+				if !code continue;
 				code = string.left(code, 4);
 			}
 			case "颜色选项" {
@@ -195,6 +197,7 @@ for(i=1; wb.sheets.count){
         var ocell = sht.Cells(k, 3 /* C */);
         ocell.Validation.Delete();
         var codeAddress = getRef(code);
+        if !codeAddress continue;
         ocell.Validation.Add(
         	/* xlValidateList */ 3,
         	/* AlertStyle */ null,

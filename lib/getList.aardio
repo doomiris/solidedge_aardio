@@ -20,8 +20,10 @@ namespace getList{
 		return t; 
 	}
 	saveFolderDB = function(){
+/*
 		import console
 		console.open()
+*/
 		_searchLoc := {
 			{"\\ccnsia1a\separts\Cabinet\PDF图纸库",	"*.*"};
 			{"\\ccnsia1a\separts\Cabinet\QHC图纸库",	"*.*"};
@@ -53,7 +55,7 @@ namespace getList{
 			db.commitTrans();
 		}	
 		db.close();
-		console.pause(true);
+		//console.pause(true);
 	};
 
 	appendDrawingMapFromExcel = function(eFileLoc, shtName){

@@ -168,7 +168,7 @@ chk_excel_sht_form.button.oncommand = function(id,event){
 			if !string.startWith(etab[i].物料号 ,"H00808") return ; 
 			if (etab[i].物料类型 !== "HALB" ) return ; 
 			if !QHC.getSapItem(etab[i].物料号) return ; 
-			if !(QHC.getSapItem(etab[i].物料号).物料是可配置的=="X") return ; 
+			if !(QHC.getSapItem(etab[i].物料号).物料组=="SG") return ; 
 			for (j=i+1; etab_count){
 				if etab[j].层级数 <= etab[i].层级数  break ; 
 				if etab[j].物料号 

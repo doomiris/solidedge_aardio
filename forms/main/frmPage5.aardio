@@ -49,7 +49,7 @@ subscribe("dft_loaded", function(...){
 	seDfts = ...;
 })
 var initDeclare = function(){
-	seApp := solidedge.application();
+	seApp = solidedge.application();
 	if (! seApp) return false; 
 	solidedge.application.setPdfOptions();
 	// TODO: 含多页文档保存为DWG时, 因为未指定多页, 可能导致只有一页.
@@ -76,6 +76,8 @@ var getListViewTable = function(listview){
 }
 
 var startPrintAllLV = function(vtab){
+	seApp = solidedge.application();
+	if !seApp return ; 
 	seApp.DisplayAlerts = 0;
 	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
 	for x,j in tbs[1].listview.checked {

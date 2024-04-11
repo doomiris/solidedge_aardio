@@ -15,7 +15,7 @@ var getDftList = function(dft_list_form){
 	import solidedge.DraftDocument;
 //	import win.ui;
 
-	seApp := solidedge.application();
+	seApp = solidedge.application();
 	if !seApp return ; 
 	var seDocuments = seApp.Documents;
 	var seDfts = {};

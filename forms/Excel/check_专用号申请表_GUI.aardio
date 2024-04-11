@@ -85,6 +85,12 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 	if !#chk_excel_NewPart_form.combobox2.selText return ; 	
 	excel_2 = get_excel(chk_excel_NewPart_form.combobox2.selText);
 	sht = excel_2.ActiveWorkbook.ActiveSheet;
+	
+	if sht.AutoFilterMode
+		sht.AutoFilterMode = false;
+	if sht.ListObjects("表1")
+		sht.ListObjects("表1").AutoFilter.ShowAllData();
+	
 	if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表:"+ '\n\n' ++sht.parent.name +"$["+sht.name+"]"); 
 	if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 
@@ -112,6 +118,7 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 				"适用产品型号";
 				"换算关系";
 				"图号";
+				"是否关键部件";
 			};
 			var etr = function(){
 				for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
@@ -122,7 +129,7 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 			if !etr() return error("找不到物料描述");
 			
 			var tab = {};
-			var eArr = sht.Range("$A$3:$U$" ++ etr()).value2
+			var eArr = sht.Range("$A$3:$V$" ++ etr()).value2
 			for(i=1;#eArr;1){    
 	    		var d = table.array();
 	    		for (j=1;#fields;1){
@@ -184,6 +191,7 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		[45] = "已喷物料应是SC组";
 		[46] = "'喷粉'请用'已喷粉'或'已喷'替代";
 		[47] = "没选择'用途'";
+		[48] = "没选择'是否是关键零件'";
 	}
 
 /*}}*/
@@ -265,6 +273,9 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		[47] = function(i){
 			return !#etab[i].用途; 
 	
+		}
+		[48] = function(i){
+			return !#etab[i].是否关键部件; 	
 		}
 	};
 	/*}}*/

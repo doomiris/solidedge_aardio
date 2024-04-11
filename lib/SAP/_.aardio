@@ -33,7 +33,7 @@ sapQuickOpen = function(){
 		}, _SAP_shcut_cmd, para
 	)
 
-	win.msgboxTimeout("正在启动SAP, 稍等...", _title, 10*1000);
+	//win.msgboxTimeout("正在启动SAP, 稍等...", _title, 10*1000);
 }
 
 downloadBOM = function(winform, etab){

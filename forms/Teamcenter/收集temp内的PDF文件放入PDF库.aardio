@@ -3,7 +3,7 @@ import console;
 import fsys;
 
 var tab = {}
-_path = "C:\Users\ccl100100\AppData\Local\Temp\"
+_path = io.appData("Temp");
 _toFolder = "\\CCNSIA1A\SEParts\Cabinet\QHC图纸库"
 fsys.enum( _path , "tc_*",
 	function(dir,filename,fullpath,findData){ 
