@@ -82,22 +82,8 @@ subscribe("refresh_dft_list",function(...){
     dft_list_form.grid.clear();
 	thread.invoke(getDftList, dft_list_form);
 } )
-import win.clip;
-dft_list_form.listview.translateAccelerator = function( msg ){ 
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
-//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
-//    var selectedRow = dft_list_form.listview.getSelection();
-    var vk = msg.wParam ;    
-    if( ( vk == 'C'# ) && ctrl  ){
-        var tab=table.array();
-        for (i=1;#owner.selected){
-            table.push(tab,string.join(owner.items[owner.selected[i]],'\t'))
-        }           
-		win.clip.write(string.join(tab,'\n'))
-        return true;
-    }
-}
+import domisoft;
+dft_list_form.listview.translateAccelerator = domisoft.ctrlC;
 
 dft_list_form.listview.onnotify = function(id,code,ptr){
     select(code) {

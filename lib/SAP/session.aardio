@@ -3,38 +3,15 @@ import com;
 
 var table = ..table;
 var string = ..string;
-import web.script;
-var vm = web.script("VBScript") ;
+
 namespace SAP;
 class session{
 	ctor( ... ){
-/*
 		this.oGui = ..com.TryGetObject("SAPGUI");
 		if( ! this.oGui ) return null,"请先打开SAP";
 		this.oApp =  this.oGui.GetScriptingEngine();
 		this.oConn = this.oApp.Children.item(0);
 		this.oSession = this.oConn.Children.item(0);
-*/
-	vm.script = /*
-	    	dim session
-	*/
-	vm.script = /*
-			'If Not IsObject(application) Then
-   			Set SapGuiAuto  = GetObject("SAPGUI")
-   			Set application = SapGuiAuto.GetScriptingEngine
-			'End If
-			If Not IsObject(connection) Then
-   			Set connection = application.Children(0)
-			End If
-			If Not IsObject(session) Then
-   			Set session    = connection.Children(0)
-			End If
-			If IsObject(WScript) Then
-   			WScript.ConnectObject session,     "on"
-   			WScript.ConnectObject application, "on"
-			End If
-	*/
-	this.oSession = vm.script.session;
 	};
 	@_metaProperty;
 }
@@ -47,47 +24,26 @@ namespace session{
 	set = function(k,v){
 		owner.oSession[k] = v;
 	};
-/*
-	nameRule = {
-		_get = function(){
-			return tonumber(..VBASettingIO.GetSetting("Domisoft", "Config", "pdfNameRule", 0)); 
-		}
-		_set = function(v){
-			..VBASettingIO.SaveSetting("Domisoft", "Config", "pdfNameRule", v); 
-		}	
-	};
- */
 	Close = function(){
 		owner.oConn.CloseSession(owner.oSession.id);
 	};
 	downloadBOM = function(winform, etab){
-		import win;
+		//import win;
 		import QHC;	
 		var session = owner.oSession;
-
 		while(session.findById("wnd[0]/tbar[0]/btn[12]").Changeable){
 			session.findById("wnd[0]/tbar[0]/btn[12]").press();
 			try{
 				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press(); //不保存退出订单界面
 			}
 		}
-		
 		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
 		session.findById("wnd[0]").sendVKey(0);
-		var ftab = {}
+		var ftab = {};
 		for (i = 1; #etab){
     		session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab[i];
     		session.findById("wnd[0]/tbar[1]/btn[8]").press();
-    		 			
-/*
-    		var test;
-    		try{
-    			test = session.findById("wnd[0]/tbar[1]/btn[9]");    
-    			//test = session.findById("wnd[0]/tbar[1]"); //试试这个
-    		}	
-    		
-*/
- 			var vt = QHC.getSapItem(etab[i]);
+			var vt = QHC.getSapItem(etab[i]);
  			var filename;
  			if vt filename = vt.物料描述;    		
     		filename = string.replace(filename, " ", "_");
@@ -98,7 +54,7 @@ namespace session{
     			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename;
     			session.findById("wnd[1]/tbar[0]/btn[11]").press();
     			session.findById("wnd[0]/tbar[0]/btn[12]").press();//[x]取消
-    			..publish("bom_down",filename);
+    			winform.publish("dok",filename);
     		}else{ //搜索不到时跳过,继续下一个
 				while(session.findById("wnd[0]/tbar[0]/btn[12]").Changeable){
 					session.findById("wnd[0]/tbar[0]/btn[12]").press();
@@ -109,32 +65,12 @@ namespace session{
     		}
 		}
 		session.findById("wnd[0]/tbar[0]/btn[12]").press();
-		winform.publish("dok", ftab);
+		session = null;
+		winform.publish("dok_list", ftab);
 	};
-	downloadEuroTif = function(){
-		var session = owner.oSession;
-		var rev = session.findById("wnd[0]/usr/ctxtDRAW-DOKVR").text;
-		var nodes = session.findById("wnd[0]/usr/tabsTAB_MAIN/tabpTSMAIN/ssubSCR_MAIN:SAPLCV110:0102/cntlCTL_FILES1/shellcont/shell/shellcont[1]/shell").GetSelectedNodes();
-		if !nodes return ; 
-		if nodes.Count !== 1 return ; 
-		var node = nodes.item(1); //?????
-		session.findById("wnd[0]/mbar/menu[5]/menu[5]").select();
-		var filename = session.findById("wnd[1]/usr/ctxtDRAW-FILEP").text;
-		filename = table.pop(string.split(filename,"\"));
-		filename = string.replace(filename, "_", "_" ++ rev ++ "_");
-		session.findById("wnd[1]/usr/ctxtDRAW-FILEP").text = "D:\users\CCL100100\cad_sap\" ++ filename;
-		session.findById("wnd[1]/tbar[0]/btn[0]").press();
-	}
-	
-	
   )
 }
-namespace session{
 
-
-	
-
-}
 
 /**intellisense()
 SAP.session = SAP支持库
@@ -142,7 +78,6 @@ SAP.session() = !session.
 !session.Close() = 关闭GUI
 session.findById(controll_id) = 按ID查找控件
 session.downloadBOM(arr) = 下载BOM
-session.downloadEuroTif() = EURO sap DOWNLOAD tif
 !session.findById() = !SAP_Element.
 !SAP_Element.press() = 点击
 !SAP_Element.text = 文本内容

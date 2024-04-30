@@ -83,7 +83,7 @@ about_winform.combobox.onListChange= function(){
 			config.dbServer.path = "\\ccnsia1a\separts\Admin\SAP\db\";
 		}
 		case 2 {
-			config.dbServer.path = "\\ccnqia05\kaifa-\01 QHC产品资料汇总\3.1SAP数据整理—研发中心\";
+			config.dbServer.path = "\\CCNQIA05\temp-\LGP\_db\";
 		}
 		case 3 {
 			import fsys.dlg.dir;

@@ -51,7 +51,7 @@ subscribe("dft_loaded", function(...){
 var initDeclare = function(){
 	seApp = solidedge.application();
 	if (! seApp) return false; 
-	solidedge.application.setPdfOptions();
+	seApp.setPdfOptions();
 	// TODO: 含多页文档保存为DWG时, 因为未指定多页, 可能导致只有一页.
 	//seApp.Documents.AutoCadConfigFile = config.setbm.workingDir + "\SEACAD.INI";
 	seApp.DisplayAlerts = 1;
@@ -83,6 +83,7 @@ var startPrintAllLV = function(vtab){
 	for x,j in tbs[1].listview.checked {
         	var	seDFT = solidedge.DraftDocument(seApp.Documents.item(seDfts.seIndex[j]));  //线程传出来的seDfts会丢失item内容
 			seDFT.Activate(); //如果不Activate,只会重复保存当前文件
+			//TODO: domisoft.getSelectedText(print_winform.listbox)
 			for y,k in print_winform.listbox.selected{
 				print_winform.progress.pos += 1 ;
 /*

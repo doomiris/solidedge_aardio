@@ -1,9 +1,10 @@
 ﻿//QHC
 import sqlite;
 import config;
+
 var table = ..table;
 var string = ..string;
-var sqlite = ..sqlite;
+var math = ..math;
 var config = ..config;
 
 namespace QHC;
@@ -12,6 +13,7 @@ sap_db_path = config.dbServer.path + "\QHCSAP.db";
 od_db_path = config.dbServer.path + "\qhc_OD_lib.db";
 drw_rel_path = config.dbServer.path + "\qhc_dw_rel_list.db";
 product_info_path = config.dbServer.path + "\qhc_product_info_lib.db";
+
 var rawTab = {
 	[1] =	{["厚度"]=0.5; ["物料"] = "H0087500182-G"; ["物料描述"] = "定尺料组 热锌板 0.5*1250*C"; ["价格"] = 6.44};
 	[2] =	{["厚度"]=0.6; ["物料"] = "H0087500185-G"; ["物料描述"] = "定尺料组 热锌板 0.6*1250*C"; ["价格"] = 6.32};
@@ -29,17 +31,18 @@ var rawTab = {
 class 下料尺寸{
 	ctor( size_str ){
 		if !size_str return; 
-		size_str = ..string.replace(..string.lower(size_str),"x","*");
-		if !..string.indexOf(size_str,"*") return ; 
+
+		size_str = string.replace(string.lower(size_str),"x","*");
+		if !string.indexOf(size_str,"*") return ; 
 		precision = 3;
-		var s = ..string.split(size_str,"*");
+		var s = string.split(size_str,"*");
 		
 		for (i=1; #s)
 			s[i] = tonumber(s[i]);
 			
 		table.sort(s);
 		table.reverse(s);
-		
+
 		this.l = s[1];
 		this.w = s[2];
 		this.t = s[3];
@@ -61,7 +64,7 @@ class 下料尺寸{
 		foam.material_black ="H0088200013";
 		
 		*/
-		this.powder = (m<0.001) ? 0.001 : ..math.round(m, precision);
+		this.powder = (m<0.001) ? 0.001 : math.round(m, precision);
 		this.powderItem =  rawTab["白色"] ;
 		/* 
 			钣金:
@@ -69,9 +72,9 @@ class 下料尺寸{
 			原材料价格上涨 2021/12/30
 		 */
 		var n = this.l * this.w * this.t * 7.85 / 0.9331 / 1E+6;
-		this.metel = (n<0.001) ? 0.001 : ..math.round(n, precision);
+		this.metel = (n<0.001) ? 0.001 : math.round(n, precision);
 		this.raw = (function(t){
-			var tab = ..table.filter(rawTab,function(v,index){
+			var tab = table.filter(rawTab, function(v,index){
 				return  (v.厚度==t);
 			})
 			
@@ -85,17 +88,17 @@ class 发泡料用量{
 		if !size_str return; 
 		precision = 3;
 		
-		size_str = ..string.replace(..string.lower(size_str),"x","*");
+		size_str = string.replace(string.lower(size_str),"x","*");
 		
-		if ..string.indexOf(size_str,"*") { 
-			var s = ..string.split(size_str,"*");
+		if string.indexOf(size_str,"*") { 
+			var s = string.split(size_str,"*");
 			this.l = tonumber(s[1]);
 			this.w = tonumber(s[2]);
 			this.t = tonumber(s[3]);
 			this.volumn = this.l * this.w * this.t / 1E+9;
 		}
 		else { //如果不含星号时按vol计算
-			if ..math.isFinite(size_str)
+			if math.isFinite(size_str)
 				this.volumn = size_str / 1E+9;
 		}
 		
@@ -108,8 +111,8 @@ class 发泡料用量{
 
 		this.mass = this.volumn * this.density;
 
-		this.white = ..math.round( this.mass * 1 / (1 + this.proportion), precision );
-		this.black = ..math.round( this.mass * this.proportion / (1 + this.proportion), precision );
+		this.white = math.round( this.mass * 1 / (1 + this.proportion), precision );
+		this.black = math.round( this.mass * this.proportion / (1 + this.proportion), precision );
 
 		this.raw =  {
 			white = "H0080300487";
@@ -119,7 +122,7 @@ class 发泡料用量{
 }
 
 openDb = function(path){
-	return sqlite(path);
+	return ..sqlite(path);
 }
 getColDef =function(){
 	var db,err = openDb(sap_db_path);
@@ -133,10 +136,10 @@ getProductDef =function(){
 }
 getRawItem =function(size_str){
 		if !size_str return; 
-		size_str = ..string.replace(..string.lower(size_str),"x","*");
-		if !..string.indexOf(size_str,"*") return ; 
+		size_str = string.replace(string.lower(size_str),"x","*");
+		if !string.indexOf(size_str,"*") return ; 
 
-		var s = ..string.split(size_str,"*");
+		var s = string.split(size_str,"*");
 		
 		for (i=1; #s)
 			s[i] = tonumber(s[i]);
@@ -145,7 +148,7 @@ getRawItem =function(size_str){
 		table.reverse(s);
 
 		var rawItem = (function(t){
-			var tab = ..table.filter(rawTab,function(v,index){
+			var tab = table.filter(rawTab,function(v,index){
 				return  (v.厚度==t);
 			})
 			
@@ -179,7 +182,7 @@ getSapItemByDesp = function(Desp){
 	Desp = string.replace(Desp, "*", "%");
 	var symbol = string.indexOf(Desp, "%") ? "LIKE" : "=";
 	var sqlstr = "SELECT * FROM [所有物料] WHERE [物料描述] " ++ symbol ++ " ?";
-	var t = db.getTable (sqlite.format( sqlstr, {Desp}));
+	var t = db.getTable (..sqlite.format( sqlstr, {Desp}));
 	return t; 
 };
 GetBomColumn = function(sht){
@@ -203,8 +206,37 @@ class ColDefType{
 	};
 }
 
-formatBOM = function(sht){
+formatColor = function(UsedRange){
+	UsedRange.formatConditions.Delete();   //清楚当前颜色
+	//设置表格线
+	import color;
+	UsedRange.Borders.LineStyle = 1 /* xlContinuous */
+	UsedRange.Borders.weight = 2 /* xlThin */
+	//UsedRange.Borders.ColorIndex = 1
+	UsedRange.Font.Name = "微软雅黑";
+	UsedRange.Font.Size = 10;
+	UsedRange.Interior.Color = color.rgb(255, 255, 255);
+	
+	//设置颜色
+	var fConds = UsedRange.formatConditions;
+	fConds.addCond = function(rule,rgb){		
+		var fmtCds = owner.Add( 2 /* xlExpression */, ,rule);
+		fmtCds.Interior.Color = color.rgb(table.unpack(rgb));
+		fmtCds.Stopiftrue = false;
+	}
+	
+	fConds.addCond("=($A1="".1"")",{0, 176, 80});
+	fConds.addCond("=($A1=""..2"")",{79, 98, 40});
+	fConds.addCond("=($A1=""...3"")",{118, 147, 60});
+	fConds.addCond("=($A1=""....4"")",{196, 215, 155});
+	fConds.addCond("=($A1="".....5"")",{216, 228, 188});
+	fConds.addCond("=($A1=""......6"")",{235, 241, 222});
+}
+
+
+formatBOM = function(sht,savechanges = true){
 	import com.excel;
+	import console;
 	var excel;
 	if !sht {
 		excel = com.excel(false);
@@ -221,36 +253,10 @@ formatBOM = function(sht){
 	excel.ScreenUpdating = false   //关闭屏幕刷新
 	excel.EnableEvents = false //先禁止触发事件
 	excel.Calculation = -4135 /* xlCalculationManual */    //手动重算
+	
   	var UsedRange = sht.UsedRange;
-    UsedRange.FormatConditions.Delete();   //清楚当前颜色
 
-	//if !isThisSheetRawBom(sht) return ; 
-	
-	//设置表格线
-	import color;
-	UsedRange.Borders.LineStyle = 1 /* xlContinuous */
-	UsedRange.Borders.weight = 2 /* xlThin */
-	//UsedRange.Borders.ColorIndex = 1
-	UsedRange.Font.Name = "微软雅黑";
-	UsedRange.Font.Size = 10;
-	UsedRange.Interior.Color = color.rgb(255, 255, 255);
-	
-	//设置颜色
-	var fConds = UsedRange.FormatConditions;
-	fConds.addCond = function(rule,rgb){		
-		var fmtCds = owner.Add( 2 /* xlExpression */, ,rule);
-		fmtCds.Interior.Color = color.rgb(..table.unpack(rgb));
-		fmtCds.StopIftrue = false;
-	}
-	
-	fConds.addCond("=($A1="".1"")",{0, 176, 80});
-	fConds.addCond("=($A1=""..2"")",{79, 98, 40});
-	fConds.addCond("=($A1=""...3"")",{118, 147, 60});
-	fConds.addCond("=($A1=""....4"")",{196, 215, 155});
-	fConds.addCond("=($A1="".....5"")",{216, 228, 188});
-	fConds.addCond("=($A1=""......6"")",{235, 241, 222});
-	
-	
+	formatColor(UsedRange);
 
 	import tarray;
 	var cot = UsedRange.Columns(coldef.LvlCol).value2;
@@ -269,31 +275,37 @@ formatBOM = function(sht){
 	if (coldef.LvlCol + 1 !== coldef.codeCol)
 		sht.Columns(coldef.LvlCol + 1).ColumnWidth = 5.5;
 */
-	
-	sht.Columns(coldef.codeCol).ColumnWidth = 14
-	sht.Columns(coldef.codeCol).HorizontalAlignment = -4108 /* xlCenter */
-	
-	sht.Columns(coldef.DespCol).AutoFit()
-	sht.Columns(coldef.DespCol).HorizontalAlignment = -4131 /* xlLeft */
-	
-	sht.Columns(coldef.TypeCol).ColumnWidth = 8
-	sht.Columns(coldef.TypeCol).HorizontalAlignment = -4108 /* xlCenter */
-	
-	sht.Columns(coldef.QtyCol).ColumnWidth = 8
-	sht.Columns(coldef.QtyCol).HorizontalAlignment = -4108 /* xlCenter */
-	
-	sht.Columns(coldef.UnitCol).ColumnWidth = 8
-	sht.Columns(coldef.UnitCol).HorizontalAlignment = -4108 /* xlCenter */	
-	
-/**
-	if (coldef.DefRow > 2) sht.Rows(coldef.DefRow - 2).HorizontalAlignment = -4108 /* xlCenter */
-	if (coldef.DefRow > 1) sht.Rows(coldef.DefRow - 1).HorizontalAlignment = -4131 /* xlLeft */
-	if (coldef.DefRow > 2) sht.Rows(coldef.DefRow - 2).Font.Bold = true
-**/
+	if coldef.codeCol {
+		sht.Columns(coldef.codeCol).ColumnWidth = 14
+		sht.Columns(coldef.codeCol).HorizontalAlignment = -4108 /* xlCenter */
+	}
+	if coldef.DespCol {
+		sht.Columns(coldef.DespCol).AutoFit()
+		sht.Columns(coldef.DespCol).HorizontalAlignment = -4131 /* xlLeft */
+	}
+	if coldef.TypeCol {
+		sht.Columns(coldef.TypeCol).ColumnWidth = 8
+		sht.Columns(coldef.TypeCol).HorizontalAlignment = -4108 /* xlCenter */
+	}
+	if coldef.QtyCol {
+		sht.Columns(coldef.QtyCol).ColumnWidth = 8
+		sht.Columns(coldef.QtyCol).HorizontalAlignment = -4108 /* xlCenter */
+	}
+	if coldef.UnitCol {
+		sht.Columns(coldef.UnitCol).ColumnWidth = 8
+		sht.Columns(coldef.UnitCol).HorizontalAlignment = -4108 /* xlCenter */	
+	}
+
 	var range_addr = UsedRange.Address();
 	range_addr = string.replace(range_addr, "@$A$1", "$A$" ++ coldef.DefRow);
-	if sht.ListObjects("Table1")
-		sht.ListObjects("Table1").Unlist();
+	if sht.ListObjects.Count {
+		for (i=1;sht.ListObjects.Count){
+			if sht.ListObjects.item(1).Name =="Table1" {
+				sht.ListObjects("Table1").Unlist();
+				break;
+			}
+		}
+	}
 	sht.ListObjects.Add(1 /* xlSrcRange */, sht.Range(range_addr), , 1 /* xlYes */).Name = "Table1";
 	sht.ListObjects("Table1").TableStyle = "";
 	sht.ListObjects("Table1").AutoFilter.ApplyFilter();
@@ -301,6 +313,184 @@ formatBOM = function(sht){
 	excel.EnableEvents = true; //恢复触发事件
 	excel.Calculation = -4105; /* xlCalculationAutomatic */   //自动重算
 	excel.ScreenUpdating = true;   //开启屏幕刷新
+	
+	if savechanges	sht.Parent.Save();
+}
+formatAllBOM = function(){
+	import com.excel;
+	var excel = com.excel(false);
+	for(i = excel.WorkBooks.Count; 1; -1) {// 反向
+			formatBOM(excel.WorkBooks(i).WorkSheets(1))
+		 	excel.WorkBooks(i).Close(true /* _save_changes */);
+	}
+}
+getPriceList= function(){
+	import com.excel;
+	import config;
+	var excel = com.excel(false);
+	excel.alerts = false;
+	
+	import fsys.dlg;
+	var fl = fsys.dlg.openEx("cost文件|cost_*.xlsx",'请选择要打开的 cost 文件',config.__sapDownload)
+	var tab = {};
+	tab.fields = {"物料","物料描述","原材料","Labour","Burden","总价"};
+	
+	for (i = 1; #fl) {
+    	var sht = excel.Workbooks.Open(
+			fl[i] /* filename */,
+			false /* UpdateLinks */,
+			true /* ReadOnly */,
+			/* format */,
+			/* Password */,
+			/* WriteResPassword */,
+			/* IgnoreReadOnlyRecommended */,
+			/* Origin */,
+			/* Delimiter */,
+			/* Editable */,
+			/* Notify */,
+			/* Converter */,
+			/* AddToMru */,
+			/* Local */,
+			/* CorruptLoad */
+		).Sheets(1);
+		var t={}
+		table.push(t,
+    		sht.Cells(2, "B").Value,
+    		sht.Cells(2, "C").Value,
+    		sht.Cells(2, "G").Value,
+    		sht.Cells(2, "H").Value,
+    		sht.Cells(2, "I").Value,
+    		sht.Cells(2, "J").Value,
+    	)
+    	sht.Parent.Close(false)
+    	sht=null;
+    	table.push(tab,t);
+	}
+	import tarray;
+	tab = tarray.mapfields(tab);
+	
+	excel.alerts = true;
+	if #tab
+		return tab; 
+}
+getLvlStr = function(lvlNum){
+	if type(lvlNum)=="string"
+		lvlNum = tonumber(lvlNum);
+	if lvlNum < 0 return "";
+	var t = table.array(lvlNum,".");
+	return  string.join(t,"") ++ lvlNum;
+}
+
+formatCostBom = function(sht){
+	import  console;
+	import tarray;
+	var  singleJob  = false;
+	import com.excel;
+	var excel;
+	if !sht {
+		excel = com.excel(false);
+		excel = excel.Application;
+		sht = excel.ActiveWorkbook.ActiveSheet;
+		singleJob = true
+	}else{
+		excel = sht.Parent.Application;
+	}
+	var uadr = sht.UsedRange.Address();
+	var uadrs= string.split(uadr,"$");
+	
+	var end_row, end_col = table.pop(uadrs, -2);
+
+	
+	var UR = sht.Range("A6:" ++ end_col ++end_row );
+	var etab = UR.value2;
+
+	etab = tarray.clearEmptyRows(etab);
+
+	var codeCol = tarray.findValue({etab[1]}, "物料").col;
+
+//	sht.Columns(1).Numberformat = "@"   //解决.1层级被识别为数字的问题
+
+	for (i = 2; #etab){
+    	for (j = 2; codeCol - 1){
+        	if etab[i][j]{
+        	    etab[i][1] = getLvlStr(j - 2);
+            	break 1;
+        	}
+    	}
+	} 
+
+	var fields = table.shift(etab);
+	fields = tarray.trimAll(fields);
+	fields[1] = "层级";
+	etab.fields = fields;
+	
+	//var colCount = #fields;
+	
+
+
+	etab = tarray.fillEmptyRow(etab);
+
+	for (j = #etab.fields; 1; -1){
+    	if !etab.fields[j]{
+    		etab = tarray.spliceCol(etab, j);
+    	}
+	}
+
+	var wk = sht.Parent;
+	var nsht = wk.Sheets.Add();
+	//nsht.Activate(); //否则 不能调整列宽
+
+
+	import etip;
+
+	nsht.range("A1:" ++ etip.toColName(#etab.fields) ++ "1" ).value2 = etab.fields;
+	nsht.range("A2:" ++ etip.toColName(#etab[1]) ++ (#etab+1) ).value2 = etab;
+	formatBOM(nsht,false);
+	
+	wk.Application.DisplayAlerts = false;
+	sht.delete();
+	var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
+	wk.SaveAs(nwk, 51 /* xlWorkbookDefault */);
+	
+	wk.Application.DisplayAlerts = true;
+	if !singleJob wk.Close(false);
+	//..io.remove(wk.FullName);
+}
+
+formatAllCostBom = function(fl){
+	import console;
+	if !ftab {
+		import fsys.dlg;
+		fl = fsys.dlg.openEx("cost源文件|cost_*.xls",'请选择要打开的 cost 文件',config.__sapDownload,parent)
+	}
+	
+	import com.excel;
+	var excel = com.excel(true);
+	excel.alerts = false;
+	
+	for k, v in fl{
+    	var sht = excel.Workbooks.Open(
+			v /* filename */,
+			false /* UpdateLinks */,
+			true /* ReadOnly */,
+			/* format */,
+			/* Password */,
+			/* WriteResPassword */,
+			/* IgnoreReadOnlyRecommended */,
+			/* Origin */,
+			/* Delimiter */,
+			/* Editable */,
+			/* Notify */,
+			/* Converter */,
+			/* AddToMru */,
+			/* Local */,
+			/* CorruptLoad */
+		).Sheets(1);
+		console.log(k, v, sht.name)
+		formatCostBom(sht);
+		
+	}
+	excel.alerts = true;
 }
 
 /**intellisense()
@@ -312,6 +502,10 @@ QHC.getSapItem() = 返回hitem\n!QHC_hitem.
 QHC.getColDef() = 获取列名称数组
 QHC.formatBOM(sheet) = 格式化SAP下载的BOM;
 QHC.getRawItem(size_str) = 根据展开尺寸获取原材料项目\n!QHC_rawItem.
+QHC.formatCostBom(sht) = 格式化成本BOM
+QHC.formatAllCostBom(filelist) = 批量格式化成本BOM
+QHC.formatAllBOM() = 批量格式化BOM
+QHC.getPriceList() = 批量获取成本BOM价格列表
 !QHC_hitem.物料 = 物料
 !QHC_hitem.物料描述 = 物料描述
 !QHC_hitem.MTyp = 类型

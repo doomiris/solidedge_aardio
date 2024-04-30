@@ -1,4 +1,6 @@
 //domisoft
+var table = ..table;
+var string = ..string;
 
 namespace domisoft;
 showInputBox = function(title, Msg,tips, winform){
@@ -26,8 +28,8 @@ getComAppPath = function(keyword){
 	import com.shell;
 	import fsys.knownFolder
 	var s = com.shell.findApp("@"+ keyword);
-	var g = ..string.match(s.path,'%{}');		
-	return (..string.replace(s.path, "@"+g, fsys.knownFolder(g)));
+	var g = string.match(s.path,'%{}');		
+	return (string.replace(s.path, "@"+g, fsys.knownFolder(g)));
 }
 getRunningWorkSheet = function(workbookName,worksheetName){
 	import com;
@@ -35,8 +37,8 @@ getRunningWorkSheet = function(workbookName,worksheetName){
 	com.enumRunning( 
 		function(displayName,object){
 				if com.GetTypeInfo(object) {
-					if ..string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-							if ..string.endWith(displayName, workbookName, true) {		
+					if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+							if string.endWith(displayName, workbookName, true) {		
 								if worksheetName
 									sht = object.Sheets(worksheetName) : null; 
 								else
@@ -63,20 +65,36 @@ taobaoURLsimple = function(url){
 			id = s.id;
 		};
 	)
-	return ..string.trimright(n,"?"); 
+	return string.trimright(n,"?"); 
 }
 getSelectedText = function(listCtrl){
 	var t = {}
 	for index, text in listCtrl.eachSelected()
-		..table.unshift(t, text);
+		table.unshift(t, text);
 	return t; 
+}
+ctrlC = function(msg){
+	import win.clip;
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+    var vk = msg.wParam;    
+    if( ( vk == 'C'# ) && ctrl ){
+		var items = owner.items;
+		var selected = owner.selected; 
+        var tab = table.array();
+        for (i=1; #selected)
+            table.push(tab,string.join(items[selected[i]],'\t'));
+		win.clip.write(string.join(tab,'\n'));
+        return true;
+    }
 }
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程
 getComAppPath(keyword) = 查找com程序路径
+getSelectedText(listbox) = 返回选中的文本数组
 getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指定worksheetName时返回sheets(1)
 taobaoURLsimple(taobaoUrl) = 简化taobao链接
+ctrlC = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
 end intellisense**/
 

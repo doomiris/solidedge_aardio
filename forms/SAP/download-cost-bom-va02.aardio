@@ -222,15 +222,18 @@ console.open()
 	*/
 			va02_form.progress.pos = i
 	}
+	va02_form.button.disabledText = null;
 
 }
 
 va02_form.button.oncommand = function(id,event){
+	
 	var absline = va02_form.edit.text;
 	if !#absline return ; 
 	var HT = va02_form.edit2.text;
 	if !#HT return ;
 	//call(dcb, va02_form, absline, HT);
+	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "downloading..."};
 	thread.invoke(dcb, va02_form, absline, HT);
 }
 

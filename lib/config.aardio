@@ -2,6 +2,10 @@
 import fsys.config;
 config = fsys.config(io.appData("/domisoft/SETBM/"));
 
+import fsys.ini;
+var ini = fsys.ini("TBM.ini");
+var lib = ini.getSection("lib");
+
 //不需要序列化的配置名字前请添加下划线
 namespace config {
 	__appName = "TBM";
@@ -9,11 +13,12 @@ namespace config {
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
 	__sapDownload = ..io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\";
-	__pdfLib = "\\CCNSIA1A\SEPARTS\Cabinet\PDF图纸库\";
+	__pdfLib = lib.pdfLib;
+	__templateLib = lib.templateLib;
 
 }
 if !config.dbServer.path
-	config.dbServer.path = "\\ccnsia1a\separts\Admin\SAP\db\";
+	config.dbServer.path = lib.dbServer;
 
 import VBASettingIO;
 if !config.tbm.Designer
@@ -44,6 +49,7 @@ __appDescription = 程序说明
 __website = 官方网站
 __sapDownload = sap下载目录
 __pdfLib = 研发PDF存档库
+__templateLib = 模版文件库位置
 dbServer.path = 数据库位置
 setbm.workingDir = 打印工作目录
 ? = 配置文件名,\n读写配置并序列化为一个表对象,\n表的成员值可以是支持序列化的普通变量,支持table对象\n配置文件在首次使用时自动加载,退出程序时自动保存\n!fsys_table.

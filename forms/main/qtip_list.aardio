@@ -7,6 +7,7 @@ import fsys;
 import fsys.file;
 import config;
 import process;
+import domisoft;
 //import godking.vlistEx;
 /*DSG{{*/
 var winform_qlist = win.form(text="aardio form";right=759;bottom=469)
@@ -31,9 +32,13 @@ var downloadbom = function(){
             table.push(tab,  bg);
     }  
     if !#tab return ;
-	import SAP.session
-	var session=SAP.session();
-	session.downloadBOM(winform_qlist, tab);
+    thread.invoke( 
+    	function(wform,tab){
+			import SAP;
+			//var session=SAP.session();
+			SAP.downloadBOM(wform, tab);
+    	},winform_qlist,tab
+    )
 };
 var copyPartNo = function(withDesp){
     var tab=table.array();
@@ -127,23 +132,7 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 /*}}*/
 
 /*CTRLC复制模块{{*/
-winform_qlist.listview.translateAccelerator = function( msg ){ 
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
-//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
-//    var selectedRow = owner.getSelection();
-    var vk = msg.wParam;    
-    if( ( vk == 'C'# ) && ctrl ){
-		var items = owner.items;
-		var selected = owner.selected; 
-        var tab=table.array();
-        for (i=1; #selected)
-            table.push(tab,string.join(items[selected[i]],'\t'));
-		win.clip.write(string.join(tab,'\n'));
-        return true;
-    }
-}
-
+winform_qlist.listview.translateAccelerator = domisoft.ctrlC;
 /*}}*/
 
 /*searchSapDB{{*/
@@ -322,21 +311,21 @@ console.open();
 /*格式化BOM{{*/
 subscribe("dok", function(...){
 	//winform_qlist.button6.disabledText = null;
+	import win;
 	win.delay(3*1000);
 	
 	var ftab = ...;
 	if !ftab return ; 
 	thread.invoke( 
 		function(ftab){
-			import com.excel;
+			import domisoft;
+			import console;
 			import QHC;
-			var excel = com.excel(false);
-			for(i = excel.WorkBooks.Count; 1; -1) {// 反向
-				if ..table.indexOf(ftab, excel.WorkBooks(i).Name) {
-					QHC.formatBOM(excel.WorkBooks(i).WorkSheets(1))
-		 			excel.WorkBooks(i).Close(true /* _save_changes */);
-				}
-			}
+			//for k, v in ftab {
+				var sht = domisoft.getRunningWorkSheet(ftab);
+				QHC.formatBOM(sht);
+			//	if #ftab>4 sht.Parent.Close (true /* _save_changes */);
+			//}
 		}, ftab
 	)
 } )

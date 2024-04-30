@@ -3,6 +3,7 @@ var pop = ..table.pop;
 var map = ..table.map;
 var mapDeep = ..table.mapDeep;
 var slice = ..table.slice;
+var splice = ..table.splice;
 var push = ..table.push;
 var escape = ..string.escape;
 var math = ..string.match;
@@ -15,7 +16,7 @@ var indexOf = ..table.indexOf;
 var mixin = ..table.assign;
 var join = ..string.join;
 var unique = ..table.unique;
-
+var trim = ..string.trim;
 
 namespace tarray;
 /* column operation */
@@ -52,6 +53,11 @@ transpose0 = function(arr){
 		})
 	}) 
 }
+transposeSingle = function(arr){	
+	return map(arr, function(col, i){	// 单行转列
+		return {col}; 
+	}) 
+}
 transpose = function(arr){
 	var t = transpose0(arr);
 	if #t == 1 return t[1];
@@ -78,12 +84,26 @@ popCol = function(arr,...){
 	arr = transpose0(arr)	
 	return mapfields(arr,fields); 
 }
-sliceCol = function(arr,a,b){;
-	var fields = slice(arr.fields,a,b)
+/*
+sliceCol0 = function(arr,a,b){
+	var t={};
+	for k, v in arr
+		t[k] = slice(v,a,b);
+	return t; 
+}
+*/
+sliceCol = function(arr,a,b){
+	var fields = arr.fields;
+	fields = slice(fields,a,b)	
 	arr = transpose0(arr);
 	arr = slice(arr,a,b);
 	arr = transpose0(arr);
 	return mapfields(arr,fields); 
+}
+spliceCol = function(arr,a,n =1){;
+	for k,v in arr
+		splice(v,a,n);
+	return arr; 
 }
 uniqueCol = function(arr,col = 1){
 	var fields = arr.fields;
@@ -116,10 +136,11 @@ replaceValue = function(arr, searchFor, replaceBy){
 	return mapDeep(arr,lambda(v,k) v == searchFor ? replaceBy : v); 
 }
 drop = function(arr, index){
-	for(i=1;#arr)
-		for(j=1;#arr[i])
-			if j==index arr[i][j] = null;
-	return arr; 
+	for(i=1; #arr)
+		for(j=1; #arr[i])
+			if j==index 
+				arr[i][j] = null;
+	return arr;
 }
 pushFields = function(arr, tab){
 	var fields = {};
@@ -211,6 +232,41 @@ cNum = function(str){
 
 
 }
+clearEmptyRows = function(arr){
+	return  ..table.filter(arr, function(v,index){
+		return ..table.count(v); // 如果没有[1]键,#操作不能识别数组, 但是count操作包含fields等非数字键
+	})
+}
+countNumKey = function(arr){
+	var n = 0;
+	for k,v in ..table.eachArgs(arr)
+ 		if v	n++;
+	return n; 
+}
+
+fillEmptyCell = function(arr, what = "", colCount){
+	colCount := #arr;
+	for (i=1; colCount)
+		arr[i] = arr[[i]] || what;	//map会忽略null值和键
+	return arr; 
+}
+
+fillEmptyRow = function(arr, what= ""){
+	var	colCount = arr.fields? #arr.fields : #arr[1];
+	for (i=1; #arr)
+		arr[i] = fillEmptyCell(arr[i], what, colCount);	//map会忽略null值和键
+	return arr;
+}
+
+trimAll = function(arr){
+	return map(arr,function(v,k,result){
+		if v
+			return trim(v); 
+		else
+			return null; 		
+	})
+}
+
 
 /**intellisense()
 tarray = array列操作扩展库

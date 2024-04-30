@@ -73,6 +73,7 @@ var dcb = function(order_down_form){
 	*/
 
 	/* 通过 vm.script 访问变量前需要先声明 */
+	var filename;
 	vm.script = /*
 	    	dim order
 	    	dim item
@@ -80,6 +81,7 @@ var dcb = function(order_down_form){
 	    	dim lib_path
 	    	dim itemStart
 	    	dim itemEnd
+	    	dim filename
 	 */ 
 	 
 	vm.script = /*
@@ -93,44 +95,50 @@ var dcb = function(order_down_form){
     var itemStart =  tonumber(order_down_form.edit2.text) ;
     var itemEnd = order_down_form.edit3.text ? tonumber(order_down_form.edit3.text) : itemStart;
     itemEnd = (itemEnd<itemStart) ? itemStart : itemEnd;
+
+    
     //console.log(itemStart, itemEnd)
     
-		vm.script.itemStart = itemStart
-		vm.script.itemEnd = itemEnd
-        //vm.script.item = itemStart;
-		vm.script = /*
-		For item=itemStart To itemEnd Step 10
-			session.findById("wnd[0]/usr/ctxtRC29L-VBELN").text = order
-			session.findById("wnd[0]/usr/txtRC29L-VBPOS").text = item
-			session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text= ""
-			session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01"
-			
-			session.findById("wnd[0]").sendVKey 0
-			
-			code = session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text
-			
-			session.findById("wnd[0]/tbar[1]/btn[8]").press
-			
-			session.findById("wnd[0]/tbar[1]/btn[43]").press
-			session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
-			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = Join(Array("B2C", order, item, code), "_") + ".xlsx"
-			session.findById("wnd[1]/tbar[0]/btn[0]").press
-			session.findById("wnd[0]/tbar[0]/btn[12]").press
-			
-			on error resume next			
-				Set testobj = Nothing			
-				Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
-				loopcount = 0
-				Do While testobj Is Nothing				
-					session.findById("wnd[0]/tbar[0]/btn[12]").press
-					Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
-					loopcount = loopcount + 1
-					If loopcount > 20 Then Exit Do
-				Loop
-			on error goto 0	
-		Next
-	 	*/ 
 
+        //vm.script.item = itemStart;
+        
+        for (i = itemStart; itemEnd; 10){
+			vm.script.item = i;
+			vm.script = /*
+				session.findById("wnd[0]/usr/ctxtRC29L-VBELN").text = order
+				session.findById("wnd[0]/usr/txtRC29L-VBPOS").text = item
+				session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text= ""
+				session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01"
+				
+				session.findById("wnd[0]").sendVKey 0
+				
+				code = session.findById("wnd[0]/usr/ctxtRC29L-MATNR").text
+				
+				session.findById("wnd[0]/tbar[1]/btn[8]").press
+				
+				session.findById("wnd[0]/tbar[1]/btn[43]").press
+				session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
+				filename = Join(Array("B2C", order, item, code), "_") + ".xlsx"
+				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
+				session.findById("wnd[1]/tbar[0]/btn[0]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+	 		*/ 
+
+			order_down_form.publish("down_bom", vm.script.filename);
+			vm.script = /*	
+				on error resume next			
+					Set testobj = Nothing			
+					Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
+					loopcount = 0
+					Do While testobj Is Nothing				
+						session.findById("wnd[0]/tbar[0]/btn[12]").press
+						Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
+						loopcount = loopcount + 1
+						If loopcount > 20 Then Exit Do
+					Loop
+				on error goto 0	
+	 		*/ 
+		}
 	vm.script = /*	
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press	
@@ -139,6 +147,18 @@ var dcb = function(order_down_form){
 order_down_form.getFolderList();
 	
 }
+subscribe("down_bom",function(...){
+	var filename = ...;	
+	win.delay(3*1000);
+	thread.invoke( 
+		function(filename){
+			import domisoft;
+			var sht = domisoft.getRunningWorkSheet(filename);
+			import QHC;
+			QHC.formatBOM(sht)
+		}, filename
+	)
+} )
 order_down_form.button.oncommand = function(id,event){
 	order_down_form.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷",text = "下载中..."};
 	thread.invoke(dcb, order_down_form);	
@@ -231,7 +251,8 @@ order_down_form.listview.onnotify = function(id,code,ptr){
 		} 
     }
 }
-
+import domisoft;
+order_down_form.listview.translateAccelerator = domisoft.ctrlC;
 order_down_form.button2.oncommand = function(id,event){
 	//if event == 0/*_BN_CLICKED*/
 		order_down_form.getFolderList();

@@ -14,7 +14,6 @@ listview={cls="listview";left=165;top=11;right=928;bottom=681;db=1;dl=1;dr=1;dt=
 )
 /*}}*/
 
-import win.clip;
 import table.product; //迪卡尔运算迭代器
 
 var product = function(arr){
@@ -62,21 +61,8 @@ winform.button.oncommand = function(id,event){
 }
 
 /*CTRLC复制模块{{*/
-winform.listview.translateAccelerator = function( msg ){ 
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
-//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
-//    var selectedRow = owner.getSelection();
-    var vk = msg.wParam;    
-    if( ( vk == 'C'# ) && ctrl ){
-        var tab=table.array();
-        for (i=1; #owner.selected)
-            table.push(tab, owner.getItemText(owner.selected[i],1));
-		win.clip.write(string.join(tab,'\n'));
-        return true;
-    }
-}
-
+import domisoft;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 /*}}*/
 
 winform.show();

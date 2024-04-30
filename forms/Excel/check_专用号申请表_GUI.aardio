@@ -15,7 +15,7 @@ import string.keywords;
 import config;
 import fsys.table;
 import QHC;
-import win.clip;
+import domisoft;
 
 /*
 	import console
@@ -37,20 +37,6 @@ com.enumRunning(
 	}
 )
 
-var get_excel = function(wbname){
-	var e;
-	com.enumRunning( 
-		function(displayName,object){
-			try{
-				var s = com.GetTypeInfo(object).GetDocumentation().name;
-				if s = "_Workbook"
-					if displayName == wbname
-						e = object.application; 
-			}
-		}
-	)
-	return e; 
-}
 
 if chk_excel_NewPart_form.combobox2.count {
 	var findActiveWB = table.indexOf(chk_excel_NewPart_form.combobox2.items, excel_0.ActiveWorkbook.Name)
@@ -83,8 +69,9 @@ var getParentIndex = function(current_index){
 
 chk_excel_NewPart_form.button.oncommand = function(id,event){
 	if !#chk_excel_NewPart_form.combobox2.selText return ; 	
-	excel_2 = get_excel(chk_excel_NewPart_form.combobox2.selText);
-	sht = excel_2.ActiveWorkbook.ActiveSheet;
+
+	sht = domisoft.getRunningWorkSheet(chk_excel_NewPart_form.combobox2.selText)
+	excel_2 = sht.Parent.Application;
 	
 	if sht.AutoFilterMode
 		sht.AutoFilterMode = false;
@@ -346,23 +333,8 @@ chk_excel_NewPart_form.listview.onnotify = function(id,code,ptr){
     }
 }
 /*}}*/
-/*CTRLC复制模块{{*/
-chk_excel_NewPart_form.listview.translateAccelerator = function( msg ){ 
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
-//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
-//    var selectedRow = owner.getSelection();
-    var vk = msg.wParam;    
-    if( ( vk == 'C'# ) && ctrl ){
-        var tab=table.array();
-        for (i=1; #owner.selected)
-            table.push(tab,string.join(owner.items[owner.selected[i]],'\t'));
-		win.clip.write(string.join(tab,'\n'));
-        return true;
-    }
-}
-
-/*}}*/
+/* CTRLC复制模块 */
+chk_excel_NewPart_form.listview.translateAccelerator = domisoft.ctrlC;
 
 chk_excel_NewPart_form.show();
 

@@ -36,7 +36,9 @@ bmp2png_form.onDropFiles = function(files){
 		var fp = string.match(files[i],"^(.+)\\.+$");
 		var tf = config.setbm.workingDir;
 		if !string.endWith(tf,"\") tf = tf ++ "\";
-		tf = tf ++ string.replace(fn,"@@.bmp",".png");
+		var info = io.splitpath(fn);
+		
+		tf = tf ++ string.replace(fn,"@"+info.ext,".png");
 		
 		if !table.find(tarray.getCol(tab, 1), fn)
 			table.push(tab,	{
@@ -52,6 +54,8 @@ bmp2png_form.button.oncommand = function(id,event){
 	for (i=1; bmp2png_form.listview.count){
 		var fn = bmp2png_form.listview.getItemText(i,2) ++ "\" ++ bmp2png_form.listview.getItemText(i,1);
 		var bmp = gdip.bitmap(fn);
+		
+		if !bmp return win.msgboxErr("不支持的格式"+'\n' + fn);
 		bmp.save(bmp2png_form.listview.getItemText(i,3));
 		bmp.dispose();
 		bmp = null;

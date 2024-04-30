@@ -110,15 +110,24 @@ downloadBOM = function(winform, etab){
     	session.findById("wnd[0]/tbar[0]/btn[12]").press	'//[x]取消
     	*/
     	
-    	..publish("bom_down",filename);
+    	winform.publish("dok",filename);
 
 	}
 	vm.script = /*	
 	session.findById("wnd[0]/tbar[0]/btn[12]").press
 
 	*/
-	winform.publish("dok", ftab);
+	winform.publish("dok_list", ftab);
 }
+assist = function(){
+	
+	mm03_price = {
+		{id = "/app/con[0]/ses[0]/wnd[1]/usr/boxTEXT008101", sapType = "GuiBox (62)", text = "组织层次"};
+	 	{id = "/app/con[0]/ses[0]/wnd[1]/usr/ctxtRMMG1-WERKS", sapType = "GuiCTextField (32)", text = "0841"};
+	 	{id = "/app/con[0]/ses[0]/wnd[1]/tbar[0]/btn[0]", sapType = "GuiButton (40)"}
+	}
+}
+
 
 /**intellisense(SAP)
 downloadBOM(arr) = 下载BOM

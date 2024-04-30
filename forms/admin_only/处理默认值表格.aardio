@@ -83,6 +83,7 @@ var getListFromXlsx = function(_xlsx_path, winform_get_default, default_con){
 	var rc = sht.usedRange.Rows.Count;
 	wb.close(false);
 	excel.alerts = true;
+	excel.Quit();
 	
 	import sqlite;
 	import config;

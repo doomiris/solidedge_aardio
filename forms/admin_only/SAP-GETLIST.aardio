@@ -132,10 +132,8 @@ winform_getlist.button.oncommand = function(id,event){
 
 /*importFromQHC{{*/
 var importFromQHC = function(winform_getlist, path){
-/*
 	import console
 	console.open();
-*/
 	//import etip;
 	import tarray;
 	import com.excel;
@@ -159,8 +157,11 @@ var importFromQHC = function(winform_getlist, path){
 	winform_getlist.log.print("退出excel...");
 	qTab.fields = table.shift(qTab); /*提取第一行作为列名*/
 
+	
 	if !table.find(qTab.fields, "禁用")
-		winform_getlist.log.print("[禁用]列不存在");
+		winform_getlist.log.print("[禁用]列不存在!");
+	if !table.find(qTab.fields, "生产展平尺寸")
+		winform_getlist.log.print("[生产展平尺寸]列不存在!");
 /*
 	if !table.find(qTab.fields, "物料是可配置的")
 		winform_getlist.log.print("[可配置]列不存在");	
@@ -173,25 +174,39 @@ var importFromQHC = function(winform_getlist, path){
 	winform_getlist.log.print("删除旧数据...");
 	if db.existsTable("qhc_export") db.exec("DROP table qhc_export")
 	db.exec("VACUUM");
-
+	
 	var fields = qTab.fields;
+	fields = table.filter(fields, λ(v) v );	//去掉null值 (有时有空白列)
+	
 	fields= tarray.replaceValue(fields,"物料", "物料 TEXT collate nocase");
 	fields = tarray.replaceValue(fields,"物料描述", "物料描述 TEXT collate nocase");	
-	fields = string.join(fields,", ");
+
 	winform_getlist.log.print("开始写入数据...");
-	db.exec("CREATE TABLE [qhc_export](" ++ fields ++ ");")  
+
+	db.exec("CREATE TABLE [qhc_export](" ++ string.join(fields,", ") ++ ");")  
 
 	db.beginTrans();
 	var n = rc-1;
-	var vl = string.join(table.array(#qTab.fields,"?"),", ");
-	
-	for(i=1; n){
+	var vl = string.join(table.array(#fields,"?"),", ");
 
+	for(i=1; n){
 		var cmd = db.prepare("INSERT INTO [qhc_export] VALUES(" ++ vl ++ ");");
 		var item = qTab[i];
+
 		for (x=1; #qTab.fields)
-			if !item[x]
+			if !item[[x]]
+				if qTab.fields[[x]]
 					item[x] = "";	/* 填充Null值, 否则展开后丢失参考*/
+					
+		item = table.filter(item, λ(v) v );	//去掉null值 (有时有空白列)
+		
+/*
+		if #qTab.fields !== #item {
+			console.dump(qTab.fields)
+			console.dump(item)
+			return error("fields和data列数不匹配"); 
+			}
+*/
 		cmd.bind.parameters(
 			table.unpack(item)
 		).step()
@@ -221,10 +236,8 @@ var mergeDb = function(winform_getlist){
 	import win;
 	import config;
 	import sqlite;
-/*
 import console
 console.open();
-*/
 	var step_db = sqlite(winform_getlist.stepDBpath);
 	winform_getlist.log.print("合并临时数据...");	
 	if step_db.existsTable("所有物料")

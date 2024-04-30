@@ -11,14 +11,28 @@ static2={cls="syslink";text="<a>copyall</a>";left=94;top=33;right=150;bottom=49;
 )
 /*}}*/
 
-//import console
-//console.open()
+/*
+import console;
+console.open();
+*/
+
 import win.ui.grid;
 var grid = win.ui.grid(winform_calc.listview);//创建数据视图
 
 import win.clip;
-
 import QHC;
+
+var tab = {};
+_fields =  {
+	"生产尺寸";
+	"长,宽,厚";
+	"原材料";
+	"原材料描述";
+	"钣金用量";
+	"粉末用量";
+	"钣材价格";
+	"喷粉后总价";
+}
 
 winform_calc.button.oncommand = function(id,event){
 	var txt = winform_calc.edit.text;
@@ -28,30 +42,19 @@ winform_calc.button.oncommand = function(id,event){
 	if winform_calc.checkbox.checked pArr = table.unique(pArr);
 	winform_calc.edit.text = string.replace( string.join(pArr,'\r\n'), '\r\n\r\n', '\r\n'); //失效了
 
-	var tab=table.create(,{fields = {
-									"生产尺寸";
-									"长,宽,厚";
-									"原材料";
-									"原材料描述";
-									"钣金用量";
-									"粉末用量";
-									"钣材价格";
-									"喷粉后总价";
-								}
-							}
-						);
+	table.clear(tab)
 	
 	for (i=1;#pArr;1){
 		if !pArr[i] continue;
 		//var d_size = pArr[i];
-		var m_size = "";	
+		var m_size;	
 		if string.startWith(pArr[i],"H",true) {
 			var hitem = QHC.getSapItem(pArr[i]);
 			if !hitem continue;
 			//d_size = hitem.设计展平尺寸 : "";
-			m_size = hitem.生产展平尺寸 : "";
-		}			
-		if !#m_size continue;
+			m_size = hitem.生产展平尺寸;
+		}
+		m_size := pArr[i];
 		var rez = QHC.下料尺寸( m_size );
 		var t={};
 		if rez {
@@ -67,9 +70,11 @@ winform_calc.button.oncommand = function(id,event){
 			t["钣材价格"]= math.round( rez.metel * qitem.价格, 2);
 			t["喷粉后总价"]= math.round(rez.powder * rez.powderItem.价格 + t["钣材价格"], 2);
 		}
-		table.push(tab,t); //保留空行
+		if table.count(t)
+			table.push(tab,t); //保留空行
 	}
-
+	
+	tab.fields = _fields;
 	grid.setTable(tab);
 
 	var col_width = {120;120;120;250;50;50;80;100};
@@ -78,9 +83,8 @@ winform_calc.button.oncommand = function(id,event){
 
 
 }
+
 /*CTRLC复制模块{{*/
-
-
 winform_calc.listview.translateAccelerator = function( msg ){ 
 	
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
@@ -89,27 +93,27 @@ winform_calc.listview.translateAccelerator = function( msg ){
 
     var vk = msg.wParam ;
 
-	if (vk == 'C'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {
+	if (vk == 'C'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {	//CTRL_C 复制钣金用量
 	    	var tab = {};
 	    	for (k, v in winform_calc.listview.selected){
-	        	table.push(tab, winform_calc.listview.getItemText(v,6));
+	        	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(_fields,"钣金用量")));
 	    	}           
 			win.clip.write(string.join(tab,"\"));
 	}
-	if (vk == 'C'#) && !ctrl && alt && (msg.message == 0x104/*_WM_SYSKEYDOWN*/){
+	if (vk == 'C'#) && !ctrl && alt && (msg.message == 0x104/*_WM_SYSKEYDOWN*/){ //ALT_C 复制粉末用量
         	var tab = {};
         	for (k, v in winform_calc.listview.selected){
-            	table.push(tab, winform_calc.listview.getItemText(v,7));
+            	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(_fields,"粉末用量")));
         	}           
 			win.clip.write(string.join(tab,"\"));
 	}
-	if (vk == 'C'#) && ctrl && alt && (msg.message == 0x100/*_WM_KEYDOWN*/){
+	if (vk == 'C'#) && ctrl && alt && (msg.message == 0x100/*_WM_KEYDOWN*/){ //CTRL+ALT+C 同时复制钣金和粉末用量
 	    	var t={};
 	    	var tab1 = {};
 	    	var tab2 = {};
 	    	for (k, v in winform_calc.listview.selected){
-	        	table.push(tab1, winform_calc.listview.getItemText(v,6));
-	        	table.push(tab2, winform_calc.listview.getItemText(v,7));
+	        	table.push(tab1, winform_calc.listview.getItemText(v, table.indexOf(_fields,"钣金用量")));
+	        	table.push(tab2, winform_calc.listview.getItemText(v, table.indexOf(_fields,"粉末用量")));
 	    	} 
 	    	table.push(t, string.join(tab1,"\"));
 	    	table.push(t, string.join(tab2,"\"));
@@ -151,10 +155,10 @@ winform_calc.listview.onnotify = function(id,code,ptr){//code很多 select外放
 			var selectedRow,tvht = owner.hitTest(x,y,true);
     		//var selectedRow = owner.getSelection();
     		if !selectedRow return ; 
-    		var mcode = owner.getItemText(selectedRow,4);
-    		var mdesp = owner.getItemText(selectedRow,5);
-    		var mweight = owner.getItemText(selectedRow,6);
-    		var pweight = owner.getItemText(selectedRow,7);
+    		var mcode = owner.getItemText(selectedRow, table.indexOf(_fields,"原材料"));
+    		var mdesp = owner.getItemText(selectedRow, table.indexOf(_fields,"原材料描述"));
+    		var mweight = owner.getItemText(selectedRow, table.indexOf(_fields,"钣金用量"));
+    		var pweight = owner.getItemText(selectedRow, table.indexOf(_fields,"粉末用量"));
 			var x,y = win.getMessagePos();
 			var menu = win.ui.popmenu(winform_calc);			
 			menu.add("复制:板材原材料[专用号+物料描述]",

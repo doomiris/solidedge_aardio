@@ -88,7 +88,13 @@ namespace application{
 		..io.remove(bmp_path);
 		..process.imageView(png_path);	
 	};
-		_topointer = lambda() owner.seApp	
+	fixDesMgr = function(){
+		/* 可解决DesignManager列显示异常的问题 */
+		import win.reg;
+		var HCU = win.reg("HKEY_CURRENT_USER\Software\Siemens\Solid Edge\Version 220\General",true);
+		HCU.delKeyTree("DesignManager");
+	};
+		_topointer = lambda() owner.seApp;	
 	);
 }	
 

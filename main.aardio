@@ -9,7 +9,6 @@ import key;
 import sqlite;
 import process;
 //import console;
-//user lib
 import config;
 import domisoft;
 import SAP;
@@ -180,8 +179,10 @@ mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('ChatGPT...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\chatgpt.aardio")));
-mainForm.popmenu2.add('AI绘图...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\AI_Draw.aardio")));
+//mainForm.popmenu2.add('ChatGPT...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\chatgpt.aardio")));
+//mainForm.popmenu2.add('AI绘图...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\AI_Draw.aardio")));
+//mainForm.popmenu2.add('修复DegMgr...', λ() seApp.fixDesMgr());
+mainForm.popmenu2.add('SE导出当前截图...', λ() seApp.exportViewAsPng());
 mainForm.popmenu2.add('SAP一键登入', function(){
 	thread.invoke(SAP.sapQuickOpen)
 	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
@@ -242,7 +243,7 @@ main_tbs.onSelchange = function(idx,strip,form){
 /*顶部按钮{{*/
 mainForm.tbutton1.oncommand = function(id,event){
 	if !seApp return; 
-	solidedge.application.reOpenDocument();
+	seApp.reOpenDocument();
 	//win.quitMessage();
 }
 
@@ -361,21 +362,22 @@ mainForm.tbutton5.oncommand = function(id,event){
 
 mainForm.tbutton6.oncommand = function(id,event){
 	if !seApp return; 
-	solidedge.application.closeDft(false);
+	seApp.closeDft(false);
     mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
 
 mainForm.tbutton7.oncommand = function(id,event){
 	if !seApp return; 
-	solidedge.application.closeDft(true);
+	seApp.closeDft(true);
     mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
 
 mainForm.tbutton8.oncommand = function(id,event){
+	import QHC;
+	
 	var tlist = {
-		_path = "\\CCNSIA1O\srdc\CCR\A05-Design\Structure Design\QHC\";
 		[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
 		[2] = "工单更改申请.xlsx";		
 		[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
@@ -388,7 +390,7 @@ mainForm.tbutton8.oncommand = function(id,event){
 		var excel = com.excel(false);
 		if !excel win.msgbox("请先打开Excel程序");
 		if !excel return ; 
-		var wb = excel.WorkBooks.Add(tlist._path ++ tlist[n]);
+		var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
 		excel.Visible = true;
 		win.showForeground(excel.Application.hwnd);
 		mainForm.show(false);
@@ -397,17 +399,17 @@ mainForm.tbutton8.oncommand = function(id,event){
 	mainForm.popmenu1 = win.ui.popmenu(mainForm);//创建弹出菜单
 	mainForm.popmenu1.addTable({
 		{ "新建申请表"; {
-    			{ "专用号申请表";		function(){opent(1)}};
-    			{ "工单更改申请";	function(){opent(2)}};
-    			{ "BOM更改申请表";		function(){opent(3)}};
-    			{ "新产品BOM申请表";	function(){opent(4)}};
-    			{ "产成品编码申请表";	function(){opent(5)}};
-    			{ "B2C BOM 批量更改单";		function(){opent(6)}};
+    			{ "专用号申请表";	λ() opent(1)};
+    			{ "工单更改申请";	λ() opent(2)};
+    			{ "BOM更改申请表";		λ() opent(3)};
+    			{ "新产品BOM申请表";	λ() opent(4)};
+    			{ "产成品编码申请表";	λ() opent(5)};
+    			{ "B2C BOM 批量更改单";		λ() opent(6)};
 			}
 		};
 		{"格式"; {
-				{"格式化BOM"; function(){import QHC; QHC.formatBOM()}};
-				{"格式化成本BOM"; function(){}};
+				{"格式化BOM"; λ() QHC.formatBOM()};
+				{"格式化成本BOM"; λ() QHC.formatCostBom()}
 			}
 		}
 	})
@@ -515,9 +517,6 @@ subscribe("checkupdate",function(...){
 } )
 */
 
-mainForm.titleBar.onDrawBackground = function(graphics,rc){
-	
-}
 
 win.loopMessage();
 return mainForm;

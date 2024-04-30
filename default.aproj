@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.373" ProductVersion="1.5.0.373" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.388" ProductVersion="1.5.0.388" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -61,7 +61,7 @@
 			<file name="SAP-job2.aardio" path="forms\obsolete\SAP-job2.aardio" comment="forms\obsolete\SAP-job2.aardio"/>
 			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
 		</folder>
-		<folder name="OpenAI" path="forms\OpenAI" comment="forms\OpenAI" local="false" embed="false" ignored="false">
+		<folder name="OpenAI" path="forms\OpenAI" comment="forms\OpenAI" local="false" embed="false" ignored="true">
 			<file name="AI-Icon-17-512.webp" path="forms\OpenAI\AI-Icon-17-512.webp" comment="forms\OpenAI\AI-Icon-17-512.webp"/>
 			<file name="AI_Draw.aardio" path="forms\OpenAI\AI_Draw.aardio" comment="forms\OpenAI\AI_Draw.aardio"/>
 			<file name="chatgpt.aardio" path="forms\OpenAI\chatgpt.aardio" comment="forms\OpenAI\chatgpt.aardio"/>

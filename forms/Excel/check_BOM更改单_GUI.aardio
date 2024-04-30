@@ -15,7 +15,7 @@ import string.keywords;
 import config;
 import fsys.table;
 import QHC;
-import win.clip;
+import domisoft;
 
 /*
 	import console
@@ -36,21 +36,6 @@ com.enumRunning(
 		}
 	}
 )
-
-var get_excel = function(wbname){
-	var e;
-	com.enumRunning( 
-		function(displayName,object){
-			try{
-				var s = com.GetTypeInfo(object).GetDocumentation().name;
-				if s = "_Workbook"
-					if displayName == wbname
-						e = object.application; 
-			}
-		}
-	)
-	return e; 
-}
 
 if chk_excel_BOM_REV_form.combobox2.count {
 	var findActiveWB = table.indexOf(chk_excel_BOM_REV_form.combobox2.items, excel_0.ActiveWorkbook.Name)
@@ -83,9 +68,9 @@ var getParentIndex = function(current_index){
 
 chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	if !#chk_excel_BOM_REV_form.combobox2.selText return ; 	
-	excel_2 = get_excel(chk_excel_BOM_REV_form.combobox2.selText);
-	sht = excel_2.ActiveWorkbook.ActiveSheet;
 
+	sht = domisoft.getRunningWorkSheet(chk_excel_BOM_REV_form.combobox2.selText)
+	excel_2 = sht.Parent.Application;
 
 	etab = (function(){
 			var fields = {
@@ -132,6 +117,9 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 		[12] = "父项物料被禁用, 请先申请解禁再更改BOM";
 		[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
 		[14] = "相同内容重复操作(在此行之前有重复项)";
+		[15] = "缺少更改备注";
+		[16] = "操作KMAT请标记出是否有OD变更";
+		[17] = "请移除空行";
 	}
 /*}}*/
 	
@@ -209,6 +197,19 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 							return true;
 			}
 		}
+		[15]=function(i){
+			if etab[i][["原父项"]]
+				return !etab[i][["更改备注"]]; 
+		}
+		[16]=function(i){
+			if etab[i][["原子项类型"]] == "KMAT" || etab[i][["新子项类型"]] == "KMAT"
+				return !etab[i][["是否有OD"]]; 
+		}
+		[17]=function(i){
+			if i<#etab
+				if !etab[i][["原父项"]]
+					return !etab[i][["新父项"]] || etab[i][["新父项"]]==0
+		}
 	};
 	/*}}*/
 	
@@ -279,23 +280,9 @@ chk_excel_BOM_REV_form.listview.onnotify = function(id,code,ptr){
     }
 }
 /*}}*/
-/*CTRLC复制模块{{*/
-chk_excel_BOM_REV_form.listview.translateAccelerator = function( msg ){ 
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-//    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);
-//    var alt = ::GetKeyState(0x12/*_VK_ALT*/);
-//    var selectedRow = owner.getSelection();
-    var vk = msg.wParam;    
-    if( ( vk == 'C'# ) && ctrl ){
-        var tab=table.array();
-        for (i=1; #owner.selected)
-            table.push(tab, string.join(owner.items[owner.selected[i]],'\t'));
-		win.clip.write(string.join(tab,'\n'));
-        return true;
-    }
-}
+/* CTRLC复制模块 */
+chk_excel_BOM_REV_form.listview.translateAccelerator = domisoft.ctrlC;
 
-/*}}*/
 
 chk_excel_BOM_REV_form.show();
 
