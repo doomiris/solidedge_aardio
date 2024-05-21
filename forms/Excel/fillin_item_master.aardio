@@ -41,7 +41,9 @@ var get_excel = function(wbname){
 }
 
 if fill_in_sap_item_form.combobox2.count {
-	var findActiveWB = table.indexOf(fill_in_sap_item_form.combobox2.items, excel_0.ActiveWorkbook.Name)
+	var findActiveWB;
+	if excel_0.ActiveWorkbook
+		findActiveWB = table.indexOf(fill_in_sap_item_form.combobox2.items, excel_0.ActiveWorkbook.Name)
 	fill_in_sap_item_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 

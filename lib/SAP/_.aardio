@@ -4,7 +4,7 @@ var table = ..table;
 var string = ..string;
 
 namespace SAP;
-sapQuickOpen = function(){
+sapQuickOpen = function(index=1){
 	import win;
 	import config;
 	_title = "SAP一键启动";
@@ -17,13 +17,29 @@ sapQuickOpen = function(){
 	if !..io.exist(_SAP_shcut_cmd) 
 		return win.msgboxErr("文件不在在:"+'\n'+_SAP_shcut_cmd); 
 	var para = `-max -system={SAP_system} -client={SAP_client} -user={SAP_user} -pw={SAP_pw} -language={SAP_language} -cmd=S000`;
-	var c = {
-		"{SAP_system}" = config.settings.edit_SAP_system;
-		"{SAP_client}" = config.settings.edit_SAP_client;
-		"{SAP_user}" = config.settings.edit_SAP_user;
-		"{SAP_pw}" = config.settings.edit_SAP_pw;
-		"{SAP_language}" = config.settings.edit_SAP_language;
-	};
+	
+	var c;
+	
+	select(index) {
+		case 1 {
+			c = {
+				"{SAP_system}" = config.settings.edit_SAP_system;
+				"{SAP_client}" = config.settings.edit_SAP_client;
+				"{SAP_user}" = config.settings.edit_SAP_user;
+				"{SAP_pw}" = config.settings.edit_SAP_pw;
+				"{SAP_language}" = config.settings.edit_SAP_language;
+			};
+		}
+		case 2 {
+			c = {
+				"{SAP_system}" = config.settings.edit_SAP_system2;
+				"{SAP_client}" = config.settings.edit_SAP_client2;
+				"{SAP_user}" = config.settings.edit_SAP_user2;
+				"{SAP_pw}" = config.settings.edit_SAP_pw2;
+				"{SAP_language}" = config.settings.edit_SAP_language2;
+			};
+		}
+	}
 
 	para = ..string.replace(para,'%{}',c);
 

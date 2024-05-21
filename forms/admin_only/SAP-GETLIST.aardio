@@ -132,8 +132,10 @@ winform_getlist.button.oncommand = function(id,event){
 
 /*importFromQHC{{*/
 var importFromQHC = function(winform_getlist, path){
+/*
 	import console
 	console.open();
+*/
 	//import etip;
 	import tarray;
 	import com.excel;
@@ -236,8 +238,10 @@ var mergeDb = function(winform_getlist){
 	import win;
 	import config;
 	import sqlite;
+/*
 import console
 console.open();
+*/
 	var step_db = sqlite(winform_getlist.stepDBpath);
 	winform_getlist.log.print("合并临时数据...");	
 	if step_db.existsTable("所有物料")
@@ -259,7 +263,7 @@ console.open();
 				ON all_cost.物料 = qhc_export.物料;
 	`); /* A table created using CREATE TABLE AS has no PRIMARY KEY and no constraints of any kind. */
 	step_db.close();
-	var db = sqlite(config.dbServer.path + "qhcsap.db");
+	var db = sqlite(io.joinpath(config.dbServer.path,"qhcsap.db"));
 
 	winform_getlist.log.print("备份数据...");
 	if (db.existsTable("所有物料") and db.existsTable("备份所有物料"))

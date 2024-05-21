@@ -458,7 +458,7 @@ formatCostBom = function(sht){
 }
 
 formatAllCostBom = function(fl){
-	import console;
+	//import console;
 	if !ftab {
 		import fsys.dlg;
 		fl = fsys.dlg.openEx("cost源文件|cost_*.xls",'请选择要打开的 cost 文件',config.__sapDownload,parent)
@@ -486,7 +486,7 @@ formatAllCostBom = function(fl){
 			/* Local */,
 			/* CorruptLoad */
 		).Sheets(1);
-		console.log(k, v, sht.name)
+		//console.log(k, v, sht.name)
 		formatCostBom(sht);
 		
 	}

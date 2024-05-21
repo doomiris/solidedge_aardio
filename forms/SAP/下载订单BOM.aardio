@@ -1,38 +1,37 @@
 import fonts.fontAwesome;
 import win.ui;
+import win.ui.menu;
 /*DSG{{*/
 var order_down_form = win.form(text="下载订单BOM";right=759;bottom=469)
 order_down_form.add(
-button={cls="button";text='\uF110 下载';left=592;top=72;right=752;bottom=112;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3};
+button={cls="button";text='\uF110 下载订单BOM';left=583;top=31;right=743;bottom=71;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3};
 button2={cls="button";text="刷新";left=8;top=432;right=48;bottom=464;z=9};
 button3={cls="button";text="删除选定文件";left=591;top=435;right=746;bottom=463;z=10};
-edit={cls="edit";left=16;top=72;right=160;bottom=104;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=1};
-edit2={cls="edit";left=248;top=72;right=336;bottom=104;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=2};
-edit3={cls="edit";left=392;top=72;right=480;bottom=104;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=6};
+button4={cls="button";text="导出订单清单";left=13;top=71;right=156;bottom=103;dr=1;dt=1;z=11};
+edit={cls="edit";left=13;top=31;right=157;bottom=63;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=1};
+edit2={cls="edit";left=245;top=31;right=333;bottom=63;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=2};
+edit3={cls="edit";left=389;top=31;right=477;bottom=63;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=6};
 listview={cls="listview";left=0;top=128;right=760;bottom=424;edge=1;fullRow=1;vscroll=1;z=8};
-static={cls="static";text="订单号";left=16;top=48;right=128;bottom=64;dl=1;dt=1;transparent=1;z=4};
-static2={cls="static";text="项目号";left=248;top=48;right=360;bottom=64;dl=1;dt=1;transparent=1;z=5};
-static3={cls="static";text="-";left=344;top=80;right=384;bottom=96;align="center";dl=1;dt=1;transparent=1;z=7}
+static={cls="static";text="订单号";left=13;top=7;right=125;bottom=23;dl=1;dt=1;transparent=1;z=4};
+static2={cls="static";text="项目号";left=245;top=7;right=357;bottom=23;dl=1;dt=1;transparent=1;z=5};
+static3={cls="static";text="-";left=341;top=39;right=381;bottom=55;align="center";dl=1;dt=1;transparent=1;z=7}
 )
 /*}}*/
 
-/*
-import console;
-console.open();
-*/
+//import console;
+//console.open();
+
 import config;
 order_down_form.bindConfig( config.orderBom, {	//绑定控件值
     edit = "text";
 } );
 
-var dcb = function(order_down_form){
+var dcb = function(order_down_form, orderId, itemId, endItemId){
 	import config;
     import web.script;
     var vm = web.script("VBScript");
-/*
-	import console;
-	console.open();
-*/
+//	import console;
+//	console.open();
 
     vm.script = /*
 		If Not IsObject(application) Then
@@ -88,19 +87,30 @@ var dcb = function(order_down_form){
 	 	session.findById("wnd[0]/tbar[0]/okcd").text = "CSK2"
 		session.findById("wnd[0]").sendVKey 0
 	 */ 
-
-    vm.script.order = order_down_form.edit.text;
+	
+    vm.script.order = orderId || order_down_form.edit.text;
 	vm.script.lib_path = config.__sapDownload;
     
-    var itemStart =  tonumber(order_down_form.edit2.text) ;
-    var itemEnd = order_down_form.edit3.text ? tonumber(order_down_form.edit3.text) : itemStart;
-    itemEnd = (itemEnd<itemStart) ? itemStart : itemEnd;
+    var itemStart; 
+    var itemEnd;
+    
+    if orderId {
+        itemStart =  itemId;
+    	itemEnd = endItemId;
+    }else{
+    	itemStart = tonumber(order_down_form.edit2.text) ;
+    	itemEnd = order_down_form.edit3.text ? tonumber(order_down_form.edit3.text) : itemStart;
+    	itemEnd = (itemEnd<itemStart) ? itemStart : itemEnd;
+    }
 
     
-    //console.log(itemStart, itemEnd)
+	if !itemStart || !itemEnd return ; 
+
+    
+//    console.log("SSEE:",itemStart, itemEnd)
     
 
-        //vm.script.item = itemStart;
+
         
         for (i = itemStart; itemEnd; 10){
 			vm.script.item = i;
@@ -206,6 +216,7 @@ iml.add('GIF\56\57a \0\15\0\x80\0\0\x80\x80\x80\xff\0\xff\33\xf9\4\0\0\0\0\0\44\
 order_down_form.listview.setColumnImageList(iml);
 */
 
+/*排序函数{{*/
 var reloadItemData = function(){
 	var sortColumn = order_down_form.listview.itemSortColumn;
 	var itemData = order_down_form.listview.items
@@ -229,30 +240,10 @@ var reloadItemData = function(){
 	order_down_form.listview.clearColumnImage()
 	order_down_form.listview.setColumnImage(math.abs(sortColumn), sortColumn<0 ? 1 : 0); 
 }
-order_down_form.listview.onnotify = function(id,code,ptr){
-
-    select(code) {
-    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    	    var pcode = owner.getItemText(selectedRow,5);
-			process.execute(config.__sapDownload + pcode)
-    	}
-		case 0xFFFFFF94/*_LVN_COLUMNCLICK*/ {
-			var notifyMsg = order_down_form.listview.getNotifyMessage(code,ptr)
-			if(order_down_form.listview.itemSortColumn = notifyMsg.iSubItem){
-				order_down_form.listview.itemSortColumn = -notifyMsg.iSubItem; 
-			}
-			else {
-				order_down_form.listview.itemSortColumn = notifyMsg.iSubItem; 
-			}
-			
-			reloadItemData();
-		} 
-    }
+/*}}*/
+var downloadSingleOrderItem = function(orderId,itemId){
+	
 }
-import domisoft;
-order_down_form.listview.translateAccelerator = domisoft.ctrlC;
 order_down_form.button2.oncommand = function(id,event){
 	//if event == 0/*_BN_CLICKED*/
 		order_down_form.getFolderList();
@@ -271,6 +262,108 @@ order_down_form.button3.oncommand = function(id,event){
 	}
 	order_down_form.getFolderList();
 }
+order_down_form.listview.onnotify = function(id,code,ptr){
+
+    select(code) {
+    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return ; 
+    	    var pcode = owner.getItemText(selectedRow,5);
+			process.execute(config.__sapDownload + pcode)
+    	}
+		case 0xFFFFFF94/*_LVN_COLUMNCLICK*/ {
+			var notifyMsg = owner.getNotifyMessage(code,ptr)
+			if(owner.itemSortColumn = notifyMsg.iSubItem){
+				owner.itemSortColumn = -notifyMsg.iSubItem; 
+			}
+			else {
+				owner.itemSortColumn = notifyMsg.iSubItem; 
+			}
+			
+			reloadItemData();
+		} 
+		case 0xFFFFFFFB/*_NM_RCLICK*/ {
+    		var selectedRow = owner.getSelection();
+    		if !selectedRow return ; 
+    		var pcode = owner.getItemText(selectedRow, 1);
+    		var desp = owner.getItemText(selectedRow, 2);
+			var x,y = win.getMessagePos();
+			var menu = win.ui.popmenu(order_down_form);			
+			menu.add("重新下载此项...", λ() thread.invoke(dcb, order_down_form, pcode, desp, desp));
+			menu.add("删除...", λ() order_down_form.button3.oncommand() );
+			menu.popup(x,y,true);
+		}
+    }
+}
+
+order_down_form.button4.oncommand = function(id,event){
+	thread.invoke( 
+		function(wform){
+			import config;
+    		import web.script;
+    		var vm = web.script("VBScript") ;
+/*
+			import console; 
+			console.open();
+*/			
+			vm.script = /*
+					If Not IsObject(application) Then
+   					Set SapGuiAuto  = GetObject("SAPGUI")
+   					Set application = SapGuiAuto.GetScriptingEngine
+					End If
+					If Not IsObject(connection) Then
+   					Set connection = application.Children(0)
+					End If
+					If Not IsObject(session) Then
+   					Set session    = connection.Children(0)
+					End If
+					If IsObject(WScript) Then
+   					WScript.ConnectObject session,     "on"
+   					WScript.ConnectObject application, "on"
+					End If
+			*/
+			
+			/* 通过 vm.script 访问变量前需要先声明 */
+			vm.script = /*
+	    			dim order
+	    			dim startdate
+	    			dim lib_path
+	 		*/
+			vm.script.order = wform.edit.text;
+			vm.script.lib_path = config.__sapDownload;
+			vm.script = /*
+				session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
+				session.findById("wnd[0]").sendVKey 0
+				session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order
+				session.findById("wnd[0]").sendVKey 0
+				'获取订单日期
+				startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
+			*/
+			vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-30))
+			vm.script = /*
+				session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select
+				session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order
+				session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate
+				session.findById("wnd[0]/tbar[0]/btn[0]").press
+				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
+				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
+				session.findById("wnd[1]/tbar[0]/btn[0]").press
+				session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
+				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" & order & ".XLSX"
+				session.findById("wnd[1]/tbar[0]/btn[11]").press
+				'返回
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+				session.findById("wnd[0]/tbar[0]/btn[12]").press
+			*/
+		}, order_down_form
+	)
+}
+
+import domisoft;
+order_down_form.listview.translateAccelerator = domisoft.ctrlC;
+
 
 order_down_form.show();
 order_down_form.getFolderList()

@@ -39,7 +39,9 @@ com.enumRunning(
 
 
 if chk_excel_NewPart_form.combobox2.count {
-	var findActiveWB = table.indexOf(chk_excel_NewPart_form.combobox2.items, excel_0.ActiveWorkbook.Name)
+	var findActiveWB
+	if excel_0.ActiveWorkbook
+		findActiveWB = table.indexOf(chk_excel_NewPart_form.combobox2.items, excel_0.ActiveWorkbook.Name)
 	chk_excel_NewPart_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 
@@ -75,8 +77,17 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 	
 	if sht.AutoFilterMode
 		sht.AutoFilterMode = false;
-	if sht.ListObjects("表1")
-		sht.ListObjects("表1").AutoFilter.ShowAllData();
+	if sht.ListObjects.Count {
+		for (i=1;sht.ListObjects.Count){			
+			select(sht.ListObjects.item(i).Name) {
+				case "Table1","表1" {
+					sht.ListObjects.item(i).AutoFilter.ShowAllData();
+					break;
+				}
+			}
+
+		}
+	}
 	
 	if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表:"+ '\n\n' ++sht.parent.name +"$["+sht.name+"]"); 
 	if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
@@ -179,6 +190,7 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		[46] = "'喷粉'请用'已喷粉'或'已喷'替代";
 		[47] = "没选择'用途'";
 		[48] = "没选择'是否是关键零件'";
+		[49] = "含有非法空格符号(字体改为AIGDT就能发现了)"
 	}
 
 /*}}*/
@@ -263,6 +275,9 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		}
 		[48] = function(i){
 			return !#etab[i].是否关键部件; 	
+		}
+		[49] = function(i){
+				return (string.indexAny(etab[i].物料描述, 194)); 
 		}
 	};
 	/*}}*/

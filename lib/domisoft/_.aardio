@@ -74,16 +74,23 @@ getSelectedText = function(listCtrl){
 	return t; 
 }
 ctrlC = function(msg){
-	import win.clip;
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam;    
     if( ( vk == 'C'# ) && ctrl ){
+        import win.clip;
 		var items = owner.items;
 		var selected = owner.selected; 
         var tab = table.array();
         for (i=1; #selected)
             table.push(tab,string.join(items[selected[i]],'\t'));
 		win.clip.write(string.join(tab,'\n'));
+        return true;
+    }
+    if( ( vk == 'A'# ) && ctrl ){
+		var items = owner.items;
+		var t = table.array();
+		for (i=1; #items) table.push(t, i); 
+		owner.selected = t; 
         return true;
     }
 }

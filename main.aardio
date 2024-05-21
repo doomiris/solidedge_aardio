@@ -183,8 +183,13 @@ mainForm.popmenu2.add();//分隔线
 //mainForm.popmenu2.add('AI绘图...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\AI_Draw.aardio")));
 //mainForm.popmenu2.add('修复DegMgr...', λ() seApp.fixDesMgr());
 mainForm.popmenu2.add('SE导出当前截图...', λ() seApp.exportViewAsPng());
-mainForm.popmenu2.add('SAP一键登入', function(){
+mainForm.popmenu2.add('SAP一键登入1', function(){
 	thread.invoke(SAP.sapQuickOpen)
+	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+	mainForm.tray.pop("Starting SAP GUI ...","TBM");
+});
+mainForm.popmenu2.add('SAP一键登入2', function(){
+	thread.invoke(SAP.sapQuickOpen,2)
 	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
 	mainForm.tray.pop("Starting SAP GUI ...","TBM");
 });

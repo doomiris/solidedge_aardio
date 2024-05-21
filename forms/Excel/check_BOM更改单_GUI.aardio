@@ -37,8 +37,11 @@ com.enumRunning(
 	}
 )
 
+
 if chk_excel_BOM_REV_form.combobox2.count {
-	var findActiveWB = table.indexOf(chk_excel_BOM_REV_form.combobox2.items, excel_0.ActiveWorkbook.Name)
+	var findActiveWB
+	if excel_0.ActiveWorkbook
+		findActiveWB = table.indexOf(chk_excel_BOM_REV_form.combobox2.items, excel_0.ActiveWorkbook.Name)
 	chk_excel_BOM_REV_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 
