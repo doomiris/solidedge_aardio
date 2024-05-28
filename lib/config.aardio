@@ -3,7 +3,7 @@ import fsys.config;
 config = fsys.config(io.appData("/domisoft/SETBM/"));
 
 import fsys.ini;
-var ini = fsys.ini("TBM.ini");
+var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED?  "D:\users\CCL100100\Downloads" : io._exedir, "TBM.ini"));
 var lib = ini.getSection("lib");
 
 //不需要序列化的配置名字前请添加下划线
@@ -15,7 +15,6 @@ namespace config {
 	__sapDownload = ..io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\";
 	__pdfLib = lib.pdfLib;
 	__templateLib = lib.templateLib;
-
 }
 if !config.dbServer.path
 	config.dbServer.path = lib.dbServer;

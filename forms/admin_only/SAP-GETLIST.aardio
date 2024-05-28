@@ -343,8 +343,9 @@ winform_getlist.button4.oncommand = function(id,event){
 		winform_getlist.log.print("完成:" + dest);
 		
 	}
-	if !io.exist("\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\") winform_getlist.log.print("无法访问:" + "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
-	else thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", "\\ccnqia05\kaifa-SAP数据整理—研发中心\_db\");
+	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
+	if !io.exist(_qhc_db) winform_getlist.log.print("无法访问:" + _qhc_db);
+	else thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", _qhc_db);
 	thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
 getXlsxDbPath = function(){

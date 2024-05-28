@@ -12,7 +12,7 @@ button7={cls="button";text="批量获取清单";left=113;top=138;right=254;botto
 edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;edge=1;multiline=1;z=2};
 edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;edge=1;multiline=1;z=3};
 edit3={cls="edit";left=430;top=252;right=891;bottom=510;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
-listview={cls="listview";left=5;top=174;right=422;bottom=514;edge=1;fullRow=1;z=13};
+listview={cls="listview";left=5;top=174;right=422;bottom=514;edge=1;fullRow=1;vscroll=1;z=13};
 progress={cls="progress";left=16;top=122;right=875;bottom=132;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
 的所在行数(仅限当前屏幕, 不可超出屏幕)

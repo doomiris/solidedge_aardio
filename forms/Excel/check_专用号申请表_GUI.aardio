@@ -240,7 +240,8 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		[38] = function(i){return (string.trim(etab[i].物料描述) !== etab[i].物料描述)}
 		[39] = function(i){
 			if etab[i].SAP物料组 == "SC" 
-				return (string.replace(string.trim(etab[i].物料描述),"已喷","未喷") !== string.trim(etab[i-1].物料描述))
+				if etab[i-1]
+					return (string.replace(string.trim(etab[i].物料描述),"已喷","未喷") !== string.trim(etab[i-1].物料描述))
 		}
 		[40] = function(i){
 			for (j=i+1;#etab;1)
