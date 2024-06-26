@@ -59,6 +59,9 @@ var str_today = function(separator){
 	return tostring(tm);
 }
 import config;
+config.tbm.Designer :=  console.getText( "这是第一次使用, 请先输入姓名:" ) ;
+config.tbm.save();
+
 var username = config.tbm.Designer;
 
 import string.keywords;

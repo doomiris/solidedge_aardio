@@ -145,13 +145,20 @@ qtip_winform.buttonD.oncommand = function(id,event){
 		table.push(fav, {["title"] = favName; ["list"] = getSelectedList()});
 		config.qitp.save();		
 	}
-	
+	var readClipH = function(){
+		var t= domisoft.readClipHcode();
+		if t
+			qtip_winform.editUser3.text = string.join(t,'\r\n');
+		
+	}
+	historyMenu.add("识别剪贴板图像",readClipH);
+	historyMenu.add();
 	var favTab = {
     	[1] = "★ 收藏夹"; 
     	[2] = { 
     			[1] = {
-    				[1] = "+ 添加到收藏夹...";
-    				[2] = addFav;
+    				text = "+ 添加到收藏夹...";
+    				proc = addFav;
         		};
         		[2] = {/* ---- */};
     	}

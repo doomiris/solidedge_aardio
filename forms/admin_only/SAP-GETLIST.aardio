@@ -146,7 +146,7 @@ var importFromQHC = function(winform_getlist, path){
 		winform_getlist.log.print("打开成功");
 	var qSht = qWb.Sheets("Sheet1");
 	qSht.Rows(1).Replace("是否禁用","禁用", 1 /* xlWhole */);
-	//qSht.Rows(1).Replace("大小/量纲","设计展平尺寸", 1 /* xlWhole */);
+	qSht.Rows(1).Replace("大小/量纲","生产展平尺寸", 1 /* xlWhole */);
 	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸", 1 /* xlWhole */);
 	var qTab = qSht.usedRange.Value2;
 	var rc = #qTab;
@@ -214,6 +214,19 @@ var importFromQHC = function(winform_getlist, path){
 		).step()
 	}
 	db.commitTrans();
+	var dual = db.getTable(`
+		SELECT 物料, 物料描述, COUNT(*) AS Count
+		FROM qhc_export
+		GROUP BY 物料
+		HAVING COUNT(*) > 1
+	`)
+	if table.count(dual){
+		winform_getlist.log.print("错误: 有重复的物料");
+		winform_getlist.log.print(dual);
+	}
+	for (i=1; #dual){
+		//db.exec(`delete`,{"物料":dual[i].物料})
+	}
 	db.close();
 	winform_getlist.log.print("写入STEP完成");
 	winform_getlist.button2.disabledText = null;

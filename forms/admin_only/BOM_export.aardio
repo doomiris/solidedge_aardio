@@ -24,7 +24,7 @@ var ts_count = #etab;
 excel.Application.CutCopyMode = false;
 
 _start_col = 9 /* I */;
-_col_count = 8;
+_col_count = 2;
 
 for(j = _start_col; _start_col + _col_count - 1 ){
     if !#etab[2][j] continue;
@@ -95,9 +95,9 @@ for(j = _start_col; _start_col + _col_count - 1 ){
 		
       	table.push(tar, hitem ? hitem.物料描述 : "");	//列名:物料描述
       	table.push(tar, bun);			//列名:单位用量
-      	table.push(tar, hitem ? hitem.BUn : "");	//列名： 单位
+      	table.push(tar, hitem ? hitem.BUn : etab[i][[5] /* E */]);	//列名： 单位
       	table.push(tar, "");	//列名:排序文本
-      	table.push(tar, hitem ? hitem.MTyp : ""); //列名:物料类型
+      	table.push(tar, hitem ? hitem.MTyp : etab[i][[6] /* F */]); //列名:物料类型
       	table.push(tar, #etab[i][7 /* G */]  ?  etab[i][7 /* G */] : ""); //列名: 相关性语句
       	
       	if !#tar[1 /* A */] or !#tar[4 /* D */] continue; //跳过 无层级 和 无专用号的行
@@ -120,14 +120,14 @@ for(j = _start_col; _start_col + _col_count - 1 ){
 		excel.Run("initExportedBom"); //调用宏格式化样式
 	}
 */
-	QHC.formatBOM(tsht);
+
     
     excel.alerts = false;	//调用的宏重置了此状态    
     tbk.SaveAs( "d:\temp\"++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx");
     
     
    // console.log((j-9) ++ "/8", tbk.FullName);
-    
+	QHC.formatBOM(tsht);
     tbk.close();
     excel.alerts = true;
 }

@@ -129,17 +129,19 @@ winform_drawing.listview2.translateAccelerator = function( msg ){
 		var tab = table.array();
 		for (i=1; owner.count){
 			if (table.find(owner.selected,i)){
-				table.push(tab, owner.getItemText(i, table.indexOf(header,"路径")) ++ owner.getItemText(i, table.indexOf(header,"文件名")));
+				var fullname = owner.getItemText(i, table.indexOf(header,"路径")) ++ owner.getItemText(i, table.indexOf(header,"文件名"));
+				if io.exist(fullname)
+					table.push(tab, fullname);
 			}
 		}     
-		if io.exist(tab[[1]])
-			win.clip.file.write(tab[[1]],"copy");	//TODO: 多文件copy
+		if #tab
+			win.clip.file.write(tab,"copy");	//TODO: 多文件copy
         return true;
     }
 }
 
 subscribe("qtip_search_4", function(...){
-	var pcode = ...
+	var pcode = ...;
 	if pcode
 		searchDocument(pcode);
 	refreshFiles();

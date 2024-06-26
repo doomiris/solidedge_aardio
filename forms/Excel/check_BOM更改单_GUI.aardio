@@ -45,36 +45,13 @@ if chk_excel_BOM_REV_form.combobox2.count {
 	chk_excel_BOM_REV_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 
-/*etab相关函数{{*/
-/*
-var getUpLevel = function(currentLevel){
-	return string.left(currentLevel, #currentLevel - 2) ++ string.right(currentLevel, 1) - 1;
-}
-
-var  getSubLevel = function(currentLevel){
-	return string.left(currentLevel, 1) ++ string.left(currentLevel, #currentLevel - 1) ++ string.right(currentLevel, 1) + 1
-}
-
-var hasChild = function(z){
-	if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
-	else return false; 
-}
-var getParentIndex = function(current_index){
-	for (i= current_index-1 ; 1; -1) {
-		if etab[i].层级数 == (etab[current_index].层级数-1)
-			return i; 
-	}
-}
-*/
-/*}}*/
-
-
 chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	if !#chk_excel_BOM_REV_form.combobox2.selText return ; 	
 
 	sht = domisoft.getRunningWorkSheet(chk_excel_BOM_REV_form.combobox2.selText)
 	excel_2 = sht.Parent.Application;
-
+	var workbook_name = sht.Parent.Name;
+	
 	etab = (function(){
 			var fields = {
 				"原父项"; "原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"; "更改备注";
@@ -103,6 +80,14 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	})();
 	
 	var etab_count = #etab;
+	
+	var pcodeOffset = function(pcode, offset = 1){
+		if !pcode return ;
+		pcode = string.trimleft(pcode, "H00");
+		pcode = tonumber(pcode) + offset;
+		return "H00" ++ pcode;  
+	}
+
 
 /*RULES_DESP{{*/
 	var rule_desp = {
@@ -121,8 +106,13 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 		[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
 		[14] = "相同内容重复操作(在此行之前有重复项)";
 		[15] = "缺少更改备注";
-		[16] = "操作KMAT请标记出是否有OD变更";
-		[17] = "请移除空行";
+		[16] = "操作KMAT请标记出是否有OD变更, 如OD不变可忽略";
+		[17] = "请移除空行(末尾空行可忽略)";
+		[18] = "替换子项前后无区别";
+		[19] = "已喷物料和未喷物料号码相隔太远(如特殊情况请确认是否可忽略)";
+	}
+	var top_rule_desp = {
+		[1] = "涉及语句变更的, 文件名部分需要指定:-是-否";
 	}
 /*}}*/
 	
@@ -213,11 +203,32 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 				if !etab[i][["原父项"]]
 					return !etab[i][["新父项"]] || etab[i][["新父项"]]==0
 		}
+		[18]=function(i){
+			if etab[i][["更改备注"]] == "替换子项"
+				return etab[i][["原子项"]] == etab[i][["新子项"]];
+
+		}
+		[19]=function(i){
+			if etab[i][["更改备注"]] == "新增BOM"
+				if string.indexOf(etab[i][["新子项描述"]],"未喷")
+					return etab[i][["原父项"]] !== pcodeOffset(etab[i][["新子项"]]);
+		}
+
 	};
+	var top_rule_err = {
+		[1]=function(){
+			var od_sht = sht.Parent.Sheets.Item("销售语句");			
+			var col_c = od_sht.usedrange.columns("C").value2;			
+			col_c = table.filter(col_c, λ(v, index) #v);			
+			var od_added = (#col_c !== 4)
+			return !string.indexOf(workbook_name,"-是-") == od_added;
+		}
+	}
+
 	/*}}*/
 	
 	
-	var bar = chk_excel_BOM_REV_form.progress
+	var bar = chk_excel_BOM_REV_form.progress;
 	bar.min = 0;
 	bar.max = etab_count;
 	getErr = {};
@@ -233,6 +244,14 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			})
 		}
 	}
+	for(j=1; #top_rule_err){
+		if top_rule_err[j]()
+			table.insert(getErr, {
+			"行":1;
+			"相关物料号": " "; /*etab[i].原父项;*/
+			"错误描述": top_rule_desp[j];
+		})
+	}
 	
 	
 	
@@ -244,9 +263,10 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	
 }
 chk_excel_BOM_REV_form.onDestroy = function(){
-   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
-   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
-
+	try{
+   		if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   		if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+	}
 }
 
 /*点击定位{{*/

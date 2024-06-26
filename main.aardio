@@ -55,13 +55,10 @@ if(!atom){
 
 /*自动更新模块{{*/
 /*
-import fsys.update.simpleMain;
-if( fsys.update.simpleMain(
-	"TBM",
-	"https://doomiris.github.io/TBM/version.json",
-	..io.appData("/domisoft/SETBM/update"),
-	function(version,description,status){})){
-	return 0;	
+if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
+{
+	win.msgbox("new version")
+	return 0;
 }
 */
 /*}}*/
@@ -105,12 +102,17 @@ mainForm.onMinimize = function(lParam){
 	mainForm.show(false); 
 	return true; 
 }
-
+	
 mainForm.onClose = function(hwnd,message,wParam,lParam){
 /*
 	if time().diffday(start_time) > 1
 		win.quitMessage(); //如果程序启动超过1天则退出;
 */
+	if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
+	{
+		win.quitMessage();
+		return 0;
+	}
 	mainForm.onMinimize();
 	return true;
 }

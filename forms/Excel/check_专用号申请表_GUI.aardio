@@ -311,8 +311,10 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 	
 }
 chk_excel_NewPart_form.onDestroy = function(){
-   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
-   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+	try{
+   		if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   		if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+	}
 }
 
 /*点击定位{{*/

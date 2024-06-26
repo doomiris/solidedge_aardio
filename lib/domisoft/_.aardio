@@ -94,6 +94,48 @@ ctrlC = function(msg){
         return true;
     }
 }
+readClipHcode = function(){
+	import win.clip;
+	import dotNet.ocr;
+	var ocr = dotNet.ocr();
+	ocr.language = "en-US"
+	var hBmp = win.clip.readBitmap()
+	if(!hBmp){
+		//winform.edit.print("剪贴板未读取到图像")
+		return;
+	}
+	
+	var bmp = ..gdip.bitmap(hBmp);
+	var ocrRet = ocr.detectBitmap(bmp);
+	var t = {};
+	if(ocrRet){  
+		//winform.edit.text = ocrRet.text;
+		//winform.edit.text = "";
+		
+		import web.json;
+		for i,block in table.eachIndex(ocrRet.blocks){
+			var s = string.trim(block.text);
+			if string.startWith(s, "008")
+				s = "H" ++ s;
+			//	return ; 
+			s = string.replace(s,",","");
+			s = string.replace(s,"O","0");
+			s = string.replace(s,"B","8");
+			s = string.replace(s,"g","9");
+			s = string.replace(s,"€","6");
+			s = string.replace(s,"t","6");
+			s = string.replace(s,"S","5");
+			
+			if string.startWith(s, "8008")
+				s = string.replace(s, "8008", "H008", 1);
+			if string.startWith(s, "'-1")
+				s = string.replace(s, "'-1", "H")
+			table.push(t,s);
+
+		}
+	}
+	return t; 
+}
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
@@ -103,5 +145,6 @@ getSelectedText(listbox) = 返回选中的文本数组
 getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指定worksheetName时返回sheets(1)
 taobaoURLsimple(taobaoUrl) = 简化taobao链接
 ctrlC = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
+readClipHcode() = 获取截图中的专用号
 end intellisense**/
 

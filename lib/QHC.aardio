@@ -64,6 +64,9 @@ class 下料尺寸{
 		foam.material_black ="H0088200013";
 		
 		*/
+		/* 工时成本 */
+		// labour = 114.5 /* 元/小时 */
+		
 		this.powder = (m<0.001) ? 0.001 : math.round(m, precision);
 		this.powderItem =  rawTab["白色"] ;
 		/* 
@@ -219,18 +222,19 @@ formatColor = function(UsedRange){
 	
 	//设置颜色
 	var fConds = UsedRange.formatConditions;
-	fConds.addCond = function(rule,rgb){		
-		var fmtCds = owner.Add( 2 /* xlExpression */, ,rule);
+	
+	var addCond = function(rule,rgb){		
+		var fmtCds = fConds.Add( 2 /* xlExpression */, ,rule);
 		fmtCds.Interior.Color = color.rgb(table.unpack(rgb));
 		fmtCds.Stopiftrue = false;
 	}
-	
-	fConds.addCond("=($A1="".1"")",{0, 176, 80});
-	fConds.addCond("=($A1=""..2"")",{79, 98, 40});
-	fConds.addCond("=($A1=""...3"")",{118, 147, 60});
-	fConds.addCond("=($A1=""....4"")",{196, 215, 155});
-	fConds.addCond("=($A1="".....5"")",{216, 228, 188});
-	fConds.addCond("=($A1=""......6"")",{235, 241, 222});
+
+	addCond("=($A1="".1"")",{0, 176, 80});
+	addCond("=($A1=""..2"")",{79, 98, 40});
+	addCond("=($A1=""...3"")",{118, 147, 60});
+	addCond("=($A1=""....4"")",{196, 215, 155});
+	addCond("=($A1="".....5"")",{216, 228, 188});
+	addCond("=($A1=""......6"")",{235, 241, 222});
 }
 
 

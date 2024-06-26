@@ -23,9 +23,8 @@ import domisoft;
 */
 
 var excel_0 = com.excel(false);
-var excel_2;
-var getErr = {};
-var etab = {};
+
+
 com.enumRunning( 
 	function(displayName,object){
 		try{
@@ -44,279 +43,303 @@ if chk_excel_sht_form.combobox2.count {
 	chk_excel_sht_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 
-/*etab相关函数{{*/
-var getUpLevel = function(currentLevel){
-	return string.left(currentLevel, #currentLevel - 2) ++ string.right(currentLevel, 1) - 1;
-}
 
-var  getSubLevel = function(currentLevel){
-	return string.left(currentLevel, 1) ++ string.left(currentLevel, #currentLevel - 1) ++ string.right(currentLevel, 1) + 1
-}
+var excel_2;
 
-var hasChild = function(z){
-	if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
-	else return false; 
-}
-var getParentIndex = function(current_index){
-	for (i= current_index-1 ; 1; -1) {
-		if etab[i].层级数 == (etab[current_index].层级数-1)
-			return i; 
-	}
-}
-/*}}*/
-
+sht = domisoft.getRunningWorkSheet(chk_excel_sht_form.combobox2.selText);
+excel_2 = sht.Parent.Application;
 
 chk_excel_sht_form.button.oncommand = function(id,event){
-	if !#chk_excel_sht_form.combobox2.selText return ; 	
-	sht = domisoft.getRunningWorkSheet(chk_excel_sht_form.combobox2.selText);
-	excel_2 = sht.Parent.Application;
+	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="wait..."}
 	
-	if !sht.Columns("B:B").find("BOM项目") return error("不是新BOM申请表"); 
-	if !sht.Rows("4:4").find("相关性语句") return error("不是最新版申请表"); 
-	var lvlErrFind = sht.columns("A").find("…");	
-	if lvlErrFind and lvlErrFind.rows.count 
-		sht.columns("A").Replace ("…", "..."); //处理层级含非法字符错误
-	etab = (function(){
-			var fields = {
-				"层级";  "BOM项目";  "项目类别";  "物料号";  "物料描述";  "单位用量";  "单位";  "排序文本";  "物料类型";  "相关性语句"
-			};
-			var etr = function(){
-				for (i = sht.usedRange.Rows.Count -3 ; 5; -1){
-					if (sht.cells(i,"A").value2) return i;
-				}
-			}
+	thread.invoke( 
+		function(chk_excel_sht_form){
 			
-			if !etr() return error("找不到边界");
+			if !#chk_excel_sht_form.combobox2.selText return ; 	
+			import tarray;
+			import com.excel;
+			import string.keywords;
+			import config;
+			import fsys.table;
+			import QHC;
+			import domisoft;
+			var getErr = {};
+			var etab = {};
+			var excel_2;
 			
-			var tab = {};
-			var eArr = sht.Range("$A$5:$J$" ++ etr()).value2;
-			for(i=1; #eArr; 1){    
-	    		var d = table.array();
-	    		for (j=1;#fields;1){
-	    			d[fields[j]] = eArr[i][j];
-	    			d["层级数"] = tonumber(string.trimleft(d["层级"], "."));
-				}		
-				table.push(tab,d);
-			}
-			return tab; 
-	})()
-	
-	var etab_count = #etab;
-
-/*RULES_DESP{{*/
-	var rule_desp = {
-		[1] = "层级跳跃错误";
-		[2] = "层级含非法字符或格式错误";
-		[3] = "可选项上级组件不可配置";
-		[4] = "配置件没有下挂可选项(借用组件可忽略, 但是别忘记维护下挂的特征类和默认配置)";
-		[5] = "缺少单位用量或用量为0"; 
-		[6] = "ROH不可有下级物料"; 
-		[7] = "当前组件下有重复项";
-		[8] = "当前物料已禁用或不存在";
-		[9] = "单位错误";
-		[10] = "此行之后有重复添加子项";
-		[11] = "请核实高银焊条用量";
-		[12] = "ZA单位对应数量不应该有小数";
-		[13] = "SC下无粉末";
-		[14] = "HALB无下挂(借用件可忽略)"; 
-		[15] = "原材料用量错误";  //TODO
-		[16] = "物料类型/单位与SAP内不一致"; 
-		[17] = "发泡料比例错误(黑料 = 1.15*白料)"; 
-		[18] = "原材料[厚度]与SAP内已维护的厚度不一致";
-		[19] = "原材料[用量]与SAP内已维护的展开尺寸不一致";		
-	}
-/*}}*/
-	
-/*RULES{{*/
-		var sapErr = {
-		[1] = function(i){
-			if (i == 1) return ; 
-			var c_lv = tonumber(string.trimleft(etab[i].层级, "."))
-    		var u_lv =  tonumber(string.trimleft(etab[i-1].层级, "."))
-    		if (c_lv && u_lv)
-    			if (c_lv > u_lv)
-    				return ( (c_lv - u_lv) !== 1 ) ; 
-		}
-		[2] = function(i){
-			var t = string.split(etab[i].层级,".");
-			return (#t !== t[#t] + 1); 
-		}
-		[3] = function(i){
-			if !etab[i].物料号 return ; 
-			if !string.startWith(etab[i].物料号 ,"H00809") return ; 
-			if (etab[i].物料类型 !== "KMAT" ) return ; 
-			for (j=i-1; 5; -1){
-				if (etab[j].层级数 == etab[i].层级数 - 1){
-					if QHC.getSapItem(etab[j].物料号)
-					return !(QHC.getSapItem(etab[j].物料号).物料组=="SG"); 
-				}
-			}
-		}
-		[4] = function(i){
-			if !etab[i].物料号 return ; 
-			if !string.startWith(etab[i].物料号 ,"H00808") return ; 
-			if (etab[i].物料类型 !== "HALB" ) return ; 
-			if !QHC.getSapItem(etab[i].物料号) return ; 
-			if !(QHC.getSapItem(etab[i].物料号).物料组=="SG") return ; 
-			for (j=i+1; etab_count){
-				if etab[j].层级数 <= etab[i].层级数  break ; 
-				if etab[j].物料号 
-					if string.startWith(etab[j].物料号, "H00809") 
-						return false //当前组件下面发现09号时
-			}
-			return true; 
-		}
-		[5] = function(i){
-			if etab[i].单位用量 return !(tonumber(etab[i].单位用量))
-			else return true; 
-		}
-		[6] = function(i){
-			if (i<etab_count)
-				if (etab[i].物料类型 == "ROH")
-					if etab[i+1] return (etab[i].层级数 < etab[i+1].层级数);
-					
-		}
-		[7] = function(i){
-			var t={};
-			for (n=i+1; etab_count){
-				if etab[n] {
-					if (etab[n].层级数 == etab[i].层级数 + 1) {
-						table.push(t,etab[n].物料号);				
-					}
-					if etab[n].层级数 <= etab[i].层级数 break;
-				}
-			} 
-			return  #(table.unique(t)) !== #t;
-		}
-		[8] = function(i){
-			var sapItem = QHC.getSapItem(etab[i].物料号);
-			if sapItem return (sapItem.禁用 == "禁用");
-			//else return true; 
-		}
-		[9] = function(i){
-			return !table.find({"ZA","KG","M","ROL","BOT"}, string.upper(etab[i].单位));
-		}
-		[10] = function(i){
-			//console.log(i, hasChild(i))
-			if !hasChild(i) return; 
-			var t = table.slice(etab, i+1, etab_count);
-			var tx = tarray.getCol( t, "物料号" );
-			var x = table.find(tx, etab[i].物料号);
-			if x return hasChild(x+i) ;
-		}
-		[11] = function(i){
-			if etab[i].物料号  == "H0088300011"
-				return (etab[i].单位用量 > 0.1);  
-		}
-		[12] = function(i){
-			if etab[i].单位  == "ZA"
-				if !string.indexOf(etab[i].物料描述,"胶带")
-					return !math.isInteger(tonumber(etab[i].单位用量));  
-		}
-		[13] = function(i){
-			var sapItem = QHC.getSapItem(etab[i].物料号);
-			if !sapItem return; 
-			if sapItem.物料组 == "SC" {
-				if !hasChild(i) return;
-				var t={};
-				for (n=i+1; etab_count){
-					if etab[n] {
-						if (etab[n].层级数 == etab[i].层级数 + 1) {
-							table.push(t,etab[n].物料号);
+			sht = domisoft.getRunningWorkSheet(chk_excel_sht_form.combobox2.selText);
+			excel_2 = sht.Parent.Application;
+			
+			if !sht.Columns("B:B").find("BOM项目") return error("不是新BOM申请表"); 
+			if !sht.Rows("4:4").find("相关性语句") return error("不是最新版申请表"); 
+			var lvlErrFind = sht.columns("A").find("…");	
+			if lvlErrFind and lvlErrFind.rows.count 
+				sht.columns("A").Replace ("…", "..."); //处理层级含非法字符错误
+			etab = (function(){
+					var fields = {
+						"层级";  "BOM项目";  "项目类别";  "物料号";  "物料描述";  "单位用量";  "单位";  "排序文本";  "物料类型";  "相关性语句"
+					};
+					var etr = function(){
+						for (i = sht.usedRange.Rows.Count -3 ; 5; -1){
+							if (sht.cells(i,"A").value2) return i;
 						}
-						if etab[n].层级数 <= etab[i].层级数 break;
 					}
-				} 
-				return !table.indexOf(t,"H0088200085"); 
-			}
-		}
-		[14] = function(i){
-			if !etab[i].物料号 return ; 
-			if (etab[i].物料类型 !== "HALB" ) return ; 
-			return !hasChild(i);
-		}
-		[15] = function(i){
-			return false; //TODO
-		}
-		[16] = function(i){
-			var sapItem = QHC.getSapItem(etab[i].物料号);
-			if !sapItem return; 
-			if etab[i].单位 !== sapItem.BUn return true;
-			if etab[i].物料类型 !== sapItem.MTyp return true;
-		}
-		[17] = function(i){
-			if etab[i].物料号 !== "H0080300487" return;
-			var current_tree_lvl = etab[i].层级数;
-			var parent_index = getParentIndex(i);
-			if !parent_index return ; 
-			for (j=parent_index; etab_count){
-				if etab[j].层级数 !== current_tree_lvl continue;
-				if etab[j].物料号 !== "H0088200013" continue;
-				if etab[j].层级数 < current_tree_lvl break;
-				var material_w = etab[i].单位用量;
-				var material_B = etab[j].单位用量;
+					
+					if !etr() return error("找不到边界");
+					
+					var tab = {};
+					var eArr = sht.Range("$A$5:$J$" ++ etr()).value2;
+					for(i=1; #eArr; 1){    
+	    				var d = table.array();
+	    				for (j=1;#fields;1){
+	    					d[fields[j]] = eArr[i][j];
+	    					d["层级数"] = tonumber(string.trimleft(d["层级"], "."));
+						}		
+						table.push(tab,d);
+					}
+					return tab; 
+			})()
 			
-				var scale = 1.15; //黑=1.15白
-				var tolerance = 0.05; //允许误差
-				return (material_B > (1+tolerance) * scale * material_w) or (material_B < (1-tolerance) * scale * material_w);
-			}		 
+			var etab_count = #etab;
+		/*etab相关函数{{*/
+		var getUpLevel = function(currentLevel){
+			return string.left(currentLevel, #currentLevel - 2) ++ string.right(currentLevel, 1) - 1;
 		}
-		[18] = function(i){
-			if string.endWith(etab[i].物料号,"-G",true){
-				var sapItem = QHC.getSapItem(etab[i-1].物料号);
-				if sapItem {
-					var s = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
-				}
-				if !s return ; 
-				var ot = QHC.getRawItem(s)[["物料"]];
-				return ot !== etab[i].物料号;
+		
+		var  getSubLevel = function(currentLevel){
+			return string.left(currentLevel, 1) ++ string.left(currentLevel, #currentLevel - 1) ++ string.right(currentLevel, 1) + 1
+		}
+		
+		var hasChild = function(z){
+			if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
+			else return false; 
+		}
+		var getParentIndex = function(current_index){
+			for (i= current_index-1 ; 1; -1) {
+				if etab[i].层级数 == (etab[current_index].层级数-1)
+					return i; 
 			}
 		}
-		[19] = function(i){
-			if string.endWith(etab[i].物料号,"-G",true){
-				var sapItem = QHC.getSapItem(etab[i-1].物料号);
-				if sapItem {
-					var f = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
-				}
-				if !f return ; 
-				var rawItem = QHC.下料尺寸(f);
-				var tolerance = 0.1;
-				return etab[i].单位用量 > (1+tolerance) * rawItem.metel or etab[i].单位用量 < (1-tolerance) * rawItem.metel; 
+		/*}}*/
+		
+		/*RULES_DESP{{*/
+			var rule_desp = {
+				[1] = "层级跳跃错误";
+				[2] = "层级含非法字符或格式错误";
+				[3] = "可选项上级组件不可配置";
+				[4] = "配置件没有下挂可选项(借用组件可忽略, 但是别忘记维护下挂的特征类和默认配置)";
+				[5] = "缺少单位用量或用量为0"; 
+				[6] = "ROH不可有下级物料"; 
+				[7] = "当前组件下有重复项";
+				[8] = "当前物料已禁用或不存在";
+				[9] = "单位错误";
+				[10] = "此行之后有重复添加子项";
+				[11] = "请核实高银焊条用量";
+				[12] = "ZA单位对应数量不应该有小数";
+				[13] = "SC下无粉末";
+				[14] = "HALB无下挂(借用件可忽略)"; 
+				[15] = "原材料用量错误";  //TODO
+				[16] = "物料类型/单位与SAP内不一致"; 
+				[17] = "发泡料比例错误(黑料 = 1.15*白料)"; 
+				[18] = "原材料[厚度]与SAP内已维护的厚度不一致";
+				[19] = "原材料[用量]与SAP内已维护的展开尺寸不一致";		
 			}
-		}
-	};
-	/*}}*/
-	
-	
-	var bar = chk_excel_sht_form.progress
-	bar.min = 0;
-	bar.max = etab_count;
-	getErr = {};
-	getErr.fields = {"行"; "相关物料号";"错误描述"}
-	for(i=1; etab_count){		
-		bar.pos = i;
-		for(j=1; #sapErr){
-			if sapErr[j](i)
-				table.push(getErr, {
-				"行":i+4;
-				"相关物料号": etab[i].物料号;
-				"错误描述": rule_desp[j];
-			})
-		}
-	}
-	
-	
-	
-	chk_excel_sht_form.listview.setTable(getErr);
-	
-	chk_excel_sht_form.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
-	chk_excel_sht_form.listview.setColumn({cx=120 ;fmt=0x2/*_LVCFMT_CENTER*/},2);
-    chk_excel_sht_form.listview.fillParent(3);
-	
+		/*}}*/
+			
+		/*RULES{{*/
+				var sapErr = {
+				[1] = function(i){
+					if (i == 1) return ; 
+					var c_lv = tonumber(string.trimleft(etab[i].层级, "."))
+    				var u_lv =  tonumber(string.trimleft(etab[i-1].层级, "."))
+    				if (c_lv && u_lv)
+    					if (c_lv > u_lv)
+    						return ( (c_lv - u_lv) !== 1 ) ; 
+				}
+				[2] = function(i){
+					var t = string.split(etab[i].层级,".");
+					return (#t !== t[#t] + 1); 
+				}
+				[3] = function(i){
+					if !etab[i].物料号 return ; 
+					if !string.startWith(etab[i].物料号 ,"H00809") return ; 
+					if (etab[i].物料类型 !== "KMAT" ) return ; 
+					for (j=i-1; 5; -1){
+						if (etab[j].层级数 == etab[i].层级数 - 1){
+							if QHC.getSapItem(etab[j].物料号)
+							return !(QHC.getSapItem(etab[j].物料号).物料组=="SG"); 
+						}
+					}
+				}
+				[4] = function(i){
+					if !etab[i].物料号 return ; 
+					if !string.startWith(etab[i].物料号 ,"H00808") return ; 
+					if (etab[i].物料类型 !== "HALB" ) return ; 
+					if !QHC.getSapItem(etab[i].物料号) return ; 
+					if !(QHC.getSapItem(etab[i].物料号).物料组=="SG") return ; 
+					for (j=i+1; etab_count){
+						if etab[j].层级数 <= etab[i].层级数  break ; 
+						if etab[j].物料号 
+							if string.startWith(etab[j].物料号, "H00809") 
+								return false //当前组件下面发现09号时
+					}
+					return true; 
+				}
+				[5] = function(i){
+					if etab[i].单位用量 return !(tonumber(etab[i].单位用量))
+					else return true; 
+				}
+				[6] = function(i){
+					if (i<etab_count)
+						if (etab[i].物料类型 == "ROH")
+							if etab[i+1] return (etab[i].层级数 < etab[i+1].层级数);
+							
+				}
+				[7] = function(i){
+					var t={};
+					for (n=i+1; etab_count){
+						if etab[n] {
+							if (etab[n].层级数 == etab[i].层级数 + 1) {
+								table.push(t,etab[n].物料号);				
+							}
+							if etab[n].层级数 <= etab[i].层级数 break;
+						}
+					} 
+					return  #(table.unique(t)) !== #t;
+				}
+				[8] = function(i){
+					var sapItem = QHC.getSapItem(etab[i].物料号);
+					if sapItem return (sapItem.禁用 == "禁用");
+					//else return true; 
+				}
+				[9] = function(i){
+						return !table.find({"ZA","KG","M","ROL","BOT"}, string.upper(etab[i].单位||""));
+				}
+				[10] = function(i){
+					//console.log(i, hasChild(i))
+					if !hasChild(i) return; 
+					var t = table.slice(etab, i+1, etab_count);
+					var tx = tarray.getCol( t, "物料号" );
+					var x = table.find(tx, etab[i].物料号);
+					if x return hasChild(x+i) ;
+				}
+				[11] = function(i){
+					if etab[i].物料号  == "H0088300011"
+						return (etab[i].单位用量 > 0.1);  
+				}
+				[12] = function(i){
+					if etab[i].单位  == "ZA"
+						if !string.indexOf(etab[i].物料描述||"","胶带")
+							return !math.isInteger(tonumber(etab[i].单位用量));  
+				}
+				[13] = function(i){
+					var sapItem = QHC.getSapItem(etab[i].物料号);
+					if !sapItem return; 
+					if sapItem.物料组 == "SC" {
+						if !hasChild(i) return;
+						var t={};
+						for (n=i+1; etab_count){
+							if etab[n] {
+								if (etab[n].层级数 == etab[i].层级数 + 1) {
+									table.push(t,etab[n].物料号);
+								}
+								if etab[n].层级数 <= etab[i].层级数 break;
+							}
+						} 
+						return !table.indexOf(t,"H0088200085"); 
+					}
+				}
+				[14] = function(i){
+					if !etab[i].物料号 return ; 
+					if (etab[i].物料类型 !== "HALB" ) return ; 
+					return !hasChild(i);
+				}
+				[15] = function(i){
+					return false; //TODO
+				}
+				[16] = function(i){
+					var sapItem = QHC.getSapItem(etab[i].物料号);
+					if !sapItem return; 
+					if etab[i].单位 !== sapItem.BUn return true;
+					if etab[i].物料类型 !== sapItem.MTyp return true;
+				}
+				[17] = function(i){
+					if etab[i].物料号 !== "H0080300487" return;
+					var current_tree_lvl = etab[i].层级数;
+					var parent_index = getParentIndex(i);
+					if !parent_index return ; 
+					for (j=parent_index; etab_count){
+						if etab[j].层级数 !== current_tree_lvl continue;
+						if etab[j].物料号 !== "H0088200013" continue;
+						if etab[j].层级数 < current_tree_lvl break;
+						var material_w = etab[i].单位用量;
+						var material_B = etab[j].单位用量;
+					
+						var scale = 1.15; //黑=1.15白
+						var tolerance = 0.05; //允许误差
+						return (material_B > (1+tolerance) * scale * material_w) or (material_B < (1-tolerance) * scale * material_w);
+					}		 
+				}
+				[18] = function(i){
+					if string.endWith(etab[i].物料号,"-G",true){
+						var sapItem = QHC.getSapItem(etab[i-1].物料号);
+						if sapItem {
+							var s = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
+						}
+						if !s return ; 
+						var ot = QHC.getRawItem(s)[["物料"]];
+						return ot !== etab[i].物料号;
+					}
+				}
+				[19] = function(i){
+					if string.endWith(etab[i].物料号,"-G",true){
+						var sapItem = QHC.getSapItem(etab[i-1].物料号);
+						if sapItem {
+							var f = sapItem[["生产展平尺寸"]] or sapItem[["设计展平尺寸"]];
+						}
+						if !f return ; 
+						var rawItem = QHC.下料尺寸(f);
+						var tolerance = 0.1;
+						return etab[i].单位用量 > (1+tolerance) * rawItem.metel or etab[i].单位用量 < (1-tolerance) * rawItem.metel; 
+					}
+				}
+			};
+			/*}}*/
+			
+			var bar = chk_excel_sht_form.progress
+			bar.min = 0;
+			bar.max = etab_count;
+			getErr = {};
+			getErr.fields = {"行"; "相关物料号";"错误描述"}
+			for(i=1; etab_count){		
+				bar.pos = i;
+				for(j=1; #sapErr){
+					if sapErr[j](i)
+						table.push(getErr, {
+						"行":i+4;
+						"相关物料号": etab[i].物料号;
+						"错误描述": rule_desp[j];
+					})
+				}
+			}
+			
+			
+			
+			chk_excel_sht_form.listview.setTable(getErr);
+			
+			chk_excel_sht_form.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
+			chk_excel_sht_form.listview.setColumn({cx=120 ;fmt=0x2/*_LVCFMT_CENTER*/},2);
+    		chk_excel_sht_form.listview.fillParent(3);
+    		chk_excel_sht_form.button.disabledText = null;
+   		
+		}, chk_excel_sht_form
+	) 
 }
 chk_excel_sht_form.onDestroy = function(){
-   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
-   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+	try{
+   		if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   		if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+	}
 }
 
 chk_excel_sht_form.listview.onSelChanged = function(selected,item,subItem,nmListView){
@@ -326,32 +349,31 @@ chk_excel_sht_form.listview.onSelChanged = function(selected,item,subItem,nmList
 	if row
 		excel_2.ActiveWindow.ScrollRow = row;
 }
-
+var mylist;
 chk_excel_sht_form.listview.onnotify = function(id,code,ptr){
 	select(code) {
     	case 0xFFFFFFFB/*_NM_RCLICK*/ {
     		var selectedRow = owner.getSelection();
     		if !selectedRow return ; 
 			var x,y = win.getMessagePos();
-		
-			var menu = win.ui.popmenu(chk_excel_sht_form);			
+			mylist = owner.items;
+			var menu = win.ui.popmenu(chk_excel_sht_form);	
 			menu.add("隐藏可忽略项", function(){
-				var t = table.filter(getErr,
+				var t = table.filter(mylist,
 					function(v,index){
 						return !string.indexOf(v["错误描述"], "可忽略"); 
 					}
 				);
-				t.fields = getErr.fields;
-				chk_excel_sht_form.listview.setTable(t);
+				//t.fields = getErr.fields;
+				chk_excel_sht_form.listview.items = t;
 			});
-			menu.add("显示可忽略项", λ() chk_excel_sht_form.listview.setTable(getErr));
+			menu.add("显示可忽略项", λ() chk_excel_sht_form.listview.items = mylist);
 			menu.popup(x,y,true);
     	}
     }
 }
 /* CTRLC复制模块 */
 chk_excel_sht_form.listview.translateAccelerator = domisoft.ctrlC;
-
 
 
 chk_excel_sht_form.show();

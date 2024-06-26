@@ -33,7 +33,7 @@ sht.columns("C").Replace ("20210", "2021");
 sht.columns("C").Replace ("3021", "2021");
 */
 var etab = getTabFromRange(sht.range("C6:J" ++ sht.UsedRange.Rows[sht.UsedRange.Rows.Count].row))
-console.log(#etab,"行, 数据获取成功")
+console.log(#etab,"行, 数据获取成功, 按任意键开始导入")
 
 console.more()
 

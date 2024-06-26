@@ -63,7 +63,8 @@ var refresh = function(){
 	update_sap_item_form.titleRow = f.row;
 	titleRng = titleRng.value2[[update_sap_item_form.titleRow]];	//查找范围前10行
 	titleRng = tarray.replaceValue(titleRng,"专用号", "物料"); //考虑其它命名方式
-
+	titleRng = tarray.replaceValue(titleRng,"SAP展开尺寸", "生产展平尺寸"); //考虑其它命名方式
+	titleRng = tarray.replaceValue(titleRng,"SAP展平尺寸", "生产展平尺寸"); //考虑其它命名方式
 	for (i=1; #tab){
 		var match = tarray.indexContains(titleRng, tab[i][fields[1]]);
 		//win.msgbox(tab[i][fields[1]])

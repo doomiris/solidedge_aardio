@@ -197,6 +197,7 @@ findKeyWords = function(arr, what){ //一维数组不可用
 	for rowIndex, row in arr{
 		for colIndex, cellValue in row {
 			if !cellValue continue;
+			cellValue = tostring(cellValue);
 			if string.keywords(what).findOne(cellValue)
 				return {
 					row = rowIndex;

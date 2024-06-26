@@ -8,6 +8,7 @@ listview={cls="listview";left=0;top=0;right=472;bottom=400;ah=1;aw=1;db=1;dl=1;d
 
 import QHC
 import tarray;
+import domisoft;
 /*
 import console
 console.open()
@@ -79,5 +80,8 @@ subscribe("qtip_search_3",function(...){
 	if string.startWith(pcode, "BG", true)
 		showProductDetail(pcode);
 } )
+
+winform_search.listview.translateAccelerator = domisoft.ctrlC;
+
 win.loopMessage();
-return winform_search; 
+return winform_search;
