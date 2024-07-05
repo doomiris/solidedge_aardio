@@ -1,11 +1,12 @@
 import win.ui;
 /*DSG{{*/
-var chk_excel_BOM_REV_form = win.form(text="检查BOM更改单";right=759;bottom=400)
+var chk_excel_BOM_REV_form = win.form(text="检查BOM更改单";right=759;bottom=400;)
 chk_excel_BOM_REV_form.add(
-button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1};
-combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
-listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
-progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4}
+button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1;};
+combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3;};
+listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2;};
+progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4;};
+
 )
 /*}}*/
 
@@ -51,7 +52,7 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	sht = domisoft.getRunningWorkSheet(chk_excel_BOM_REV_form.combobox2.selText)
 	excel_2 = sht.Parent.Application;
 	var workbook_name = sht.Parent.Name;
-	
+	var od_sht = sht.Parent.Sheets.Item("销售语句");
 	etab = (function(){
 			var fields = {
 				"原父项"; "原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"; "更改备注";
@@ -113,6 +114,7 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	}
 	var top_rule_desp = {
 		[1] = "涉及语句变更的, 文件名部分需要指定:-是-否";
+		[2] = "[第二页]新增的特性值描述不能超过30个字符";
 	}
 /*}}*/
 	
@@ -210,18 +212,25 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 		}
 		[19]=function(i){
 			if etab[i][["更改备注"]] == "新增BOM"
-				if string.indexOf(etab[i][["新子项描述"]],"未喷")
+				if etab[i][["新子项描述"]] and string.indexOf(etab[i][["新子项描述"]],"未喷")
 					return etab[i][["原父项"]] !== pcodeOffset(etab[i][["新子项"]]);
 		}
 
 	};
 	var top_rule_err = {
-		[1]=function(){
-			var od_sht = sht.Parent.Sheets.Item("销售语句");			
-			var col_c = od_sht.usedrange.columns("C").value2;			
+		[1]=function(){	
+			var col_c = od_sht.usedrange.columns("C").value2;
 			col_c = table.filter(col_c, λ(v, index) #v);			
 			var od_added = (#col_c !== 4)
 			return !string.indexOf(workbook_name,"-是-") == od_added;
+		}
+		[2]=function(){		
+			var col_e = od_sht.usedRange.Columns("E").value2;
+			for (i=1; #col_e){
+				if !col_e[i][[1]] continue;
+				if col_e[i][[1]] == "特性" break;
+				if string.len(col_e[i][[1]])>30 return true; 
+			}	
 		}
 	}
 

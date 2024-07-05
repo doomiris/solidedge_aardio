@@ -184,7 +184,7 @@ findString = function(arr, what){ //一维数组专用
 		if !Value continue;
 		if type(Value) == "number"
 			Value = tostring(Value);
-		if ..string.find(Value, "@" + what)
+		if ..string.find(Value, "@@" + what)
 			return {
 				index = index;
 				value = Value;

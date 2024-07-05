@@ -14,7 +14,7 @@ listview={cls="listview";left=0;top=112;right=760;bottom=432;ah=1;aw=1;db=1;dl=1
 import config;
 /*sqliteDB{{*/
 import sqlite;
-var db,err = sqlite(config.dbServer.path + "qhc_dw_rel_list.db");	//打开数据库连接
+var db,err = sqlite(io.joinpath(config.dbServer.path,"qhc_dw_rel_list.db"));	//打开数据库连接
 if (err) error(err)
 /*}}*/
 	//import console

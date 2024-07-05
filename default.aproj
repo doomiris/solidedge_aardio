@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.420" ProductVersion="1.5.0.420" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.438" ProductVersion="1.5.0.438" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -19,6 +19,7 @@
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
+			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
 			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
 			<file name="BOM-CALC.aardio" path="forms\Excel\BOM-CALC.aardio" comment="forms\Excel\BOM-CALC.aardio"/>
 			<file name="check_BOM更改单_GUI.aardio" path="forms\Excel\check_BOM更改单_GUI.aardio" comment="forms\Excel\check_BOM更改单_GUI.aardio"/>
@@ -30,7 +31,6 @@
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
 			<file name="物料名称生成.aardio" path="forms\Excel\物料名称生成.aardio" comment="forms\Excel\物料名称生成.aardio"/>
-			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
@@ -100,6 +100,7 @@
 			<file name="download-cost-bom-va02.aardio" path="forms\SAP\download-cost-bom-va02.aardio" comment="forms\SAP\download-cost-bom-va02.aardio"/>
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="下载订单BOM.aardio" path="forms\SAP\下载订单BOM.aardio" comment="forms\SAP\下载订单BOM.aardio"/>
+			<file name="获取订单清单信息.aardio" path="forms\SAP\获取订单清单信息.aardio" comment="forms\SAP\获取订单清单信息.aardio"/>
 		</folder>
 		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="false">
 			<file name="loader.aardio" path="forms\side_loader\loader.aardio" comment="forms\side_loader\loader.aardio"/>
@@ -127,6 +128,7 @@
 			<file name="shortcut.aardio" path="forms\TEST\shortcut.aardio" comment="forms\TEST\shortcut.aardio"/>
 			<file name="winform1.aardio" path="forms\TEST\winform1.aardio" comment="forms\TEST\winform1.aardio"/>
 			<file name="加减法.aardio" path="forms\TEST\加减法.aardio" comment="forms\TEST\加减法.aardio"/>
+			<file name="动态提示下拉框winform1.aardio" path="forms\TEST\动态提示下拉框winform1.aardio" comment="forms\TEST\动态提示下拉框winform1.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\TEST\将选中区域提取为一维字符串数组.aardio" comment="forms\TEST\将选中区域提取为一维字符串数组.aardio"/>
 			<file name="提取原材料用量追加到物料后列.aardio" path="forms\TEST\提取原材料用量追加到物料后列.aardio" comment="forms\TEST\提取原材料用量追加到物料后列.aardio"/>
 			<file name="查找图号.aardio" path="forms\TEST\查找图号.aardio" comment="forms\TEST\查找图号.aardio"/>

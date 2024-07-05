@@ -44,7 +44,7 @@ var initDeclare = function(){
 /*}}*/
 
 import config;
-var dbpath = config.dbServer.path + "tbm.db";
+var dbpath =io.joinpath(config.dbServer.path,"tbm.db");
 
 import sqlite;
 var dbRs = sqlite(dbpath);	//打开数据库连接

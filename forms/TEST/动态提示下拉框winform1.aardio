@@ -1,0 +1,44 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469;)
+winform.add(
+cb_material={cls="combobox";left=183;top=208;right=435;bottom=234;edge=1;items={};mode="dropdown";vscroll=1;z=1;};
+
+)
+/*}}*/
+
+import console
+console.open();
+
+import config;
+import sqlite;
+var dbpath = io.joinpath(config.dbServer.path, "tbm.db"); 
+var dbRs = sqlite(dbpath);	//打开数据库连接
+import tarray;
+var tab = dbRs.getTable("SELECT * from [SE_TBM_Lists]");
+
+var getSuggest = function(tab, cType, keyword){
+	var t = table.filter(tab,function(v,index){
+		if v["ListName"] !== cType return ; 
+		return string.find(v["Title"], "@@"+keyword); 
+	})
+	return tarray.getCol(t, "Title");
+}
+
+winform.getCtrlNameByID = function(id){
+    for(k,v in owner)
+        if v[["id"]] == id
+            return k;   
+}
+//winform.cb_material.autoComplete(
+
+winform.cb_material.onEditChange = function(){ 
+	var ctl = string.trimleft(owner.parent.getCtrlNameByID(owner.id), "cb_");
+	var result =  getSuggest(tab, ctl, owner.text);
+	result = table.slice(result,1,10);
+	owner.autoComplete(result)
+}
+
+
+winform.show();
+win.loopMessage();

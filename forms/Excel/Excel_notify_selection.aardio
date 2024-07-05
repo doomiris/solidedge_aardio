@@ -1,33 +1,8 @@
 //通知窗口 
 import console;
 import com;
-var w_index = 1
-var excel_app_tab={};
 import domisoft;
-domisoft.clearExcelCorpse();
-com.enumRunning( 
-	function(displayName,object){
-			if com.GetTypeInfo(object) {
-				if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-					if !table.indexOf(excel_app_tab, object.FullName||displayName) {
-						if io.splitpath(displayName).ext !== ".xlam" {
-							//console.log(w_index, io.splitpath(displayName).file);				
-							excel_app_tab[w_index] = object;
-							w_index++;
-						}
-					}
-				}
-			}
-	}
-)
-if #excel_app_tab return; 
-var getExcel_index = 1;
-
-var sht = excel_app_tab[getExcel_index].ActiveSheet;
-excel_app_tab = null;
-
-if !sht console.pause("需要重新执行");
-
+var sht = domisoft.getRunningWorkSheet();
 
 import win.ui;
 
@@ -45,8 +20,7 @@ static={cls="static";text="SAP物料速查";left=8;top=0;right=312;bottom=24;fon
 import config;
 /*sqliteDB{{*/
 import sqlite;
-var sapdb = config.dbServer.path + "qhcsap.db";
-var db,err = sqlite(sapdb);	//打开数据库连接
+var db,err = sqlite(io.joinpath(config.dbServer.path, "qhcsap.db"));	//打开数据库连接
 
 if (err) error(err)
 /*}}*/

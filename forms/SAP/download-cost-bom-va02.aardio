@@ -110,12 +110,13 @@ var filterRed = function(wform){
 		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
 		
 		'处理销售订单重估问题
+		on error resume next
 		set reobj = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
 		if not reobj is nothing then
 			reobj.press	
 			session.findById("wnd[1]/tbar[0]/btn[0]").press
 		end if
-		
+		on error goto 0
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
 		session.findById("wnd[0]/tbar[1]/btn[20]").press
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "CMF_LIGHTS"
@@ -319,14 +320,17 @@ va02_form.button4.oncommand = function(id,event){
 				dim testobj
 				on error resume next
 				set testobj = session.findById("wnd[0]/usr/subHEADER:SAPMV45A:0460/txtVBAP-POSNR")
-				do while testobj is not nothing
+				for i=1 to 15
 					session.findById("wnd[0]/tbar[1]/btn[8]").press					
 					set testobj = session.findById("wnd[0]/usr/subHEADER:SAPMV45A:0460/txtVBAP-POSNR")					
-				loop
+				next
 				on error goto 0
-
     		*/
 			wform.button4.disabledText = null;
+/*
+列, 行, 从0开始
+wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,0]
+*/		
 		}, va02_form
 	)
 }

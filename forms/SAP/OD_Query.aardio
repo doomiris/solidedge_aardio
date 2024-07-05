@@ -3,21 +3,22 @@ import win.ui;
 import tarray;
 import domisoft;
 /*DSG{{*/
-var winform_od_query = win.form(text="分类和特性查询";right=999;bottom=751)
+var winform_od_query = win.form(text="分类和特性查询";right=999;bottom=751;)
 winform_od_query.add(
-button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;color=255;db=1;dl=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
-button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;db=1;dl=1;z=9};
-edit={cls="edit";left=8;top=32;right=216;bottom=64;dl=1;dt=1;edge=1;z=6};
-edit2={cls="edit";left=232;top=32;right=528;bottom=64;dl=1;dt=1;edge=1;z=8};
-listview1={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;z=1};
-listview2={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=2};
-listview3={cls="listview";left=536;top=88;right=992;bottom=728;ah=1;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
-listview4={cls="listview";left=8;top=232;right=216;bottom=632;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=13};
-splitter={cls="splitter";left=216;top=88;right=224;bottom=624;ah=1;db=1;dt=1;frame=1;z=4};
-splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;frame=1;z=5};
-static={cls="static";text="分类";left=8;top=72;right=88;bottom=88;dl=1;dt=1;transparent=1;z=10};
-static2={cls="static";text="特性";left=224;top=72;right=304;bottom=88;dl=1;dt=1;transparent=1;z=11};
-static3={cls="static";text="特性值";left=536;top=72;right=616;bottom=88;dl=1;dt=1;transparent=1;z=12}
+button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;color=255;db=1;dl=1;font=LOGFONT(h=-16;name='FontAwesome');z=7;};
+button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;db=1;dl=1;z=9;};
+edit={cls="edit";left=8;top=32;right=216;bottom=64;dl=1;dt=1;edge=1;z=6;};
+edit2={cls="edit";left=232;top=32;right=528;bottom=64;dl=1;dt=1;edge=1;z=8;};
+listview1={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;z=1;};
+listview2={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=2;};
+listview3={cls="listview";left=536;top=88;right=992;bottom=728;ah=1;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;z=3;};
+listview4={cls="listview";left=8;top=232;right=216;bottom=632;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=13;};
+splitter={cls="splitter";left=216;top=88;right=224;bottom=624;ah=1;db=1;dt=1;frame=1;z=4;};
+splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;frame=1;z=5;};
+static={cls="static";text="分类";left=8;top=72;right=88;bottom=88;dl=1;dt=1;transparent=1;z=10;};
+static2={cls="static";text="特性";left=224;top=72;right=304;bottom=88;dl=1;dt=1;transparent=1;z=11;};
+static3={cls="static";text="特性值";left=536;top=72;right=616;bottom=88;dl=1;dt=1;transparent=1;z=12;};
+
 )
 /*}}*/
 
@@ -28,7 +29,7 @@ console.open();
 /*sqliteDB{{*/
 import config;
 import sqlite;
-var db, err = sqlite(config.dbServer.path + "qhc_OD_lib.db");	//打开数据库连接
+var db, err = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"));	//打开数据库连接
 if err win.msgbox(err);
 
 
@@ -88,6 +89,12 @@ var searchOption = function(str){
 	var t = db.getTable("SELECT * FROM `特性参数规划表`", { 特性 : str });
 	return filterDeleted(t);
 }
+var searchBGbyOption = function(str){
+	if !str return null; 
+	str = string.upper(string.trim(str));
+	var t = db.getTable("SELECT DISTINCT 产品编码 FROM `默认值`", { 分类 : str });
+	return t;
+}
 var 喷粉部分表;
 var searchPaintClass = function(str){
 	if !str return null; 
@@ -111,9 +118,9 @@ var initPaintClass = function(){
 }
 
 var bgTab = {fields = {[1]="物料";[2]="物料描述"}};
-
 var keepBG = function(hcode){
 	import QHC;
+	if !hcode return ;  
 	if tarray.findValue(bgTab, hcode) return ; 
 	var hitem = QHC.getSapItem(hcode);
 	table.push(bgTab, {
@@ -151,12 +158,12 @@ winform_od_query.edit.onChange = function(){
 		喷粉部分表 := initPaintClass();
 		t = searchPaintClass(text);	
 	}
-	if !#t {
+	if !table.count(t) {
 		t = searchClass(text);
 	}
 	if !#t return ;
 	
-	var tClass, tOpts;
+	var tClass, tOpts, tBGs;
 	
 	if string.startWith(text, "CG",true){
 		tClass = tarray.uniqueCol(tarray.sliceCol(t,2,3));
@@ -172,15 +179,26 @@ winform_od_query.edit.onChange = function(){
 	}else{
 		tClass = tarray.uniqueCol(tarray.sliceCol(t,1,2));
 		tOpts = tarray.uniqueCol(tarray.sliceCol(t,4,5));
-		
+
 		if pt
 			table.push(tClass,{"分类":pt;"分类描述":"喷粉类别"});
-		//winform_od_query.listview4.addItem(bt,1);
 		
 		if tClass
 			if !tarray.findValue(winform_od_query.listview1.items, tClass[1]["分类"])
 				winform_od_query.listview1.setTable(tClass);
-		if tOpts	winform_od_query.listview2.setTable(tOpts);
+		if #tOpts
+			winform_od_query.listview2.setTable(tOpts);
+		
+		tBGs = searchBGbyOption(text);
+		//win.msgbox(tBGs);
+		
+		if #tBGs{
+			winform_od_query.listview4.clear();
+			bgTab = {fields = {[1]="物料";[2]="物料描述"}};
+			for(i=1; #tBGs){
+				keepBG(tBGs[i].产品编码);
+			}
+		}
 	}
 
 }
@@ -203,19 +221,19 @@ winform_od_query.edit2.onChange = function(){
 	if tOpts	winform_od_query.listview2.setTable(tOpts);
 	if cType	winform_od_query.listview3.setTable(cType);
 }
-var lastOpt;//记住上次搜索项, 减少搜索频率
+var lastOpt1,lastOpt2,lastOpt3,lastOpt4;//记住上次搜索项, 减少搜索频率
 winform_od_query.listview2.onnotify = function(id,code,ptr){
 	select(code) {
 		case 0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
 			var c = owner.getItemText(owner.getSelection(),1);
-			if c == lastOpt return ; 
+			if c == lastOpt2 return ; 
 			if !c return; 
 			var t = searchOption(c)
 			if !#t return;
 			var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
 			winform_od_query.listview3.clear(true);
 			if cType	winform_od_query.listview3.setTable(cType);
-			lastOpt = c;
+			lastOpt2 = c;
 		}
 	}
 }
@@ -223,10 +241,10 @@ winform_od_query.listview1.onnotify = function(id,code,ptr){
 	select(code) {
 		case 0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
 			var c = owner.getItemText(owner.getSelection(),1);
-			if c == lastOpt return ; 
+			if c == lastOpt1 return ; 
 			if !c return; 
 			winform_od_query.edit.text = c;
-			lastOpt = c;	
+			lastOpt1 = c;	
 		}
 	}
 }
@@ -234,10 +252,10 @@ winform_od_query.listview4.onnotify = function(id,code,ptr){
 	select(code) {
 		case 0xFFFFFF9B/*_LVN_ITEMCHANGED*/ {
 			var c = owner.getItemText(owner.getSelection(),1);
-			if c == lastOpt return ; 
+			if c == lastOpt4 return ; 
 			if !c return; 
 			winform_od_query.edit.text = c;
-			lastOpt = c;	
+			lastOpt4 = c;	
 		}
 	}
 }
@@ -254,10 +272,10 @@ winform_od_query.button2.oncommand = function(id,event){
 	loadcodex("\forms\Excel\可选项调研表增加下拉菜单.aardio");
 }
 
+
+
 winform_od_query.splitter.split(winform_od_query.listview1, winform_od_query.listview2);
 winform_od_query.splitter2.split(winform_od_query.listview2, winform_od_query.listview3);
-
-
 
 
 winform_od_query.show();

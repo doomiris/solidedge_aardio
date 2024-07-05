@@ -41,7 +41,7 @@ console.more()
 _tname = "qhc_dw_rel_list";
 import config;
 import sqlite;
-var db = sqlite(config.dbServer.path + "qhc_dw_rel_list.db");
+var db = sqlite(io.joinpath(config.dbServer.path, "qhc_dw_rel_list.db"));
 //if db.existsTable(_tname) db.exec("DROP table " ++ _tname ++ ";")
 var fieldsName = string.replace(string.join(etab.fields,", "),"/","");
 //db.exec( "CREATE TABLE [" ++ _tname ++ "](" ++ fieldsName ++");")  

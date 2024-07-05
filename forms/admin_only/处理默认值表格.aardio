@@ -30,7 +30,7 @@ var default_con = {
 }
 
 import sqlite;
-var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+var db = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));
 
 if db.existsTable(default_con._title) db.exec("DROP table " + default_con._title);
 db.exec("CREATE TABLE "+ default_con._title +"( " + string.join(default_con._fieldsName,", ") + ");")
@@ -87,7 +87,7 @@ var getListFromXlsx = function(_xlsx_path, winform_get_default, default_con){
 	
 	import sqlite;
 	import config;
-	var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+	var db = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));
 	
 	import string;
 	import math;

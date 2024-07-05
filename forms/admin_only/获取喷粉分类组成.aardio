@@ -22,7 +22,7 @@ for (i=1; #br)
 //console.dump(tab)
 import config;
 import sqlite;
-var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+var db = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"));
 if db.existsTable(tab.title) db.exec("DROP table " ++ tab.title)
 
 db.exec( "CREATE TABLE [" ++ tab.title ++ "](" ++ string.join(tab.fields,", ") ++");");

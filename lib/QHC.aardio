@@ -6,13 +6,13 @@ var table = ..table;
 var string = ..string;
 var math = ..math;
 var config = ..config;
-
+var io = ..io;
 namespace QHC;
 
-sap_db_path = config.dbServer.path + "\QHCSAP.db";
-od_db_path = config.dbServer.path + "\qhc_OD_lib.db";
-drw_rel_path = config.dbServer.path + "\qhc_dw_rel_list.db";
-product_info_path = config.dbServer.path + "\qhc_product_info_lib.db";
+sap_db_path = io.joinpath(config.dbServer.path, "QHCSAP.db");
+od_db_path = io.joinpath(config.dbServer.path, "qhc_OD_lib.db");
+drw_rel_path = io.joinpath(config.dbServer.path, "qhc_dw_rel_list.db");
+product_info_path = io.joinpath(config.dbServer.path, "qhc_product_info_lib.db");
 
 var rawTab = {
 	[1] =	{["厚度"]=0.5; ["物料"] = "H0087500182-G"; ["物料描述"] = "定尺料组 热锌板 0.5*1250*C"; ["价格"] = 6.44};

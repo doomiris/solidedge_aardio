@@ -2,19 +2,21 @@ import fonts.fontAwesome;
 import win.ui;
 import win.ui.menu;
 /*DSG{{*/
-var order_down_form = win.form(text="下载订单BOM";right=759;bottom=469)
+var order_down_form = win.form(text="下载订单BOM";right=759;bottom=469;)
 order_down_form.add(
-button={cls="button";text='\uF110 下载订单BOM';left=583;top=31;right=743;bottom=71;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3};
-button2={cls="button";text="刷新";left=8;top=432;right=48;bottom=464;z=9};
-button3={cls="button";text="删除选定文件";left=591;top=435;right=746;bottom=463;z=10};
-button4={cls="button";text="导出订单清单";left=13;top=71;right=156;bottom=103;dr=1;dt=1;z=11};
-edit={cls="edit";left=13;top=31;right=157;bottom=63;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=1};
-edit2={cls="edit";left=245;top=31;right=333;bottom=63;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=2};
-edit3={cls="edit";left=389;top=31;right=477;bottom=63;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=6};
-listview={cls="listview";left=0;top=128;right=760;bottom=424;edge=1;fullRow=1;vscroll=1;z=8};
-static={cls="static";text="订单号";left=13;top=7;right=125;bottom=23;dl=1;dt=1;transparent=1;z=4};
-static2={cls="static";text="项目号";left=245;top=7;right=357;bottom=23;dl=1;dt=1;transparent=1;z=5};
-static3={cls="static";text="-";left=341;top=39;right=381;bottom=55;align="center";dl=1;dt=1;transparent=1;z=7}
+button={cls="button";text='\uF110 下载订单BOM';left=583;top=31;right=743;bottom=71;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3;};
+button2={cls="button";text="刷新";left=8;top=432;right=48;bottom=464;z=9;};
+button3={cls="button";text="删除选定文件";left=591;top=435;right=746;bottom=463;z=10;};
+button4={cls="button";text="导出订单清单";left=13;top=71;right=156;bottom=103;dr=1;dt=1;z=11;};
+button6={cls="button";text="...";left=161;top=71;right=182;bottom=103;z=12;};
+edit={cls="edit";left=13;top=31;right=157;bottom=63;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=1;};
+edit2={cls="edit";left=245;top=31;right=333;bottom=63;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=2;};
+edit3={cls="edit";left=389;top=31;right=477;bottom=63;dl=1;dt=1;edge=1;hidesel=1;num=1;tabstop=1;z=6;};
+listview={cls="listview";left=0;top=128;right=760;bottom=424;edge=1;fullRow=1;vscroll=1;z=8;};
+static={cls="static";text="订单号";left=13;top=7;right=125;bottom=23;dl=1;dt=1;transparent=1;z=4;};
+static2={cls="static";text="项目号";left=245;top=7;right=357;bottom=23;dl=1;dt=1;transparent=1;z=5;};
+static3={cls="static";text="-";left=341;top=39;right=381;bottom=55;align="center";dl=1;dt=1;transparent=1;z=7;};
+
 )
 /*}}*/
 
@@ -22,6 +24,19 @@ static3={cls="static";text="-";left=341;top=39;right=381;bottom=55;align="center
 //console.open();
 
 import config;
+import domisoft;
+
+import win.ui.grid;
+var grid = win.ui.grid(order_down_form.listview);//创建数据视图
+grid.setReadonlyColumns(-1);
+var current_list = {};
+grid.onSortColumn = function(column,desc){
+	var name = current_list.fields[column];
+	table.sort(current_list,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
+	 
+	grid.setTable( current_list );
+	return true; //返回 true 允许当前列排序
+}
 order_down_form.bindConfig( config.orderBom, {	//绑定控件值
     edit = "text";
 } );
@@ -180,22 +195,25 @@ order_down_form.getFolderList = function(){
 			//console.open()
 
 			import fsys;
+			import fsys.file;
 			import process;
 			import QHC;
 			var list = fsys.list(config.__sapDownload,,"B2C_*.xlsx");
-			var t = {};
-			t.fields = {[5] = "缓存文件";[1]="订单";[2]="项目";[3]="物料";[4]="物料描述"};
+		
+			current_list.fields = {[6] = "下载日期";[5] = "缓存文件";[1]="订单";[2]="项目";[3]="物料";[4]="物料描述"};
 			for (i=1; #list){
 				var f = string.split(string.split(list[i],".")[1],"_");
-				table.push(t, {
-					"订单" = f[2];
-					"项目" = f[3];
+				var fitem = fsys.file(list[list[i]]);
+				table.push(current_list, {
+					"订单" = string.upper(f[2]);
+					"项目" = tonumber(f[3]);
 					"物料" = f[4];
 					"物料描述" = QHC.getSapItem(f[4])? QHC.getSapItem(f[4]).物料描述 :"";
 					"缓存文件" = list[i];
+					"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
 				});
 			}
-			order_down_form.listview.setTable(t);
+			grid.setTable(current_list);
 			order_down_form.listview.setColumn({cx=80; fmt=0x2/*_LVCFMT_CENTER*/}, 1);
 			order_down_form.listview.setColumn({cx=40; fmt=0x2/*_LVCFMT_CENTER*/}, 2);
 			order_down_form.listview.setColumn({cx=100; fmt=0x2/*_LVCFMT_CENTER*/}, 3);
@@ -208,42 +226,7 @@ order_down_form.getFolderList = function(){
 //	)
 }
 
-/*
-import win.imageList;
-var iml = win.imageList(16, 15);
-iml.add('GIF\56\57a \0\15\0\x80\0\0\x80\x80\x80\xff\0\xff\33\xf9\4\0\0\0\0\0\44\0\0\0\0 \0\15\0\0\2\31\x8c
-\x8f\xa9\xcb\xed\15\xa3\x9c\xb4N\xf0\x80\xde\56k\xbfA\\\xd7\x84 \x97Y\xea\xca\xb6\xee\11\xc7F\1\0;', 0xff00ff);
-order_down_form.listview.setColumnImageList(iml);
-*/
 
-/*排序函数{{*/
-var reloadItemData = function(){
-	var sortColumn = order_down_form.listview.itemSortColumn;
-	var itemData = order_down_form.listview.items
-	
-	if(sortColumn<0){
-		var i = math.abs(sortColumn)
-		if i==2
-			table.sort(itemData,lambda(a) tonumber(owner[i])>tonumber(a[i]))
-		else
-			table.sort(itemData,lambda(a) owner[i]>a[i])
-	}
-	else {
-		if sortColumn==2
-			table.sort(itemData,lambda(a) tonumber(owner[sortColumn])<tonumber(a[sortColumn]))
-		else
-			table.sort(itemData,lambda(a) owner[sortColumn]<a[sortColumn])	
-	} 
-	
-	order_down_form.listview.items = itemData;
-
-	order_down_form.listview.clearColumnImage()
-	order_down_form.listview.setColumnImage(math.abs(sortColumn), sortColumn<0 ? 1 : 0); 
-}
-/*}}*/
-var downloadSingleOrderItem = function(orderId,itemId){
-	
-}
 order_down_form.button2.oncommand = function(id,event){
 	//if event == 0/*_BN_CLICKED*/
 		order_down_form.getFolderList();
@@ -263,7 +246,6 @@ order_down_form.button3.oncommand = function(id,event){
 	order_down_form.getFolderList();
 }
 order_down_form.listview.onnotify = function(id,code,ptr){
-
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
     		var selectedRow = owner.getSelection();
@@ -271,17 +253,6 @@ order_down_form.listview.onnotify = function(id,code,ptr){
     	    var pcode = owner.getItemText(selectedRow,5);
 			process.execute(config.__sapDownload + pcode)
     	}
-		case 0xFFFFFF94/*_LVN_COLUMNCLICK*/ {
-			var notifyMsg = owner.getNotifyMessage(code,ptr)
-			if(owner.itemSortColumn = notifyMsg.iSubItem){
-				owner.itemSortColumn = -notifyMsg.iSubItem; 
-			}
-			else {
-				owner.itemSortColumn = notifyMsg.iSubItem; 
-			}
-			
-			reloadItemData();
-		} 
 		case 0xFFFFFFFB/*_NM_RCLICK*/ {
     		var selectedRow = owner.getSelection();
     		if !selectedRow return ; 
@@ -295,7 +266,6 @@ order_down_form.listview.onnotify = function(id,code,ptr){
 		}
     }
 }
-
 order_down_form.button4.oncommand = function(id,event){
 	thread.invoke( 
 		function(wform){
@@ -361,7 +331,14 @@ order_down_form.button4.oncommand = function(id,event){
 	)
 }
 
-import domisoft;
+order_down_form.button6.oncommand = function(id,event){
+	thread.invokeEx( 
+		function(){
+			loadcodex("\forms\SAP\获取订单清单信息.aardio")
+		}
+	)
+}
+
 order_down_form.listview.translateAccelerator = domisoft.ctrlC;
 
 

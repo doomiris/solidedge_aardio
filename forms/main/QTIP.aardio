@@ -13,20 +13,21 @@ import console;
 console.open();
 */
 /*DSG{{*/
-qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0;)
 qtip_winform.add(
-bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
-bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088};dl=1;dt=1;notify=1;z=6};
-bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;notify=1;z=8};
-bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7};
-bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9};
-button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2};
-button2={cls="button";text='\uF053';left=0;top=8;right=24;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
-buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=3};
-custom={cls="custom";left=0;top=56;right=640;bottom=504;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=4};
-editUser3={cls="edit";left=256;top=8;right=520;bottom=40;aw=1;dl=1;dr=1;dt=1;edge=1;z=5};
-splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z=11}
+bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10;};
+bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088;};dl=1;dt=1;notify=1;z=6;};
+bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;notify=1;z=8;};
+bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7;};
+bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9;};
+button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2;};
+button2={cls="button";text='\uF053';left=0;top=8;right=24;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12;};
+buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=3;};
+custom={cls="custom";left=0;top=56;right=640;bottom=504;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=1;};
+edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=4;};
+editUser3={cls="edit";left=256;top=8;right=520;bottom=40;aw=1;dl=1;dr=1;dt=1;edge=1;z=5;};
+splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z=11;};
+
 )
 /*}}*/
 
@@ -248,7 +249,15 @@ qtip_winform.button2.oncommand = function(id,event){
 	if event == 0/*_BN_CLICKED*/
 		qtbs.selIndex = 2;
 }
-/** 点击搜索后就失效了..怎么回事.
+/*
+ (限制)
+低级鼠标钩子回调函数不要做耗时操作，
+如果耗时超过一秒或超过注册表限制的更小时间，系统会直接删除钩子。
+没有任何方法可以检查到删除操作，应当遵守规则避免滥用。
+
+耗时操作建议在钩子回调中创建线程，或使用 winform.setTimeout 延时异步执行。
+在超级热键回调函数中，如果返回一个函数也可以不阻塞异步执行。
+*/
 import mouse.hook;
 var hook = mouse.hook();
 //录制回调函数
@@ -258,13 +267,16 @@ hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
 		case 0x20C /* _WM_XBUTTONUP */ {
 			var lastTab = qtbs.lastTab;
 			if ::HIWORD(mouseData) == 1	//后退
-       			qtbs.selIndex = 2;
+				publish("gototab", 2)
 			else	//前进
-				qtbs.selIndex = lastTab;
+				publish("gototab", lastTab)
 		}
 	}
 }
-**/
+subscribe("gototab",function(...){
+	var tab_index = ...;
+	qtbs.selIndex = tab_index;
+} )
 /*}}*/
 
 /*

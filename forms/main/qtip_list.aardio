@@ -1,5 +1,6 @@
 import win.ui;
 import win.ui.menu;
+import win.ui.grid;
 import win.clip;
 import win.clip.file;
 import sqlite;
@@ -10,12 +11,21 @@ import process;
 import domisoft;
 //import godking.vlistEx;
 /*DSG{{*/
-var winform_qlist = win.form(text="aardio form";right=759;bottom=469)
+var winform_qlist = win.form(text="aardio form";right=759;bottom=469;)
 winform_qlist.add(
-listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
+listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1;};
+
 )
 /*}}*/
 
+winform_qlist.grid = win.ui.grid(winform_qlist.listview);
+winform_qlist.grid.setReadonlyColumns(-1);
+winform_qlist.grid.onSortColumn = function(column, desc){
+	var name = owner.source.fields[column];
+	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
+	owner.setTable( owner.source );
+	return true; //返回 true 允许当前列排序	
+};
 var saveInputList = function(str){
     if !(table.find(config.qTipLog, str)){
     	table.unshift(config.qTipLog, str);
@@ -287,14 +297,12 @@ console.open();
 	}
 	/*调整列宽*/
 	
-	var formatListView = function(lv, tab){
-		lv.clear(true);
-		lv.enableDoubleBuffering();
+	var formatListView = function(lv){
+		winform_qlist.grid.clear(true);
+		//lv.enableDoubleBuffering();
+		
+		winform_qlist.grid.onSortColumn(1, false);
 
-		lv.setTable( tab );
-		//grid.readonlyColums = {
-    	//	[1] = true;[2] = true;[3] = true;[4] = true;[5] = true;
-    	//}
 		lv.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
 	//	lv.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
 		lv.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
@@ -305,9 +313,11 @@ console.open();
 	}
 	sapTab.fields = fields;
 		//console.dump(sapTab)
-	formatListView(winform_qlist.listview, sapTab);
+	winform_qlist.grid.source = sapTab;
+	formatListView(winform_qlist.listview);
 }
 /*}}*/
+
 /*格式化BOM{{*/
 subscribe("dok", function(...){
 	//winform_qlist.button6.disabledText = null;
