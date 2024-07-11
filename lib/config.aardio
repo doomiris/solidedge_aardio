@@ -1,10 +1,19 @@
 ﻿//config 配置文件
-import fsys.config;
-config = fsys.config(io.appData("/domisoft/SETBM/"));
 
+import fsys.config;
 import fsys.ini;
+
+
+
+config = fsys.config(io.appData("/domisoft/SETBM/"));
 var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED?  "D:\users\CCL100100\Downloads" : io._exedir, "TBM.ini"));
 var lib = ini.getSection("lib");
+
+var table = ..table;
+var string = ..string;
+var math = ..math;
+var config = ..config;
+var io = ..io;
 
 //不需要序列化的配置名字前请添加下划线
 namespace config {
@@ -12,7 +21,7 @@ namespace config {
 	__appVersion = "1.5.22.01";
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
-	__sapDownload = ..io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) + "\SAP\SAP GUI\";
+	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
 	__pdfLib = lib.pdfLib;
 	__templateLib = lib.templateLib;
 }

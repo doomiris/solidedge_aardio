@@ -302,14 +302,17 @@ namespace DraftDocument{
         		case "dxf"{
         		    if (owner.ModelLinks.Item(1).ModelType == 0 /* igPartLink */){ 
         				var smDoc = owner.ModelLinks.item(1).ModelDocument;
-	//        			var Nothing = ..com.VariantNull();   			
-	//        			smDoc.Models.SaveAsFlatDXFEx(fname, Nothing , Nothing, Nothing, true);
-        				import web.script;
-        				var vm = web.script("VBScript") ;
-        				vm.external = {smDoc : smDoc; fname : fname}
-        				vm.addCode(`
-        				Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)
-        				`);
+						if (smDoc.FlatPatternModels.Count > 0){
+							var face = smDoc.FlatPatternModels[1].FlatPatterns[1].Reference;
+							for index, loop in ..com.each(face.Loops) {
+								if loop.IsOuterLoop {
+									var edge = loop.Edges[1];
+									var vertex = edge.StartVertex;
+									smDoc.Models.SaveAsFlatDXFEx(fname, face, edge, vertex, true);
+									break;
+								}
+							}
+						}
 	       				succ = true; 
 	       			}
         		}

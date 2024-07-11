@@ -14,6 +14,8 @@ import domisoft;
 import SAP;
 import solidedge.application;
 import solidedge.DraftDocument;
+import access;
+import access.oleDb;
 /*DSG{{*/
 mainForm = win.form(text="TBM";right=623;bottom=551;bgcolor=15793151;border="none";)
 mainForm.add(
@@ -85,7 +87,9 @@ mainForm.isDialogMessage = function(hwnd,msg){
 /*}}*/
 			
 win.ui.simpleWindow( mainForm );
-mainForm.enableDpiScaling();
+//mainForm.enableDpiScaling();
+
+//mainForm.enableDpiScaling(
 
 //var start_time = time();
 

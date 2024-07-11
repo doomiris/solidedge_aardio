@@ -25,7 +25,7 @@ button2={cls="button";text='\uF053';left=0;top=8;right=24;bottom=40;color=842150
 buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=3;};
 custom={cls="custom";left=0;top=56;right=640;bottom=504;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=1;};
 edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=4;};
-editUser3={cls="edit";left=256;top=8;right=520;bottom=40;aw=1;dl=1;dr=1;dt=1;edge=1;z=5;};
+editUser3={cls="edit";left=256;top=8;right=520;bottom=47;autohscroll=false;aw=1;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=5;};
 splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z=11;};
 
 )
@@ -100,7 +100,6 @@ qtbs.open = function(selIndex,pcode){
 /*}}*/
 
 qtip_winform.show();
-
 /*搜索按钮{{*/
 qtip_winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
@@ -225,6 +224,7 @@ subscribe("filter_Changed",function(...){
 })
 /*}}*/
 /*输入框切换单多行{{*/
+/*
 qtip_winform.custom.adjust = function( cx,cy,wParam ) {
 	var txt = qtip_winform.editUser3.text;
 	var height = qtip_winform.editUser3.height;
@@ -242,6 +242,7 @@ qtip_winform.custom.adjust = function( cx,cy,wParam ) {
 	qtip_winform.splitter.ltControl = qtip_winform.editUser3;
 	qtip_winform.splitter.ltMin=32;
 };
+*/
 /*}}*/
 
 /*后退按钮{{*/
@@ -261,36 +262,28 @@ qtip_winform.button2.oncommand = function(id,event){
 import mouse.hook;
 var hook = mouse.hook();
 //录制回调函数
+
 hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
     if( injected ) return; //模拟鼠标不处理
+    _dt = 30; //ms
     select(msg) {
 		case 0x20C /* _WM_XBUTTONUP */ {
-			var lastTab = qtbs.lastTab;
 			if ::HIWORD(mouseData) == 1	//后退
-				publish("gototab", 2)
+				qtip_winform.setTimeout(function(){
+					qtbs.selIndex = 2
+				}, _dt)			
 			else	//前进
-				publish("gototab", lastTab)
+				qtip_winform.setTimeout(function(){
+					qtbs.selIndex = qtbs.lastTab
+				}, _dt)				
 		}
 	}
 }
-subscribe("gototab",function(...){
-	var tab_index = ...;
-	qtbs.selIndex = tab_index;
-} )
 /*}}*/
 
-/*
-qtip_winform.bkplus2.skin(
-	background = { 
-		hover = "/res/images/btn-hover.png";
-		focus = "/res/images/btn-focus.jpg";
-		active = "/res/images/btn-active.png";
-		disabled = "/res/images/btn-disabled.png"; 
-	}
-)
-*/
+
 var tooltipCtrl = win.ui.tooltip( qtip_winform );//在窗口上创建tooltip控件
-tooltipCtrl.addTool(qtip_winform.buttonD,`
+tooltipCtrl.addTool(qtip_winform.buttonD, `
 查看搜索历史记录和清单收藏夹
 > 创建清单时仅保存当前选择的物料, 无选择时保存整个清单
 - 按住SHIFT+点击:删除记录/收藏

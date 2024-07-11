@@ -52,12 +52,17 @@ namespace SheetMetalDocument{
 	psm2dxf = function(fname){
 		var smDoc = owner.sePSM;
 		if smDoc.FlatPatternModels.Count == 0 owner.addFlatPattern();
-    	import web.script;
-    	var vm = web.script("VBScript");
-    	vm.external = {smDoc : smDoc; fname : fname};
-    	vm.addCode(`
-    		Call external.smDoc.Models.SaveAsFlatDXFEx(external.fname,Nothing,Nothing,Nothing,True)
-    	`);
+		if (smDoc.FlatPatternModels.Count > 0){
+			var face = smDoc.FlatPatternModels[1].FlatPatterns[1].Reference;
+			for index, loop in ..com.each(face.Loops) {
+				if loop.IsOuterLoop {
+					var edge = loop.Edges[1];
+					var vertex = edge.StartVertex;
+					smDoc.Models.SaveAsFlatDXFEx(fname, face, edge, vertex, true);
+					break;
+				}
+			}
+		}
 	}
 	_topointer = lambda() owner.sePSM;
 	

@@ -1,21 +1,25 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var about_winform = win.form(text="aardio form";right=759;bottom=470;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+var about_winform = win.form(text="aardio form";right=759;bottom=470;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0;)
 about_winform.add(
-button={cls="button";text='\uF085';left=232;top=16;right=264;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=7};
-button2={cls="button";text='\uF013';left=280;top=16;right=312;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=8};
-combobox={cls="combobox";left=85;top=442;right=168;bottom=462;clipch=1;db=1;dl=1;items={"SRDC";"QHC";"Local Disk"};mode="dropdownlist";transparent=1;z=5};
-github={cls="plus";left=731;top=445;right=755;bottom=469;align="right";color=8388608;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');iconColor=2960685;iconStyle={font=LOGFONT(h=-19;name='FontAwesome')};iconText='\uF09B';notify=1;paddingLeft=20;z=9};
-lnkVersion={cls="plus";text="正在检查新版本";left=600;top=8;right=752;bottom=57;align="right";color=8388608;dr=1;dt=1;font=LOGFONT(h=-16);iconColor=2960685;iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF021';notify=1;paddingLeft=20;z=3};
-richedit={cls="richedit";left=8;top=72;right=760;bottom=432;ah=1;autohscroll=false;aw=1;db=1;dl=1;dr=1;dt=1;link=1;multiline=1;readonly=1;transparent=1;vscroll=1;wrap=1;z=2};
-static={cls="static";text="TBM工具组";left=8;top=8;right=248;bottom=56;color=8388608;dl=1;dt=1;font=LOGFONT(h=-37;name='Microsoft YaHei UI');transparent=1;z=1};
-static2={cls="static";text='\uF216  服务器:';left=10;top=445;right=80;bottom=464;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=6};
-winver={cls="richedit";text="当前系统版本：";left=432;top=448;right=728;bottom=468;align="right";aw=1;db=1;dr=1;readonly=1;transparent=1;z=4}
+button={cls="button";text='\uF085';left=232;top=16;right=264;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=7;};
+button2={cls="button";text='\uF013';left=280;top=16;right=312;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=8;};
+combobox={cls="combobox";left=85;top=442;right=168;bottom=462;clipch=1;db=1;dl=1;items={"SRDC";"QHC";"Local Disk"};mode="dropdownlist";transparent=1;z=5;};
+github={cls="plus";left=731;top=445;right=755;bottom=469;align="right";color=8388608;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');iconColor=2960685;iconStyle={font=LOGFONT(h=-19;name='FontAwesome');};iconText='\uF09B';notify=1;paddingLeft=20;z=9;};
+lnkVersion={cls="plus";text="正在检查新版本";left=600;top=8;right=752;bottom=57;align="right";color=8388608;dr=1;dt=1;font=LOGFONT(h=-16);iconColor=2960685;iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome');};iconText='\uF021';notify=1;paddingLeft=20;z=3;};
+richedit={cls="richedit";left=8;top=72;right=760;bottom=432;ah=1;autohscroll=false;aw=1;db=1;dl=1;dr=1;dt=1;link=1;multiline=1;readonly=1;transparent=1;vscroll=1;wrap=1;z=2;};
+static={cls="static";text="TBM工具组";left=8;top=8;right=248;bottom=56;color=8388608;dl=1;dt=1;font=LOGFONT(h=-37;name='Microsoft YaHei UI');transparent=1;z=1;};
+static2={cls="static";text='\uF216  服务器:';left=10;top=445;right=80;bottom=464;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=6;};
+winver={cls="richedit";text="当前系统版本：";left=432;top=448;right=728;bottom=468;align="right";aw=1;db=1;dr=1;readonly=1;transparent=1;z=4;};
+
 )
 /*}}*/
 
 import config;
+import fsys.version;
+var ver = fsys.version.getInfo(io._exepath);
+
 about_winform.bindConfig( config.serverIndex,{
 	combobox = "selIndex";	
 } );
@@ -23,59 +27,34 @@ about_winform.bindConfig( config.serverIndex,{
 var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");
 about_winform.button.hide = !adminSession;
 
-var updateLog = function(about_winform){
-	thread.delay(100);
-	import inet.http;
-	var http = inet.http();
-	var txt = http.get("https://doomiris.github.io/TBM/update_history.txt");
-	http.close();
+var loadUpdateLog = function(about_winform){
+	var url = "https://doomiris.github.io/TBM/update_history.txt";
 	var richedit = about_winform.richedit;
 	richedit.disabledText = null;
-	richedit.text = txt;
+	
+	import domisoft;
+	richedit.text = domisoft.getContentFromHTTP(url);
 }
 
-
-
-
-/**
-import fsys.update.simpleMain;
-fsys.update.simpleMain.onStatusChanged(function(version,description,status){
-	/*注意此回调可捕获到调用前或调用后的更新状态变更*/
-	if(status=="ready"){
-		about_winform.lnkVersion.disabledText = null;	
-		about_winform.lnkVersion.text = "点这里重新启动软件更新到新版本：" + version
-		tooltipCtrl.addTool(about_winform.lnkVersion,description);
-	}
-	elseif(status=="complete"){
-		about_winform.lnkVersion.text = "已更新到最新版本:" + version;
-		tooltipCtrl.addTool(about_winform.lnkVersion,description);
-	} 
-	elseif(status=="latest"){
-		about_winform.lnkVersion.disabledText = null;
-		about_winform.lnkVersion.text = "已经是最新版本";
-		
-	} 
-	elseif(status=="failed"){
-		about_winform.lnkVersion.disabledText = null;
-		about_winform.msgErr(description);
-	}
-})
-about_winform.lnkVersion.oncommand = function(id,event){ 
-	about_winform.lnkVersion.text = fsys.update.simpleMain.getReadyStatusInfo() ? "正在启动自动更新" : "正在检查新版本";
-	about_winform.lnkVersion.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
-	if(fsys.update.simpleMain.checkUpdate(true)){
-		win.quitMessage();
-	}
+var checkUpdate = function(wform){
+	var url = "https://doomiris.github.io/TBM/version.json";
+	import domisoft;
+	t = domisoft.getContentFromHTTP(url, true);
+	import win;
+	win.msgbox(t);
 }
-**/
-about_winform.lnkVersion.oncommand = function(id,event){ 	
-	about_winform.richedit.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text ="正在查找更新记录..."}
-	thread.invoke( updateLog, about_winform);
+about_winform.lnkVersion.oncommand = function(id,event){
+	thread.invoke( checkUpdate, about_winform);
 }
-import fsys.version;
-var ver = fsys.version.getInfo(io._exepath);
-about_winform.winver.text = "当前版本：" ++ ver.productVersion.major ++ "."++ ver.productVersion.minor ++ 
-" [" ++ ver.productVersion.revision ++ "] ";
+
+about_winform.winver.text =
+	"当前版本：" ++
+	ver.productVersion.major ++
+	"."	++
+	ver.productVersion.minor ++ 
+	" [" ++
+	ver.productVersion.revision ++
+	"] ";
 
 about_winform.combobox.onListChange= function(){ 
 	select(owner.selIndex) {
@@ -124,7 +103,7 @@ about_winform.github.oncommand = function(id,event){
 	, about_winform);
 }
 
-thread.invoke( updateLog, about_winform);
+win.setTimeout(loadUpdateLog, 100, about_winform)
 
 import win.ui.tooltip;
 var tooltipCtrl = win.ui.tooltip( about_winform );

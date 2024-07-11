@@ -79,12 +79,20 @@ ctrlC = function(msg){
     var vk = msg.wParam;    
     if( ( vk == 'C'# ) && ctrl ){
         import win.clip;
+        import win.clip.html;
+        var cliphtml = win.clip.html();
 		var items = owner.items;
 		var selected = owner.selected; 
-        var tab = table.array();
+        var txtTab = table.array();
         for (i=1; #selected)
-            table.push(tab,string.join(items[selected[i]],'\t'));
-		win.clip.write(string.join(tab,'\n'));
+            table.push(txtTab,string.join(items[selected[i]],'\t'));
+		win.clip.write(string.join(txtTab,'\n'));		
+		var hTab = table.array();
+        for (i=1; #selected)
+            table.push(hTab,string.join(items[selected[i]],"</td><td>"));
+        var html = "<html><table border=1'><tr><td>" + string.join(hTab,"</td></TR><TR><td>") + "</td></TR></table></html>"
+        html = cliphtml.stringify(html);
+		cliphtml.write(html,true,false);
         return true;
     }
     if( ( vk == 'A'# ) && ctrl ){
@@ -137,6 +145,16 @@ readClipHcode = function(){
 	}
 	return t; 
 }
+getContentFromHTTP = function(url, parseJson = false){
+	import inet.http;
+	var http = inet.http();
+	var t = http.get(url);
+	http.close();
+	if !parseJson return t; 
+	import web.json;
+	return web.json.parse(t);
+}
+
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
@@ -147,6 +165,6 @@ getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指�
 taobaoURLsimple(taobaoUrl) = 简化taobao链接
 ctrlC(translateAccelerator) = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
 readClipHcode() = 获取截图中的专用号
-
+getContentFromHTTP(.(url, parseJson) = 获取网址内容
 end intellisense**/
 

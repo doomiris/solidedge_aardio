@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.438" ProductVersion="1.5.0.438" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.450" ProductVersion="1.5.0.450" publishDir="D:\users\CCL100100\Downloads" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -97,6 +97,7 @@
 			<file name="psm2dxf.aardio" path="forms\printcenter\psm2dxf.aardio" comment="forms\printcenter\psm2dxf.aardio"/>
 		</folder>
 		<folder name="SAP" path="forms\SAP" comment="forms\SAP" local="false" embed="false" ignored="false">
+			<file name="BOM浏览器.aardio" path="forms\SAP\BOM浏览器.aardio" comment="forms\SAP\BOM浏览器.aardio"/>
 			<file name="download-cost-bom-va02.aardio" path="forms\SAP\download-cost-bom-va02.aardio" comment="forms\SAP\download-cost-bom-va02.aardio"/>
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="下载订单BOM.aardio" path="forms\SAP\下载订单BOM.aardio" comment="forms\SAP\下载订单BOM.aardio"/>

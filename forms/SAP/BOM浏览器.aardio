@@ -4,12 +4,10 @@ import win.ui.grid;
 var winform = win.form(text="订单清单浏览";right=759;bottom=469;)
 winform.add(
 button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7;};
-button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;dl=1;dt=1;z=8;};
-button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;dl=1;dt=1;z=9;};
 edit={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4;};
 edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6;};
 listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1;};
-listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;msel=1;vscroll=1;z=2;};
+listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;vscroll=1;z=2;};
 splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3;};
 static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5;};
 
@@ -44,13 +42,13 @@ grid.onSortColumn = function(column, desc){
 grid2.onSortColumn = grid.onSortColumn;
 
 var getFolderList = function(){
-			var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
-			grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
+			var list = fsys.list(config.__sapDownload,,"BG*00000_*.xlsx");
+			grid2.source={ fields = {[1]="成品编码";[2]="下载日期";[3] = "缓存文件"}};
 			for (i=1; #list){
-				var f = string.split(string.split(list[i],".")[1],"_");
+				var f = string.split(list[i],"_");
 				var fitem = fsys.file(list[list[i]]);
 				table.push(grid2.source, {
-					"订单号" = string.upper(f[3]) ;
+					"成品编码" = string.upper(f[1]) ;
 					"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
 					"缓存文件" = list[i];
 				});
@@ -88,16 +86,13 @@ var getDetail = function(wbpath, wform){
 		return ; 
 	}
 	var t = db.getTable(`
-		SELECT DISTINCT
-			[凭证日期],
-			[SD 凭证],
-			[项目(SD)],
-			[售达方],
-			[名称 1],
-			[选择],
-			[物料],
-			[描述],
-			[订单数量]
+		SELECT
+			[展开层],
+			[对象标识],
+			[对象描述],
+			[组件数量(CUn)],
+			[组件单位],
+			[物料类型]
 		FROM
 			[Sheet1$]
 	`);
@@ -105,8 +100,8 @@ var getDetail = function(wbpath, wform){
 	db = null;
 	collectgarbage("collect");
 	return table.map(t, function(v){
-		 v["凭证日期"] = tostring(v["凭证日期"],"yyyy/MM/dd" );
-		 v["项目(SD)"] = tonumber(v["项目(SD)"]);
+		 v["展开层"] = tostring(v["展开层"]);
+		 v["组件数量(CUn)"] = tonumber(v["组件数量(CUn)"]);
 		 v["订单数量"] = tonumber(v["订单数量"]);
 		 return v; 
 	}); 
@@ -118,8 +113,9 @@ grid2.onClick = function(item,subItem,nmListView){
 	grid.source = getDetail(c, winform);
 	if !grid.source or !#grid.source return;
 	grid.clear(true);
-	grid.onSortColumn(3, false);
-	winform.listview.fillParent(8);
+	//grid.onSortColumn(3, false);
+	grid.setTable(grid.source);
+	winform.listview.fillParent(3);
 }
 grid2.onDoubleClick = function(item,subItem,nmListView){
 	var c = owner.source[item].缓存文件;
@@ -133,7 +129,7 @@ winform.edit.onChange = function(){
 	if !str or !#str {
 		grid.setTable(grid.source);
 	}else{
-		var t = table.filter(grid.source, λ(v) string.find(v["描述"], "@@"+str));
+		var t = table.filter(grid.source, λ(v) string.find(v["对象描述"], "@@"+str));
 		t.fields = grid.source.fields;
 		grid.clear(true);
 		grid.setTable(t);
@@ -147,82 +143,9 @@ winform.button.oncommand = function(id,event){
 			import config;
     		import web.script;
     		var vm = web.script("VBScript") ;
-/*
-			import console; 
-			console.open();
-*/			
-			vm.script = /*
-					If Not IsObject(application) Then
-   					Set SapGuiAuto  = GetObject("SAPGUI")
-   					Set application = SapGuiAuto.GetScriptingEngine
-					End If
-					If Not IsObject(connection) Then
-   					Set connection = application.Children(0)
-					End If
-					If Not IsObject(session) Then
-   					Set session    = connection.Children(0)
-					End If
-					If IsObject(WScript) Then
-   					WScript.ConnectObject session,     "on"
-   					WScript.ConnectObject application, "on"
-					End If
-			*/
-			
-			/* 通过 vm.script 访问变量前需要先声明 */
-			vm.script = /*
-	    			dim order
-	    			dim startdate
-	    			dim lib_path
-	 		*/
-			vm.script.order = order_number;
-			vm.script.lib_path = config.__sapDownload;
-			vm.script = /*
-				session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
-				session.findById("wnd[0]").sendVKey 0
-				session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order
-				session.findById("wnd[0]").sendVKey 0
-				'获取订单日期
-				startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
-			*/
-			vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-30))
-			vm.script = /*
-				session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select
-				session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order
-				session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate
-				session.findById("wnd[0]/tbar[0]/btn[0]").press
-				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
-				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
-				session.findById("wnd[1]/tbar[0]/btn[0]").press
-				session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
-				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" & order & ".XLSX"
-				session.findById("wnd[1]/tbar[0]/btn[11]").press
-				'返回
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-			*/
 			wform.button.disabledText = null;
 		}, winform, winform.edit2.text
 	)
-}
-
-winform.button2.oncommand = function(id,event){
-	getFolderList();
-}
-
-winform.button3.oncommand = function(id,event){
-	var flist = winform.listview2.selected;
-	if !#flist return ; 
-	for k, v in flist {
-		io.remove(
-			io.joinpath(
-				config.__sapDownload,
-				winform.listview2.getItemText(v, 3)
-			)
-		);
-	}
-	getFolderList();
 }
 
 winform.splitter.split(winform.listview,winform.listview2);
