@@ -90,10 +90,9 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 				var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
 				if #flist {
 					var fn = flist[flist[#flist]];
-					var f = fsys.file(fn);
-					var t = f.lastModified().local();
-					f.close();
-					f = null;
+					var fitem = fsys.file(fn);
+					var t = fitem.lastModified().local();
+					fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
 					menu.add(
 						"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
 						λ() process.execute(fn)

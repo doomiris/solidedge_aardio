@@ -52,6 +52,7 @@ var getFolderList = function(){
 					"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
 					"缓存文件" = list[i];
 				});
+				fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
 			}
 			grid2.onSortColumn(2, true);
 

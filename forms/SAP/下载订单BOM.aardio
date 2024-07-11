@@ -41,6 +41,8 @@ order_down_form.bindConfig( config.orderBom, {	//绑定控件值
 
 var dcb = function(order_down_form, orderId, itemId, endItemId){
 	import config;
+	import io;
+	import win;
     import web.script;
     var vm = web.script("VBScript");
 //	import console;
@@ -134,13 +136,25 @@ var dcb = function(order_down_form, orderId, itemId, endItemId){
 			session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
 			filename = Join(Array("B2C", order, item, code), "_") + ".xlsx"
 			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
-			session.findById("wnd[1]/tbar[0]/btn[0]").press
-			session.findById("wnd[0]/tbar[0]/btn[12]").press
-	 	*/ 
-
-		order_down_form.publish("down_bom", vm.script.filename);
-		vm.script = /*	
-			on error resume next			
+	 		*/ 
+	 		var fullname = io.joinpath(vm.script.lib_path, vm.script.filename);
+	 		var succ = true;
+	 		if io.exist(fullname)
+	 			 succ = io.remove(fullname);
+	 		if succ {
+				vm.script = /*
+					session.findById("wnd[1]/tbar[0]/btn[0]").press
+					session.findById("wnd[0]/tbar[0]/btn[12]").press
+		 		*/
+	 			order_down_form.publish("down_bom", vm.script.filename);
+	 		}else {
+	 			vm.script = /*
+	 			session.findById("wnd[1]/tbar[0]/btn[12]").press
+	 			*/
+	 			win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
+	 		}	 		
+			vm.script = /*	
+				on error resume next			
 				Set testobj = Nothing			
 				Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
 				loopcount = 0
@@ -201,6 +215,7 @@ order_down_form.getFolderList = function(){
 					"缓存文件" = list[i];
 					"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
 				});
+				fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
 			}
 			grid.setTable(current_list);
 			order_down_form.listview.setColumn({cx=80; fmt=0x2/*_LVCFMT_CENTER*/}, 1);

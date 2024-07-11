@@ -9,7 +9,7 @@ button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom
 edit={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4;};
 edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6;};
 listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1;};
-listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;msel=1;vscroll=1;z=2;};
+listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=2;};
 splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3;};
 static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5;};
 
@@ -19,6 +19,7 @@ static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;a
 import fsys;
 import fsys.file;
 import domisoft;
+import tarray;
 import config;
 import process;
 winform.grid = win.ui.grid(winform.listview);//创建数据视图
@@ -48,12 +49,13 @@ var getFolderList = function(){
 			grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
 			for (i=1; #list){
 				var f = string.split(string.split(list[i],".")[1],"_");
-				var fitem = fsys.file(list[list[i]]);
+				var fitem = fsys.file(list[list[i]]);	
 				table.push(grid2.source, {
 					"订单号" = string.upper(f[3]) ;
 					"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
 					"缓存文件" = list[i];
 				});
+				fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
 			}
 			grid2.onSortColumn(2, true);
 
@@ -141,16 +143,32 @@ winform.edit.onChange = function(){
 }
 
 winform.button.oncommand = function(id,event){
+	var order_number = string.trim(winform.edit2.text);
+	if !order_number return ; 
+/*
+	var col = tarray.getCol(grid2.source,1);
+	var fi = table.indexOf(col, order_number);
+	if fi {
+	 		var fullname = io.joinpath(config.__sapDownload, grid2.source[fi].缓存文件);
+	 		var succ, err = true,"";
+	 		if io.exist(fullname)
+	 			 succ, err = io.remove(fullname)
+	 		if !succ
+	 			win.msgbox(err,fullname);
+	}
+*/
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"};
 	thread.invoke( 
 		function(wform, order_number){
 			import config;
+			import io;
+			import win;
     		import web.script;
     		var vm = web.script("VBScript") ;
-/*
+
 			import console; 
 			console.open();
-*/			
+		
 			vm.script = /*
 					If Not IsObject(application) Then
    					Set SapGuiAuto  = GetObject("SAPGUI")
@@ -173,6 +191,7 @@ winform.button.oncommand = function(id,event){
 	    			dim order
 	    			dim startdate
 	    			dim lib_path
+	    			dim filename
 	 		*/
 			vm.script.order = order_number;
 			vm.script.lib_path = config.__sapDownload;
@@ -184,7 +203,7 @@ winform.button.oncommand = function(id,event){
 				'获取订单日期
 				startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
 			*/
-			vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-30))
+			vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-90))
 			vm.script = /*
 				session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select
 				session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order
@@ -194,19 +213,44 @@ winform.button.oncommand = function(id,event){
 				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
 				session.findById("wnd[1]/tbar[0]/btn[0]").press
 				session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
-				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "ORDER_LIST_" & order & ".XLSX"
-				session.findById("wnd[1]/tbar[0]/btn[11]").press
-				'返回
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-				session.findById("wnd[0]/tbar[0]/btn[12]").press
-			*/
+				filename = "ORDER_LIST_" & order & ".XLSX"
+				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
+	 		*/ 
+	 		var fullname = io.joinpath(vm.script.lib_path, vm.script.filename);
+	 		var succ = true;
+	 		if io.exist(fullname)
+	 			 succ = io.remove(fullname);
+	 		if succ {
+				vm.script = /*
+					session.findById("wnd[1]/tbar[0]/btn[11]").press
+		 		*/
+	 			wform.publish("down_bom", vm.script.filename);
+	 		}else {
+	 			vm.script = /*
+	 				session.findById("wnd[1]/tbar[0]/btn[12]").press
+	 			*/
+	 			win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
+	 		}	 		
+			vm.script = /*	
+				on error resume next			
+				Set testobj = Nothing			
+				Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
+				loopcount = 0
+				Do While testobj Is Nothing				
+					session.findById("wnd[0]/tbar[0]/btn[12]").press
+					Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
+					loopcount = loopcount + 1
+					If loopcount > 20 Then Exit Do
+				Loop
+			on error goto 0	
+	 	*/ 
 			wform.button.disabledText = null;
-		}, winform, winform.edit2.text
+		}, winform, order_number
 	)
 }
-
+subscribe("down_bom",function(...){
+	win.setTimeout(getFolderList, 3000)
+})
 winform.button2.oncommand = function(id,event){
 	getFolderList();
 }
