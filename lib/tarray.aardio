@@ -17,6 +17,7 @@ var mixin = ..table.assign;
 var join = ..string.join;
 var unique = ..table.unique;
 var trim = ..string.trim;
+var len = ..string.len;
 
 namespace tarray;
 /* column operation */
@@ -28,6 +29,7 @@ serialize = function(arr){
 			b[indexOf(arr.fields,k) ? indexOf(arr.fields,k): k] = v;
 		push(t, b:"");
 	}
+	if arr.fields t.fields = arr.fields;
 	return t; 
 }
 detach = function(arr){
@@ -261,10 +263,11 @@ fillEmptyRow = function(arr, what= ""){
 
 trimAll = function(arr){
 	return map(arr,function(v,k,result){
-		if v
-			return trim(v); 
-		else
-			return null; 		
+		if !v return null;
+		v = tostring(v);
+		if !len(v) return null;
+		if !len(trim(v)) return null;
+		return trim(v);
 	})
 }
 

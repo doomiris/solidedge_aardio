@@ -2,8 +2,9 @@ import win.ui;
 /*DSG{{*/
 var chk_excel_BOM_REV_form = win.form(text="检查BOM更改单";right=759;bottom=400;)
 chk_excel_BOM_REV_form.add(
-button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1;};
-combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3;};
+button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;default=1;dl=1;dt=1;tabstop=1;z=1;};
+checkbox={cls="checkbox";text="自动修复部分简单错误";left=593;top=41;right=744;bottom=59;checked=1;color=16711680;dr=1;dt=1;tabstop=1;transparent=1;z=5;};
+combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";tabstop=1;z=3;};
 listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2;};
 progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4;};
 
@@ -18,6 +19,11 @@ import fsys.table;
 import QHC;
 import domisoft;
 
+chk_excel_BOM_REV_form.bindConfig( config.checkGUI, {	//绑定控件值
+    checkbox = "checked";
+} );
+
+
 /*
 	import console
 	console.open()
@@ -26,7 +32,7 @@ import domisoft;
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
-var etab = {};
+
 com.enumRunning( 
 	function(displayName,object){
 		try{
@@ -45,7 +51,9 @@ if chk_excel_BOM_REV_form.combobox2.count {
 		findActiveWB = table.indexOf(chk_excel_BOM_REV_form.combobox2.items, excel_0.ActiveWorkbook.Name)
 	chk_excel_BOM_REV_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
-
+var etab = {};
+var sht;
+var formRng;
 chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 	if !#chk_excel_BOM_REV_form.combobox2.selText return ; 	
 
@@ -69,14 +77,20 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			if !etr() return error("找不到边界");
 			
 			var tab = {};
-			var eArr = sht.Range("$B$9:$S$" ++ etr()).value2;
+			formRng = sht.Range("$B$9:$S$" ++ etr());
+			var eArr = formRng.value2;
 			for(i=1; #eArr){    
 	    		var d = table.array();
 	    		for (j=1;#fields){
-	    			d[fields[j]] = eArr[i][j];
+	    		    if eArr[i][j]
+	    		    	if string.len(eArr[i][j])
+	    					d[fields[j]] = eArr[i][j];
 				}		
 				table.push(tab,d);
 			}
+			for k, v in tab
+				v = tarray.trimAll(v)
+			tab.fields = fields;
 			return tab; 
 	})();
 	
@@ -124,107 +138,180 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			if etab[i][["原父项"]]
 				return etab[i][["原父项"]] !== etab[i][["新父项"]]; 
 		};
-		[2]=function(i){
+		[2] = function(i){
 			if etab[i].原父项
 				return etab[i][["项目类别"]] !== "L"; 
 		};
-		[3]=function(i){
+		[3] = function(i){
 			if etab[i][["更改备注"]] == "新增子项" or etab[i][["更改备注"]] == "新增BOM"
 				return #etab[i][["原子项"]] and !#etab[i][["新子项"]];
 		};
-		[4]=function(i){
-			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项"
+		[4] = function(i){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项"
 				return !#etab[i][["原子项"]] and #etab[i][["新子项"]];
 		};
-		[5]=function(i){
+		[5] = function(i){
 			if etab[i][["更改备注"]] == "更改用量"
 				return etab[i][["原子项数量"]] == etab[i][["新子项数量"]]; 
 		};
-		[6]=function(i){
-			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+		[6] = function(i){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
 			var n = tarray.cNum(etab[i][["新子项数量"]]);
 			var a = string.split(tostring(n),".");
 			if #a>1
 				return #a[2]>3; 
 		};
-		[7]=function(i){
-			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+		[7] = function(i){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
 			if etab[i][["新子项单位"]]  == "ZA"
 				if !string.indexOf(etab[i][["新子项描述"]],"胶带")
 						return !math.isInteger(tarray.cNum(etab[i][["新子项数量"]]));  
 		};
-		[8]=function(i){
-			if etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return; 
+		[8] = function(i){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return; 
+			if !etab[i][["新子项"]] return ; 
 			var item = QHC.getSapItem(etab[i][["新子项"]]);
 			return item[["MTyp"]] !== etab[i][["新子项类型"]] or item[["BUn"]] !== etab[i][["新子项单位"]]; 
 		};
-		[9]=function(i){
-			if etab[i][["更改备注"]]=="新增子项" or etab[i][["更改备注"]]=="新增BOM" {
+		[9] = function(i){
+			if etab[i][["更改备注"]] =="新增子项" or etab[i][["更改备注"]] =="新增BOM" {
 				var item = QHC.getSapItem(etab[i][["原父项"]]);
 				return item[["MTyp"]] == "ROH"; 
 			}
 		};
-		[10]=function(i){
-			if !etab[i][["更改备注"]] or etab[i][["更改备注"]]=="删除BOM" or etab[i][["更改备注"]]=="删除子项" return;
+		[10] = function(i){
+			if !etab[i][["更改备注"]] or etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
+			if !etab[i][["新子项"]] return ; 
 			return !(tarray.cNum(etab[i][["新子项数量"]]))
 		};
-		[11]=function(i){
+		[11] = function(i){
 			
 			if etab[i][["原父项"]] and string.startWith(etab[i][["原父项"]], "H00809")
 				return etab[i][["是否有OD"]] !== "√"
 		};
-		[12]=function(i){	//仅检查禁用状态, 忽略新号问题
+		[12] = function(i){	//仅检查禁用状态, 忽略新号问题
 			var item = QHC.getSapItem(etab[i][["原父项"]]);
-			return item[["禁用"]]=="禁用"
+			return item[["禁用"]] =="禁用"
 		};
-		[13]=function(i){	//仅检查禁用状态, 忽略新号问题
+		[13] = function(i){	//仅检查禁用状态, 忽略新号问题
 			//if !#etab[i].新子项 return ; 
 			var item = QHC.getSapItem(etab[i][["新子项"]]);
-			return item[["禁用"]]=="禁用"
+			return item[["禁用"]] =="禁用"
 		};
-		[14]=function(i){
+		[14] = function(i){
 			if i==1 return ; 
 			if !etab[i][["原父项"]] return ; 
 			for(j=1; i-1){
-				if etab[j][["原父项"]]==etab[i][["原父项"]] and 
-					etab[j][["原子项"]]==etab[i][["原子项"]] and
-						etab[j][["新子项"]]==etab[i][["新子项"]]
+				if etab[j][["原父项"]] ==etab[i][["原父项"]] and 
+					etab[j][["原子项"]] ==etab[i][["原子项"]] and
+						etab[j][["新子项"]] ==etab[i][["新子项"]]
 							return true;
 			}
 		}
-		[15]=function(i){
+		[15] = function(i){
 			if etab[i][["原父项"]]
 				return !etab[i][["更改备注"]]; 
 		}
-		[16]=function(i){
+		[16] = function(i){
 			if etab[i][["原子项类型"]] == "KMAT" || etab[i][["新子项类型"]] == "KMAT"
 				return !etab[i][["是否有OD"]]; 
 		}
-		[17]=function(i){
+		[17] = function(i){
 			if i<#etab
 				if !etab[i][["原父项"]]
-					return !etab[i][["新父项"]] || etab[i][["新父项"]]==0
+					return !etab[i][["新父项"]] || etab[i][["新父项"]] ==0
 		}
-		[18]=function(i){
+		[18] = function(i){
 			if etab[i][["更改备注"]] == "替换子项"
 				return etab[i][["原子项"]] == etab[i][["新子项"]];
 
 		}
-		[19]=function(i){
+		[19] = function(i){
 			if etab[i][["更改备注"]] == "新增BOM"
 				if etab[i][["新子项描述"]] and string.indexOf(etab[i][["新子项描述"]],"未喷")
 					return etab[i][["原父项"]] !== pcodeOffset(etab[i][["新子项"]]);
 		}
 
 	};
+
+	var solver = {	//解决方案
+		[1] = function(i){
+			 etab[i]["新父项"] = etab[i]["原父项"];
+			 return true; 
+		}
+		[2] = function(i){
+			etab[i]["项目类别"] = "L"
+			return true; 
+		}
+		[3] = function(i){
+			var a = {"原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"};
+			var b = {"新子项"; "新子项描述"; "新子项数量"; "新子项单位"; "新子项类型"};
+			for (j=1; #a)
+				etab[i][a[j]], etab[i][b[j]] = etab[i][b[j]], etab[i][a[j]];
+			return true; 
+		}
+		[4] = function(i){
+			var a = {"原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"};
+			var b = {"新子项"; "新子项描述"; "新子项数量"; "新子项单位"; "新子项类型"};
+			for (j=1; #a)
+				etab[i][a[j]], etab[i][b[j]] = etab[i][b[j]], etab[i][a[j]];
+			return true; 
+		}
+		[5] = function(i){}
+		[6] = function(i){
+			var n = tarray.cNum(etab[i][["新子项数量"]]);
+			etab[i]["新子项数量"]  = math.round(n, 3);
+			return true;
+		}
+		[7] = function(i){
+			
+		}
+		[8] = function(i){
+			
+		}
+		[9] = function(i){
+			
+		}
+		[10] = function(i){
+			
+		}
+		[11] = function(i){
+			
+		}
+		[12] = function(i){
+			
+		}
+		[13] = function(i){
+			
+		}
+		[14] = function(i){
+			
+		}
+		[15] = function(i){
+			
+		}
+		[16] = function(i){
+			
+		}
+		[17] = function(i){
+			
+		}
+		[18] = function(i){
+			
+		}
+		[19] = function(i){
+			
+		}
+
+	};
 	var top_rule_err = {
-		[1]=function(){	
+		[1] = function(){	
 			var col_c = od_sht.usedrange.columns("C").value2;
 			col_c = table.filter(col_c, λ(v, index) #v);			
 			var od_added = (#col_c !== 4)
 			return !string.indexOf(workbook_name,"-是-") == od_added;
 		}
-		[2]=function(){		
+		[2] = function(){		
 			var col_e = od_sht.usedRange.Columns("E").value2;
 			for (i=1; #col_e){
 				if !col_e[i][[1]] continue;
@@ -233,15 +320,23 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			}	
 		}
 	}
-
+	var top_rule_solver ={
+		[1] = function(){			
+		}
+		[2] = function(){			
+		}
+	}
 	/*}}*/
 	
+	import console
+	console.open();
 	
 	var bar = chk_excel_BOM_REV_form.progress;
 	bar.min = 0;
 	bar.max = etab_count;
 	getErr = {};
-	getErr.fields = {"行"; "相关物料号";"错误描述"}
+	getErr.fields = {"行"; "相关物料号";"错误描述"; "自动纠正"}
+	var allowfix = chk_excel_BOM_REV_form.checkbox.checked;
 	for(i=1; etab_count){		
 		bar.pos = i;
 		for(j=1; #sapErr){
@@ -250,6 +345,7 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 				"行":i+8;
 				"相关物料号": " "; /*etab[i].原父项;*/
 				"错误描述": rule_desp[j];
+				"自动纠正": solver[j](i) and allowfix  ? "此条已修正, 请再次检查确认" :""
 			})
 		}
 	}
@@ -259,11 +355,17 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			"行":1;
 			"相关物料号": " "; /*etab[i].原父项;*/
 			"错误描述": top_rule_desp[j];
+			"自动纠正": top_rule_solver[j]() and allowfix ? "此条已修正, 请再次检查确认" :""
 		})
 	}
-	
-	
-	
+
+	if chk_excel_BOM_REV_form.checkbox.checked {
+		console.dump(etab)
+		var t = tarray.serialize(etab);
+		t = tarray.fillEmptyRow(t);
+		formRng.value2 = t
+	}
+		
 	chk_excel_BOM_REV_form.listview.setTable(getErr);
 	
 	chk_excel_BOM_REV_form.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);

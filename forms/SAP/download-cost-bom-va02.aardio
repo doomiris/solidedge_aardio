@@ -1,26 +1,27 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var va02_form = win.form(text="下载成本BOM";right=890;bottom=519)
+var va02_form = win.form(text="下载成本BOM";right=890;bottom=519;)
 va02_form.add(
-button={cls="button";text="开始下载成本BOM";left=88;top=70;right=212;bottom=110;db=1;dr=1;z=1};
-button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
-button3={cls="button";text="打开下载目录";left=259;top=139;right=365;bottom=165;db=1;dr=1;z=7};
-button4={cls="button";text="连续确认";left=812;top=138;right=874;bottom=152;dr=1;dt=1;z=14};
-button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=10};
-button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;z=11};
-button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;z=12};
-button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;dr=1;dt=1;z=15};
-edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;edge=1;multiline=1;z=2};
-edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;edge=1;multiline=1;z=3};
-edit3={cls="edit";left=430;top=252;right=891;bottom=510;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
-listview={cls="listview";left=5;top=174;right=422;bottom=514;edge=1;fullRow=1;vscroll=1;z=13};
-progress={cls="progress";left=16;top=122;right=875;bottom=132;edge=1;max=100;min=0;z=6};
+button={cls="button";text="开始下载成本BOM";left=88;top=70;right=212;bottom=110;db=1;dr=1;z=1;};
+button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9;};
+button3={cls="button";text="打开下载目录";left=259;top=139;right=365;bottom=165;db=1;dr=1;z=7;};
+button4={cls="button";text="连续确认";left=812;top=138;right=874;bottom=152;dr=1;dt=1;z=14;};
+button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=10;};
+button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;z=11;};
+button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;z=12;};
+button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;dr=1;dt=1;z=15;};
+edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;edge=1;multiline=1;z=2;};
+edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;edge=1;multiline=1;z=3;};
+edit3={cls="edit";left=430;top=252;right=891;bottom=510;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8;};
+listview={cls="listview";left=5;top=174;right=422;bottom=514;edge=1;fullRow=1;vscroll=1;z=13;};
+progress={cls="progress";left=16;top=122;right=875;bottom=132;edge=1;max=100;min=0;z=6;};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
 的所在行数(仅限当前屏幕, 不可超出屏幕)
- (不是项目编号)";left=224;top=65;right=474;bottom=113;transparent=1;z=4};
+ (不是项目编号)";left=224;top=65;right=474;bottom=113;transparent=1;z=4;};
 static2={cls="static";text="校正行数 (当前屏幕页首行, 首页0,
- 下页12) 此处 +12 表示从13行";left=527;top=68;right=764;bottom=103;transparent=1;z=5}
+ 下页12) 此处 +12 表示从13行";left=527;top=68;right=764;bottom=103;transparent=1;z=5;};
+
 )
 /*}}*/
 
@@ -138,13 +139,13 @@ var filterRed = function(wform){
 
 
 var dcb = function(va02_form, absline, HT){
-
 /*
 import console
 console.open()
-
 */
+	import io;
 	import config;
+	import domisoft;
     import web.script;
     var vm = web.script("VBScript") ;
 
@@ -175,6 +176,7 @@ console.open()
 	    	dim i
 	    	dim absline
 	    	dim lib_path
+	    	dim costFilename
 	 */
 	 vm.script.absline = absline;
 	 vm.script.lib_path = config.__sapDownload;
@@ -182,18 +184,19 @@ console.open()
 	 	vm.script.i = i
 	 	
 	vm.script = /*
-
     		pcode = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1," & i & "]").Text
     		pdesp = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[4," & i & "]").Text
-
     		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = True
     		costFilename = "cost_" & trim(pcode) & "_" & trim(pdesp) & ".xls"
-
+	*/
+	
+	vm.script.costFilename = domisoft.formatWindowsFileName(vm.script.costFilename);
+	
+	vm.script = /*
+	
     		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
-    		
 
     		set markcost = nothing 
-
     		on error resume next
     			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
 			on error goto 0
@@ -239,12 +242,10 @@ console.open()
 }
 
 va02_form.button.oncommand = function(id,event){
-	
 	var absline = va02_form.edit.text;
 	if !#absline return ; 
 	var HT = va02_form.edit2.text;
 	if !#HT return ;
-	//call(dcb, va02_form, absline, HT);
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "downloading..."};
 	thread.invoke(dcb, va02_form, absline, HT);
 }

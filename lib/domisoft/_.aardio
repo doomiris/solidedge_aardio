@@ -2,6 +2,8 @@
 var table = ..table;
 var string = ..string;
 var math = ..math;
+var replace = string.replace
+var trim = string.trim
 
 namespace domisoft;
 showInputBox = function(title, Msg,tips, winform){
@@ -30,7 +32,7 @@ getComAppPath = function(keyword){
 	import fsys.knownFolder
 	var s = com.shell.findApp("@"+ keyword);
 	var g = string.match(s.path,'%{}');		
-	return (string.replace(s.path, "@"+g, fsys.knownFolder(g)));
+	return (replace(s.path, "@"+g, fsys.knownFolder(g)));
 }
 getRunningWorkSheet = function(workbookName,worksheetName){
 	import com;
@@ -123,22 +125,22 @@ readClipHcode = function(){
 		
 		import web.json;
 		for i,block in table.eachIndex(ocrRet.blocks){
-			var s = string.trim(block.text);
+			var s = trim(block.text);
 			if string.startWith(s, "008")
 				s = "H" ++ s;
 			//	return ; 
-			s = string.replace(s,",","");
-			s = string.replace(s,"O","0");
-			s = string.replace(s,"B","8");
-			s = string.replace(s,"g","9");
-			s = string.replace(s,"€","6");
-			s = string.replace(s,"t","6");
-			s = string.replace(s,"S","5");
+			s = replace(s,",","");
+			s = replace(s,"O","0");
+			s = replace(s,"B","8");
+			s = replace(s,"g","9");
+			s = replace(s,"€","6");
+			s = replace(s,"t","6");
+			s = replace(s,"S","5");
 			
 			if string.startWith(s, "8008")
-				s = string.replace(s, "8008", "H008", 1);
+				s = replace(s, "8008", "H008", 1);
 			if string.startWith(s, "'-1")
-				s = string.replace(s, "'-1", "H")
+				s = replace(s, "'-1", "H")
 			table.push(t,s);
 
 		}
@@ -154,7 +156,20 @@ getContentFromHTTP = function(url, parseJson = false){
 	import web.json;
 	return web.json.parse(t);
 }
-
+formatWindowsFileName = function (nameStr) {
+    nameStr = replace(nameStr, "@\", "＼");
+    nameStr = replace(nameStr, "@/", "／");
+    nameStr = replace(nameStr, "@:", "：");
+    nameStr = replace(nameStr, "@*", "x");
+    nameStr = replace(nameStr, "@?", "？");
+    nameStr = replace(nameStr, '\"', "“");   //替换双引号
+    nameStr = replace(nameStr, "@<", "＜");
+    nameStr = replace(nameStr, "@>", "＞");
+    nameStr = replace(nameStr, "@|", "｜");
+    nameStr = replace(nameStr, '\r', " ");  //替换回车符
+    nameStr = replace(nameStr, '\n', " ");  //替换换行符
+    return trim(nameStr);
+};
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
@@ -166,5 +181,6 @@ taobaoURLsimple(taobaoUrl) = 简化taobao链接
 ctrlC(translateAccelerator) = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
 readClipHcode() = 获取截图中的专用号
 getContentFromHTTP(.(url, parseJson) = 获取网址内容
+formatWindowsFileName(nameStr) = 替换Windows文件名非法字符为全角＼"／，．＜＞｜＊
 end intellisense**/
 

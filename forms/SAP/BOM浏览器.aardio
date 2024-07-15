@@ -1,7 +1,7 @@
 import win.ui;
 import win.ui.grid;
 /*DSG{{*/
-var winform = win.form(text="订单清单浏览";right=759;bottom=469;)
+var winform = win.form(text="订单清单浏览";right=759;bottom=469;clipch=1;)
 winform.add(
 button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7;};
 edit={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4;};
@@ -148,7 +148,45 @@ winform.button.oncommand = function(id,event){
 		}, winform, winform.edit2.text
 	)
 }
-
+winform.listview.onnotify = function(id,code,ptr){ 
+	if( code == 0xFFFFFFF4/*_NM_CUSTOMDRAW*/ ){
+		var lvcd = winform.listview.getNotifyCustomDraw(code,ptr);
+		if( lvcd.nmcd.dwDrawStage == 0x10001/*_CDDS_ITEMPREPAINT*/)
+			return 0x20/*_CDRF_NOTIFYSUBITEMDRAW*/
+		elseif( lvcd.nmcd.dwDrawStage == 1/*_CDDS_PREPAINT*/ ){
+			return 0x20/*_CDRF_NOTIFYITEMDRAW*/;
+		}
+		elseif( lvcd.nmcd.dwDrawStage == ( 0x10001/*_CDDS_ITEMPREPAINT*/ | 0x20000/*_CDDS_SUBITEM*/) ){ 
+			//注意这里 dwItemSpec行, iSubItem列 的索引自0开始( 其他函数通常自1开始 )
+			select(winform.listview.getItemText(lvcd.nmcd.dwItemSpec+1 /*从0开始*/,1)) {
+				case ".1" {
+					lvcd.clrTextBk =  gdi.RGB(0, 176, 80) ;
+				}
+				case "..2" {
+					lvcd.clrTextBk =  gdi.RGB(79, 98, 40) ;
+				}
+				case "...3" {
+					lvcd.clrTextBk =  gdi.RGB(118, 147, 60) ;
+				}
+				case "....4" {
+					lvcd.clrTextBk =  gdi.RGB(196, 215, 155) ;
+				}
+				case ".....5" {
+					lvcd.clrTextBk =  gdi.RGB(216, 228, 188) ;
+				}
+				case "......6" {
+					lvcd.clrTextBk =  gdi.RGB(235, 241, 222) ;
+				}
+				else {
+				}
+			}
+				
+			lvcd.update()
+			
+			return 0/*_CDRF_DODEFAULT*/
+		}
+	}
+}
 winform.splitter.split(winform.listview,winform.listview2);
 winform.show();
 

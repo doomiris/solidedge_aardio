@@ -6,8 +6,8 @@ winform.add(
 button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7;};
 button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;dl=1;dt=1;z=8;};
 button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;dl=1;dt=1;z=9;};
-edit={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4;};
-edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6;};
+edit={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6;};
+editDesp={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4;};
 listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1;};
 listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=2;};
 splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3;};
@@ -33,6 +33,10 @@ import console
 console.open()
 
 */
+winform.bindConfig( config.orderBom, {	//绑定控件值
+    edit = "text";
+} );
+
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
 
@@ -129,7 +133,7 @@ grid2.onDoubleClick = function(item,subItem,nmListView){
 	process.execute(io.joinpath(config.__sapDownload,c))
 }
 
-winform.edit.onChange = function(){ 
+winform.editDesp.onChange = function(){ 
 	if(owner.onModified)owner.onModified(true);
 	var str = string.trim(owner.text);
 	if !str or !#str {
@@ -143,7 +147,7 @@ winform.edit.onChange = function(){
 }
 
 winform.button.oncommand = function(id,event){
-	var order_number = string.trim(winform.edit2.text);
+	var order_number = string.trim(winform.edit.text);
 	if !order_number return ; 
 /*
 	var col = tarray.getCol(grid2.source,1);
@@ -166,8 +170,10 @@ winform.button.oncommand = function(id,event){
     		import web.script;
     		var vm = web.script("VBScript") ;
 
+/*
 			import console; 
 			console.open();
+*/
 		
 			vm.script = /*
 					If Not IsObject(application) Then
@@ -232,17 +238,12 @@ winform.button.oncommand = function(id,event){
 	 			win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
 	 		}	 		
 			vm.script = /*	
-				on error resume next			
-				Set testobj = Nothing			
-				Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
-				loopcount = 0
-				Do While testobj Is Nothing				
+				do while session.findById("wnd[0]/tbar[0]/btn[12]").Changeable
 					session.findById("wnd[0]/tbar[0]/btn[12]").press
-					Set testobj = session.findById("wnd[0]/usr/ctxtRC29L-VBELN")
-					loopcount = loopcount + 1
-					If loopcount > 20 Then Exit Do
-				Loop
-			on error goto 0	
+					on error resume next
+						session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+					on error goto 0
+				loop
 	 	*/ 
 			wform.button.disabledText = null;
 		}, winform, order_number

@@ -1,5 +1,5 @@
 ﻿//DraftDocument 常用函数
-
+import domisoft;
 namespace solidedge;
 class DraftDocument{
 	ctor( seDFT ){
@@ -205,7 +205,7 @@ namespace DraftDocument{
 	name_cn = {
 		_get = function(){
 			return
-				owner.formatWindowsFileName(
+				domisoft.formatWindowsFileName(
 					owner.getValueFromBlk(owner.firstTitleBlock(), "零件名称")
 				);
 		}
@@ -218,7 +218,7 @@ namespace DraftDocument{
 	productRange = {
 		_get = function(){
 			return
-				owner.formatWindowsFileName(
+				domisoft.formatWindowsFileName(
 					owner.getValueFromBlk(owner.firstTitleBlock(), "型号/项目名称")
 				);
 		}
@@ -228,22 +228,6 @@ namespace DraftDocument{
 	};
 	/* ====================== */
 	
-	formatWindowsFileName = function (nameStr) {
-    	//替换Windows文件名非法字符为全角＼"／，．＜＞｜＊
-    	nameStr = ..string.replace(nameStr, "@\", "＼");
-    	nameStr = ..string.replace(nameStr, "@/", "／");
-    	nameStr = ..string.replace(nameStr, "@:", "：");
-    	nameStr = ..string.replace(nameStr, "@*", "x");
-    	nameStr = ..string.replace(nameStr, "@?", "？");
-    	nameStr = ..string.replace(nameStr, '\"', "“");   //替换双引号
-    	nameStr = ..string.replace(nameStr, "@<", "＜");
-    	nameStr = ..string.replace(nameStr, "@>", "＞");
-    	nameStr = ..string.replace(nameStr, "@|", "｜");
-    	nameStr = ..string.replace(nameStr, '\r', " ");  //替换回车符
-    	nameStr = ..string.replace(nameStr, '\n', " ");  //替换换行符
-    	return ..string.trim(nameStr);
-	};
-
 	getNameByExt = function(fileExt, nTab, toFolder){
 		if owner.application.useQhcNameRule {
         		return

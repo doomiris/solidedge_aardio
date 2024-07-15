@@ -56,6 +56,7 @@ downloadBOM = function(winform, etab){
 	import QHC;
 	import config;
     import web.script;
+    import domisoft;
     import console;
     
     var vm = web.script("VBScript") ;
@@ -111,6 +112,7 @@ downloadBOM = function(winform, etab){
  		if vt filename = vt.物料描述; 			
     	filename = string.replace(filename, " ", "_");
     	filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
+    	filename = domisoft.formatWindowsFileName(filename);
     	vm.script.filename = filename;    		
     	table.push(ftab, filename);
     	var fn = ..io.joinpath(config.__sapDownload,filename);
