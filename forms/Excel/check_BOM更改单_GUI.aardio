@@ -24,10 +24,8 @@ chk_excel_BOM_REV_form.bindConfig( config.checkGUI, {	//绑定控件值
 } );
 
 
-/*
 	import console
-	console.open()
-*/
+	//console.open()
 
 var excel_0 = com.excel(false);
 var excel_2;
@@ -236,7 +234,7 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 
 	var solver = {	//解决方案
 		[1] = function(i){
-			 etab[i]["新父项"] = etab[i]["原父项"];
+			 etab[i]["新父项"] = "=B" ++ (i+8); //etab[i]["原父项"];			 
 			 return true; 
 		}
 		[2] = function(i){
@@ -294,7 +292,9 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			
 		}
 		[17] = function(i){
-			
+			etab[i]["新父项"] =null;
+			etab[i]["项目类别"] =null;		
+			return true; 	
 		}
 		[18] = function(i){
 			
@@ -321,15 +321,15 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 		}
 	}
 	var top_rule_solver ={
-		[1] = function(){			
+		[1] = function(){
 		}
-		[2] = function(){			
+		[2] = function(){
 		}
+
+		
 	}
 	/*}}*/
 	
-	import console
-	console.open();
 	
 	var bar = chk_excel_BOM_REV_form.progress;
 	bar.min = 0;
@@ -355,15 +355,21 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			"行":1;
 			"相关物料号": " "; /*etab[i].原父项;*/
 			"错误描述": top_rule_desp[j];
-			"自动纠正": top_rule_solver[j]() and allowfix ? "此条已修正, 请再次检查确认" :""
+			"自动纠正": top_rule_solver[j]() and allowfix ? "此条已被自动修正" :""
 		})
 	}
 
 	if chk_excel_BOM_REV_form.checkbox.checked {
-		console.dump(etab)
+		//console.dump(etab)
 		var t = tarray.serialize(etab);
-		t = tarray.fillEmptyRow(t);
+		t = tarray.fillEmptyRow(t);	
 		formRng.value2 = t
+/**
+		for (i = 1; #etab)
+			if etab[i][["原父项"]]{
+				formRng.Cells(i+8, 9 /* I */).NumberFormat="General";
+				formRng.Cells(i+8, 9 /* I */).Formula = "=B"++ (i++8);}
+**/
 	}
 		
 	chk_excel_BOM_REV_form.listview.setTable(getErr);

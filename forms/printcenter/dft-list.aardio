@@ -13,8 +13,13 @@ dft_list_form.grid = win.ui.grid(dft_list_form.listview);//创建数据视图
 var getDftList = function(dft_list_form){
 	import solidedge.application;
 	import solidedge.DraftDocument;
+	import domisoft;
 //	import win.ui;
+/*
+import console
+console.open();
 
+*/
 	seApp = solidedge.application();
 	if !seApp return ; 
 	var seDocuments = seApp.Documents;
@@ -38,8 +43,8 @@ var getDftList = function(dft_list_form){
 		if(tb){
 			var lbt = seDft.getLabelTable(tb);
 			t.物料 = seDft.getFileName();
-			t.名称 = seDft.formatWindowsFileName(lbt["零件名称"]);
-			t.型号 = seDft.formatWindowsFileName(lbt["型号/项目名称"]);
+			t.名称 = domisoft.formatWindowsFileName(lbt["零件名称"]);
+			t.型号 = domisoft.formatWindowsFileName(lbt["型号/项目名称"]);
 			t.版本 = seDft.getDftVer();
 			var blkObj = seDft.getLabelObjectTable(seDft.getBlkByName("Version_CCR 2020",seDft.getFirstSheet()));
 			if blkObj

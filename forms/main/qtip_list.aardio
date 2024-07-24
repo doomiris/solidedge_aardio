@@ -11,10 +11,9 @@ import process;
 import domisoft;
 //import godking.vlistEx;
 /*DSG{{*/
-var winform_qlist = win.form(text="aardio form";right=759;bottom=469;)
+var winform_qlist = win.form(text="aardio form";right=759;bottom=469)
 winform_qlist.add(
-listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1;};
-
+listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
 
@@ -197,6 +196,8 @@ console.open();
     	userinput=string.replace(userinput,"@*","%");
     	userinput=string.replace(userinput,"@?","_");
 		
+		userinput=string.replace(userinput,"@=","{等号}"); //先把等号换成制表符后面记得再换回来:P
+		
 		var sqlstr;
 			
 		if !filter_form.chkMoreCols.checked {
@@ -262,13 +263,19 @@ console.open();
 		sqlstr = sqlite.format(sqlstr, {searchField});
 
 		var quickSearch = !string.indexOf(userinput,"%");
-		if !quickSearch sqlstr = string.replace(sqlstr,"=","LIKE");
-		
+		if !quickSearch {
+			sqlstr = string.replace(sqlstr,"=","LIKE");
+		}
 		if (filter_form.chkDisabled.checked and !quickSearch)	sqlstr += " AND ifnull(`禁用`, '') = ''"; // 禁用列如果为空或null则是正常物料
 		
 		/*  预测用的-F物料已经全部禁用了
 		if table.indexOf(getSelectedText(filter_form.clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11"; 
 		*/
+/*
+		import win;
+		win.msgbox(sqlstr);
+*/		
+		sqlstr = string.replace(sqlstr,"{等号}","="); 
 		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
 
 		if !#t
