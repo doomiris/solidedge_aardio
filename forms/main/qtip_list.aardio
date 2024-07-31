@@ -307,8 +307,10 @@ console.open();
 		winform_qlist.grid.clear(true);
 		//lv.enableDoubleBuffering();
 		
-		winform_qlist.grid.onSortColumn(1, false);
+		//winform_qlist.grid.onSortColumn(1, false);  
 
+		winform_qlist.grid.setTable(winform_qlist.grid.source);
+		
 		lv.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
 	//	lv.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
 		lv.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);

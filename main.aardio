@@ -17,32 +17,31 @@ import solidedge.DraftDocument;
 import access;
 import access.oleDb;
 /*DSG{{*/
-mainForm = win.form(text="TBM";right=623;bottom=551;bgcolor=15793151;border="none";)
+mainForm = win.form(text="TBM";right=623;bottom=551;bgcolor=15793151;border="none")
 mainForm.add(
-button={cls="button";text='\uF127';left=36;top=4;right=68;bottom=36;bgcolor=255;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');hide=1;z=23;};
-cLogo={cls="bkplus";left=70;top=8;right=94;bottom=32;background="\res\tbm3.ico";color=8388608;dl=1;dt=1;z=21;};
-caption={cls="bkplus";text="domisoft";left=94;top=10;right=184;bottom=28;color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=20;};
-custom={cls="custom";left=83;top=40;right=624;bottom=552;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=8;};
-logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="\res\ENGINE.ICO";color=8388608;dl=1;dt=1;z=22;};
-nav1={cls="plus";text="TBM";left=0;top=48;right=85;bottom=128;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536;};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20;};};iconText='\uF1EA';notify=1;textPadding={bottom=10;};valign="bottom";x=0.5;y=0.2;z=3;};
-nav2={cls="plus";text="变更";left=0;top=129;right=85;bottom=209;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536;};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20;};};iconText='\uF277';notify=1;textPadding={bottom=10;};valign="bottom";x=0.5;y=0.2;z=4;};
-nav3={cls="plus";text="SAP";left=0;top=210;right=85;bottom=290;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536;};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20;};};iconText='\uF1B0';notify=1;textPadding={bottom=10;};valign="bottom";x=0.5;y=0.2;z=5;};
-nav4={cls="plus";text="技术要求";left=0;top=291;right=85;bottom=371;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536;};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20;};};iconText='\uF0CB';notify=1;textPadding={bottom=10;};valign="bottom";x=0.5;y=0.2;z=6;};
-nav5={cls="plus";text="Print";left=0;top=372;right=85;bottom=456;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536;};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20;};};iconText='\uF1C1';notify=1;textPadding={bottom=10;};valign="bottom";x=0.5;y=0.2;z=7;};
-nav6={cls="plus";text="About";left=0;top=448;right=85;bottom=532;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536;};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20;};};iconText='\uF262';notify=1;textPadding={bottom=10;};valign="bottom";x=0.5;y=0.2;z=16;};
-navBar={cls="bkplus";left=0;top=37;right=83;bottom=552;bgcolor=11829830;db=1;dl=1;dt=1;z=2;};
-static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=17;};
-tbutton1={cls="button";text='\uF01E';left=184;top=4;right=216;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=13;};
-tbutton2={cls="button";text='\uF07E';left=216;top=4;right=248;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=9;};
-tbutton3={cls="button";text='\uF05A';left=248;top=4;right=280;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=10;};
-tbutton4={cls="button";text='\uF05C';left=280;top=4;right=312;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=11;};
-tbutton5={cls="button";text='\uF0EE';left=312;top=4;right=344;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=12;};
-tbutton6={cls="button";text='\uF05E';left=344;top=4;right=376;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=14;};
-tbutton7={cls="button";text='\uF05B';left=376;top=4;right=408;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=15;};
-tbutton8={cls="button";text='\uF067';left=408;top=4;right=440;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=18;};
-tbutton9={cls="button";text='\uF074';left=440;top=4;right=472;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=19;};
-titleBar={cls="bkplus";left=0;top=0;right=624;bottom=38;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=1;};
-
+button={cls="button";text='\uF127';left=36;top=4;right=68;bottom=36;bgcolor=255;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');hide=1;z=23};
+cLogo={cls="bkplus";left=70;top=8;right=94;bottom=32;background="\res\tbm3.ico";color=8388608;dl=1;dt=1;z=21};
+caption={cls="bkplus";text="domisoft";left=94;top=10;right=184;bottom=28;color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=20};
+custom={cls="custom";left=83;top=40;right=624;bottom=552;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=8};
+logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="\res\ENGINE.ICO";color=8388608;dl=1;dt=1;z=22};
+nav1={cls="plus";text="TBM";left=0;top=48;right=85;bottom=128;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1EA';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=3};
+nav2={cls="plus";text="变更";left=0;top=129;right=85;bottom=209;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF277';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=4};
+nav3={cls="plus";text="SAP";left=0;top=210;right=85;bottom=290;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1B0';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=5};
+nav4={cls="plus";text="技术要求";left=0;top=291;right=85;bottom=371;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF0CB';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=6};
+nav5={cls="plus";text="Print";left=0;top=372;right=85;bottom=456;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1C1';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=7};
+nav6={cls="plus";text="About";left=0;top=448;right=85;bottom=532;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF262';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=16};
+navBar={cls="bkplus";left=0;top=37;right=83;bottom=552;bgcolor=11829830;db=1;dl=1;dt=1;z=2};
+static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=17};
+tbutton1={cls="button";text='\uF01E';left=184;top=4;right=216;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=13};
+tbutton2={cls="button";text='\uF07E';left=216;top=4;right=248;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=9};
+tbutton3={cls="button";text='\uF05A';left=248;top=4;right=280;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=10};
+tbutton4={cls="button";text='\uF05C';left=280;top=4;right=312;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=11};
+tbutton5={cls="button";text='\uF0EE';left=312;top=4;right=344;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
+tbutton6={cls="button";text='\uF05E';left=344;top=4;right=376;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=14};
+tbutton7={cls="button";text='\uF05B';left=376;top=4;right=408;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=15};
+tbutton8={cls="button";text='\uF067';left=408;top=4;right=440;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=18};
+tbutton9={cls="button";text='\uF074';left=440;top=4;right=472;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=19};
+titleBar={cls="bkplus";left=0;top=0;right=624;bottom=38;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=1}
 )
 /*}}*/
 
@@ -93,12 +92,8 @@ win.ui.simpleWindow( mainForm );
 
 //var start_time = time();
 
-var seApp = solidedge.application();
-mainForm.button.hide = !!seApp;
+var seApp;
 
-try{
-	if (seApp) winex.attach(seApp.hWnd);
-}
 
 /*托盘图标{{*/
 	mainForm.tray = win.util.tray(mainForm);
@@ -180,8 +175,8 @@ mainForm.popmenu2.add('原材料用量计算...', λ() thread.invoke(λ() loadco
 mainForm.popmenu2.add('打开分类查询窗口...', λ() thread.invoke(λ() loadcodex("\forms\SAP\OD_Query.aardio")));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio")));
-mainForm.popmenu2.add('下载订单BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\下载订单BOM.aardio")));
-mainForm.popmenu2.add('订单清单浏览器...', λ() thread.invoke(λ() loadcodex("\forms\SAP\获取订单清单信息.aardio")));
+//mainForm.popmenu2.add('订单BOM(B2C)...', λ() thread.invoke(λ() loadcodex("\forms\SAP\下载订单BOM.aardio")));
+mainForm.popmenu2.add('订单清单和订单BOM(B2C)浏览器...', λ() thread.invoke(λ() loadcodex("\forms\SAP\获取订单清单信息.aardio")));
 
 mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() thread.invoke(λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio")));
 mainForm.popmenu2.add();//分隔线
@@ -530,6 +525,7 @@ subscribe("checkupdate",function(...){
 	fsys.update.simpleMain.checkUpdate(true);
 } )
 */
+
 
 win.loopMessage();
 return mainForm;

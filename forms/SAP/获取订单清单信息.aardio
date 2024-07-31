@@ -1,18 +1,17 @@
 import win.ui;
 import win.ui.grid;
 /*DSG{{*/
-var winform = win.form(text="订单清单浏览";right=759;bottom=469;)
+var winform = win.form(text="订单清单浏览";right=759;bottom=469)
 winform.add(
-button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7;};
-button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;dl=1;dt=1;z=8;};
-button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;dl=1;dt=1;z=9;};
-edit={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6;};
-editDesp={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4;};
-listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1;};
-listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=2;};
-splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3;};
-static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5;};
-
+button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7};
+button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;dl=1;dt=1;z=8};
+button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;dl=1;dt=1;z=9};
+edit={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
+editDesp={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4};
+listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1};
+listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=2};
+splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3};
+static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5}
 )
 /*}}*/
 
@@ -22,6 +21,8 @@ import domisoft;
 import tarray;
 import config;
 import process;
+import SAP;
+
 winform.grid = win.ui.grid(winform.listview);//创建数据视图
 var grid = winform.grid;
 grid.setReadonlyColumns(-1);
@@ -31,12 +32,10 @@ grid2.setReadonlyColumns(-1);
 /*
 import console
 console.open()
-
 */
 winform.bindConfig( config.orderBom, {	//绑定控件值
     edit = "text";
 } );
-
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
 
@@ -49,36 +48,40 @@ grid.onSortColumn = function(column, desc){
 grid2.onSortColumn = grid.onSortColumn;
 
 var getFolderList = function(){
-			var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
-			grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
-			for (i=1; #list){
-				var f = string.split(string.split(list[i],".")[1],"_");
-				var fitem = fsys.file(list[list[i]]);	
-				table.push(grid2.source, {
-					"订单号" = string.upper(f[3]) ;
-					"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
-					"缓存文件" = list[i];
-				});
-				fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
-			}
-			grid2.onSortColumn(2, true);
+	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
+	grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
+	for (i=1; #list){
+		var f = string.split(string.split(list[i],".")[1],"_");
+		var fitem = fsys.file(list[list[i]]);	
+		table.push(grid2.source, {
+			"订单号" = string.upper(f[3]) ;
+			"下载日期" = time(fitem.getTime().creation.local(),"%Y/%m/%d %H:%M:%S");
+			"缓存文件" = list[i];
+		});
+		fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
+	}
+	grid2.onSortColumn(2, true);
 
-			//grid2.setTable(flist);
-			winform.listview2.setColumn({cx=80; fmt=0x0/*_LVCFMT_LEFT*/}, 1);
-			winform.listview2.setColumn({cx=120; fmt=0x2/*_LVCFMT_CENTER*/}, 2);
-			winform.listview2.fillParent(3);
+	//grid2.setTable(flist);
+	domisoft.setColumnWidth(winform.listview2, {80,120})
+	winform.listview2.fillParent(3);
+	winform.button.disabledText = null;
 }
+
+
 
 getFolderList();
 
 var getDetail = function(wbpath, wform){
+	import access;
+	import access.oleDb;
 	import config;
+
 	wbpath = io.joinpath(config.__sapDownload, wbpath)
 	if !io.exist(wbpath) return error("文件不存在"++'\n'++wbpath); 
 	wform.grid.clear(true);
 	wform.grid.setColumns({[1]="正在打开..." + wbpath});
-	import access;
-	import access.oleDb;
+
 	var db, err = access(wbpath);
 	var n=0;
 	while(err){
@@ -93,6 +96,8 @@ var getDetail = function(wbpath, wform){
 		wform.grid.setColumns({[1]= err;[2] = wbpath})
 		return ; 
 	}
+	//console.log(wbpath)
+
 	var t = db.getTable(`
 		SELECT DISTINCT
 			[凭证日期],
@@ -106,10 +111,26 @@ var getDetail = function(wbpath, wform){
 			[订单数量]
 		FROM
 			[Sheet1$]
+		WHERE
+			[拒绝原因] = ""
 	`);
+
 	db.close();
 	db = null;
 	collectgarbage("collect");
+	table.push(t.fields, "订单BOM缓存日期");
+	import fsys;
+	import fsys.file;
+	for (i=1;#t){
+		var filename = string.join({"B2C", t[i]["SD 凭证"], t[i]["项目(SD)"], t[i]["物料"]},"_") ++ ".xlsx";
+		var fullname = io.joinpath(config.__sapDownload, filename);
+		if io.exist(fullname){
+			var fitem = fsys.file(fullname);
+			t[i]["订单BOM缓存日期"] = fitem.getFileTime().creation.local();
+			fitem.close();
+		}
+	}
+	
 	return table.map(t, function(v){
 		 v["凭证日期"] = tostring(v["凭证日期"],"yyyy/MM/dd" );
 		 v["项目(SD)"] = tonumber(v["项目(SD)"]);
@@ -119,12 +140,13 @@ var getDetail = function(wbpath, wform){
 }
 
 grid2.onClick = function(item,subItem,nmListView){
-	var c = owner.source[item].缓存文件;
+	var c =  grid2.source[item || winform.listview2.selIndex].缓存文件;
 	if !c return; 
 	grid.source = getDetail(c, winform);
 	if !grid.source or !#grid.source return;
 	grid.clear(true);
 	grid.onSortColumn(3, false);
+	domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,250,40,100})
 	winform.listview.fillParent(8);
 }
 grid2.onDoubleClick = function(item,subItem,nmListView){
@@ -132,10 +154,38 @@ grid2.onDoubleClick = function(item,subItem,nmListView){
 	if !c return; 
 	process.execute(io.joinpath(config.__sapDownload,c))
 }
+grid.onDoubleClick = function(item,subItem,nmListView){
+	var t = owner.source[item];
+	var c = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
+	c = io.joinpath(config.__sapDownload, c ++ ".xlsx") ;
+	if !io.exist(c)
+		win.msgbox("没有找到" ++ '\n' ++ c ++ '\n' ++ "请下载");
+	else 
+		process.execute(c)
+}
 
+winform.grid.onRightClick = function(item,subItem,nmListView){
+	var selectedIndex = owner.selected;
+	var itemList = table.array();
+	for (i=1; #owner.source)
+		if table.indexOf(selectedIndex, i)
+			table.push(itemList, owner.source[i]["项目(SD)"])
+	var x,y = win.getMessagePos();
+	var menu = win.ui.popmenu(winform);
+	
+	var t = owner.source[item];
+	var c = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
+	c = io.joinpath(config.__sapDownload, c ++ ".xlsx") ;
+
+	menu.add("打开订单BOM...", λ() process.execute(c));
+	menu.add("下载订单BOM...", λ() SAP.downloadB2CBOM(winform, t["SD 凭证"], itemList));
+	menu.popup(x,y,true);
+}
 winform.editDesp.onChange = function(){ 
 	if(owner.onModified)owner.onModified(true);
-	var str = string.trim(owner.text);
+	var str = owner.text;
+	if !str return ; 
+	str = string.trim(owner.text);
 	if !str or !#str {
 		grid.setTable(grid.source);
 	}else{
@@ -149,112 +199,39 @@ winform.editDesp.onChange = function(){
 winform.button.oncommand = function(id,event){
 	var order_number = string.trim(winform.edit.text);
 	if !order_number return ; 
-/*
-	var col = tarray.getCol(grid2.source,1);
-	var fi = table.indexOf(col, order_number);
-	if fi {
-	 		var fullname = io.joinpath(config.__sapDownload, grid2.source[fi].缓存文件);
-	 		var succ, err = true,"";
-	 		if io.exist(fullname)
-	 			 succ, err = io.remove(fullname)
-	 		if !succ
-	 			win.msgbox(err,fullname);
-	}
-*/
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"};
-	thread.invoke( 
-		function(wform, order_number){
-			import config;
-			import io;
-			import win;
-    		import web.script;
-    		var vm = web.script("VBScript") ;
+	thread.invoke(SAP.downloadOrderList, winform, order_number)
+}
 
-/*
-			import console; 
-			console.open();
-*/
-		
-			vm.script = /*
-					If Not IsObject(application) Then
-   					Set SapGuiAuto  = GetObject("SAPGUI")
-   					Set application = SapGuiAuto.GetScriptingEngine
-					End If
-					If Not IsObject(connection) Then
-   					Set connection = application.Children(0)
-					End If
-					If Not IsObject(session) Then
-   					Set session    = connection.Children(0)
-					End If
-					If IsObject(WScript) Then
-   					WScript.ConnectObject session,     "on"
-   					WScript.ConnectObject application, "on"
-					End If
-			*/
-			
-			/* 通过 vm.script 访问变量前需要先声明 */
-			vm.script = /*
-	    			dim order
-	    			dim startdate
-	    			dim lib_path
-	    			dim filename
-	 		*/
-			vm.script.order = order_number;
-			vm.script.lib_path = config.__sapDownload;
-			vm.script = /*
-				session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
-				session.findById("wnd[0]").sendVKey 0
-				session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order
-				session.findById("wnd[0]").sendVKey 0
-				'获取订单日期
-				startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
-			*/
-			vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-90))
-			vm.script = /*
-				session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select
-				session.findById("wnd[0]/usr/txtVBCOM-BSTKD").text = order
-				session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate
-				session.findById("wnd[0]/tbar[0]/btn[0]").press
-				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
-				session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
-				session.findById("wnd[1]/tbar[0]/btn[0]").press
-				session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
-				filename = "ORDER_LIST_" & order & ".XLSX"
-				session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
-	 		*/ 
-	 		var fullname = io.joinpath(vm.script.lib_path, vm.script.filename);
-	 		var succ = true;
-	 		if io.exist(fullname)
-	 			 succ = io.remove(fullname);
-	 		if succ {
-				vm.script = /*
-					session.findById("wnd[1]/tbar[0]/btn[11]").press
-		 		*/
-	 			wform.publish("down_bom", vm.script.filename);
-	 		}else {
-	 			vm.script = /*
-	 				session.findById("wnd[1]/tbar[0]/btn[12]").press
-	 			*/
-	 			win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
-	 		}	 		
-			vm.script = /*	
-				do while session.findById("wnd[0]/tbar[0]/btn[12]").Changeable
-					session.findById("wnd[0]/tbar[0]/btn[12]").press
-					on error resume next
-						session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
-					on error goto 0
-				loop
-	 	*/ 
-			wform.button.disabledText = null;
-		}, winform, order_number
+subscribe("down_b2c_bom",function(...){
+	var filename = ...;	
+	win.delay(3*1000);
+	thread.invoke( 
+		function(filename){
+			import domisoft;
+			var sht = domisoft.getRunningWorkSheet(filename);
+			import QHC;
+			QHC.formatBOM(sht)
+		}, filename
 	)
-}
-subscribe("down_bom",function(...){
-	win.setTimeout(getFolderList, 3000)
-})
-winform.button2.oncommand = function(id,event){
-	getFolderList();
-}
+} )
+
+subscribe("done_job", grid2.onClick); 
+subscribe("order_list_job_done", getFolderList); 
+subscribe("down_order_list",function(...){
+	var filename = ...;	
+	win.delay(5*1000);
+	thread.invoke(
+		function(filename){
+			import domisoft;
+			var sht = domisoft.getRunningWorkSheet(filename);	
+	 		if sht
+	 			sht.Parent.Close(false);
+		}, filename
+	)
+} )	
+	
+winform.button2.oncommand = getFolderList;
 
 winform.button3.oncommand = function(id,event){
 	var flist = winform.listview2.selected;

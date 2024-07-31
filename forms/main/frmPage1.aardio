@@ -8,45 +8,44 @@ import config;
 import sqlite;
 import tarray;
 /*DSG{{*/
-var tbm_winform = win.form(text="TBM";right=501;bottom=354;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0;)
+var tbm_winform = win.form(text="TBM";right=501;bottom=354;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 tbm_winform.add(
-button={cls="button";text='\uF062';left=72;top=144;right=96;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=9;};
-button2={cls="button";text='\uF00C  OK';left=387;top=306;right=488;bottom=345;db=1;default=1;dr=1;font=LOGFONT(name='FontAwesome');z=16;};
-button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=345;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=17;};
-button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=27;};
-button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=28;};
-button6={cls="button";text='\uF06E';left=104;top=144;right=128;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=32;};
-button7={cls="button";text='\uF142';left=487;top=103;right=501;bottom=127;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-11;name='FontAwesome');z=35;};
-cb_approve_date={cls="edit";left=215;top=248;right=300;bottom=272;dl=1;dt=1;z=15;};
-cb_approver={cls="combobox";left=48;top=245;right=178;bottom=270;dl=1;dt=1;items={};mode="dropdown";z=13;};
-cb_design_date={cls="edit";left=215;top=184;right=300;bottom=208;dl=1;dt=1;z=10;};
-cb_designer={cls="combobox";left=48;top=185;right=178;bottom=210;dl=1;dt=1;items={};mode="dropdown";z=11;};
-cb_material={cls="combobox";left=47;top=103;right=235;bottom=129;dl=1;dt=1;edge=1;items={};mode="dropdown";z=3;};
-cb_model_no={cls="combobox";left=300;top=58;right=488;bottom=84;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2;};
-cb_name_cn={cls="combobox";left=47;top=58;right=235;bottom=84;dl=1;dt=1;edge=1;items={};mode="dropdown";z=1;};
-cb_paint_std={cls="combobox";left=210;top=147;right=332;bottom=173;dl=1;dt=1;edge=1;items={"Q/LD J52005";"GB/T 21363-2018"};mode="dropdown";z=36;};
-cb_review_date={cls="edit";left=215;top=216;right=300;bottom=240;dl=1;dt=1;z=14;};
-cb_reviewer={cls="combobox";left=48;top=215;right=178;bottom=240;dl=1;dt=1;items={};mode="dropdown";z=12;};
-cb_tol={cls="combobox";left=358;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18;};
-cb_weight={cls="combobox";left=300;top=103;right=488;bottom=129;dr=1;dt=1;edge=1;items={};mode="dropdown";z=4;};
-chkPaint={cls="checkbox";text="喷粉标准";left=136;top=152;right=207;bottom=170;bgcolor=16777215;dl=1;dt=1;z=8;};
-chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272;right=480;bottom=296;checked=1;color=16711680;db=1;dr=1;hide=1;z=29;};
-groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5;};
-rd_M={cls="radiobutton";text="自制件(&E)";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30;};
-rd_P={cls="radiobutton";text="外购件(&F)";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31;};
-seDocPath={cls="static";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6;};
-static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19;};
-static10={cls="static";text="唤起快捷键 Alt+T";left=168;top=320;right=272;bottom=336;align="right";color=32768;db=1;dr=1;transparent=1;z=34;};
-static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20;};
-static3={cls="static";text="批准";left=15;top=250;right=45;bottom=275;dl=1;dt=1;transparent=1;z=21;};
-static4={cls="static";text="名称";left=15;top=63;right=45;bottom=82;dl=1;dt=1;transparent=1;z=22;};
-static5={cls="static";text="材料";left=15;top=106;right=45;bottom=125;dl=1;dt=1;transparent=1;z=23;};
-static6={cls="static";text="型号";left=269;top=63;right=299;bottom=82;dr=1;dt=1;transparent=1;z=24;};
-static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;dt=1;transparent=1;z=25;};
-static8={cls="static";text="版本";left=15;top=149;right=45;bottom=168;dl=1;dt=1;transparent=1;z=26;};
-static9={cls="static";text='\uF0E2';left=24;top=24;right=40;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=33;};
-version={cls="edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1;font=LOGFONT(h=-13);z=7;};
-
+button={cls="button";text='\uF062';left=72;top=144;right=96;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=9};
+button2={cls="button";text='\uF00C  OK';left=387;top=306;right=488;bottom=345;db=1;default=1;dr=1;font=LOGFONT(name='FontAwesome');z=16};
+button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=345;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=17};
+button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=27};
+button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=28};
+button6={cls="button";text='\uF06E';left=104;top=144;right=128;bottom=167;bgcolor=16777215;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=32};
+button7={cls="button";text='\uF142';left=487;top=103;right=501;bottom=127;color=8421504;dr=1;dt=1;flat=1;font=LOGFONT(h=-11;name='FontAwesome');z=35};
+cb_approve_date={cls="edit";left=215;top=248;right=300;bottom=272;dl=1;dt=1;z=15};
+cb_approver={cls="combobox";left=48;top=245;right=178;bottom=270;dl=1;dt=1;items={};mode="dropdown";z=13};
+cb_design_date={cls="edit";left=215;top=184;right=300;bottom=208;dl=1;dt=1;z=10};
+cb_designer={cls="combobox";left=48;top=185;right=178;bottom=210;dl=1;dt=1;items={};mode="dropdown";z=11};
+cb_material={cls="combobox";left=47;top=103;right=235;bottom=129;dl=1;dt=1;edge=1;items={};mode="dropdown";z=3};
+cb_model_no={cls="combobox";left=300;top=58;right=488;bottom=84;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
+cb_name_cn={cls="combobox";left=47;top=58;right=235;bottom=84;dl=1;dt=1;edge=1;items={};mode="dropdown";z=1};
+cb_paint_std={cls="combobox";left=210;top=147;right=332;bottom=173;dl=1;dt=1;edge=1;items={"Q/LD J52005";"GB/T 21363-2018"};mode="dropdown";z=36};
+cb_review_date={cls="edit";left=215;top=216;right=300;bottom=240;dl=1;dt=1;z=14};
+cb_reviewer={cls="combobox";left=48;top=215;right=178;bottom=240;dl=1;dt=1;items={};mode="dropdown";z=12};
+cb_tol={cls="combobox";left=358;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18};
+cb_weight={cls="combobox";left=300;top=103;right=488;bottom=129;dr=1;dt=1;edge=1;items={};mode="dropdown";z=4};
+chkPaint={cls="checkbox";text="喷粉标准";left=136;top=152;right=207;bottom=170;bgcolor=16777215;dl=1;dt=1;z=8};
+chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272;right=480;bottom=296;checked=1;color=16711680;db=1;dr=1;hide=1;z=29};
+groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
+rd_M={cls="radiobutton";text="自制件(&E)";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
+rd_P={cls="radiobutton";text="外购件(&F)";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
+seDocPath={cls="static";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
+static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
+static10={cls="static";text="唤起快捷键 Alt+T";left=168;top=320;right=272;bottom=336;align="right";color=32768;db=1;dr=1;transparent=1;z=34};
+static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20};
+static3={cls="static";text="批准";left=15;top=250;right=45;bottom=275;dl=1;dt=1;transparent=1;z=21};
+static4={cls="static";text="名称";left=15;top=63;right=45;bottom=82;dl=1;dt=1;transparent=1;z=22};
+static5={cls="static";text="材料";left=15;top=106;right=45;bottom=125;dl=1;dt=1;transparent=1;z=23};
+static6={cls="static";text="型号";left=269;top=63;right=299;bottom=82;dr=1;dt=1;transparent=1;z=24};
+static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;dt=1;transparent=1;z=25};
+static8={cls="static";text="版本";left=15;top=149;right=45;bottom=168;dl=1;dt=1;transparent=1;z=26};
+static9={cls="static";text='\uF0E2';left=24;top=24;right=40;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=33};
+version={cls="edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1;font=LOGFONT(h=-13);z=7}
 )
 /*}}*/
 
@@ -146,7 +145,7 @@ var loadPromptList = function(){
 	for(name,ctrl in tbm_winform.eachControl() ){
 		if ctrl.cls !== "combobox" continue ; 
 		var ctl = string.trimleft(name, "cb_");
-		ctrl.onEditChange = function(){
+		ctrl.onDropDown = function(){
 			var result;
 			if !owner.text || !#owner.items || owner.items[[1]] == owner.text
 				result =  getSuggest(owner.parent.promTab, ctl, "");
@@ -156,7 +155,7 @@ var loadPromptList = function(){
 			owner.autoComplete(result);
 			return true; 
 		}
-		ctrl.onDropDown = ctrl.onEditChange;
+		//ctrl.onDropDown = ctrl.onEditChange;
 	}
 }
 /*}}*/

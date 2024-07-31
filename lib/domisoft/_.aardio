@@ -170,7 +170,15 @@ formatWindowsFileName = function (nameStr) {
     nameStr = replace(nameStr, '\n', " ");  //替换换行符
     return trim(nameStr);
 };
-
+setColumnWidth = function(lv, widthTab){
+	var count = math.max(lv.columnCount, #widthTab)
+	for (i=1; count)
+		if i <= lv.columnCount
+			lv.setColumn({
+				cx = widthTab[i];
+				fmt = (widthTab[i] <= 100) ? 0x2 /*_LVCFMT_CENTER*/ : 0x0 /*_LVCFMT_LEFT*/
+			}, i);
+}
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程
@@ -182,5 +190,6 @@ ctrlC(translateAccelerator) = 用于listview.translateAccelerator赋值启用CTR
 readClipHcode() = 获取截图中的专用号
 getContentFromHTTP(.(url, parseJson) = 获取网址内容
 formatWindowsFileName(nameStr) = 替换Windows文件名非法字符为全角＼"／，．＜＞｜＊
+setColumnWidth(listview, widthTable) = 设置列宽
 end intellisense**/
 
