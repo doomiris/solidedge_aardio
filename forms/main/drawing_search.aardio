@@ -8,6 +8,7 @@ listview2={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;aw=1;db=1;dl=1
 /*}}*/
 
 import config;
+import domisoft;
 import process;
 import win.clip;
 import win.clip.file;
@@ -19,7 +20,7 @@ console.open()
 */
 
 /*sqliteDB{{*/
-	var flistDB = sqlite(config.dbServer.path + "\drawing_lists.db");	//打开数据库连接
+	var flistDB = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));	//打开数据库连接
 /*}}*/
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
@@ -27,11 +28,11 @@ var searchDocument = function (filenumber){
 
 	winform_drawing.edit2.text = "";
 
-    winform_drawing.listview2.clear(true);
+    winform_drawing.listview2.clear();
     
     if !#filenumber return ; 
     
-    winform_drawing.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
+    //winform_drawing.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 
 	var fileTab = table.create(,{fields={[2]="文件名";[3]="路径";[1]="类型";[4]="版本"}});
@@ -62,18 +63,20 @@ var searchDocument = function (filenumber){
 	winform_drawing.listview2.header = fileTab.fields;
 	
 	
-	winform_drawing.listview2.clear(true);
+	winform_drawing.listview2.clear();
 	winform_drawing.listview2.setTable(fileTab);
 
-//调整列宽		
+//调整列宽	
+	winform_drawing.listview2.coulumnWidth := domisoft.setColumnWidth(winform_drawing.listview2, {50,200,300,100})
+/**
 	winform_drawing.listview2.setColumn({cx=50;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
 	winform_drawing.listview2.setColumn({cx=200;fmt=0x0/*_LVCFMT_LEFT*/},   2);
 	winform_drawing.listview2.setColumn({cx=300;fmt=0x0/*_LVCFMT_LEFT*/}, 3);
 	//winform_drawing.listview2.setColumn({cx=100 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
-	winform_drawing.listview2.adjust = function(cx,cy){
-    	//winform_drawing.listview2.fillParent(1);
-    	winform_drawing.listview2.fillParent(3);
-	} 
+**/
+
+    winform_drawing.listview2.fillParent(3);
+
 }
 /*}}*/
 var refreshFiles = function(){
@@ -135,7 +138,7 @@ winform_drawing.listview2.translateAccelerator = function( msg ){
 			}
 		}     
 		if #tab
-			win.clip.file.write(tab,"copy");	//TODO: 多文件copy
+			win.clip.file.write(tab,"copy");
         return true;
     }
 }

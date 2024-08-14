@@ -1,0 +1,29 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="自动关闭代理(不要关闭窗口)";right=501;bottom=235)
+winform.add(
+edit={cls="edit";left=2;top=2;right=499;bottom=222;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=1}
+)
+/*}}*/
+
+var reset = function(wform){
+	import inet;
+	var t = inet.getSystemProxy();
+	if t.autoConfigUrl
+		thread.invoke( 
+			function(wform){
+				import inet.conn;
+				inet.conn.setProxyAutoConfig()
+				inet.conn.setProxy();
+				inet.reloadSystemProxy();
+				wform.edit.log(tostring(time().local()), '\r\n' )
+			},wform
+		)
+	wform.edit.log(".")
+}
+
+reset (winform); //立即执行一次, 然后按以下时间重复
+winform.setInterval(reset, 5 * 60 * 1000,winform); 
+
+winform.show();
+win.loopMessage();

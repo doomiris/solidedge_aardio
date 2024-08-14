@@ -2,8 +2,25 @@
 var table = ..table;
 var string = ..string;
 var math = ..math;
-var replace = string.replace
-var trim = string.trim
+
+var replace = string.replace;
+var trim = string.trim;
+
+math.isNumber = function(str){
+	return #str = #tostring((tonumber(str))); 
+}
+table.toHTML = function(tab){
+    var html = "<table border=1>";
+    for (i = 1; #tab) {
+        html += "<tr>";
+        for (j = 1; #tab[i]) 
+            html += "<td nowrap>" + tab[i][j] + "</td>";
+        html += "</tr>";
+    }
+    html += "</table>";
+    return html;
+}
+
 
 namespace domisoft;
 showInputBox = function(title, Msg,tips, winform){
@@ -76,35 +93,47 @@ getSelectedText = function(listCtrl){
 		table.unshift(t, text);
 	return t; 
 }
-ctrlC = function(msg){
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
-    var vk = msg.wParam;    
-    if( ( vk == 'C'# ) && ctrl ){
+copySelectedItem = function(ctrl){
+		if !ctrl	ctrl = owner;
         import win.clip;
         import win.clip.html;
         var cliphtml = win.clip.html();
-		var items = owner.items;
-		var selected = owner.selected; 
+		var items = ctrl.items;
+		var selected = ctrl.selected; 
+		/* clip添加纯文本格式 */
         var txtTab = table.array();
         for (i=1; #selected)
             table.push(txtTab,string.join(items[selected[i]],'\t'));
 		win.clip.write(string.join(txtTab,'\n'));		
+		/* clip添加HTML格式 */
 		var hTab = table.array();
         for (i=1; #selected)
-            table.push(hTab,string.join(items[selected[i]],"</td><td>"));
-        var html = "<html><table border=1'><tr><td>" + string.join(hTab,"</td></TR><TR><td>") + "</td></TR></table></html>"
+            table.push(hTab, items[selected[i]]);            
+        var html = table.toHTML(hTab)
         html = cliphtml.stringify(html);
 		cliphtml.write(html,true,false);
+}
+selectAll = function(ctrl){
+	if !ctrl ctrl = owner
+	var t = table.array();
+	for (i=1; ctrl.count) table.push(t, i); 
+	ctrl.selected = t; 
+}
+
+ctrlC = function(msg){
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+    var vk = msg.wParam;    
+    if( ( vk == 'C'# ) && ctrl ){
+		copySelectedItem(owner);
         return true;
     }
     if( ( vk == 'A'# ) && ctrl ){
-		var items = owner.items;
-		var t = table.array();
-		for (i=1; #items) table.push(t, i); 
-		owner.selected = t; 
+		selectAll(owner);
         return true;
     }
 }
+
+
 readClipHcode = function(){
 	import win.clip;
 	import dotNet.ocr;
@@ -178,7 +207,11 @@ setColumnWidth = function(lv, widthTab){
 				cx = widthTab[i];
 				fmt = (widthTab[i] <= 100) ? 0x2 /*_LVCFMT_CENTER*/ : 0x0 /*_LVCFMT_LEFT*/
 			}, i);
+	return true; 
 }
+
+
+
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程

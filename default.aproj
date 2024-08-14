@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.468" ProductVersion="1.5.0.468" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.472" ProductVersion="1.5.0.472" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
 			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\admin_only\add_QHC_Drawing_Release_List.aardio" comment="forms\admin_only\add_QHC_Drawing_Release_List.aardio"/>
-			<file name="BOM_export.aardio" path="forms\admin_only\BOM_export.aardio" comment="forms\admin_only\BOM_export.aardio"/>
 			<file name="BOM_OD_LIB.aardio" path="forms\admin_only\BOM_OD_LIB.aardio" comment="forms\admin_only\BOM_OD_LIB.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
 			<file name="SAP-GETLIST.aardio" path="forms\admin_only\SAP-GETLIST.aardio" comment="forms\admin_only\SAP-GETLIST.aardio"/>
@@ -30,7 +29,6 @@
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
-			<file name="物料名称生成.aardio" path="forms\Excel\物料名称生成.aardio" comment="forms\Excel\物料名称生成.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
@@ -47,6 +45,7 @@
 			<file name="sap_search.aardio" path="forms\main\sap_search.aardio" comment="forms\main\sap_search.aardio"/>
 			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
 			<file name="frmclipboard.aardio" path="forms\main\frmclipboard.aardio" comment="forms\main\frmclipboard.aardio"/>
+			<file name="loader.aardio" path="forms\main\loader.aardio" comment="forms\main\loader.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">
 			<file name="BOM-CALC.aardio" path="forms\obsolete\BOM-CALC.aardio" comment="forms\obsolete\BOM-CALC.aardio"/>
@@ -102,22 +101,23 @@
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="获取订单清单信息.aardio" path="forms\SAP\获取订单清单信息.aardio" comment="forms\SAP\获取订单清单信息.aardio"/>
 		</folder>
-		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="false">
-			<file name="loader.aardio" path="forms\side_loader\loader.aardio" comment="forms\side_loader\loader.aardio"/>
+		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="true">
+			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
+			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
+			<file name="物料名称生成.aardio" path="forms\side_loader\物料名称生成.aardio" comment="forms\side_loader\物料名称生成.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
+			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>
 			<file name="收集temp内的PDF文件放入PDF库.aardio" path="forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio" comment="forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio"/>
 			<file name="更新插件.aardio" path="forms\Teamcenter\更新插件.aardio" comment="forms\Teamcenter\更新插件.aardio"/>
 		</folder>
 		<folder name="TEST" path="forms\TEST" comment="forms\TEST" local="false" embed="false" ignored="true">
 			<file name="BOM_FILL_FROM_BASE.aardio" path="forms\TEST\BOM_FILL_FROM_BASE.aardio" comment="forms\TEST\BOM_FILL_FROM_BASE.aardio"/>
 			<file name="BOM_OD_LIB_COLOR.aardio" path="forms\TEST\BOM_OD_LIB_COLOR.aardio" comment="forms\TEST\BOM_OD_LIB_COLOR.aardio"/>
-			<file name="BOM_OD_默认值.aardio" path="forms\TEST\BOM_OD_默认值.aardio" comment="forms\TEST\BOM_OD_默认值.aardio"/>
 			<file name="BOM_Studio.aardio" path="forms\TEST\BOM_Studio.aardio" comment="forms\TEST\BOM_Studio.aardio"/>
 			<file name="COPY_指定类型文件.aardio" path="forms\TEST\COPY_指定类型文件.aardio" comment="forms\TEST\COPY_指定类型文件.aardio"/>
 			<file name="CS12查BOM.aardio" path="forms\TEST\CS12查BOM.aardio" comment="forms\TEST\CS12查BOM.aardio"/>
 			<file name="download_tif_from_EuroSap.aardio" path="forms\TEST\download_tif_from_EuroSap.aardio" comment="forms\TEST\download_tif_from_EuroSap.aardio"/>
-			<file name="EXCEL_get_cost_sum_from_bom.aardio" path="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio" comment="forms\TEST\EXCEL_get_cost_sum_from_bom.aardio"/>
 			<file name="excel_get_pdf_from_lib.aardio" path="forms\TEST\excel_get_pdf_from_lib.aardio" comment="forms\TEST\excel_get_pdf_from_lib.aardio"/>
 			<file name="excel_group_rows.aardio" path="forms\TEST\excel_group_rows.aardio" comment="forms\TEST\excel_group_rows.aardio"/>
 			<file name="excel_tree.aardio" path="forms\TEST\excel_tree.aardio" comment="forms\TEST\excel_tree.aardio"/>

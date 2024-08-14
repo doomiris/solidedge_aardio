@@ -159,11 +159,11 @@ console.open();
 
 	var db = QHC.openDb(QHC.sap_db_path);
 	var sapTab;
-	var fields //= QHC.getColDef();
+	//var fields //= QHC.getColDef();
     if !#userinput return ; 
 
-    winform_qlist.listview.clear(true);
-    winform_qlist.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
+    winform_qlist.listview.clear();
+    //winform_qlist.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
 
     userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
     
@@ -172,7 +172,9 @@ console.open();
 		userinput = string.replace(userinput, v,'\r\n');    
 
     var userinputArr = string.split(userinput, '\r\n');
-    userinputArr = table.unique(userinputArr);
+    
+    if filter_form.chkHideDuplicate.checked
+		userinputArr = table.unique(userinputArr);
     
     if (#userinputArr == 1)
     	winform_qlist.publish("saveInput", userinputArr[1]);
@@ -180,9 +182,9 @@ console.open();
  	table.clear(sapTab);
 	sapTab={};
 	
-	fields = tarray.replaceValue(fields, "MTyp", "类型");
-	fields = tarray.replaceValue(fields, "BUn", "单位");
-	fields = tarray.replaceValue(fields, "PGr", "采购组");
+	//fields = tarray.replaceValue(fields, "MTyp", "类型");
+	//fields = tarray.replaceValue(fields, "BUn", "单位");
+	//fields = tarray.replaceValue(fields, "PGr", "采购组");
 	//console.dump(fields)
     for (i=1; #userinputArr; 1){
         if string.indexOf(userinputArr[i], '\t') userinputArr[i] = table.pop(string.split(userinputArr[i],'\t'));
@@ -214,7 +216,7 @@ console.open();
 			 	WHERE
 			 		??
 			 " ;
-			 fields = {"物料","物料描述","单位","类型","物料组","价格"};
+			// fields = {"物料","物料描述","单位","类型","物料组","价格"};
 		}else{
 			sqlstr = "
 				SELECT
@@ -226,14 +228,13 @@ console.open();
 					`价格`,
 					`PGr` AS `采购组`,
 					`禁用`,
-					`设计展平尺寸`,
 					`生产展平尺寸`
 			 	FROM
 			 		`所有物料`
 			 	WHERE
 			 		??
 			 " ;
-			 fields = {"物料","物料描述","单位","类型","物料组","价格","禁用","设计展平尺寸","生产展平尺寸"};
+			// fields = {"物料","物料描述","单位","类型","物料组","价格","采购组","禁用","生产展平尺寸"};
 		}
     	var searchField = {};	
     	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
@@ -271,27 +272,24 @@ console.open();
 		/*  预测用的-F物料已经全部禁用了
 		if table.indexOf(getSelectedText(filter_form.clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11"; 
 		*/
-/*
-		import win;
-		win.msgbox(sqlstr);
-*/		
-		sqlstr = string.replace(sqlstr,"{等号}","="); 
-		var t = quickSearch ? {[1] = db.stepQuery(sqlstr)} : db.getTable(sqlstr);
+
+		sqlstr = string.replace(sqlstr,"{等号}","=");
+		
+		if quickSearch
+			sqlstr = sqlstr + " LIMIT 1"
+		var t =  db.getTable(sqlstr);
 
 		if !#t
 			if !filter_form.chkHideUnknown.checked
 				table.push(t, {物料=userinput;物料描述="1没找到SAP物料, 双击可继续查找图纸"/*;物料类型="";价格="";禁用=""*/});
 
-/*
-		if (filter_form.chkDisabled.checked)	
-			t = table.filter(t, lambda(v) !v.禁用 || !#v.禁用 );
-*/
 
 		if #t
 			sapTab = table.concat(sapTab, t);
-		
-		if #sapTab
-			sapTab = tarray.uniqueByCol(sapTab, "物料");	//uniqueCol 需要有fields
+
+		//if #sapTab
+		//	if filter_form.chkHideDuplicate.checked
+		//		sapTab = tarray.uniqueByCol(sapTab, "物料");	//uniqueCol 需要有fields
 	}
 	
 	if !#sapTab {
@@ -304,23 +302,12 @@ console.open();
 	/*调整列宽*/
 	
 	var formatListView = function(lv){
-		winform_qlist.grid.clear(true);
-		//lv.enableDoubleBuffering();
-		
-		//winform_qlist.grid.onSortColumn(1, false);  
-
+		winform_qlist.grid.clear();
 		winform_qlist.grid.setTable(winform_qlist.grid.source);
-		
-		lv.setColumn({cx=90 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
-	//	lv.setColumn({cx=350;fmt=0x0/*_LVCFMT_LEFT*/},  2);
-		lv.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},3);
-		lv.setColumn({cx=60 ;fmt=0x2/*_LVCFMT_CENTER*/},4);
-		lv.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},5);
-		lv.setColumn({cx=50 ;fmt=0x2/*_LVCFMT_CENTER*/},6);
+		winform_qlist.grid.columnWidth := domisoft.setColumnWidth(winform_qlist.grid, {90,350,60,60,60,50,50,50,50,120})
     	lv.fillParent(2);
 	}
-	sapTab.fields = fields;
-		//console.dump(sapTab)
+	//sapTab.fields = fields;
 	winform_qlist.grid.source = sapTab;
 	formatListView(winform_qlist.listview);
 }
@@ -340,10 +327,10 @@ subscribe("dok", function(...){
 			import console;
 			import QHC;
 			//for k, v in ftab {
-				var sht = domisoft.getRunningWorkSheet(ftab);
-				QHC.formatBOM(sht);
-			//	if #ftab>4 sht.Parent.Close (true /* _save_changes */);
-			//}
+			var sht = domisoft.getRunningWorkSheet(ftab);
+			QHC.formatBOM(sht);
+			import fsys;
+			fsys.copy(sht.Parent.FullName, io.joinpath(config.dbServer.path,"\xl_lib\"), 0x10/*_FOF_NOCONFIRMATION*/)
 		}, ftab
 	)
 } )

@@ -28,15 +28,15 @@ namespace config {
 if !config.dbServer.path
 	config.dbServer.path = lib.dbServer;
 
-import VBASettingIO;
+//import VBASettingIO;
 if !config.tbm.Designer
-	config.tbm.Designer = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
+	config.tbm.Designer = ""// VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
 if !config.tbm.Reviewer
-	config.tbm.Reviewer = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
+	config.tbm.Reviewer = ""//VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
 if !config.tbm.Approver
-	config.tbm.Approver = VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
+	config.tbm.Approver = ""//VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
 if !config.setbm.workingDir
-	config.setbm.workingDir = VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces\");
+	config.setbm.workingDir = "d:\workspaces\"//VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces\");
 if !config.revmgr.desp
 	config.revmgr.desp = {};
 if !config.qtip.fav

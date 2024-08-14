@@ -47,6 +47,7 @@ grid.onSortColumn = function(column, desc){
 };
 grid2.onSortColumn = grid.onSortColumn;
 
+
 var getFolderList = function(){
 	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
 	grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
@@ -63,7 +64,7 @@ var getFolderList = function(){
 	grid2.onSortColumn(2, true);
 
 	//grid2.setTable(flist);
-	domisoft.setColumnWidth(winform.listview2, {80,120})
+	grid2.ColumnWidth := domisoft.setColumnWidth(winform.listview2, {80,120})
 	winform.listview2.fillParent(3);
 	winform.button.disabledText = null;
 }
@@ -79,21 +80,21 @@ var getDetail = function(wbpath, wform){
 
 	wbpath = io.joinpath(config.__sapDownload, wbpath)
 	if !io.exist(wbpath) return error("文件不存在"++'\n'++wbpath); 
-	wform.grid.clear(true);
-	wform.grid.setColumns({[1]="正在打开..." + wbpath});
+	wform.grid.clear();
+	//wform.grid.setColumns({[1]="正在打开..." + wbpath});
 
 	var db, err = access(wbpath);
 	var n=0;
 	while(err){
-		wform.grid.setColumns({[1]="OLEDB数据库初始化..."+n});
+		//wform.grid.setColumns({[1]="OLEDB数据库初始化..."+n});
 		collectgarbage("collect");
 		n=n+1;
 		db, err = access(wbpath);
 		if n>1000 break;
 	}
 	if err {
-		wform.grid.clear(true);
-		wform.grid.setColumns({[1]= err;[2] = wbpath})
+		wform.grid.clear();
+		//wform.grid.setColumns({[1]= err;[2] = wbpath})
 		return ; 
 	}
 	//console.log(wbpath)
@@ -144,9 +145,9 @@ grid2.onClick = function(item,subItem,nmListView){
 	if !c return; 
 	grid.source = getDetail(c, winform);
 	if !grid.source or !#grid.source return;
-	grid.clear(true);
+	grid.clear();
 	grid.onSortColumn(3, false);
-	domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,250,40,100})
+	grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,250,40,100})
 	winform.listview.fillParent(8);
 }
 grid2.onDoubleClick = function(item,subItem,nmListView){
@@ -191,7 +192,7 @@ winform.editDesp.onChange = function(){
 	}else{
 		var t = table.filter(grid.source, λ(v) string.find(v["描述"], "@@"+str));
 		t.fields = grid.source.fields;
-		grid.clear(true);
+		grid.clear();
 		grid.setTable(t);
 	}
 }
@@ -248,7 +249,7 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.splitter.split(winform.listview,winform.listview2);
-winform.show();
+winform.show(3/*_SW_MAXIMIZE*/);
 
 win.loopMessage();
 return winform;

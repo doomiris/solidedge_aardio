@@ -311,7 +311,14 @@ downloadOrderList = function(winform, orderId){
    			WScript.ConnectObject application, "on"
 			End If
 	*/
-	
+	vm.script = /*
+		do while session.findById("wnd[0]/tbar[0]/btn[12]").Changeable
+			session.findById("wnd[0]/tbar[0]/btn[12]").press
+			on error resume next
+				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+			on error goto 0
+		loop
+	*/
 	/* 通过 vm.script 访问变量前需要先声明 */
 	vm.script = /*
 	    	dim order

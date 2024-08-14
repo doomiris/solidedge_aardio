@@ -1,0 +1,115 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="物料名称生成";right=929;bottom=694)
+winform.add(
+button={cls="button";text="Copy All >>";left=82;top=657;right=157;bottom=681;db=1;dl=1;z=5};
+button2={cls="button";text="清空";left=17;top=657;right=68;bottom=680;db=1;dl=1;z=11};
+["lb名称"]={cls="listbox";left=14;top=414;right=171;bottom=486;aw=1;dl=1;dt=1;edge=1;items={"背风板";"风道";"分隔板";"支撑"};z=3};
+["lb型号"]={cls="listbox";left=14;top=165;right=171;bottom=232;aw=1;dl=1;dt=1;edge=1;items={"Monaxis";"CGL";"SGL"};z=2};
+["lb材料"]={cls="listbox";left=14;top=510;right=171;bottom=569;aw=1;dl=1;dt=1;edge=1;items={"未喷粉/已喷粉";"未喷粉/已喷粉/不锈钢"};z=9};
+["lb类型"]={cls="listbox";left=14;top=244;right=171;bottom=324;aw=1;dl=1;dt=1;edge=1;items={"D/M";"SR/TR";"SP/TP";"EU/LU"};z=7};
+["lb长度"]={cls="listbox";left=14;top=340;right=171;bottom=403;aw=1;dl=1;dt=1;edge=1;items={"125/188/250/375";"2D/3D/4D/5D"};z=8};
+listbox={cls="listbox";left=14;top=13;right=171;bottom=91;aw=1;dl=1;dt=1;edge=1;hide=1;items={"项目";"型号";"物料名称";"材质";"尺寸"};z=6};
+listview={cls="listview";left=181;top=11;right=928;bottom=681;db=1;dl=1;dr=1;dt=1;edge=1;z=4};
+["method方式"]={cls="listbox";left=14;top=101;right=171;bottom=146;aw=1;dl=1;dt=1;edge=1;hide=1;items={"按长度";"按门数"};z=1};
+splitter={cls="splitter";left=173;top=9;right=179;bottom=684;frame=1;z=10}
+)
+/*}}*/
+
+io.curDir("\\CCNSIA1A\SEParts\Admin\SAP\db\sideload\");
+
+import table.product; //迪卡尔运算迭代器
+import domisoft;
+
+var product = function(arr){
+    var t = {};
+    for c in table.product(arr,true)  {
+        var mt={};
+        for k, v in c
+        	table.push(mt, v);    
+ 		table.push(t, mt);
+ 	}
+    return t;
+}
+
+
+var getlist = function(){
+	var t={};
+	for(name,ctrl in winform.eachControl("listbox") ){
+//		if ctrl.cls !== "listbox" continue;
+		if !string.startWith(name,"lb") continue;
+		var keyword = string.trimleft(name,"lb");
+		var v = ctrl.selText;
+		//if !v return ; 
+		if v and string.find(v,"@/")
+			v = string.split(v,"/");
+		else
+			v={v};
+		t[keyword] = v;
+	}
+
+	var st = product({t.型号,t.类型,t.长度,t.名称,t.材料});
+	return st; 
+}
+
+var refreshList = function(	){
+	var t = getlist();
+	var s = {};
+	for (i=1; #t){
+		table.push(s, {
+			["desp"]:string.join(t[i]," ");
+			["sort"]:t[i][3]
+		})
+	}
+	s.fields = {[1]="desp";[2]="sort"};
+	winform.listview.setTable(s);	
+}
+
+var clearAll = function(){
+	for(name,ctrl in winform.eachControl("listbox") ){
+		ctrl.selIndex = null;
+	}
+}
+
+
+winform.show();
+
+
+winform.splitter.split({
+	winform.listbox,
+	winform.method方式,
+	winform.lb名称,
+	winform.lb型号,
+	winform.lb材料,
+	winform.lb类型,
+	winform.lb长度,
+	winform.button
+	}, winform.listview)
+
+
+for(name,ctrl in winform.eachControl("listbox") ){
+	ctrl.onSelChange = refreshList;
+	ctrl.wndproc = function(hwnd,message,wParam,lParam){
+		if message == 0x205 /* _WM_RBUTTONUP */ owner.selIndex = null;
+	}
+}
+
+winform.listview.selectAll = domisoft.selectAll;
+winform.listview.copySelectedItem = domisoft.copySelectedItem;
+winform.listview.translateAccelerator = domisoft.ctrlC;
+
+winform.button.oncommand = function(id,event){
+	winform.listview.selectAll();
+	winform.listview.copySelectedItem();
+}
+
+winform.splitter.ltMin = 140;
+winform.splitter.rbMin = 200;
+
+
+winform.button2.oncommand = clearAll;
+
+
+
+win.loopMessage();
+return winform;

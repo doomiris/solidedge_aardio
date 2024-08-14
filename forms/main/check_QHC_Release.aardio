@@ -4,7 +4,6 @@ import win.ui;
 var winform_queryrev = win.form(text="QHC开发图纸下发记录";right=759;bottom=469)
 winform_queryrev.add(
 button={cls="button";text="查找";left=224;top=56;right=296;bottom=88;dl=1;dt=1;z=3};
-button2={cls="button";text='\uF0E2';left=8;top=432;right=40;bottom=464;db=1;dl=1;font=LOGFONT(name='FontAwesome');z=5};
 edit={cls="edit";left=48;top=56;right=200;bottom=88;dl=1;dt=1;edge=1;z=2};
 edit2={cls="edit";left=696;top=64;right=736;bottom=88;dr=1;dt=1;edge=1;z=4};
 listview={cls="listview";left=0;top=112;right=760;bottom=432;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;items={};z=1}
@@ -12,6 +11,7 @@ listview={cls="listview";left=0;top=112;right=760;bottom=432;ah=1;aw=1;db=1;dl=1
 /*}}*/
 
 import config;
+import domisoft;
 /*sqliteDB{{*/
 import sqlite;
 var db,err = sqlite(io.joinpath(config.dbServer.path,"qhc_dw_rel_list.db"));	//打开数据库连接
@@ -30,28 +30,22 @@ var searchQHCDB = function(pcode){
 }
 /*}}*/
 
-var getLatestVer = function(pcode){
-	tab := searchQHCDB(pcode);
-	return #tab>0 ? tab[#tab].图纸版次 : ""; 
-}
-
-
 import win.ui.grid;
 var grid = win.ui.grid(winform_queryrev.listview);//创建数据视图
-var tab;
 
+var tab;
 winform_queryrev.button.oncommand = function(id,event){
 	winform_queryrev.edit.text = string.upper(winform_queryrev.edit.text);
 	tab = searchQHCDB(winform_queryrev.edit.text)
 	for(i=1;#tab){
 		tab[i].图纸下发时间 = time(tab[i].图纸下发时间,"%Y/%m/%d");
 	}
-	
+	table.sort(tab, lambda(next) tonumber(owner.图纸版次) < tonumber(next.图纸版次))
   	grid.setTable(tab);
   	winform_queryrev.edit2.text = #tab ? tab[#tab].图纸版次 : ""
 }
 
-
+winform_queryrev.listview.translateAccelerator = domisoft.ctrlC;
 
 winform_queryrev.show();
 
@@ -63,12 +57,6 @@ subscribe("qtip_search_5", function(...){
 	}
 } )
 
-
-winform_queryrev.button2.oncommand = function(id,event){
-    _dw_path = "\\ccnqia05\开发部共享文件-\01.2022Y图纸&技术通知及BOM\2022年开发部图纸下发台账-以此为准.xlsx";
-	if !io.exist(_dw_path) return error("找不到开发部共享文件: " ++ _dw_path);
-	loadcodex("\forms\Excel\refresh_QHC_Drawing_Release_List.aardio", _dw_path );
-}
 
 
 win.loopMessage();

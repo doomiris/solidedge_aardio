@@ -190,7 +190,8 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		[46] = "'喷粉'请用'已喷粉'或'已喷'替代";
 		[47] = "没选择'用途'";
 		[48] = "没选择'是否是关键零件'";
-		[49] = "含有非法空格符号(字体改为AIGDT就能发现了)"
+		[49] = "含有非法空格符号(字体改为AIGDT就能发现了)";
+		[50] = "展平尺寸格式错误"
 	}
 
 /*}}*/
@@ -279,6 +280,21 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 		}
 		[49] = function(i){
 				return (string.indexAny(etab[i].物料描述, 194)); 
+		}
+		[50] = function(i){
+				if etab[i].物料类型=="HALB" {
+					if etab[i].SAP展开尺寸 {
+						var d = string.split(etab[i].SAP展开尺寸, "*");
+						if #d !== 3
+							return true; 
+						else {
+							for (i=1; #d)
+								if !math.isNumber(d[i])
+									return true; 
+						}
+						
+					}
+				}
 		}
 	};
 	/*}}*/

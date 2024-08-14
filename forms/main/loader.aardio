@@ -1,0 +1,38 @@
+import win.ui;
+import win.ui.grid
+/*DSG{{*/
+var winform = win.form(text="扩展中心";right=759;bottom=469)
+winform.add(
+button={cls="button";text="Button";left=616;top=35;right=737;bottom=77;hide=1;z=2};
+listview={cls="listview";left=0;top=118;right=759;bottom=413;edge=1;z=1}
+)
+/*}}*/
+
+var grid = win.ui.grid(winform.listview);
+import inet;
+import inet.conn;
+import table.product;
+import domisoft;
+
+import config;
+var lib_path = io.joinpath(config.dbServer.path,"\sideload\");
+
+import fsys;
+var flist = fsys.list(lib_path,,"*.aardio");
+
+var lt = {}
+
+for (i=1; #flist)
+	table.push(lt, io.splitpath(flist[flist[i]]))
+
+grid.setTable(lt)
+grid.ColumnWidth := domisoft.setColumnWidth(grid, {15,50,200,300})
+grid.onDoubleClick = function(item,subItem,nmListView){
+	var file = flist[flist[item]];
+	loadcodex(file);
+}
+
+
+
+winform.show();
+win.loopMessage();

@@ -13,7 +13,6 @@ import config;
 import domisoft;
 import SAP;
 import solidedge.application;
-import solidedge.DraftDocument;
 import access;
 import access.oleDb;
 /*DSG{{*/
@@ -92,7 +91,7 @@ win.ui.simpleWindow( mainForm );
 
 //var start_time = time();
 
-var seApp;
+var seApp = solidedge.application();
 
 
 /*托盘图标{{*/
@@ -162,7 +161,6 @@ mainForm.popmenu2.add('&Open TBM', function(){
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('检查专用号申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio")));
 mainForm.popmenu2.add('智能填写专用号申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio")));
-mainForm.popmenu2.add('物料名称生成器', λ() thread.invoke(λ() loadcodex("\forms\Excel\物料名称生成.aardio")));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('专用号填入ItemMaster...', λ() thread.invoke(λ() loadcodex("\forms\Excel\fillin_item_master.aardio")));
 //mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
@@ -177,6 +175,7 @@ mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio")));
 //mainForm.popmenu2.add('订单BOM(B2C)...', λ() thread.invoke(λ() loadcodex("\forms\SAP\下载订单BOM.aardio")));
 mainForm.popmenu2.add('订单清单和订单BOM(B2C)浏览器...', λ() thread.invoke(λ() loadcodex("\forms\SAP\获取订单清单信息.aardio")));
+mainForm.popmenu2.add('BOM浏览器...', λ() thread.invoke(λ() loadcodex("\forms\SAP\BOM浏览器.aardio")));
 
 mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() thread.invoke(λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio")));
 mainForm.popmenu2.add();//分隔线
@@ -198,6 +197,8 @@ mainForm.popmenu2.add('SAP一键登入2', function(){
 	mainForm.tray.pop("Starting SAP GUI ...","TBM");
 });
 mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('更多...', λ() thread.invoke(λ() loadcodex("\forms\main\loader.aardio")));
+
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
 /*左侧导航按钮{{*/
@@ -275,6 +276,7 @@ mainForm.tbutton2.oncommand = function(id,event){
 
 mainForm.tbutton3.oncommand = function(id,event){
 	if !seApp return; 
+	import solidedge.DraftDocument;
     if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
 	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
@@ -312,6 +314,7 @@ mainForm.tbutton3.oncommand = function(id,event){
 
 mainForm.tbutton4.oncommand = function(id,event){
 	if !seApp return; 
+	import solidedge.DraftDocument;
 	if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
 	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
@@ -525,7 +528,6 @@ subscribe("checkupdate",function(...){
 	fsys.update.simpleMain.checkUpdate(true);
 } )
 */
-
 
 win.loopMessage();
 return mainForm;
