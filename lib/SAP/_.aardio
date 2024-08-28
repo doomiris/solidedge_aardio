@@ -1,4 +1,5 @@
 //SAP vbs 支持库
+import web.script;
 
 var table = ..table;
 var string = ..string;
@@ -51,6 +52,37 @@ sapQuickOpen = function(index=1){
 
 	//win.msgboxTimeout("正在启动SAP, 稍等...", _title, 10*1000);
 }
+Conncet = function(vm){
+    var vm = web.script("VBScript") ;
+	vm.script = /*
+		If Not IsObject(application) Then
+   		Set SapGuiAuto  = GetObject("SAPGUI")
+   		Set application = SapGuiAuto.GetScriptingEngine
+		End If
+		If Not IsObject(connection) Then
+   		Set connection = application.Children(0)
+		End If
+		If Not IsObject(session) Then
+   		Set session    = connection.Children(0)
+		End If
+		If IsObject(WScript) Then
+   		WScript.ConnectObject session,     "on"
+   		WScript.ConnectObject application, "on"
+		End If
+	*/
+}
+Close = function(vm){
+	vm.script = /*
+		WScript.DisconnectObject application
+		WScript.DisconnectObject session
+		Set session = Nothing
+		Set connection = Nothing
+		Set application = Nothing
+		Set SapGuiAuto = Nothing
+		WScript.Quit
+	*/
+}
+
 
 downloadBOM = function(winform, etab){
 	import QHC;
@@ -394,10 +426,115 @@ downloadOrderList = function(winform, orderId){
 	*/ 
 
 }
+downloadManufactureBOM = function(winform, orderId, itemList){
+	import config;
+	import io;
+	import win;
+	import web.script;
+	var vm = web.script("VBScript") ;
+	
+	/*
+	import console; 
+	console.open();
+	*/
+	
+	vm.script = /*
+			If Not IsObject(application) Then
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
+			End If
+			If Not IsObject(connection) Then
+   			Set connection = application.Children(0)
+			End If
+			If Not IsObject(session) Then
+   			Set session    = connection.Children(0)
+			End If
+			If IsObject(WScript) Then
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
+			End If
+	*/
+	vm.script = /*
+		do while session.findById("wnd[0]/titl").text <> "SAP 轻松访问"
+			session.findById("wnd[0]/tbar[0]/btn[12]").press
+			on error resume next
+				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+			on error goto 0
+		loop
+	*/
+	vm.script = /*
+				if session.findById("wnd[0]/titl").text <> "生产订单信息系统" then
+	 			session.findById("wnd[0]/tbar[0]/okcd").text = "COOIS"
+				session.findById("wnd[0]").sendVKey 0
+			end if
+	*/
+	/* 通过 vm.script 访问变量前需要先声明 */
+	vm.script = /*
+	    	dim orderId
+	    	dim orderItem
+	    	dim lib_path
+	    	dim filename
+
+	*/
+
+	vm.script.orderId = orderId;
+	vm.script.lib_path = config.__sapDownload;
+    for (i = 1; #itemList){
+		vm.script.orderItem = itemList[i];
+		vm.script.filename = string.join({"COOIS",orderId,itemList[i]},"_") + ".xlsx"
+		vm.script = /*
+			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDAUF-LOW").text = orderId
+			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDPOS-LOW").text = orderItem
+			session.findById("wnd[0]/usr/ssub%_SUBSCREEN_TOPBLOCK:PPIO_ENTRY:1100/cmbPPIO_ENTRY_SC1100-PPIO_LISTTYP").key = "PPIOM000"
+			session.findById("wnd[0]/tbar[1]/btn[8]").press
+			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").contextMenu
+			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").selectContextMenuItem "&XXL"
+			session.findById("wnd[1]/usr/chkCB_ALWAYS").selected = true
+			session.findById("wnd[1]/tbar[0]/btn[0]").press
+			session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
+			session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
+			*/
+			var succ = true;
+			var fullname = io.joinpath(vm.script.lib_path, vm.script.filename);
+			if io.exist(fullname)
+	 				succ = io.remove(fullname);
+			if succ {
+				vm.script = /*
+					session.findById("wnd[1]/tbar[0]/btn[0]").press
+				*/
+			}else {
+	 			import com.excel;
+	 			var excel = com.excel(false);
+	 			var wb = null;
+	 			try{
+	 				wb = excel.WorkBooks(vm.script.filename);
+	 			}
+	 			if wb {			
+	 				wb.Close(false);
+	 				if io.remove(fullname){
+						vm.script = /*
+							session.findById("wnd[1]/tbar[0]/btn[0]").press
+		 				*/
+	 					winform.publish("downloadManufactureBOM", vm.script.filename)
+	 				}
+	 			}else{
+	 				vm.script = /*
+	 				session.findById("wnd[1]/tbar[0]/btn[12]").press
+	 				*/		
+	 				win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
+	 			}
+			}
+			vm.script = /*
+	 				session.findById("wnd[0]/tbar[0]/btn[12]").press
+	 		*/	
+		winform.publish("downloadManufactureBOM", vm.script.filename)
+	}
+}
 
 /**intellisense(SAP)
 downloadBOM(arr) = 下载BOM
 sapQuickOpen() = 一键打开SAP
 downloadB2CBOM(winform, orderId, itemId, endItemId) = 下载B2C订单BOM
 downloadOrderList(winform, orderId) = 下载订单清单
+downloadManufactureBOM(winform, orderId, itemId, endItemId) = 下载订单生产BOM
 end intellisense**/

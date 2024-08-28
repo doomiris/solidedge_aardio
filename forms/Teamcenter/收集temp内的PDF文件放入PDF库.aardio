@@ -54,5 +54,20 @@ for k, v in found {
 	}
 }
 
+var add2pdfDB = function(fullname){
+	var filename = io.splitpath(fullname)
+	import sqlite;
+	import config
+	var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"))
+	db.exec(`
+		INSERT INTO Lib(文件名, 路径)
+		SELECT @filename
+		WHERE NOT EXISTS(
+			SELECT * from Lib
+			WHERE 文件名=@filename
+		)
+	`,{})
+	
+}
 
 console.pause(true);

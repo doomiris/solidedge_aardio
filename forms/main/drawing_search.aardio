@@ -14,6 +14,7 @@ import win.clip;
 import win.clip.file;
 import sqlite;
 import win.ui.accelerator;
+import godking.rightMenu;
 /*
 import console;
 console.open()
@@ -117,6 +118,13 @@ winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select�
 			menu.add("删除文件...", λ() io.remove(fullName));
 			menu.add("刷新", λ() refreshFiles());
 			;
+			menu.add("更多...", λ() godking.rightMenu(
+				winform_drawing/*父窗口*/,
+				fullName/*文件路径*/,
+				x/*菜单x*/,y/*菜单y*/,
+				false/*是否相对坐标*/,
+				false/*是否显示文件名*/)
+			);
 			menu.popup(x,y,true);
 
     	}
@@ -147,7 +155,7 @@ subscribe("qtip_search_4", function(...){
 	var pcode = ...;
 	if pcode
 		searchDocument(pcode);
-	refreshFiles();
+	//refreshFiles();
 });
 
 winform_drawing.show();

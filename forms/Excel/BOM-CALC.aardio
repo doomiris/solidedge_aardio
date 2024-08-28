@@ -21,6 +21,8 @@ var grid = win.ui.grid(winform_calc.listview);//创建数据视图
 
 import win.clip;
 import QHC;
+import domisoft;
+
 
 var tab = {};
 _fields =  {
@@ -78,7 +80,8 @@ winform_calc.button.oncommand = function(id,event){
 	}
 	
 	tab.fields = _fields;
-	grid.setTable(tab);
+	grid.source = tab
+	grid.setTable(grid.source);
 
 	var col_width = {120;120;120;250;50;50;80;100};
 	for (i=1; #col_width)
@@ -124,20 +127,6 @@ winform_calc.listview.translateAccelerator = function( msg ){
 			win.clip.write(string.join(t,'\n'));
 	}
 }
-var copyTable = function(){
-	var items = winform_calc.listview.items;
-	var tab={}
-	for k, v in items {
-		var t = string.join(v,'\t');
-		t = string.crlf(t,'\r');
-		t = string.replace(t, '\r',"");
-		table.push(tab, t);
-
-	}
-	//win.msgbox(tab);
-	win.clip.write(string.join(tab,'\n'));	
-}
-
 /*}}*/
 
 winform_calc.static.onHyperlinkClick = function(nmSysLink,url,id){
@@ -146,53 +135,48 @@ winform_calc.static.onHyperlinkClick = function(nmSysLink,url,id){
 }
 
 winform_calc.static2.onHyperlinkClick = function(nmSysLink,url,id){
-	copyTable();
+	domisoft.copyTable(winform_calc.listview.items);
 }
 
-winform_calc.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
-    select(code) {
-    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
+grid.onRightClick = function(item,subItem,nmListView){
+	if !item return; 
+	var selectedIndex = owner.selected;
+	if !#selectedIndex return;
+	
+	var 钣金tab={};
+	var 粉末tab={};
+	
+	for (i=1; #selectedIndex){
+		table.push(钣金tab, {
+			grid.source[selectedIndex[i]].原材料,
+			grid.source[selectedIndex[i]].原材料描述,
+			grid.source[selectedIndex[i]].钣金用量,
+			"KG",
+			"ROH",
+		})
+		table.push(粉末tab, {
+			"H0088200085",
+			"标准白色",
+			grid.source[selectedIndex[i]].粉末用量,
+			"KG",
+			"ROH",
+		})		
+	}
 
-    	}
-    	case 0xFFFFFFFB/*_NM_RCLICK*/  {
-			var selectedRow,tvht = owner.hitTest(x,y,true);
-    		//var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    		var mcode = owner.getItemText(selectedRow, table.indexOf(_fields,"原材料"));
-    		var mdesp = owner.getItemText(selectedRow, table.indexOf(_fields,"原材料描述"));
-    		var mweight = owner.getItemText(selectedRow, table.indexOf(_fields,"钣金用量"));
-    		var pweight = owner.getItemText(selectedRow, table.indexOf(_fields,"粉末用量"));
-			var x,y = win.getMessagePos();
-			var menu = win.ui.popmenu(winform_calc);			
-			menu.add("复制:板材原材料[专用号+物料描述]",
-				λ() win.clip.write(string.join(
-						{mcode, mdesp},
-					'\t')));
-			menu.add("复制:板材原材料[用量]",
-				λ() win.clip.write(string.join(
-						{mweight},
-					'\t')));
-			menu.add("复制:板材原材料[专用号+物料描述+用量+KG+ROH]",
-				λ() win.clip.write(string.join(
-						{mcode, mdesp, mweight,"KG","ROH"},
-					'\t')));
-			menu.add();
-			menu.add("复制:标准白色[专用号+物料描述]",
-				λ() win.clip.write(string.join(
-						{"H0088200085","标准白色"},
-					'\t')));
-			menu.add("复制:标准白色[用量]",
-				λ() win.clip.write(string.join(
-						{pweight},
-					'\t')));
-			menu.add("复制:标准白色[专用号+物料描述+用量+KG+ROH]",
-				λ() win.clip.write(string.join(
-						{"H0088200085","标准白色",pweight,"KG","ROH"},
-					'\t')));
-			menu.popup(x,y,true);
-    	}
-    }
+	var x,y = win.getMessagePos();
+	var menu = win.ui.popmenu(winform_calc);
+
+	menu.add("复制:板材原材料[专用号+物料描述+用量+KG+ROH]",
+		λ() domisoft.copyTable(钣金tab)
+	);
+	menu.add();
+
+	menu.add("复制:标准白色[专用号+物料描述+用量+KG+ROH]",
+		λ() domisoft.copyTable(粉末tab)
+	);
+	menu.popup(x,y,true);
 }
+
 
 winform_calc.show();
 win.loopMessage();

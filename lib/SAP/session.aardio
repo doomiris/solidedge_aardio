@@ -8,6 +8,7 @@ namespace SAP;
 class session{
 	ctor( ... ){
 		this.oGui = ..com.TryGetObject("SAPGUI");
+		..com.SetPreferredArrayType(this.oGui,0xC/*_VT_VARIANT*/);
 		if( ! this.oGui ) return null,"请先打开SAP";
 		this.oApp =  this.oGui.GetScriptingEngine();
 		this.oConn = this.oApp.Children.item(0);

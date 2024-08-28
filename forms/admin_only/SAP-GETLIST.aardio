@@ -3,17 +3,16 @@ import win.ui;
 import config;
 import fsys;
 /*DSG{{*/
-var winform_getlist = win.form(text="admin数据库刷新工具";right=759;bottom=469;)
+var winform_getlist = win.form(text="admin数据库刷新工具";right=759;bottom=469)
 winform_getlist.add(
-button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;z=1;};
-button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;z=3;};
-button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;z=4;};
-button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;z=5;};
-button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;font=LOGFONT(h=-16;name='FontAwesome');z=7;};
-button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;z=8;};
-edit={cls="edit";left=72;top=24;right=568;bottom=56;edge=1;z=6;};
-log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2;};
-
+button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;z=1};
+button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;z=3};
+button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;z=4};
+button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;z=5};
+button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;font=LOGFONT(h=-16;name='FontAwesome');z=7};
+button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;z=8};
+edit={cls="edit";left=72;top=24;right=568;bottom=56;edge=1;z=6};
+log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 )
 /*}}*/
 
@@ -357,6 +356,12 @@ winform_getlist.button4.oncommand = function(id,event){
 		import fsys;
 		winform_getlist.log.print("...正在复制到" + dest);
 		fsys.copy(tart, dest, 0x4/*_FOF_SILENT*/ + 0x10/*_FOF_NOCONFIRMATION*/);
+		import fsys.table;
+		var vtab = fsys.table(io.joinpath(io.splitpath(dest).dir,"dblog.table"));
+		vtab.assign(
+		   last_updated = time().local();
+		);
+		vtab.save();
 		winform_getlist.log.print("完成:" + dest);
 		
 	}

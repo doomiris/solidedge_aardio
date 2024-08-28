@@ -1,5 +1,6 @@
 import win.ui;
 import win.ui.grid;
+import win.ui.atom;
 /*DSG{{*/
 var winform = win.form(text="订单清单浏览";right=759;bottom=469)
 winform.add(
@@ -22,7 +23,15 @@ import tarray;
 import config;
 import process;
 import SAP;
-
+/*只允许一个实例{{*/
+var atom,hwnd = winform.atom("domisoft.aardio.tbm.orderviewer");
+if(!atom){ 
+	win.showForeground(hwnd);
+	win.setActive(hwnd);
+	win.quitMessage();	
+	return;
+}
+/*}}*/
 winform.grid = win.ui.grid(winform.listview);//创建数据视图
 var grid = winform.grid;
 grid.setReadonlyColumns(-1);
@@ -33,11 +42,13 @@ grid2.setReadonlyColumns(-1);
 import console
 console.open()
 */
+/*
 winform.bindConfig( config.orderBom, {	//绑定控件值
     edit = "text";
 } );
+*/
 
-winform.listview.translateAccelerator = domisoft.ctrlC;
+
 
 grid.onSortColumn = function(column, desc){
 	var name = owner.source.fields[column];
@@ -70,7 +81,6 @@ var getFolderList = function(){
 }
 
 
-
 getFolderList();
 
 var getDetail = function(wbpath, wform){
@@ -79,14 +89,14 @@ var getDetail = function(wbpath, wform){
 	import config;
 
 	wbpath = io.joinpath(config.__sapDownload, wbpath)
-	if !io.exist(wbpath) return error("文件不存在"++'\n'++wbpath); 
+	if !io.exist(wbpath) return win.msgbox("文件不存在了, 请重新下载."++'\n'++wbpath); 
 	wform.grid.clear();
-	//wform.grid.setColumns({[1]="正在打开..." + wbpath});
+
 
 	var db, err = access(wbpath);
 	var n=0;
 	while(err){
-		//wform.grid.setColumns({[1]="OLEDB数据库初始化..."+n});
+
 		collectgarbage("collect");
 		n=n+1;
 		db, err = access(wbpath);
@@ -94,11 +104,9 @@ var getDetail = function(wbpath, wform){
 	}
 	if err {
 		wform.grid.clear();
-		//wform.grid.setColumns({[1]= err;[2] = wbpath})
+
 		return ; 
 	}
-	//console.log(wbpath)
-
 	var t = db.getTable(`
 		SELECT DISTINCT
 			[凭证日期],
@@ -113,21 +121,28 @@ var getDetail = function(wbpath, wform){
 		FROM
 			[Sheet1$]
 		WHERE
-			[拒绝原因] = ""
+			[拒绝原因] = "" OR [拒绝原因] IS NULL
 	`);
 
 	db.close();
 	db = null;
 	collectgarbage("collect");
-	table.push(t.fields, "订单BOM缓存日期");
+	table.push(t.fields, "订单BOM缓存日期", "生产BOM缓存日期");
 	import fsys;
 	import fsys.file;
 	for (i=1;#t){
-		var filename = string.join({"B2C", t[i]["SD 凭证"], t[i]["项目(SD)"], t[i]["物料"]},"_") ++ ".xlsx";
-		var fullname = io.joinpath(config.__sapDownload, filename);
-		if io.exist(fullname){
-			var fitem = fsys.file(fullname);
+		var b2c_filename = string.join({"B2C", t[i]["SD 凭证"], t[i]["项目(SD)"], t[i]["物料"]},"_") ++ ".xlsx";
+		var coois_filename = string.join({"COOIS", t[i]["SD 凭证"], t[i]["项目(SD)"]},"_") ++ ".xlsx";
+		b2c_filename = io.joinpath(config.__sapDownload, b2c_filename);
+		coois_filename = io.joinpath(config.__sapDownload, coois_filename);
+		if io.exist(b2c_filename){
+			var fitem = fsys.file(b2c_filename);
 			t[i]["订单BOM缓存日期"] = fitem.getFileTime().creation.local();
+			fitem.close();
+		}
+		if io.exist(coois_filename){
+			var fitem = fsys.file(coois_filename);
+			t[i]["生产BOM缓存日期"] = fitem.getFileTime().creation.local();
 			fitem.close();
 		}
 	}
@@ -141,13 +156,16 @@ var getDetail = function(wbpath, wform){
 }
 
 grid2.onClick = function(item,subItem,nmListView){
+	if !item and ! winform.listview2.selIndex return ; 
 	var c =  grid2.source[item || winform.listview2.selIndex].缓存文件;
 	if !c return; 
+	if item
+		winform.edit.text = grid2.source[item].订单号;
 	grid.source = getDetail(c, winform);
 	if !grid.source or !#grid.source return;
 	grid.clear();
 	grid.onSortColumn(3, false);
-	grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,250,40,100})
+	grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,350,40,120,120})
 	winform.listview.fillParent(8);
 }
 grid2.onDoubleClick = function(item,subItem,nmListView){
@@ -170,16 +188,23 @@ winform.grid.onRightClick = function(item,subItem,nmListView){
 	var itemList = table.array();
 	for (i=1; #owner.source)
 		if table.indexOf(selectedIndex, i)
-			table.push(itemList, owner.source[i]["项目(SD)"])
+			table.push(itemList, owner.source[i]["项目(SD)"]);
+			
 	var x,y = win.getMessagePos();
 	var menu = win.ui.popmenu(winform);
 	
 	var t = owner.source[item];
 	var c = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
-	c = io.joinpath(config.__sapDownload, c ++ ".xlsx") ;
-
-	menu.add("打开订单BOM...", λ() process.execute(c));
+	c = io.joinpath(config.__sapDownload, c + ".xlsx") ;
+	var m = string.join({"COOIS", t["SD 凭证"], t["项目(SD)"]}, "_");
+	m = io.joinpath(config.__sapDownload, m + ".xlsx") ;
+	
+	if io.exist(c)
+		menu.add("打开订单BOM...", λ() process.execute(c));
 	menu.add("下载订单BOM...", λ() SAP.downloadB2CBOM(winform, t["SD 凭证"], itemList));
+	if io.exist(m)
+		menu.add("打开COOIS生产订单BOM...", λ() process.execute(m));
+	menu.add("下载COOIS生产订单BOM...", λ() SAP.downloadManufactureBOM(winform, t["SD 凭证"], itemList));
 	menu.popup(x,y,true);
 }
 winform.editDesp.onChange = function(){ 
@@ -249,7 +274,13 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.splitter.split(winform.listview,winform.listview2);
-winform.show(3/*_SW_MAXIMIZE*/);
 
+if winform.listview2.count
+	grid2.onClick(1,1)
+
+winform.listview.translateAccelerator = domisoft.ctrlC;	
+winform.listview2.translateAccelerator = domisoft.ctrlC;
+
+winform.show(3/*_SW_MAXIMIZE*/);
 win.loopMessage();
 return winform;

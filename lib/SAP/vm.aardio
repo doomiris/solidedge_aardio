@@ -1,0 +1,184 @@
+//SAP VM
+import web.script;
+var table = ..table;
+var string = ..string;
+var io = ..io;
+/*
+web.script 使用 ScriptControl 控件。
+而 ScriptControl 加载的脚本每行最好保持在 1000 字以内。
+ScriptControl 控件的不同版本每行字数上限在 1000 字到 2000 字以内是安全的，
+稳妥的方法是保证每行在 1000 字以内.
+*/
+namespace SAP;
+class vm{
+	ctor( ... ){
+		this.ovm = ..web.script("VBScript");
+		this.ovm.script = /*
+			If Not IsObject(application) Then
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				If SapGuiAuto IS Nothing Then
+   					msgbox "先启动SAP"
+				End If
+   				Set application = SapGuiAuto.GetScriptingEngine
+			End If
+			If Not IsObject(connection) Then
+   				Set connection = application.Children(0)
+			End If
+			If Not IsObject(session) Then
+   				Set session = connection.Children(0)
+			End If
+			If IsObject(WScript) Then
+   				WScript.ConnectObject session,     "on"
+   				WScript.ConnectObject application, "on"
+			End If
+		*/
+		this@ = _metaProperty;
+	};
+}
+
+namespace vm{
+	import util.metaProperty; 
+	_metaProperty = util.metaProperty( 
+	get = λ(k)  owner.ovm[k];
+	set = function(k,v){
+		owner.ovm[k] = v;
+	};
+	findById = function(id_str, Raise){
+		var proxy = {};
+		var session = owner.ovm;
+		session.script = /*
+			dim id_str
+			dim obj
+			dim Raise
+			dim text
+		*/
+		session.script.id_str = id_str;
+		session.script.Raise = Raise;
+		session.script = /*
+			'on error resume next
+			set obj = session.findById(id_str,Raise)
+			'on error goto 0
+		*/
+		proxy@ ={}
+		proxy@._get = function(s){
+			select(s) {
+				case "select","press","sendVKey" {
+					return function(v){
+						if !v
+							session.script = `obj.` + s;
+						else
+							session.script = `obj.` + s + `(` + v + `)`;
+					}; 
+				}
+				case "text","selected" {
+					session.script = `text = obj.` + s;
+					return session.script.text; 
+				}
+
+			}
+		}
+		proxy@._set = function(s,n){
+			select(s) {
+				case "text","selected" {
+					session.script = `obj.` + s + `=` + n;
+				}
+			}
+		}
+		return proxy; 
+	}
+	Close = function(){
+		owner.ovm.script = /*
+			If IsObject(WScript) Then
+				WScript.DisconnectObject session
+				WScript.DisconnectObject application
+			End If
+			Set session = Nothing
+			Set connection = Nothing
+			Set application = Nothing
+			Set SapGuiAuto = Nothing
+			If IsObject(WScript) Then WScript.Quit
+		*/
+	}
+	title = {
+		_get = λ() owner.findById("wnd[0]/titl").text; 
+	}
+	status = {
+		_get = λ() owner.findById("wnd[0]/sbar/pane[0]").text; 
+	}
+	isHomepage ={
+		_get = λ() owner.title == "SAP 轻松访问" || owner.title == "SAP Easy Access";
+	}
+	refresh = λ() owner.findById("wnd[0]/mbar/menu[0]/menu[5]").select();
+	goBack = λ() owner.findById("wnd[0]/tbar[0]/btn[12]").press();
+	exec = λ() owner.findById("wnd[0]/tbar[1]/btn[8]").press();
+	saveAsName = {
+		_get = λ() owner.findById("wnd[1]/usr/ctxtDY_FILENAME").text;
+		_set = function(filename){owner.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename};
+
+	} 
+	saveAsFolder = {
+		_get = λ() owner.findById("wnd[1]/usr/ctxtDY_PATH").text;
+		_set = function(lib_path){owner.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path};
+	} 
+	saveAsOK = λ() owner.findById("wnd[1]/tbar[0]/btn[11]").press();
+	saveAsCancel = λ() owner.findById("wnd[1]/tbar[0]/btn[12]").press();
+	homepage = function(){
+		while(!owner.isHomepage){
+			owner.goBack();
+			//session.findById("wnd[1]/usr/btnSPOP-OPTION1").press'不保存退出订单界面
+		}
+	};
+	downloadBOM = function(etab){
+		import QHC;	
+		var session = owner.ovm;
+		session.homepage();
+		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
+		session.findById("wnd[0]").sendVKey(0);
+		var ftab = {};
+		for (i = 1; #etab){
+    		session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab[i];
+    		session.exec();
+			var vt = QHC.getSapItem(etab[i]);
+ 			var filename;
+ 			if vt filename = vt.物料描述;    		
+    		filename = string.replace(filename, " ", "_");
+    		filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
+    		table.push(ftab, filename);
+    		if session.status !== "无可用数据！" {
+    			session.findById("wnd[0]/tbar[1]/btn[9]").press(); //zmdm_001 里面的download
+    			session.saveAsName = filename;
+    			session.saveAsOK();
+    			session.goBack();
+    		}else{ //搜索不到时跳过,继续下一个
+				session.homepage();
+				session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
+				session.findById("wnd[0]").sendVKey(0);
+    			continue;
+    		}
+		}
+		session.goBack();
+	};
+	_topointer = lambda() owner.ovm;	
+);
+}
+
+/**intellisense(SAP)
+SAP.vm = SAP VM
+SAP.vm() = !vm.
+!vm.Close() = 断开与SAP连接
+!vm.homepage() = 返回首页
+!vm.findById(id_str) = 查找ID返回GuiComponent\n!GuiComponent.
+!GuiComponent.ContainerType = ContainerType
+!GuiComponent.Id = Id
+!GuiComponent.Name = Name
+!GuiComponent.Parent = Parent
+!GuiComponent.Type = Type
+!GuiComponent.TypeAsNumber = TypeAsNumber
+!GuiComponent.Children = Children
+!GuiComponent.text = 文本内容
+!GuiComponent.select() = 选取菜单
+!GuiComponent.press() = 点击
+!GuiComponent.selected = 选中状态
+!GuiComponent.setFocus() = 获取焦点
+!GuiComponent.caretPosition = 光标位置
+end intellisense**/

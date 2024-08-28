@@ -2,9 +2,20 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="自动关闭代理(不要关闭窗口)";right=501;bottom=235)
 winform.add(
-edit={cls="edit";left=2;top=2;right=499;bottom=222;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=1}
+checkbox={cls="checkbox";text="关闭系统代理";left=163;top=7;right=284;bottom=22;checked=1;dl=1;dt=1;z=4};
+checkbox2={cls="checkbox";text="SAP保持在线(需要退回首页)";left=309;top=7;right=486;bottom=25;checked=1;dl=1;dt=1;z=5};
+edit={cls="edit";left=2;top=32;right=499;bottom=222;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=1};
+edit2={cls="edit";text="5";left=10;top=7;right=47;bottom=28;dl=1;dt=1;edge=1;num=1;z=2};
+static={cls="static";text="分钟 (间隔时间)";left=55;top=9;right=149;bottom=26;dl=1;dt=1;transparent=1;z=3}
 )
 /*}}*/
+
+import config;
+winform.bindConfig( config.intervalJob, {	//绑定控件值
+    edit = "text";
+    checkbox = "checked"
+} );
+winform.edit.text = "";
 
 var reset = function(wform){
 	import inet;
@@ -21,9 +32,27 @@ var reset = function(wform){
 		)
 	wform.edit.log(".")
 }
+var refreshSAP = function(wform){
+//	thread.invoke( 
+//		function(wform){
+    		import SAP.vm;
+    		var session = SAP.vm();
+			if session.isHomepage {
+				session.refresh();
+				wform.edit.log(",");
+			}
+			session.Close();
+//		}, wform
+//	)
+}
+var interval = winform.edit2.text;
 
 reset (winform); //立即执行一次, 然后按以下时间重复
-winform.setInterval(reset, 5 * 60 * 1000,winform); 
+refreshSAP (winform);
+if winform.checkbox.checked
+	winform.setInterval(reset, interval * 60 * 1000, winform); 
+if winform.checkbox2.checked
+	winform.setInterval(refreshSAP, interval * 60 * 1000, winform); 
 
 winform.show();
 win.loopMessage();

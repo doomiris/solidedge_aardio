@@ -83,6 +83,12 @@ var searchClassByBG = function(str){
 	return t[["分类"]], p[["喷粉类别"]];
 }
 
+var searchClassByChar = function(str){
+	if !str return null; 
+	str = string.upper(string.trim(str));
+	var t = db.getTable("SELECT DISTINCT 分类, 分类描述 FROM `分类`", { 特性 : str });
+	return t;
+}
 var searchOption = function(str){
 	if !str return null; 
 	str = string.upper(string.trim(str));
@@ -210,7 +216,8 @@ var editChange2 = function(text){
 	winform_od_query.listview2.clear(true);
 	winform_od_query.listview3.clear(true);
 	
-	var t = searchOption(text);
+	var t = searchOption(text); //查特性
+	var ct = searchClassByChar(text); //反查分类
 	if !#t return ;
 
 	var tOpts = tarray.uniqueCol(tarray.sliceCol(t,1,2));
@@ -218,6 +225,8 @@ var editChange2 = function(text){
 
 	if tOpts	winform_od_query.listview2.setTable(tOpts);
 	if cType	winform_od_query.listview3.setTable(cType);
+	if #ct
+		winform_od_query.listview1.setTable(ct);
 }
 
 winform_od_query.edit2.onChange = function(){ 
@@ -287,6 +296,7 @@ winform_od_query.splitter.split({
 			winform_od_query.listview4,
 			winform_od_query.splitter3
 		}, winform_od_query.listview2);
+
 winform_od_query.splitter2.split(winform_od_query.listview2, winform_od_query.listview3);
 
 

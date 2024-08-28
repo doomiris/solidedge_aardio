@@ -399,7 +399,7 @@ mainForm.tbutton8.oncommand = function(id,event){
 	}
 	var opent = function(n){
 		import com.excel;
-		var excel = com.excel(false);
+		var excel = com.GetOrCreateObject("Excel.Application")
 		if !excel win.msgbox("请先打开Excel程序");
 		if !excel return ; 
 		var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));

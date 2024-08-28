@@ -116,7 +116,7 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 		[11] = "给09组新增子项时确认是否有OD"; 
 		[12] = "父项物料被禁用, 请先申请解禁再更改BOM";
 		[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
-		[14] = "相同内容重复操作(在此行之前有重复项)";
+		[14] = "相同内容重复操作(在此行之前有重复项,检查此行之前的条目)";
 		[15] = "缺少更改备注";
 		[16] = "操作KMAT请标记出是否有OD变更, 如OD不变可忽略";
 		[17] = "请移除空行(末尾空行可忽略)";
@@ -200,9 +200,11 @@ chk_excel_BOM_REV_form.button.oncommand = function(id,event){
 			if i==1 return ; 
 			if !etab[i][["原父项"]] return ; 
 			for(j=1; i-1){
-				if etab[j][["原父项"]] ==etab[i][["原父项"]] and 
-					etab[j][["原子项"]] ==etab[i][["原子项"]] and
-						etab[j][["新子项"]] ==etab[i][["新子项"]]
+				if #etab[j][["原子项"]] and etab[j][["原父项"]] == etab[i][["原父项"]] and 
+					etab[j][["原子项"]] == etab[i][["原子项"]]
+							return true;
+				if #etab[j][["新子项"]] and etab[j][["原父项"]] == etab[i][["原父项"]] and 
+						etab[j][["新子项"]] == etab[i][["新子项"]]
 							return true;
 			}
 		}

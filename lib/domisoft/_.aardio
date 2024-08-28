@@ -13,8 +13,10 @@ table.toHTML = function(tab){
     var html = "<table border=1>";
     for (i = 1; #tab) {
         html += "<tr>";
-        for (j = 1; #tab[i]) 
+        for (j = 1; #tab[i]) {
+        	tab[i][[j]] := "";
             html += "<td nowrap>" + tab[i][j] + "</td>";
+        }
         html += "</tr>";
     }
     html += "</table>";
@@ -109,6 +111,34 @@ copySelectedItem = function(ctrl){
 		var hTab = table.array();
         for (i=1; #selected)
             table.push(hTab, items[selected[i]]);            
+        var html = table.toHTML(hTab)
+        html = cliphtml.stringify(html);
+		cliphtml.write(html,true,false);
+}
+copyTable = function(tab, selectedIndex){
+		if !#tab return ; 
+		select type(selectedIndex) {
+			case "number" {selectedIndex = {selectedIndex}}
+			case "table" {/*不处理*/}
+			case "null" {
+				selectedIndex = table.array();
+				for (i=1;#tab) selectedIndex[i] = i;
+			}
+			else return ; 			
+		} 
+        import win.clip;
+        import win.clip.html;
+        var cliphtml = win.clip.html();
+
+		/* clip添加纯文本格式 */
+        var txtTab = table.array();
+        for (i=1; #selectedIndex)
+            table.push(txtTab,string.join(tab[selectedIndex[i]],'\t'));
+		win.clip.write(string.join(txtTab,'\n'));		
+		/* clip添加HTML格式 */
+		var hTab = table.array();
+        for (i=1; #selectedIndex)
+            table.push(hTab, tab[selectedIndex[i]]);            
         var html = table.toHTML(hTab)
         html = cliphtml.stringify(html);
 		cliphtml.write(html,true,false);
@@ -224,5 +254,6 @@ readClipHcode() = 获取截图中的专用号
 getContentFromHTTP(.(url, parseJson) = 获取网址内容
 formatWindowsFileName(nameStr) = 替换Windows文件名非法字符为全角＼"／，．＜＞｜＊
 setColumnWidth(listview, widthTable) = 设置列宽
+copyTable(tab, selectedIndex) = 复制表格
 end intellisense**/
 
