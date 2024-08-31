@@ -21,7 +21,7 @@ wb.export(
 		import config;
 		import sqlite;
 		
-		var sapdb = config.dbServer.path + "\qhcsap.db";
+		var sapdb = io.joinpath(config.dbServer.path, "qhcsap.db");
 		var db = sqlite(sapdb);
 		var sapTab={};
 		sapTab.fields = {"物料";"物料描述";"单位";"类型";"物料组";"价格";"配置";"禁用"}
