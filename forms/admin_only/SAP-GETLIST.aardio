@@ -342,7 +342,16 @@ console.open();
 	}
 	db.close();
 	winform_getlist.button3.disabledText = null;
+	
+	import fsys.table;
+	var vtab = fsys.table(io.joinpath(config.dbServer.path,"dblog.table"));
+	vtab.assign(
+		last_updated = time().local();
+	);
+	vtab.save();
+	
 	winform_getlist.log.print("合并数据完成.");
+	
 }
 
 /*}}*/
@@ -356,19 +365,12 @@ winform_getlist.button4.oncommand = function(id,event){
 		import fsys;
 		winform_getlist.log.print("...正在复制到" + dest);
 		fsys.copy(tart, dest, 0x4/*_FOF_SILENT*/ + 0x10/*_FOF_NOCONFIRMATION*/);
-		import fsys.table;
-		var vtab = fsys.table(io.joinpath(io.splitpath(dest).dir,"dblog.table"));
-		vtab.assign(
-		   last_updated = time().local();
-		);
-		vtab.save();
 		winform_getlist.log.print("完成:" + dest);
-		
 	}
 	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
 	if !io.exist(_qhc_db) winform_getlist.log.print("无法访问:" + _qhc_db);
-	else thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", _qhc_db);
-	thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.db", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
+	else thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.*", _qhc_db);
+	thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
 getXlsxDbPath = function(){
 	import fsys;

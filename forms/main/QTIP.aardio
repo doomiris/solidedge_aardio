@@ -1,6 +1,5 @@
 import fonts.fontAwesome;
 import win.ui;
-
 /*DSG{{*/
 qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 qtip_winform.add(
@@ -227,22 +226,16 @@ qtip_winform.button2.oncommand = function(id,event){
 import mouse.hook;
 var hook = mouse.hook();
 //录制回调函数
-
 hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
     if( injected ) return; //模拟鼠标不处理
-    _dt = 30; //ms
     select(msg) {
 		case 0x20C /* _WM_XBUTTONUP */ {
 			if ::HIWORD(mouseData) == 1	//后退
-				qtip_winform.setTimeout(function(){
-					qtbs.selIndex = 2
-				}, _dt)			
+				qtbs.selIndex = 2
 			else	//前进
-				qtip_winform.setTimeout(function(){
-					qtbs.selIndex = qtbs.lastTab
-				}, _dt)				
+				qtbs.selIndex = qtbs.lastTab
 		}
-	}
+    }
 }
 /*}}*/
 

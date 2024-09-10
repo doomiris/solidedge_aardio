@@ -13,25 +13,51 @@ namespace SAP;
 class vm{
 	ctor( ... ){
 		this.ovm = ..web.script("VBScript");
+		this.ovm.allowUi = true;
 		this.ovm.script = /*
 			If Not IsObject(application) Then
    				Set SapGuiAuto  = GetObject("SAPGUI")
-   				If SapGuiAuto IS Nothing Then
-   					msgbox "先启动SAP"
-				End If
+   				
    				Set application = SapGuiAuto.GetScriptingEngine
 			End If
+		*/
+		this.ovm.script = /*
+			on error resume next
 			If Not IsObject(connection) Then
    				Set connection = application.Children(0)
 			End If
+			If connection Is Nothing Then msgbox "请先启动SAP"
+			on error goto 0
+		*/
+				
+		if !this.ovm.script.connection return null;
+		this.ovm.script = /*
 			If Not IsObject(session) Then
    				Set session = connection.Children(0)
 			End If
+		*/
+		this.ovm.script = /*
 			If IsObject(WScript) Then
    				WScript.ConnectObject session,     "on"
    				WScript.ConnectObject application, "on"
 			End If
 		*/
+		this.Close = function(){
+			this.ovm.script = /*
+				If IsObject(WScript) Then
+					WScript.DisconnectObject session
+					WScript.DisconnectObject application
+				End If
+			*/
+			this.ovm.script = /*
+				Set session = Nothing
+				Set connection = Nothing
+				Set application = Nothing
+				Set SapGuiAuto = Nothing
+				If IsObject(WScript) Then WScript.Quit
+			*/
+		}
+		..table.gc(this,"Close");
 		this@ = _metaProperty;
 	};
 }
@@ -43,6 +69,19 @@ namespace vm{
 	set = function(k,v){
 		owner.ovm[k] = v;
 	};
+ 	busy = {
+ 		_get = function(){
+			owner.ovm.script = /*
+				dim busy
+				busy = session.busy
+			*/
+			return !!owner.ovm.script.busy; 
+ 		}
+ 		_set = function(v){
+ 			v = !v ? 0 : 1;
+ 			owner.ovm.script= `session.busy=` ++ v;
+ 		}		
+ 	}
 	findById = function(id_str, Raise){
 		var proxy = {};
 		var session = owner.ovm;
@@ -64,10 +103,12 @@ namespace vm{
 			select(s) {
 				case "select","press","sendVKey" {
 					return function(v){
-						if !v
+						if v==null //注意0值
 							session.script = `obj.` + s;
 						else
-							session.script = `obj.` + s + `(` + v + `)`;
+							session.script = `obj.` + s + ` ` ++ v;
+						
+						
 					}; 
 				}
 				case "text","selected" {
@@ -85,19 +126,6 @@ namespace vm{
 			}
 		}
 		return proxy; 
-	}
-	Close = function(){
-		owner.ovm.script = /*
-			If IsObject(WScript) Then
-				WScript.DisconnectObject session
-				WScript.DisconnectObject application
-			End If
-			Set session = Nothing
-			Set connection = Nothing
-			Set application = Nothing
-			Set SapGuiAuto = Nothing
-			If IsObject(WScript) Then WScript.Quit
-		*/
 	}
 	title = {
 		_get = λ() owner.findById("wnd[0]/titl").text; 
@@ -128,9 +156,12 @@ namespace vm{
 			//session.findById("wnd[1]/usr/btnSPOP-OPTION1").press'不保存退出订单界面
 		}
 	};
-	downloadBOM = function(etab){
+	downloadBOM = function(winform, etab){
 		import QHC;	
-		var session = owner.ovm;
+		import config;
+    	import domisoft;
+    	import console;
+		var session = owner;
 		session.homepage();
 		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
 		session.findById("wnd[0]").sendVKey(0);
@@ -143,12 +174,18 @@ namespace vm{
  			if vt filename = vt.物料描述;    		
     		filename = string.replace(filename, " ", "_");
     		filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
+    		filename = domisoft.formatWindowsFileName(filename);
     		table.push(ftab, filename);
+    		var fn = io.joinpath(config.__sapDownload,filename);
+    		if io.exist(fn)
+    			if !io.remove(fn)
+    				console.debug("删除失败", fn);
     		if session.status !== "无可用数据！" {
     			session.findById("wnd[0]/tbar[1]/btn[9]").press(); //zmdm_001 里面的download
     			session.saveAsName = filename;
     			session.saveAsOK();
     			session.goBack();
+    			winform.publish("dok",filename);
     		}else{ //搜索不到时跳过,继续下一个
 				session.homepage();
 				session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
@@ -157,6 +194,7 @@ namespace vm{
     		}
 		}
 		session.goBack();
+		winform.publish("dok_list", ftab);
 	};
 	_topointer = lambda() owner.ovm;	
 );

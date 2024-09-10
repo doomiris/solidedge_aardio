@@ -85,13 +85,32 @@ for(i=1;#etab){
 }
 if db.existsTable("分类汇总") db.exec("DROP table 分类汇总");
 if db.existsTable("特性汇总") db.exec("DROP table 特性汇总");
-db.exec("CREATE TABLE 分类汇总 AS
-SELECT DISTINCT 分类.分类, 分类.分类描述
-FROM 分类;");
-db.exec("CREATE TABLE 特性汇总 AS
-SELECT DISTINCT 特性参数规划表.特性, 特性参数规划表.特性描述
-FROM 特性参数规划表;");
-db.exec("DELETE FROM 特性参数规划表 WHERE 特性 IS NULL;");
+db.exec(`
+	CREATE TABLE 分类汇总 AS
+		SELECT DISTINCT 分类.分类, 分类.分类描述
+		FROM 分类
+`);
+db.exec(`
+	CREATE TABLE 特性汇总 AS
+		SELECT DISTINCT 特性参数规划表.特性, 特性参数规划表.特性描述
+		FROM 特性参数规划表
+`);
+db.exec(`
+	DELETE FROM 特性参数规划表
+	WHERE 特性 IS NULL
+`);
+db.exec(`
+	UPDATE 分类
+	SET 特性描述 = (
+		SELECT 特性描述 FROM 特性汇总 WHERE 特性汇总.特性 = 分类.特性
+	)
+`)
+db.exec(`
+	UPDATE 特性参数规划表
+	SET 特性描述 = (
+		SELECT 特性描述 FROM 特性汇总 WHERE 特性汇总.特性 = 特性参数规划表.特性
+	)
+`)
 db.close();
 
 console.log("完成")

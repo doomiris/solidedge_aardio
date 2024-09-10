@@ -1,5 +1,6 @@
 import win.ui;
 import win.ui.grid
+import win.ui.listEdit;
 /*DSG{{*/
 var winform = win.form(text="扩展中心";right=759;bottom=469)
 winform.add(
@@ -8,16 +9,22 @@ listview={cls="listview";left=0;top=118;right=759;bottom=413;edge=1;z=1}
 )
 /*}}*/
 
-var grid = win.ui.grid(winform.listview);
+import win.debounce;
 import inet;
 import inet.conn;
 import table.product;
 import domisoft;
-
+import SAP.vm;
 import config;
+import fsys;
+
+
+var grid = win.ui.grid(winform.listview);
+
+
 var lib_path = io.joinpath(config.dbServer.path,"\sideload\");
 
-import fsys;
+
 var flist = fsys.list(lib_path,,"*.aardio");
 
 var lt = {}

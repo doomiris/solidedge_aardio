@@ -31,10 +31,9 @@ import config;
 import sqlite;
 var db, err = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"));	//打开数据库连接
 if err win.msgbox(err);
-
-
 /*}}*/
 
+/*输入框清空小按钮{{*/
 winform_od_query.edit.translateCommand();
 winform_od_query.edit2.translateCommand();
 
@@ -50,6 +49,7 @@ actrls[1].oncommand = function(id,event){
 bctrls[1].oncommand = function(id,event){
 	owner.parent.text="" 
 }
+/*}}*/
 var filterDeleted = function(t){
 	if !t or !#t return t; 
 	var z = {};
@@ -69,13 +69,13 @@ var sortby = function(t,c){
 	table.sort(t, lambda(a) (owner[c]) < a[c]);
 	return t;
 }
-var searchClass = function(str){
+var searchClass = function(str){	//search分类
 	if !str return null; 
 	str = string.upper(string.trim(str));
 	var t = db.getTable("SELECT * FROM `分类`", { 分类 : str });
 	return filterDeleted(t);
 }
-var searchClassByBG = function(str){
+var searchClassByBG = function(str){	//按BG号search分类,喷粉分类
 	if !str return null; 
 	str = string.upper(string.trim(str));
 	var t = db.stepQuery("SELECT * FROM `默认值`", { 产品编码 : str });
@@ -83,38 +83,38 @@ var searchClassByBG = function(str){
 	return t[["分类"]], p[["喷粉类别"]];
 }
 
-var searchClassByChar = function(str){
+var searchClassByChar = function(str){//按特性反查search分类
 	if !str return null; 
 	str = string.upper(string.trim(str));
 	var t = db.getTable("SELECT DISTINCT 分类, 分类描述 FROM `分类`", { 特性 : str });
 	return t;
 }
-var searchOption = function(str){
+var searchOption = function(str){//search特性
 	if !str return null; 
 	str = string.upper(string.trim(str));
 	var t = db.getTable("SELECT * FROM `特性参数规划表`", { 特性 : str });
 	return filterDeleted(t);
 }
-var searchBGbyOption = function(str){
+var searchBGbyOption = function(str){//按分类查search BG
 	if !str return null; 
 	str = string.upper(string.trim(str));
 	var t = db.getTable("SELECT DISTINCT 产品编码 FROM `默认值`", { 分类 : str });
 	return t;
 }
 var 喷粉部分表;
-var searchPaintClass = function(str){
+var searchPaintClass = function(str){ //search喷粉分类
 	if !str return null; 
 	str = string.upper(string.trim(str));
 	var t = db.getTable("SELECT * FROM `喷粉分类组成`", { 产品系列号 : str });
 	return t;
 }
-var searchColor = function(colorGroupId){
+var searchColor = function(colorGroupId){//search喷粉颜色组
 	if !colorGroupId return null; 
 	var t = db.getTable("SELECT * FROM `颜色分组`", { 颜色分组 : colorGroupId });
 	return sortby(t,"默认颜色可选项类别");
 }
 
-var initPaintClass = function(){
+var initPaintClass = function(){//search喷粉部位
 	var d = db.getTable("SELECT * FROM `喷粉部位`");
 	if !d or !#d return null; 
 	var t = {};

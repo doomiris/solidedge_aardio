@@ -144,6 +144,13 @@ drop = function(arr, index){
 				arr[i][j] = null;
 	return arr;
 }
+dropByFields = function(arr, fields){
+	for(i=1; #arr)
+		for(j=1; #arr[i])
+			if j==index 
+				arr[i][j] = null;
+	return arr;
+}
 pushFields = function(arr, tab){
 	var fields = {};
 	for k, v in tab {

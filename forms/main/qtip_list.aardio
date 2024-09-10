@@ -37,14 +37,12 @@ var downloadbom = function(){
     var tab=table.array();
     for (k, v in winform_qlist.listview.selected){
         var bg = winform_qlist.listview.getItemText(v, 1);
-        if string.startWith(bg,"BG")
             table.push(tab,  bg);
     }  
     if !#tab return ;
     thread.invoke( 
     	function(wform,tab){
 			import SAP;
-			//var session=SAP.session();
 			SAP.downloadBOM(wform, tab);
     	},winform_qlist,tab
     )
@@ -84,21 +82,21 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 			var x,y = win.getMessagePos();
 			//var hItem,tvht = winform_qlist.listview.hitTest(x,y,true);
 			var menu = win.ui.popmenu(winform_qlist);			
-			if string.startWith(pcode,"BG",true){
-				menu.add("下载BOM...", downloadbom);				
-				var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
-				if #flist {
-					var fn = flist[flist[#flist]];
-					var fitem = fsys.file(fn);
-					var t = fitem.lastModified().local();
-					fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
-					menu.add(
-						"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
-						λ() process.execute(fn)
-					);
-					
-				}
+
+			menu.add("下载BOM...", downloadbom);				
+			var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
+			if #flist {
+				var fn = flist[flist[#flist]];
+				var fitem = fsys.file(fn);
+				var t = fitem.lastModified().local();
+				fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
+				menu.add(
+					"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
+					λ() process.execute(fn)
+				);
+				
 			}
+
 
 			menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
 			menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));

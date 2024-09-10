@@ -37,22 +37,41 @@ var refreshSAP = function(wform){
 //		function(wform){
     		import SAP.vm;
     		var session = SAP.vm();
-			if session.isHomepage {
-				session.refresh();
-				wform.edit.log(",");
+    		if !session	return ; 
+    		if !session.busy{
+				if session.isHomepage {
+					session.refresh();
+					wform.edit.log(",");
+				}
 			}
-			session.Close();
 //		}, wform
 //	)
 }
 var interval = winform.edit2.text;
 
-reset (winform); //立即执行一次, 然后按以下时间重复
+//立即执行一次, 然后按以下时间重复
+var s1, s2
+
+winform.checkbox.oncommand = function(id,event){
+	if !owner.checked
+		winform.clearInterval(s1);
+	else
+		s1 = winform.setInterval(reset, interval * 60 * 1000, winform); 
+}
+winform.checkbox2.oncommand = function(id,event){
+	if !owner.checked
+		winform.clearInterval(s2);
+	else
+		s2 = winform.setInterval(refreshSAP, interval * 60 * 1000, winform); 
+}
+
+reset (winform); 
 refreshSAP (winform);
+
 if winform.checkbox.checked
-	winform.setInterval(reset, interval * 60 * 1000, winform); 
+	s1 = winform.setInterval(reset, interval * 60 * 1000, winform); 
 if winform.checkbox2.checked
-	winform.setInterval(refreshSAP, interval * 60 * 1000, winform); 
+	s2 = winform.setInterval(refreshSAP, interval * 60 * 1000, winform); 
 
 winform.show();
 win.loopMessage();

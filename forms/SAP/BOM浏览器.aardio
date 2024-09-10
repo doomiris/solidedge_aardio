@@ -4,13 +4,14 @@ import win.ui.atom;
 /*DSG{{*/
 var winform = win.form(text="BOM浏览器";right=1012;bottom=469;clipch=1)
 winform.add(
-button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7};
+button={cls="button";text="下载订单清单...";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
+custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=45;aw=1;dl=1;dr=1;dt=1;z=8};
 edit={cls="edit";left=799;top=10;right=1005;bottom=36;dr=1;dt=1;edge=1;z=4};
 edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
 listview={cls="listview";left=228;top=54;right=1012;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1};
 listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;vscroll=1;z=2};
 splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3};
-static={cls="static";text="筛选[描述]";left=716;top=13;right=795;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5}
+static={cls="static";text="筛选[描述]";left=732;top=13;right=795;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5}
 )
 /*}}*/
 
@@ -35,6 +36,7 @@ if(!atom){
 /*}}*/
 
 import win.ui.menu;
+import win.ui.toolbar;
 _path = io.joinpath(config.dbServer.path,"BOM_LIB.xlsx")
 var acc, err = access(_path);
 var db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
@@ -49,6 +51,10 @@ return ;
 import com.excel;
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.listview2);
+var tbar = win.ui.toolbar(winform.custom);
+tbar.create( style = 0x1000/*_TBSTYLE_LIST*/+0x200/*_TBSTYLE_WRAPABLE*/ + 0x20/*_TBSTYLE_NOPREFIX*/ ); // 创建工具条
+tbar.showLabel = true; //在按钮上显示文字
+
 
 var getBOMList = function(){
 	var t = db.getTable("SELECT DISTINCT 大类 FROM [Sheet1$]");
@@ -56,6 +62,24 @@ var getBOMList = function(){
 	grid2.setTable(grid2.source);
 }
 
+var getTags = function(tab,fields){
+	import tarray;
+	var t= {};
+	tab = tarray.transpose(tab);
+	for (i=1; #tab)
+		if table.indexOf(fields, tab[i].fields)
+			table.push(t, table.unpack(tab[i]))
+	t = table.unique(t)
+	t = table.filter(t, λ(v,index)	#v	)
+	for (i=1; #t){
+		tbar.add(
+			t[i], 
+			function (id) {
+			
+			},1
+		)
+	}
+}
 
 grid2.onClick = function(item,subItem,nmListView){
 	if !item return ; 
@@ -63,6 +87,7 @@ grid2.onClick = function(item,subItem,nmListView){
 	grid.source = t;
 	grid.setTable(grid.source);
 	grid2.ColumnWidth := domisoft.setColumnWidth(grid, {50,50,50,120,250,50,50,50,50})
+	getTags(grid.source,{"中类","小类","属性","可选项分类","喷粉分类","温度等级"})
 }
 
 
@@ -131,8 +156,14 @@ grid.onRightClick = function(item,subItem,nmListView){
 	menu.popup(x,y,true);
 }
 
-winform.splitter.split(winform.listview,winform.listview2);
-winform.show();
 getBOMList();
+
+winform.show();
+
+winform.splitter.split(winform.listview,winform.listview2);
+winform.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview2.translateAccelerator = domisoft.ctrlC;
+
+
 win.loopMessage();
 return winform;

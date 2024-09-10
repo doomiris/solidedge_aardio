@@ -97,10 +97,14 @@ getSelectedText = function(listCtrl){
 }
 copySelectedItem = function(ctrl){
 		if !ctrl	ctrl = owner;
+		var doNotCopyColumns = ctrl.doNotCopyColumns;
         import win.clip;
         import win.clip.html;
         var cliphtml = win.clip.html();
 		var items = ctrl.items;
+		import tarray;
+		for (i=1; #doNotCopyColumns)
+			items = tarray.drop(items, doNotCopyColumns[i])
 		var selected = ctrl.selected; 
 		/* clip添加纯文本格式 */
         var txtTab = table.array();
