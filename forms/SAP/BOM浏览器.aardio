@@ -36,7 +36,8 @@ if(!atom){
 /*}}*/
 
 import win.ui.menu;
-import win.ui.toolbar;
+import win.ui.tabs;
+import win.imageList;
 _path = io.joinpath(config.dbServer.path,"BOM_LIB.xlsx")
 var acc, err = access(_path);
 var db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
@@ -51,9 +52,53 @@ return ;
 import com.excel;
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.listview2);
-var tbar = win.ui.toolbar(winform.custom);
-tbar.create( style = 0x1000/*_TBSTYLE_LIST*/+0x200/*_TBSTYLE_WRAPABLE*/ + 0x20/*_TBSTYLE_NOPREFIX*/ ); // 创建工具条
-tbar.showLabel = true; //在按钮上显示文字
+
+winform.custom.add( 
+	plus={cls="plus";left=0;top=1;right=50;bottom=25;z=1};
+	plus2={cls="plus";left=50;top=1;right=100;bottom=25;z=2};
+)
+var tabs = win.ui.tabs(winform.custom);;
+
+tabs.skin({
+	foreground={
+		active=0xFFFFBAB7;
+		default=0x00FFFFFF;
+		hover=0x38FFFFFF
+	};
+	color={
+		default=0xFF000000; 
+	};
+	checked={
+		foreground={default=0xFFFFFFFF;}; 
+		color={default=0xFF42A875;};
+	}
+})
+
+	
+	
+	
+	
+/**
+	tbar.create( style =
+		0x200/*_TBSTYLE_WRAPABLE*/
+		+ 2/*_TBSTYLE_CHECK*/
+		+ 0x1000/*_TBSTYLE_LIST*/
+	); // 创建工具条
+	
+	tbar.showLabel = true; //在按钮上显示文字
+	tbar.imageList = win.imageList.shell( 3/*_SHIL_SYSSMALL*/ )
+	tbar.add()
+	tbar.add(
+		"重置", 
+		function (id) {
+			grid.setTable(grid.source)
+		},109
+	)
+
+}
+**/
+
+
 
 
 var getBOMList = function(){
@@ -61,6 +106,7 @@ var getBOMList = function(){
 	grid2.source = t;
 	grid2.setTable(grid2.source);
 }
+
 
 var getTags = function(tab,fields){
 	import tarray;
@@ -71,16 +117,22 @@ var getTags = function(tab,fields){
 			table.push(t, table.unpack(tab[i]))
 	t = table.unique(t)
 	t = table.filter(t, λ(v,index)	#v	)
+	tabs.clear()
 	for (i=1; #t){
-		tbar.add(
-			t[i], 
-			function (id) {
-			
-			},1
-		)
+		tabs.add({
+			text = t[i],
+			//iconText='\uF0AD';
+			hasCloseButton = false;
+		})
 	}
 }
-
+tabs.onSelchange = function(index,stripItem,form){
+	var txt = stripItem.text
+	var t = table.filter(grid.source, λ(v) table.find(v, txt));
+	t.fields = grid.source.fields;
+	grid.clear();
+	grid.setTable(t);
+}
 grid2.onClick = function(item,subItem,nmListView){
 	if !item return ; 
 	var t = db.getTable(`SELECT * FROM [Sheet1$] WHERE [大类]="` + owner.source[item]["大类"]+`";`)

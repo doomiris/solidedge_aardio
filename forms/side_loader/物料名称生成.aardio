@@ -104,14 +104,11 @@ winform.listview.doNotCopyColumns = {2};
 winform.listview.translateAccelerator = domisoft.ctrlC;
 
 
-
-
 /*
 winform.splitter.ltMin = 140;
 winform.splitter.rbMin = 200;
-
-
 */
+
 
 winform.lb_clue.sendClicked = function(lbCtrl){
 	lbCtrl.add(owner.selText)
