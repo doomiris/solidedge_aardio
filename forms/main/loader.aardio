@@ -1,6 +1,7 @@
 import win.ui;
 import win.ui.grid
 import win.ui.listEdit;
+import win.ui.tabs;
 /*DSG{{*/
 var winform = win.form(text="扩展中心";right=759;bottom=469)
 winform.add(
@@ -17,6 +18,7 @@ import domisoft;
 import SAP.vm;
 import config;
 import fsys;
+
 
 
 var grid = win.ui.grid(winform.listview);

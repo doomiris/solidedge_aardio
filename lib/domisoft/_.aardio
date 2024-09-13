@@ -22,8 +22,6 @@ table.toHTML = function(tab){
     html += "</table>";
     return html;
 }
-
-
 namespace domisoft;
 showInputBox = function(title, Msg,tips, winform){
 	import win.inputBox;
@@ -98,23 +96,37 @@ getSelectedText = function(listCtrl){
 copySelectedItem = function(ctrl){
 		if !ctrl	ctrl = owner;
 		var doNotCopyColumns = ctrl.doNotCopyColumns;
+		//var onlyCopyColumns = ctrl.onlyCopyColumns;
+//		import win;
         import win.clip;
         import win.clip.html;
+        import tarray;
+/*
+        import console
+		console.open()
+*/
+		
         var cliphtml = win.clip.html();
 		var items = ctrl.items;
-		import tarray;
-		for (i=1; #doNotCopyColumns)
-			items = tarray.drop(items, doNotCopyColumns[i])
+		var t = {};
+		for (i=1; ctrl.columnCount)
+			if !table.find(doNotCopyColumns, i)
+				table.push(t, tarray.getCol(items, i))
 		var selected = ctrl.selected; 
+		items = tarray.transpose0(t);
+//		console.dump(items);
 		/* clip添加纯文本格式 */
         var txtTab = table.array();
-        for (i=1; #selected)
-            table.push(txtTab,string.join(items[selected[i]],'\t'));
-		win.clip.write(string.join(txtTab,'\n'));		
+        for (i=1; #selected){
+            table.push(txtTab, string.join(items[selected[i]], '\t'));
+         }
+		win.clip.write(string.join(txtTab, '\n'));
+
 		/* clip添加HTML格式 */
 		var hTab = table.array();
         for (i=1; #selected)
-            table.push(hTab, items[selected[i]]);            
+            table.push(hTab, items[selected[i]]);
+ 
         var html = table.toHTML(hTab)
         html = cliphtml.stringify(html);
 		cliphtml.write(html,true,false);
@@ -243,7 +255,14 @@ setColumnWidth = function(lv, widthTab){
 			}, i);
 	return true; 
 }
-
+getFileDate = function(filename, formatString = "%Y/%m/%d %H:%M:%S"){
+	import fsys.file;
+	var file = fsys.file(filename);
+	var d = file.getTime().write.local();
+	file.close()
+	if formatString d = ..time(d, formatString);
+	return d; 
+}
 
 
 /**intellisense(domisoft)
@@ -253,11 +272,12 @@ getComAppPath(keyword) = 查找com程序路径
 getSelectedText(listbox) = 返回选中的文本数组
 getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指定worksheetName时返回sheets(1)
 taobaoURLsimple(taobaoUrl) = 简化taobao链接
-ctrlC(translateAccelerator) = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
+ctrlC(translateAccelerator, doNotCopyColumns) = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
 readClipHcode() = 获取截图中的专用号
 getContentFromHTTP(.(url, parseJson) = 获取网址内容
 formatWindowsFileName(nameStr) = 替换Windows文件名非法字符为全角＼"／，．＜＞｜＊
 setColumnWidth(listview, widthTable) = 设置列宽
 copyTable(tab, selectedIndex) = 复制表格
+getFileDate(filename, formatString) = 获取文件修改时间
 end intellisense**/
 

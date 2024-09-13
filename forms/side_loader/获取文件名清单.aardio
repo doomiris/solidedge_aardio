@@ -1,0 +1,23 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
+listview={cls="listview";left=27;top=49;right=731;bottom=431;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;z=1}
+)
+/*}}*/
+
+import win.ui.grid;
+import domisoft;
+
+winform.grid = win.ui.grid(winform.listview);
+
+winform.onDropFiles = function(files){
+	for(i=1;#files)
+		files[i] = io.splitpath(files[i]);
+	winform.listview.setTable(files)
+}
+//winform.listview.doNotCopyColumns = {1, 2, 4};
+winform.listview.translateAccelerator =  domisoft.ctrlC;
+
+winform.show();
+win.loopMessage();

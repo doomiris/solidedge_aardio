@@ -1,28 +1,30 @@
 import win.ui;
 import win.ui.grid;
 import win.ui.atom;
+import win.ui.toolbar;
 /*DSG{{*/
 var winform = win.form(text="BOM浏览器";right=1012;bottom=469;clipch=1)
 winform.add(
 button={cls="button";text="下载订单清单...";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
-custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=45;aw=1;dl=1;dr=1;dt=1;z=8};
-edit={cls="edit";left=799;top=10;right=1005;bottom=36;dr=1;dt=1;edge=1;z=4};
+custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;cp=1;dl=1;dr=1;dt=1;z=8};
+edit={cls="edit";left=801;top=5;right=1007;bottom=31;dr=1;dt=1;edge=1;z=4};
 edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
 listview={cls="listview";left=228;top=54;right=1012;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1};
 listview2={cls="listview";left=0;top=53;right=224;bottom=469;db=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;vscroll=1;z=2};
 splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3};
-static={cls="static";text="筛选[描述]";left=732;top=13;right=795;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5}
+static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;align="right";dr=1;dt=1;transparent=1;z=5}
 )
 /*}}*/
 
 import fsys;
 import fsys.file;
 import domisoft;
+import tarray;
 import config;
 import process;
 import access;
 import access.oleDb;
-
+import com.excel;
 import godking.tableToDB;
 //import tarray;
 /*只允许一个实例{{*/
@@ -36,69 +38,35 @@ if(!atom){
 /*}}*/
 
 import win.ui.menu;
-import win.ui.tabs;
-import win.imageList;
+
+
 _path = io.joinpath(config.dbServer.path,"BOM_LIB.xlsx")
 var acc, err = access(_path);
 var db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
 acc.close();
-/*
-var t = db.getTable("SELECT * FROM [Sheet1$]")
-win.msgbox(#t)
-return ; 
-*/
 
-
-import com.excel;
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.listview2);
+grid.source = {};
+grid2.source = {};
+grid.reset = λ() owner.setTable(owner.source);
+grid2.reset = grid.reset;
 
-winform.custom.add( 
-	plus={cls="plus";left=0;top=1;right=50;bottom=25;z=1};
-	plus2={cls="plus";left=50;top=1;right=100;bottom=25;z=2};
-)
-var tabs = win.ui.tabs(winform.custom);;
-
-tabs.skin({
-	foreground={
-		active=0xFFFFBAB7;
-		default=0x00FFFFFF;
-		hover=0x38FFFFFF
-	};
-	color={
-		default=0xFF000000; 
-	};
-	checked={
-		foreground={default=0xFFFFFFFF;}; 
-		color={default=0xFF42A875;};
-	}
-})
-
-	
-	
-	
-	
-/**
+var tbar;
+var resetToolbar = function(){
+	if tbar tbar.close();
+	tbar = win.ui.toolbar(winform.custom);		
 	tbar.create( style =
 		0x200/*_TBSTYLE_WRAPABLE*/
-		+ 2/*_TBSTYLE_CHECK*/
 		+ 0x1000/*_TBSTYLE_LIST*/
+		+ 2/*_TBSTYLE_CHECK*/
 	); // 创建工具条
 	
 	tbar.showLabel = true; //在按钮上显示文字
-	tbar.imageList = win.imageList.shell( 3/*_SHIL_SYSSMALL*/ )
+	tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
 	tbar.add()
-	tbar.add(
-		"重置", 
-		function (id) {
-			grid.setTable(grid.source)
-		},109
-	)
-
+	tbar.add("❌ 重置", λ() grid.reset())
 }
-**/
-
-
 
 
 var getBOMList = function(){
@@ -107,35 +75,47 @@ var getBOMList = function(){
 	grid2.setTable(grid2.source);
 }
 
+var filterTag = function(id){
+	var txt = tbar.getButtonById(id).text;
+	var st = table.filter(grid.source, λ(v) table.find(v, txt));
+	st.fields = grid.source.fields;
+	grid.clear();
+	grid.setTable(st);
+}
 
 var getTags = function(tab,fields){
-	import tarray;
 	var t= {};
 	tab = tarray.transpose(tab);
 	for (i=1; #tab)
 		if table.indexOf(fields, tab[i].fields)
 			table.push(t, table.unpack(tab[i]))
 	t = table.unique(t)
-	t = table.filter(t, λ(v,index)	#v	)
-	tabs.clear()
-	for (i=1; #t){
-		tabs.add({
-			text = t[i],
-			//iconText='\uF0AD';
-			hasCloseButton = false;
-		})
-	}
+	t = table.filter(t, λ(v,index) #v)
+
+	resetToolbar();
+	
+	for (i=1; #t)
+		tbar.add(t[i], filterTag)
+
 }
-tabs.onSelchange = function(index,stripItem,form){
-	var txt = stripItem.text
-	var t = table.filter(grid.source, λ(v) table.find(v, txt));
-	t.fields = grid.source.fields;
+winform.edit.onChange = function(){ 
+	if(owner.onModified)owner.onModified(true);
+	var txt = owner.text;
+	var st = table.filter(grid.source, λ(v) string.find(v.物料描述, txt));
+	st.fields = grid.source.fields;
 	grid.clear();
-	grid.setTable(t);
+	grid.setTable(st);
 }
 grid2.onClick = function(item,subItem,nmListView){
 	if !item return ; 
 	var t = db.getTable(`SELECT * FROM [Sheet1$] WHERE [大类]="` + owner.source[item]["大类"]+`";`)
+	for (i=1;#t){
+		var f = string.join({t[i]["物料"], t[i]["物料描述"]},"_") ++ ".xlsx";
+		f = io.joinpath(config.dbServer.path,"xl_lib", f);
+		f = string.replace(f," ","_");
+		if io.exist(f)
+			t[i]["缓存日期"] = domisoft.getFileDate(f);			
+	}
 	grid.source = t;
 	grid.setTable(grid.source);
 	grid2.ColumnWidth := domisoft.setColumnWidth(grid, {50,50,50,120,250,50,50,50,50})
@@ -145,9 +125,10 @@ grid2.onClick = function(item,subItem,nmListView){
 
 grid.onDoubleClick = function(item,subItem,nmListView){
 	if !item return ; 
-	var n = string.join({owner.source[item]["物料"], owner.source[item]["物料描述"]},"_") ++ ".xlsx";
+	var data = owner.getTable(owner.source.fields);
+	var n = string.join({data[item]["物料"], data[item]["物料描述"]},"_") ++ ".xlsx";
 	var f = io.joinpath(config.dbServer.path,"xl_lib", n);
-	var f = string.replace(f," ","_");
+	f = string.replace(f," ","_");
 	if !io.exist(f)
 		win.msgboxErr(f)
 	else {
@@ -159,13 +140,12 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 
 }
 
-
-
 var downloadbom = function(){
 	ctrl := grid;
     var tab=table.array();
+    var data = ctrl.getTable(ctrl.source.fields);
     for (k, v in ctrl.selected){
-        var bg = ctrl.source[v]["物料"];
+        var bg = data[v]["物料"];
         if string.startWith(bg,"BG")
             table.push(tab,  bg);
     }  
@@ -199,9 +179,20 @@ subscribe("dok", function(...){
 	)
 } )
 /*}}*/
-
+grid.copyPartNo = function(fields){
+	var f = owner.source.fields;
+	owner.doNotCopyColumns = {};
+	for k, v in f
+		if !table.find(fields, v)
+			table.push(owner.doNotCopyColumns, k);
+	domisoft.copySelectedItem(owner);
+	owner.doNotCopyColumns = {};
+}
 var menu = win.ui.popmenu(winform);
-menu.add("下载...", downloadbom)
+menu.add("复制[物料]", λ() grid.copyPartNo({"物料"}));
+menu.add("复制[物料][物料描述]", λ() grid.copyPartNo({"物料","物料描述"}));
+menu.add("下载...", downloadbom);
+
 
 grid.onRightClick = function(item,subItem,nmListView){
 	var x,y = win.getMessagePos();
@@ -213,6 +204,12 @@ getBOMList();
 winform.show();
 
 winform.splitter.split(winform.listview,winform.listview2);
+winform.listview.doNotCopyColumns = {-1};
+
+winform.button.oncommand = function(id,event){
+	tbar.close();
+}
+
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.listview2.translateAccelerator = domisoft.ctrlC;
 

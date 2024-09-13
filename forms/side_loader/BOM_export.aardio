@@ -27,21 +27,21 @@ excel.Application.CutCopyMode = false;
 _start_col = 9 /* I */;
 _col_count = 16;
 
+var tbk = excel.WorkBooks.Add(
+    io.joinpath(config.dbServer.path, "\..\form\", "新产品BOM申请单模板.xlsx")
+);
+
+var tsht = tbk.Sheets(1);
+
+var tsht_tab = {};
+
+excel.alerts = false;
 for(j = _start_col; _start_col + _col_count - 1 ){
     if !#etab[2][j] continue;
 
-    excel.alerts = false;
-    
-    var tbk = excel.WorkBooks.Add(
-    	io.joinpath(config.dbServer.path, "\..\form\", "新产品BOM申请单模板.xlsx")
-    );
-    var tsht = tbk.Sheets(1);
-
-    var tsht_tab = {};
-    
     for(i=1; ts_count){
         progress.setProgress( (i+(j-_start_col)*ts_count)*100/(ts_count*_col_count), "wait... ["++(j-_start_col+1) ++ "/" + _col_count + "]");
-        
+
         if i == 1 continue; //跳过标题行
 
         if !#etab[i][1 /* A */] continue; //跳过层级为空的行
@@ -106,37 +106,33 @@ for(j = _start_col; _start_col + _col_count - 1 ){
  //     	console.dump(tar);
     }
     
-    var tar_end_row = #tsht_tab + 4 ;
-    
-    tsht.Range("6:"++ tar_end_row).EntireRow.insert();
 
-	tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
+}
+var tar_end_row = #tsht_tab + 4 ;
+tsht.Range("6:"++ tar_end_row).EntireRow.insert();
+tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
+tsht.Activate();
 
-
-    tsht.Activate();
-    
 /*
-	try{
-		excel.Run("initExportedBom"); //调用宏格式化样式
-	}
+try{
+	excel.Run("initExportedBom"); //调用宏格式化样式
+}
 */
 
-    
-    excel.alerts = false;	//调用的宏重置了此状态    
-    tbk.SaveAs(
-    	io.joinpath(
-    		config.setbm.workingDir,
-    		tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
-    	)
-    );
-    
-    
-   // console.log((j-9) ++ "/8", tbk.FullName);
-	QHC.formatBOM(tsht);
-    tbk.close();
-    excel.alerts = true;
-}
 
+excel.alerts = false;	//调用的宏重置了此状态    
+tbk.SaveAs(
+    io.joinpath(
+    	config.setbm.workingDir,
+    	tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
+    )
+);
+
+
+// console.log((j-9) ++ "/8", tbk.FullName);
+QHC.formatBOM(tsht);
+tbk.close();
+excel.alerts = true;
 
 
 /*

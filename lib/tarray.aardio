@@ -138,6 +138,7 @@ replaceValue = function(arr, searchFor, replaceBy){
 	return mapDeep(arr,lambda(v,k) v == searchFor ? replaceBy : v); 
 }
 drop = function(arr, index){
+	//if index < 0 index = #arr + index + 1;
 	for(i=1; #arr)
 		for(j=1; #arr[i])
 			if j==index 
