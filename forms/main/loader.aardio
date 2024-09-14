@@ -6,6 +6,7 @@ import win.ui.tabs;
 var winform = win.form(text="扩展中心";right=759;bottom=469)
 winform.add(
 button={cls="button";text="Button";left=616;top=35;right=737;bottom=77;hide=1;z=2};
+combobox={cls="combobox";left=42;top=42;right=216;bottom=68;edge=1;items={};mode="dropdown";z=3};
 listview={cls="listview";left=0;top=118;right=759;bottom=413;edge=1;z=1}
 )
 /*}}*/
@@ -13,32 +14,44 @@ listview={cls="listview";left=0;top=118;right=759;bottom=413;edge=1;z=1}
 import win.debounce;
 import inet;
 import inet.conn;
+import inet.http;
 import table.product;
 import domisoft;
 import SAP.vm;
 import config;
 import fsys;
+var site = {
+	{
+		name = "gitee.com",
+		url = "https://gitee.com/doomiris/solidedge_aardio/raw/master/forms/side_loader/"
+	},
+	{
+		name = "github.com",
+		url = "https://raw.githubusercontent.com/doomiris/solidedge_aardio/master/forms/side_loader/"
+	}
+}
+var list = {
+	{ name = "物料名称生成", filename = "物料名称生成.aardio"}
+	{ name = "获取文件名清单", filename = "获取文件名清单.aardio"}
+	{ name = "淘宝链接简化", filename = "淘宝链接简化.aardio"}
+	{ name = "关闭代理", filename = "关闭代理.aardio"}
+}
 
+for (i=1; #site)	
+	winform.combobox.add(site[i].name);
 
+winform.bindConfig( config.sideloader,{
+	combobox = "selIndex";
+} );
 
 var grid = win.ui.grid(winform.listview);
 
-
-var lib_path = io.joinpath(config.dbServer.path,"\sideload\");
-
-
-var flist = fsys.list(lib_path,,"*.aardio");
-
-var lt = {}
-
-for (i=1; #flist)
-	table.push(lt, io.splitpath(flist[flist[i]]))
-
-grid.setTable(lt)
+grid.setTable(list)
 grid.ColumnWidth := domisoft.setColumnWidth(grid, {15,50,200,300})
 grid.onDoubleClick = function(item,subItem,nmListView){
-	var file = flist[flist[item]];
-	loadcodex(file);
+	if !winform.combobox.selIndex return ; 
+	var file = inet.url.append(site[winform.combobox.selIndex].url, list[item].filename);
+	loadcodex(inet.http().get(file));
 }
 
 
