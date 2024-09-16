@@ -56,16 +56,16 @@ var tbar;
 var resetToolbar = function(){
 	if tbar tbar.close();
 	tbar = win.ui.toolbar(winform.custom);		
-	tbar.create( style =
-		0x200/*_TBSTYLE_WRAPABLE*/
-		+ 0x1000/*_TBSTYLE_LIST*/
-		+ 2/*_TBSTYLE_CHECK*/
-	); // 创建工具条
-	
+	tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
 	tbar.showLabel = true; //在按钮上显示文字
 	tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
-	tbar.add()
-	tbar.add("❌ 重置", λ() grid.reset())
+	tbar.add("❌ 重置",
+		function(){
+			for (i=1; #tbar.buttons)
+				tbar.buttons[i].checked = false;
+			grid.reset()
+		}
+	)
 }
 
 
@@ -95,7 +95,7 @@ var getTags = function(tab,fields){
 	resetToolbar();
 	
 	for (i=1; #t)
-		tbar.add(t[i], filterTag)
+		tbar.add(t[i], filterTag, /*img*/ , /* id */,2/*_TBSTYLE_CHECK*/ + 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
 
 }
 winform.edit.onChange = function(){ 
