@@ -231,9 +231,9 @@ hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
     select(msg) {
 		case 0x20C /* _WM_XBUTTONUP */ {
 			if ::HIWORD(mouseData) == 1	//后退
-				qtbs.selIndex = 2
+				win.setTimeout(function(){qtbs.selIndex = 2})
 			else	//前进
-				qtbs.selIndex = qtbs.lastTab
+				win.setTimeout(function(){qtbs.selIndex = qtbs.lastTab})
 		}
     }
 }
