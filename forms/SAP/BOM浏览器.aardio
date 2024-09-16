@@ -23,7 +23,7 @@ import tarray;
 import config;
 import process;
 import access;
-import access.oleDb;
+//import access.oleDb;
 import com.excel;
 import godking.tableToDB;
 //import tarray;
@@ -40,7 +40,7 @@ if(!atom){
 import win.ui.menu;
 
 
-_path = io.joinpath(config.dbServer.path,"BOM_LIB.xlsx")
+_path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
 var acc, err = access(_path);
 var db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
 acc.close();

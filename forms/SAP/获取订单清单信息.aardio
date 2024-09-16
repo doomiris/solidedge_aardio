@@ -60,7 +60,7 @@ grid2.onSortColumn = grid.onSortColumn;
 
 
 var getFolderList = function(){
-	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
+	var list = fsys.list(io.joinpath(config.dbServer.path,"xl_lib"),,"ORDER_LIST_*.xlsx");
 	grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
 	for (i=1; #list){
 		var f = string.split(string.split(list[i],".")[1],"_");
@@ -83,29 +83,29 @@ getFolderList();
 
 var getDetail = function(wbpath, wform){
 	import access;
-	import access.oleDb;
 	import config;
 	import domisoft;
-
-	wbpath = io.joinpath(config.__sapDownload, wbpath)
-	if !io.exist(wbpath) return win.msgbox("文件不存在了, 请重新下载."++'\n'++wbpath); 
+	var fullpath = io.joinpath(config.dbServer.path,"xl_lib", wbpath)
+	var newpath = string.replace(fullpath,"@@.xlsx",".xls");
+	if !io.exist(fullpath) return win.msgbox("文件不存在了, 请重新下载."++'\n'++fullpath); 
 	wform.grid.clear();
-
-
-	var db, err = access(wbpath);
-	var n=0;
-	while(err){
-
-		collectgarbage("collect");
-		n=n+1;
-		db, err = access(wbpath);
-		if n>1000 break;
+	if !io.exist(newpath){
+		var succ = thread.invokeAndWait(
+			function(fullpath,newpath){
+				import com.excel;
+				var excel = com.excel(true);
+				excel.alerts = false;
+				var wb = excel.Open(fullpath);
+				wb.SaveAs(newpath, 56/*_xlExcel8*/)
+				wb.close();
+				excel.alerts = true;
+				excel.Quit();
+				return io.exist(newpath); 
+			},fullpath,newpath
+		)
 	}
-	if err {
-		wform.grid.clear();
-
-		return ; 
-	}
+	var db, err = access(newpath);
+	if !db return ; 
 	var t = db.getTable(`
 		SELECT DISTINCT
 			[凭证日期],
@@ -124,8 +124,7 @@ var getDetail = function(wbpath, wform){
 	`);
 
 	db.close();
-	db = null;
-	collectgarbage("collect");
+
 	table.push(t.fields, "订单BOM缓存日期", "生产BOM缓存日期");
 
 	for (i=1;#t){
