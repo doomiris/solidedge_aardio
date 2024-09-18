@@ -359,7 +359,7 @@ downloadOrderList = function(winform, orderId){
 	    	dim filename
 	*/
 	vm.script.order = orderId;
-	vm.script.lib_path = config.__sapDownload;
+	vm.script.lib_path = io.joinpath(config.dbServer.path, "xl_lib");
 	vm.script = /*
 		session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
 		session.findById("wnd[0]").sendVKey 0
@@ -380,9 +380,14 @@ downloadOrderList = function(winform, orderId){
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
+
+		session.findById("wnd[1]/usr/radRB_OTHERS").selected = True
+		session.findById("wnd[1]/usr/cmbG_LISTBOX").Key = "10" 	'Excel（Office 2007 XLSX 格式）
+		session.findById("wnd[1]/usr/chkCB_ALWAYS").selected = True
 		session.findById("wnd[1]/tbar[0]/btn[0]").press
+		
 		session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
-		filename = "ORDER_LIST_" & order & ".XLSX"
+		filename = "ORDER_LIST_" & order & ".xlsx"
 		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
 	*/ 
 	var fullname = io.joinpath(vm.script.lib_path, vm.script.filename);

@@ -23,7 +23,6 @@ import tarray;
 import config;
 import process;
 import access;
-//import access.oleDb;
 import com.excel;
 import godking.tableToDB;
 //import tarray;
