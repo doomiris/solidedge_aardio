@@ -96,38 +96,35 @@ getSelectedText = function(listCtrl){
 copySelectedItem = function(ctrl){
 		if !ctrl	ctrl = owner;
 		var doNotCopyColumns = ctrl.doNotCopyColumns;
-		//var onlyCopyColumns = ctrl.onlyCopyColumns;
-//		import win;
+		doNotCopyColumns := {/* 防null报错 */};
+		table.sort(doNotCopyColumns);
+		table.reverse(doNotCopyColumns);
+
         import win.clip;
         import win.clip.html;
-        import tarray;
-/*
-        import console
-		console.open()
-*/
-		
-        var cliphtml = win.clip.html();
+
 		var items = ctrl.items;
-		var t = {};
-		for (i=1; ctrl.columnCount)
-			if !table.find(doNotCopyColumns, i)
-				table.push(t, tarray.getCol(items, i))
 		var selected = ctrl.selected; 
-		items = tarray.transpose0(t);
-//		console.dump(items);
+		
+		var selTab = {}
+		for (i=1; #selected)
+				table.push(selTab, items[selected[i]]);
+		for (i=1; #selTab)
+				for(j=1;#doNotCopyColumns)
+					table.remove(selTab[i],	doNotCopyColumns[j]);
+
 		/* clip添加纯文本格式 */
         var txtTab = table.array();
-        for (i=1; #selected){
-            table.push(txtTab, string.join(items[selected[i]], '\t'));
-         }
+        for (i=1; #selTab)
+            table.push(txtTab, string.join(selTab[i], '\t'));
 		win.clip.write(string.join(txtTab, '\n'));
 
 		/* clip添加HTML格式 */
 		var hTab = table.array();
-        for (i=1; #selected)
-            table.push(hTab, items[selected[i]]);
- 
-        var html = table.toHTML(hTab)
+        for (i=1; #selTab)
+            table.push(hTab, selTab[i]);
+        var html = table.toHTML(hTab);  
+ 		var cliphtml = win.clip.html();
         html = cliphtml.stringify(html);
 		cliphtml.write(html,true,false);
 }

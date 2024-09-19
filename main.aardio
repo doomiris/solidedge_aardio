@@ -403,7 +403,6 @@ mainForm.tbutton8.oncommand = function(id,event){
 			var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
 		else
 			var wb = excel.WorkBooks.Add(config.__formTemplateSharepointServer ++ tlist[n]);
-			if wb	wb.readonly = false;
 		
 		excel.Visible = true;
 		win.showForeground(excel.Application.hwnd);
