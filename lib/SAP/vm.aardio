@@ -26,7 +26,7 @@ class vm{
 			If Not IsObject(connection) Then
    				Set connection = application.Children(0)
 			End If
-			If connection Is Nothing Then msgbox "请先启动SAP"
+			'If connection Is Nothing Then msgbox "请先启动SAP"
 			on error goto 0
 		*/
 				
@@ -111,7 +111,7 @@ namespace vm{
 						
 					}; 
 				}
-				case "text","selected" {
+				case "text","selected","Text" {
 					session.script = `text = obj.` + s;
 					return session.script.text; 
 				}
@@ -120,8 +120,8 @@ namespace vm{
 		}
 		proxy@._set = function(s,n){
 			select(s) {
-				case "text","selected" {
-					session.script = `obj.` + s + `=` + n;
+				case "text","selected","Text" {
+					session.script = `obj.` + s + `= "` + n + `"`;
 				}
 			}
 		}

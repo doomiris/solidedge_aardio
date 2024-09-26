@@ -260,6 +260,9 @@ getFileDate = function(filename, formatString = "%Y/%m/%d %H:%M:%S"){
 	if formatString d = ..time(d, formatString);
 	return d; 
 }
+sendFileTo = function(fullname, dest){
+	
+}
 
 
 /**intellisense(domisoft)

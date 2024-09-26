@@ -2,15 +2,15 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="物料名称生成";right=929;bottom=792)
 winform.add(
-button3={cls="button";text="/\";left=89;top=208;right=140;bottom=231;db=1;dl=1;dt=1;z=5};
+button3={cls="button";text="/\";left=89;top=208;right=140;bottom=231;dl=1;dt=1;z=5};
 button4={cls="button";text="\/";left=142;top=208;right=193;bottom=231;dl=1;dt=1;z=6};
 button5={cls="button";text="/\";left=276;top=18;right=301;bottom=41;dl=1;dt=1;z=12};
 button6={cls="button";text="\/";left=276;top=46;right=301;bottom=69;dl=1;dt=1;z=11};
 button7={cls="button";text="-";left=276;top=75;right=300;bottom=98;dl=1;dt=1;z=10};
 button8={cls="button";text="+";left=276;top=104;right=300;bottom=127;dl=1;dt=1;z=9};
 button9={cls="button";text="清空";left=276;top=133;right=300;bottom=156;dl=1;dt=1;z=8};
-lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;aw=1;dl=1;dt=1;edge=1;items={};msel=1;z=3};
-listbox={cls="listbox";left=1;top=13;right=275;bottom=203;aw=1;dl=1;dt=1;edge=1;items={};z=1};
+lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;dl=1;dt=1;edge=1;items={};msel=1;z=3};
+listbox={cls="listbox";left=1;top=13;right=275;bottom=203;dl=1;dt=1;edge=1;items={};z=1};
 listview={cls="listview";left=310;top=11;right=928;bottom=793;db=1;dl=1;dr=1;dt=1;edge=1;z=2};
 splitter={cls="splitter";left=304;top=14;right=309;bottom=794;frame=1;hide=1;z=4};
 splitter2={cls="splitter";left=4;top=200;right=302;bottom=205;frame=1;hide=1;horz=1;z=7}

@@ -60,7 +60,8 @@ var searchDocument = function (filenumber){
 		item["类型"] = string.upper(ext);
 		fileTab[i] = item;
 	}
-	table.unshift(fileTab.fields, "类型");
+	if !table.indexOf(fileTab.fields,"类型")
+		table.unshift(fileTab.fields, "类型");
 	winform_drawing.listview2.header = fileTab.fields;
 	
 	

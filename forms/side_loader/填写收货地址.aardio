@@ -1,0 +1,19 @@
+//import console
+//console.open()
+import SAP.vm;
+var session = SAP.vm();
+
+if session.findById("wnd[1]").Text !== "P11(1)/220 交货地点" return ;
+
+session.findById("wnd[1]/usr/txtADDR1_DATA-NAME1").Text = "兰功鹏";
+session.findById("wnd[1]/usr/txtADDR1_DATA-SORT1").Text = "兰功鹏";
+session.findById("wnd[1]/usr/txtADDR1_DATA-STREET").Text = "申江路";
+session.findById("wnd[1]/usr/txtADDR1_DATA-HOUSE_NUM1").Text = "3239";
+session.findById("wnd[1]/usr/txtADDR1_DATA-POST_CODE1").Text = "201206";
+session.findById("wnd[1]/usr/txtADDR1_DATA-CITY1").Text = "浦东新区";
+session.findById("wnd[1]/usr/ctxtADDR1_DATA-COUNTRY").Text = "CN";
+session.findById("wnd[1]/usr/ctxtADDR1_DATA-REGION").Text = "020";
+session.findById("wnd[1]/usr/txtSZA1_D0100-MOB_NUMBER").Text = "15618295250";
+
+session = null;
+//console.pause(true)

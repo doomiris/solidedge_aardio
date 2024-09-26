@@ -1,5 +1,5 @@
 /*RULES_DESP{{*/
-etab, i = ...
+
 rule_desp = {
 	[1] = "前后父项物料不匹配(不要改变原有模版公式)";
 	[2] = "项目类别固定值:L";
@@ -233,7 +233,6 @@ top_rule_solver ={
 	}
 }
 
-return rule_desp, top_rule_desp, sapErr, solver, top_rule_err, top_rule_solver
 /*}}*/
 	
 	

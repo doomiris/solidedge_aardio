@@ -113,18 +113,12 @@ tsht.Range("6:"++ tar_end_row).EntireRow.insert();
 tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
 tsht.Activate();
 
-/*
-try{
-	excel.Run("initExportedBom"); //调用宏格式化样式
-}
-*/
 
-
-excel.alerts = false;	//调用的宏重置了此状态    
+excel.alerts = false;	
 tbk.SaveAs(
     io.joinpath(
     	config.setbm.workingDir,
-    	tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
+    	"init_" ++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
     )
 );
 

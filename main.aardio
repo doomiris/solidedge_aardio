@@ -166,8 +166,8 @@ mainForm.popmenu2.add('专用号填入ItemMaster...', λ() thread.invoke(λ() lo
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('检查新BOM申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio")));
 mainForm.popmenu2.add('检查BOM更改单', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio")));
-mainForm.popmenu2.add('原材料用量计算...', λ() thread.invoke(λ() loadcodex("\forms\Excel\BOM-CALC.aardio")));
 mainForm.popmenu2.add('打开分类查询窗口...', λ() thread.invoke(λ() loadcodex("\forms\SAP\OD_Query.aardio")));
+mainForm.popmenu2.add('原材料用量计算...', λ() thread.invoke(λ() loadcodex("\forms\Excel\BOM-CALC.aardio")));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio")));
 //mainForm.popmenu2.add('订单BOM(B2C)...', λ() thread.invoke(λ() loadcodex("\forms\SAP\下载订单BOM.aardio")));
@@ -194,7 +194,7 @@ mainForm.popmenu2.add('SAP一键登入2', function(){
 	mainForm.tray.pop("Starting SAP GUI ...","TBM");
 });
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('更多...', λ() thread.invoke(λ() loadcodex("\forms\main\loader.aardio")));
+mainForm.popmenu2.add('更多...', λ() loadcodex("\forms\main\browser.aardio"));
 
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/

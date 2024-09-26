@@ -40,7 +40,25 @@ for k, v in tab {
 if !io.exist(_toFolder) return ; 
 
 _allow_overwrite = true;
-
+var add2pdfDB = function(fullname){
+	var filename = io.splitpath(fullname).file;
+	import sqlite;
+	import config
+	var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"))
+/*
+	db.exec(`
+		INSERT INTO Lib(文件名, 路径)
+		SELECT @filename
+		WHERE NOT EXISTS(
+			SELECT * from Lib
+			WHERE 文件名=@filename
+		)
+	`,{})
+*/
+	db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {filename, _toFolder} } }); 
+	db.close();
+	
+}
 for k, v in found {
 	var fromFile = v;
 	var toFile = io.joinpath(_toFolder, k);
@@ -51,23 +69,11 @@ for k, v in found {
 	}else{
 		if !io.exist(toFile)
 			fsys.copy(fromFile, toFile);
+
 	}
+	add2pdfDB(toFile);
 }
 
-var add2pdfDB = function(fullname){
-	var filename = io.splitpath(fullname)
-	import sqlite;
-	import config
-	var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"))
-	db.exec(`
-		INSERT INTO Lib(文件名, 路径)
-		SELECT @filename
-		WHERE NOT EXISTS(
-			SELECT * from Lib
-			WHERE 文件名=@filename
-		)
-	`,{})
-	
-}
+
 
 console.pause(true);

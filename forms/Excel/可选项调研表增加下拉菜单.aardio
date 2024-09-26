@@ -37,23 +37,33 @@ var db, err = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));
 if err win.msgbox(err);
 
 
-/*filterDeleted{{*/
+/*借用OD查询的函数记得更新{{*/
 var filterDeleted = function(t){
+	if !t or !#t return t; 
 	var z = {};
 	if t.fields z.fields = t.fields;
 	for (i=1; #t) {
-		if t[i].更改标记
+		if !t[i].特性 continue;
+		if t[i].更改标记	//无标记不代表删除哦
 			if string.find(t[i].更改标记,"删") continue;
 		table.push(z, t[i])
-	}		
+	}
+	if table.indexOf(z.fields,"特性值") table.sort(z, lambda(a) tonumber((owner.特性值)) < tonumber(a.特性值));
+	else if table.indexOf(z.fields,"特性") table.sort(z, lambda(a) owner.特性 < a.特性);
 	return z;
 }
-/*}}*/
+var searchClass = function(str){	//search分类
+	if !str return null; 
+	str = string.upper(string.trim(str));
+	var t = db.getTable("SELECT * FROM `分类`", { 分类 : str });
+	return filterDeleted(t);
+}
 var searchOption = function(str){
 	if !str return null; 
 	var t = db.getTable("SELECT * FROM [特性参数规划表]", { 特性 = string.upper(str) });
 	return filterDeleted(t);
 }
+/*}}*/
 
 
 console.log("当前文档...", wb.name)
@@ -83,23 +93,29 @@ var odtab = table.create(,{ fields = {[1] = "特性", [2] = "特性描述", [3] 
 
 console.log("获取OD数据表...", _od_list_sht) 
 var od = {};
+var pd = {};
 
 /*从所有页获取特性列表{{*/
 for(i=1; wb.sheets.count){
 	var sht = wb.sheets(i);
 	if sht.name == _od_list_sht continue; 
-	for (k=10; sht.usedrange.rows.count){
-		if sht.Cells(k, 4 /* D */).value2 !== "SAP选项" continue;
-		var code = sht.Cells(k, 2 /* B */).value2
-		if !#code break;
-		code = string.left(code, 4);
-		table.push(od, code)
-	}
-	
+	var keyCode = sht.cells(9,"A").value2;
+	if !keyCode continue;
+	if !string.indexOf(keyCode,"/") continue;
+	var 可选项分类, 喷粉分类 = table.unpack(string.split(keyCode,"/"));
+	var 特性列表 = db.getTable("SELECT 特性,更改标记 FROM `分类`", { 分类 : 可选项分类 });
+	特性列表 = filterDeleted(特性列表);
+	for (i=1; #特性列表)
+		table.push(od, 特性列表[i].特性);
+	var 颜色列表 = db.getTable("SELECT 喷粉部位编码,颜色分组 FROM `喷粉分类组成`", { 产品系列号 : 喷粉分类 });
+
+	for (i=1; #颜色列表)
+		table.push(pd, 颜色列表[i].颜色分组);
 }
 /*}}*/
-/* 特性列表去除重复项 */
+/* 去除重复项 */
 od = table.unique(od);
+pd = table.unique(pd);
 
 /*根据特性列表查找所有特性值并生成总表{{*/
 for (i=1; #od){
@@ -109,7 +125,7 @@ for (i=1; #od){
 }
 /*}}*/
 console.log("获取颜色数据表...") 
-var colortab = db.getTable("SELECT * FROM [颜色分组]", { 颜色分组 = "1.0" });
+var colortab = db.getTable("SELECT * FROM `颜色分组` Order By 颜色分组,默认颜色可选项类别 ASC");
 var ctab = {}
 ctab.fields = odtab.fields
 /*颜色名称去除开头的专用号{{*/
@@ -128,11 +144,28 @@ var trimColorDesp = function(desp){
 }
 /*}}*/
 
+var 喷粉部分 = {
+	[1] = "柜内颜色";
+	[2] = "柜外颜色";
+	[3] = "肩膀型材颜色";
+	[4] = "侧板内板颜色";
+	[5] = "机舱护板颜色";
+	[6] = "侧板颜色";
+	[7] = "装饰板颜色";
+	[8] = "后护板颜色";
+	[9] = "内部颜色";
+	[10] = "外部颜色";
+	[11] = "底饰板颜色";
+	[12] = "顶饰板颜色";
+}
+
+
+
 /*生成颜色特性值总表{{*/
 for(i=1; #colortab){
 	table.push(ctab, { 
-		特性 = "1" , 
-		特性描述 = "颜色分组" , 
+		特性 = colortab[i].颜色分组 , 
+		特性描述 = "", 
 		特性值 = colortab[i].默认颜色可选项类别, 
 		特性值描述 = trimColorDesp(colortab[i].特性值描述)
 	})
@@ -149,8 +182,21 @@ odsht.Visible = 0 /* xlSheetHidden  */
 /*getRef从odsht获取地址填入下拉列表地址{{*/
 var getRef = function(code){
 	var t = table.filter(odtab,function(v, index){
-		return v.特性 == code;
+		return v.特性描述 == code;
 	});
+	var min = table.indexOf(odtab, t[1]);
+	if !min return null; 
+	var max = min + #t -1;
+	return "$D$" ++ min ++ ":$D$" ++ max; 
+}
+var getColorRef = function(pl /* 喷粉分类 */,bw /* 喷粉部位 */){
+	
+	var s = db.stepQuery("SELECT * FROM [喷粉分类组成]",{产品系列号:pl; 喷粉部位编码:bw})
+	var pn = !s ? 1 : s.颜色分组; 
+	var t = table.filter(odtab,function(v, index){
+		return v.特性 == pn;
+	});
+
 	var min = table.indexOf(odtab, t[1]);
 	if !min return null; 
 	var max = min + #t -1;
@@ -158,6 +204,7 @@ var getRef = function(code){
 }
 /*}}*/
 
+/*
 var getDefaultConfig = function(classCode, productCode){
 	var t;
 	if !productCode
@@ -168,6 +215,7 @@ var getDefaultConfig = function(classCode, productCode){
 	//console.dump(t) 
 	return t; 
 }
+*/
 
 var getDefaultValueText = function(tab,keyCode){
 	tarray.findValue(arr, what)
@@ -175,35 +223,52 @@ var getDefaultValueText = function(tab,keyCode){
 for(i=1; wb.sheets.count){
 	var sht = wb.sheets(i);
 	if sht.name == _od_list_sht continue; 
-	if (sht.Visible !== -1 /* xlSheetVisible  */) continue; 
+	if (sht.Visible !== -1 /* xlSheetVisible  */) continue;
 	
-	var classCode = string.trim(sht.cells(9,"A").text);
-	DefaultConfig = getDefaultConfig(classCode);
+	var keyCode = sht.cells(9,"A").value2;
+	if !keyCode continue;
+	
+	if !string.indexOf(keyCode,"/") continue;
+	var 可选项分类, 喷粉分类 = table.unpack(string.split(keyCode,"/"));
+	
+	//var classCode = string.trim(sht.cells(9,"A").text);
+	//DefaultConfig = getDefaultConfig(classCode);
 
 	console.log("开始添加下拉菜单...", sht.name ) 
 	for (k=10; sht.usedrange.rows.count){
-		var code;
+		var code, codeAddress;
+		
+        var ocell = sht.Cells(k, 3 /* C */);
+        ocell.Validation.Delete();
+        //ocell.value2 = "";
+        
 		select(sht.Cells(k, 4 /* D */).value2) {
-			case "SAP选项"  {
+			case "SAP选项" {
 				code = sht.Cells(k, 2 /* B */).value2;
 				if !code continue;
-				code = string.left(code, 4);
+				 codeAddress = getRef(code);
+				//code = string.left(code, 4);
 			}
 			case "颜色选项" {
-				code = "1";
+				code = sht.Cells(k, 2 /* B */).value2;
+				if !code continue;
+				var bw = table.indexOf(喷粉部分,code);
+						
+				bw = bw>9 ? "P"++bw : "P0"++bw;
+				codeAddress = getColorRef(喷粉分类 /* 喷粉分类 */,bw /* 喷粉部位 */);
+				//code = string.left(code, 4);
 			}
 		}
 		if !code continue;
-        var ocell = sht.Cells(k, 3 /* C */);
-        ocell.Validation.Delete();
-        var codeAddress = getRef(code);
-        if !codeAddress continue;
+		if !codeAddress continue;
+
         ocell.Validation.Add(
         	/* xlValidateList */ 3,
         	/* AlertStyle */ null,
         	/* Operator */ null,
         	/* Formula1 */ "=" ++ _od_list_sht + "!" + codeAddress,
         );
+/*
         if DefaultConfig {
             var index_code = tarray.indexOfCol(DefaultConfig, code, "特性");
             if !index_code continue; //没发现默认值就跳过
@@ -212,6 +277,7 @@ for(i=1; wb.sheets.count){
             var 此默认值描述 = odtab[index_code].特性值描述;
             ocell.value2 = 此默认值描述;
         }
+*/
 	}
 }
 

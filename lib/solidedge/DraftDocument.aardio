@@ -271,10 +271,15 @@ namespace DraftDocument{
         					    import io;
         						import fsys;
         						import config;
-        						if config.printingCenter.AllowSentToPdfLib
-       								if io.exist(config.__pdfLib)
-       									if !io.exist(io.joinpath(config.__pdfLib, fname))
-        									fsys.copy(fname, config.__pdfLib, 0x614/*_FOF_NO_UI*/ + 0x10/*_FOF_NOCONFIRMATION*/);
+        						import sqlite;
+        						if !config.printingCenter.AllowSentToPdfLib return; 
+       							if !io.exist(config.__pdfLib) return ; 
+       							var destFile = io.joinpath(config.__pdfLib, fname);
+       							
+        						fsys.copy(fname, config.__pdfLib, 0x614/*_FOF_NO_UI*/ + 0x10/*_FOF_NOCONFIRMATION*/);
+        						var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"));
+        						db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {io.splitpath(fname).file, config.__pdfLib} } }); 
+        						db.close();
         					}, fname
         				);
         			succ = true; 
