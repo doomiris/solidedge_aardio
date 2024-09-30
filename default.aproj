@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.499" ProductVersion="1.5.0.499" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.506" ProductVersion="1.5.0.506" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main" path="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -32,21 +32,22 @@
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
+			<file name="browser.aardio" path="forms\main\browser.aardio" comment="forms\main\browser.aardio"/>
 			<file name="check_QHC_Release.aardio" path="forms\main\check_QHC_Release.aardio" comment="forms\main\check_QHC_Release.aardio"/>
 			<file name="drawing_search.aardio" path="forms\main\drawing_search.aardio" comment="forms\main\drawing_search.aardio"/>
+			<file name="frmclipboard.aardio" path="forms\main\frmclipboard.aardio" comment="forms\main\frmclipboard.aardio"/>
 			<file name="frmPage1.aardio" path="forms\main\frmPage1.aardio" comment="forms\main\frmPage1.aardio"/>
 			<file name="frmPage2.aardio" path="forms\main\frmPage2.aardio" comment="forms\main\frmPage2.aardio"/>
 			<file name="frmPage3.aardio" path="forms\main\frmPage3.aardio" comment="forms\main\frmPage3.aardio"/>
 			<file name="frmPage4.aardio" path="forms\main\frmPage4.aardio" comment="forms\main\frmPage4.aardio"/>
 			<file name="frmPage5.aardio" path="forms\main\frmPage5.aardio" comment="forms\main\frmPage5.aardio"/>
+			<file name="loader.aardio" path="forms\main\loader.aardio" comment="forms\main\loader.aardio"/>
 			<file name="QTIP.aardio" path="forms\main\QTIP.aardio" comment="forms\main\QTIP.aardio"/>
 			<file name="qtip_filter.aardio" path="forms\main\qtip_filter.aardio" comment="forms\main\qtip_filter.aardio"/>
 			<file name="qtip_list.aardio" path="forms\main\qtip_list.aardio" comment="forms\main\qtip_list.aardio"/>
 			<file name="sap_search.aardio" path="forms\main\sap_search.aardio" comment="forms\main\sap_search.aardio"/>
 			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
-			<file name="frmclipboard.aardio" path="forms\main\frmclipboard.aardio" comment="forms\main\frmclipboard.aardio"/>
-			<file name="loader.aardio" path="forms\main\loader.aardio" comment="forms\main\loader.aardio"/>
-			<file name="browser.aardio" path="forms\main\browser.aardio" comment="forms\main\browser.aardio"/>
+			<file name="物料名称生成.aardio" path="forms\main\物料名称生成.aardio" comment="forms\main\物料名称生成.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">
 			<file name="BOM-CALC.aardio" path="forms\obsolete\BOM-CALC.aardio" comment="forms\obsolete\BOM-CALC.aardio"/>
@@ -102,7 +103,7 @@
 			<file name="OD_Query.aardio" path="forms\SAP\OD_Query.aardio" comment="forms\SAP\OD_Query.aardio"/>
 			<file name="获取订单清单信息.aardio" path="forms\SAP\获取订单清单信息.aardio" comment="forms\SAP\获取订单清单信息.aardio"/>
 		</folder>
-		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="false">
+		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="true">
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>

@@ -102,7 +102,7 @@ winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select�
     		var selectedRow = owner.getSelection();
     		if !selectedRow return;
     		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
-			var fullName = owner.getItemText(selectedRow, table.indexOf(header,"路径")) ++ pcode;
+			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")),pcode);
 			if io.exist(fullName)
 				process.execute(fullName);
     	}

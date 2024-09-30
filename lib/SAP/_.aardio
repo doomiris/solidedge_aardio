@@ -534,6 +534,9 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 	 		*/	
 		winform.publish("downloadManufactureBOM", vm.script.filename)
 	}
+	vm.script = /*
+	 	session.findById("wnd[0]/tbar[0]/btn[12]").press
+	*/	
 }
 
 /**intellisense(SAP)

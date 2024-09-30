@@ -25,7 +25,7 @@ import domisoft;
 
 
 var tab = {};
-_fields =  {
+var fields =  {
 	"生产尺寸";
 	"长,宽,厚";
 	"原材料";
@@ -79,7 +79,7 @@ winform_calc.button.oncommand = function(id,event){
 			table.push(tab,t); //保留空行
 	}
 	
-	tab.fields = _fields;
+	tab.fields = fields;
 	grid.source = tab
 	grid.setTable(grid.source);
 
@@ -102,14 +102,14 @@ winform_calc.listview.translateAccelerator = function( msg ){
 	if (vk == 'C'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {	//CTRL_C 复制钣金用量
 	    	var tab = {};
 	    	for (k, v in winform_calc.listview.selected){
-	        	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(_fields,"钣金用量")));
+	        	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
 	    	}           
 			win.clip.write(string.join(tab,"\"));
 	}
 	if (vk == 'C'#) && !ctrl && alt && (msg.message == 0x104/*_WM_SYSKEYDOWN*/){ //ALT_C 复制粉末用量
         	var tab = {};
         	for (k, v in winform_calc.listview.selected){
-            	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(_fields,"粉末用量")));
+            	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
         	}           
 			win.clip.write(string.join(tab,"\"));
 	}
@@ -118,8 +118,8 @@ winform_calc.listview.translateAccelerator = function( msg ){
 	    	var tab1 = {};
 	    	var tab2 = {};
 	    	for (k, v in winform_calc.listview.selected){
-	        	table.push(tab1, winform_calc.listview.getItemText(v, table.indexOf(_fields,"钣金用量")));
-	        	table.push(tab2, winform_calc.listview.getItemText(v, table.indexOf(_fields,"粉末用量")));
+	        	table.push(tab1, winform_calc.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
+	        	table.push(tab2, winform_calc.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
 	    	} 
 	    	table.push(t, string.join(tab1,"\"));
 	    	table.push(t, string.join(tab2,"\"));

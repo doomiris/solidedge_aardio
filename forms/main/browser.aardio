@@ -28,7 +28,7 @@ tabs.skin({
     }
 })
 
-_MoreToolsLists = {
+_MoreToolsLists := {
 	[1] = {text = "BOM浏览器"; iconText = '\uF0CB'; hasCloseButton = false; formPath = "\forms\SAP\BOM浏览器.aardio"};
 	[2] = {text = "订单清单"; iconText = '\uF0DB'; hasCloseButton = false; formPath = "\forms\SAP\获取订单清单信息.aardio"};
 	[3] = {text = "OD相关查询"; iconText = '\uF1AA'; hasCloseButton = false; formPath = "\forms\SAP\OD_Query.aardio"};

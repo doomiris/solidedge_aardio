@@ -328,7 +328,9 @@ subscribe("dok", function(...){
 			var sht = domisoft.getRunningWorkSheet(ftab);
 			QHC.formatBOM(sht);
 			import fsys;
-			fsys.copy(sht.Parent.FullName, io.joinpath(config.dbServer.path,"\xl_lib\"), 0x10/*_FOF_NOCONFIRMATION*/)
+			var destPath = io.joinpath(config.dbServer.path,"\xl_lib\");
+			if sht.ParentPath !== destPath
+				fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
 		}, ftab
 	)
 } )

@@ -39,8 +39,9 @@ if(!atom){
 import win.ui.menu;
 
 
-_path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
-var acc, err = access(_path);
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
+var acc, err = access(path);
+
 var db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
 acc.close();
 
@@ -143,9 +144,10 @@ var downloadbom = function(){
 	ctrl := grid;
     var tab=table.array();
     var data = ctrl.getTable(ctrl.source.fields);
+//    win.msgbox(data)
     for (k, v in ctrl.selected){
         var bg = data[v]["物料"];
-        if string.startWith(bg,"BG")
+//        if string.startWith(bg,"BG")
             table.push(tab,  bg);
     }  
     if !#tab return ;

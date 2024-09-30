@@ -138,7 +138,7 @@ var keepBG = function(hcode){
 }
 
 var abb = null; //延迟线程ID
-_delay_query = 600 //延迟时间 mm
+var delay_query = 600 //延迟时间 mm
 
 var editChange = function(text){
 	//winform_od_query.listview1.clear(true);
@@ -209,7 +209,7 @@ winform_od_query.edit.onChange = function(){
 	actrls[1].hide = !#text;
 	owner.redraw();
 	win.clearTimeout(abb)
-	abb = win.setTimeout(editChange, _delay_query, text)
+	abb = win.setTimeout(editChange, delay_query, text)
 }
 var editChange2 = function(text){
 	//winform_od_query.listview1.clear(true);
@@ -235,7 +235,7 @@ winform_od_query.edit2.onChange = function(){
 	bctrls[1].hide = !#text;
 	owner.redraw();
 	win.clearTimeout(abb)
-	abb = win.setTimeout(editChange2, _delay_query, text);
+	abb = win.setTimeout(editChange2, delay_query, text);
 }
 var lastOpt1,lastOpt2,lastOpt3,lastOpt4;//记住上次搜索项, 减少搜索频率
 winform_od_query.listview2.onnotify = function(id,code,ptr){

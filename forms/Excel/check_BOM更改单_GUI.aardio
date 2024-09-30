@@ -130,6 +130,9 @@ var rule_desp = {
 	[18] = "替换子项前后无区别";
 	[19] = "已喷物料和未喷物料号码相隔太远(如特殊情况请确认是否可忽略)";
 	[20] = "删除子项:右侧新子项需要留空";
+	[21] = "子项物料与父项相同";
+	[22] = "可选项子项数量只能是1"; //K3规则SAP不再限制了
+	/* 此处增加规则需要在desp/rule/solver三处都添加子项 */
 }
 var top_rule_desp = {
 	[1] = "涉及语句变更的, 文件名部分需要指定:-是-否";
@@ -242,7 +245,15 @@ var sapErr = {
 		if etab[i][["更改备注"]] == "删除子项" or etab[i][["更改备注"]] == "删除BOM"
 				return !!etab[i][["新子项"]] or !!etab[i][["新子项描述"]] or !!etab[i][["新子项数量"]];
 	}
-
+	[21] = function(i){
+		if etab[i][["原父项"]]
+			return etab[i][["原父项"]] == etab[i][["新子项"]];
+	}
+	[22] = function(i){
+		/* K3规则SAP不再限制了*/
+	}
+	
+	
 };
 
 var solver = {	//解决方案
@@ -317,6 +328,12 @@ var solver = {	//解决方案
 	}
 	[20] = function(i){
 		
+	}
+	[21] = function(i){
+		
+	}
+	[22] = function(i){
+		/* K3规则SAP不再限制了*/
 	}
 };
 var top_rule_err = {
