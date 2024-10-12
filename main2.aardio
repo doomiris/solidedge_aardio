@@ -1,0 +1,534 @@
+import fonts.fontAwesome;
+import win.ui;
+import win.ui.simpleWindow;
+import win.ui.atom;
+import win.ui.tabs;
+import win.ui.tooltip; 
+import win.util.tray;
+import key;
+import sqlite;
+import process;
+import config;
+import domisoft;
+import SAP;
+import solidedge.application;
+/*DSG{{*/
+mainForm = win.form(text="TBM";right=623;bottom=551;bgcolor=15793151;border="none")
+mainForm.add(
+button={cls="button";text='\uF127';left=36;top=4;right=68;bottom=36;bgcolor=255;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');hide=1;z=23};
+cLogo={cls="bkplus";left=70;top=8;right=94;bottom=32;background="\res\tbm3.ico";color=8388608;dl=1;dt=1;z=21};
+caption={cls="bkplus";text="domisoft";left=94;top=10;right=184;bottom=28;color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=20};
+custom={cls="custom";left=83;top=40;right=624;bottom=552;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=8};
+logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="\res\ENGINE.ICO";color=8388608;dl=1;dt=1;z=22};
+nav1={cls="plus";text="Solid Edge";left=0;top=48;right=85;bottom=128;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1EA';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=3};
+nav2={cls="plus";text="Excel";left=0;top=129;right=85;bottom=209;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF277';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=4};
+nav3={cls="plus";text="SAP";left=0;top=210;right=85;bottom=290;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1B0';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=5};
+nav4={cls="plus";text="技术要求";left=0;top=291;right=85;bottom=371;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF0CB';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=6};
+nav5={cls="plus";text="Print";left=0;top=372;right=85;bottom=456;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF1C1';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=7};
+nav6={cls="plus";text="About";left=0;top=448;right=85;bottom=532;bkBottom=3;bkLeft=7;bkRight=8;bkTop=2;border={color=-65536};color=16777215;dl=1;dt=1;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-37;name='FontAwesome');padding={bottom=20}};iconText='\uF262';notify=1;textPadding={bottom=10};valign="bottom";x=0.5;y=0.2;z=16};
+navBar={cls="bkplus";left=0;top=37;right=83;bottom=552;bgcolor=11829830;db=1;dl=1;dt=1;z=2};
+static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=17};
+tbutton1={cls="button";text='\uF01E';left=184;top=4;right=216;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=13};
+tbutton2={cls="button";text='\uF07E';left=216;top=4;right=248;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=9};
+tbutton3={cls="button";text='\uF05A';left=248;top=4;right=280;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=10};
+tbutton4={cls="button";text='\uF05C';left=280;top=4;right=312;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=11};
+tbutton5={cls="button";text='\uF0EE';left=312;top=4;right=344;bottom=36;dr=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
+tbutton6={cls="button";text='\uF05E';left=344;top=4;right=376;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=14};
+tbutton7={cls="button";text='\uF05B';left=376;top=4;right=408;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=15};
+tbutton8={cls="button";text='\uF067';left=408;top=4;right=440;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=18};
+tbutton9={cls="button";text='\uF074';left=440;top=4;right=472;bottom=36;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=19};
+titleBar={cls="bkplus";left=0;top=0;right=624;bottom=38;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=1}
+)
+/*}}*/
+
+/*只允许一个实例{{*/
+var atom,hwnd = mainForm.atom("domisoft.aardio.tbm");
+if(!atom){ 
+	win.showForeground(hwnd);
+	win.setActive(hwnd);
+	win.quitMessage();	
+	return;
+}
+/*}}*/
+
+/*自动更新模块{{*/
+/*
+if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
+{
+	win.msgbox("new version")
+	return 0;
+}
+*/
+/*}}*/
+/*closeOnEscPress{{*/
+mainForm.isDialogMessage = function(hwnd,msg){ 
+	if( msg.message == 0x100/*_WM_KEYDOWN*/){
+		
+/**
+		if(  msg.wParam == 0xD/*_VK_RETURN*/ ){ 
+			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
+		}
+**/
+		
+		if( msg.wParam == 0x1B/*_VK_ESC*/ ){	//按Esc退出窗口
+			mainForm.close();
+			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
+		} 
+	}
+	
+	//检测并响应默认快捷键
+	return win.isDialogMessage(hwnd,msg);
+}
+/*}}*/
+			
+win.ui.simpleWindow( mainForm );
+//mainForm.enableDpiScaling();
+
+//mainForm.enableDpiScaling(
+
+//var start_time = time();
+
+var seApp = solidedge.application();
+
+
+/*托盘图标{{*/
+	mainForm.tray = win.util.tray(mainForm);
+mainForm.onMinimize = function(lParam){
+//	mainForm.modifyStyleEx(0x40000/*_WS_EX_APPWINDOW*/,0x80/*_WS_EX_TOOLWINDOW*/)
+	mainForm.show(false); 
+	return true; 
+}
+	
+mainForm.onClose = function(hwnd,message,wParam,lParam){
+/*
+	if time().diffday(start_time) > 1
+		win.quitMessage(); //如果程序启动超过1天则退出;
+*/
+	if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
+	{
+		win.quitMessage();
+		return 0;
+	}
+	mainForm.onMinimize();
+	return true;
+}
+
+mainForm.onDestroy = function(){
+	if(mainForm.tray){
+		mainForm.tray.delete()
+	}
+}
+
+
+import com.interface.ITaskbarList3;
+mainForm.wndproc =  function(hwnd,message,wParam,lParam){
+ 		select(message) {
+ 			case 0xACCF/*_WM_TRAYMESSAGE*/ {
+				select(lParam) {
+					case 0x205/*_WM_RBUTTONUP*/ {
+						win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	    				var pt = ::POINT();
+						::User32.GetCursorPos(pt);   		
+	    				mainForm.popmenu2.popup(pt.x,pt.y, true);
+					}
+					case 0x202/*_WM_LBUTTONUP*/ {
+						win.setForeground(mainForm.hwnd); //弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失							
+						mainForm.show(!win.isVisible(mainForm.hwnd));
+						if main_tbs.currentTab == 1
+							main_tbs.forms[1].publish("refresh");
+					}
+				}
+			}
+			case _WM_TASKBARBUTTONCREATED { 
+            	mainForm.taskbar = com.interface.ITaskbarList3.Create() ;
+            } 
+	}
+}
+
+	
+/*}}*/
+/*托盘右键菜单{{*/
+mainForm.popmenu2 = win.ui.popmenu(mainForm);//创建弹出菜单
+mainForm.popmenu2.add('&Open TBM', function(){
+	//在下面输入菜单响应代码
+	win.setForeground(mainForm.hwnd)
+	mainForm.show();
+	
+});
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('检查专用号申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio")));
+mainForm.popmenu2.add('智能填写专用号申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\assist_专用号申请表.aardio")));
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('专用号填入ItemMaster...', λ() thread.invoke(λ() loadcodex("\forms\Excel\fillin_item_master.aardio")));
+//mainForm.popmenu2.add('根据下发清单更新ItemMaster', λ() loadcodex("\forms\Excel\fillin_item_master.aardio"));
+//mainForm.popmenu2.add('更新ItemMaster物料信息', λ() loadcodex("\forms\Excel\Excel_update_info.aardio"));
+//mainForm.popmenu2.add('打开图纸下发版次查询窗口...', λ() loadcodex("\forms\main\check_QHC_Release.aardio"));
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('检查新BOM申请表', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio")));
+mainForm.popmenu2.add('检查BOM更改单', λ() thread.invoke(λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio")));
+mainForm.popmenu2.add('打开分类查询窗口...', λ() thread.invoke(λ() loadcodex("\forms\SAP\OD_Query.aardio")));
+mainForm.popmenu2.add('原材料用量计算...', λ() thread.invoke(λ() loadcodex("\forms\Excel\BOM-CALC.aardio")));
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('VA02/03下载成本BOM...', λ() thread.invoke(λ() loadcodex("\forms\SAP\download-cost-bom-va02.aardio")));
+//mainForm.popmenu2.add('订单BOM(B2C)...', λ() thread.invoke(λ() loadcodex("\forms\SAP\下载订单BOM.aardio")));
+mainForm.popmenu2.add('订单清单和订单BOM(B2C)浏览器...', λ() thread.invoke(λ() loadcodex("\forms\SAP\获取订单清单信息.aardio")));
+mainForm.popmenu2.add('BOM浏览器...', λ() thread.invoke(λ() loadcodex("\forms\SAP\BOM浏览器.aardio")));
+
+mainForm.popmenu2.add('为当前Excel表更新SAP主数据...', λ() thread.invoke(λ() loadcodex("\forms\Excel\update_SAP_ITEM.aardio")));
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
+mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
+mainForm.popmenu2.add();//分隔线
+//mainForm.popmenu2.add('ChatGPT...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\chatgpt.aardio")));
+//mainForm.popmenu2.add('AI绘图...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\AI_Draw.aardio")));
+//mainForm.popmenu2.add('修复DegMgr...', λ() seApp.fixDesMgr());
+mainForm.popmenu2.add('SE导出当前截图...', λ() seApp.exportViewAsPng());
+mainForm.popmenu2.add('SAP一键登入1', function(){
+	thread.invoke(SAP.sapQuickOpen)
+	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+	mainForm.tray.pop("Starting SAP GUI ...","TBM");
+});
+mainForm.popmenu2.add('SAP一键登入2', function(){
+	thread.invoke(SAP.sapQuickOpen,2)
+	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+	mainForm.tray.pop("Starting SAP GUI ...","TBM");
+});
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('更多...', λ() loadcodex("\forms\main\browser.aardio"));
+
+mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
+/*}}*/
+/*左侧导航按钮{{*/
+//main_tbs不用var声明, 所有子项就都能直接访问了.
+main_tbs = win.ui.tabs( 
+	mainForm.nav1,
+	mainForm.nav2,
+	mainForm.nav3,
+	mainForm.nav4,
+	mainForm.nav5,
+	mainForm.nav6,
+);
+main_tbs.skin({
+	background={
+		active=0xFFFFFFFF;
+		default=0x00FFFFFF;
+		hover=0x38FFFFFF
+	};
+	color={
+		default=0xFFFFFFFF; 
+	};
+	checked={
+		background={default=0xFFFFFFFF;};
+		color={default=0xff0047ab;};
+	}
+})
+_frmName = {
+	[1] = "\forms\main\SE_browser.aardio";
+	[2] = "\forms\main\excel_browser.aardio";
+	[3] = "\forms\main\sap_browser.aardio";
+	[4] = "\forms\main\excel_browser.aardio";
+	[5] = "\forms\main\frmPage5.aardio";
+	[6] = "\forms\main\frmPage3.aardio";
+}
+for k,v in _frmName
+	main_tbs.loadForm(k,v );
+
+var navindex = 6;
+if (_ARGV.nav)
+	navindex = tonumber(_ARGV.nav);
+elseif config.settings.simpleSAPmode
+	navindex = 3;
+
+main_tbs.selIndex = navindex;
+main_tbs.currentTab = navindex;
+main_tbs.onSelchange = function(idx,strip,form){
+	form.publish("refresh");
+	main_tbs.currentTab = idx;
+} 
+/*}}*/
+
+/*顶部按钮{{*/
+mainForm.tbutton1.oncommand = function(id,event){
+	if !seApp return; 
+	seApp.reOpenDocument();
+	//win.quitMessage();
+}
+
+mainForm.tbutton2.oncommand = function(id,event){
+	if !seApp return; 
+    if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+    var SelSet = seApp.ActiveDocument.SelectSet;
+    if SelSet.Count !== 1 return; 
+    if (SelSet(1).Type !== 488188096 /* igDimension */) return;
+    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L", mainForm);
+    if !s return; 
+    if ..string.len(..string.trim(s)) == 0 return ; 
+    SelSet(1).OverrideString = s;
+    SelSet(1).Style.NTSSymbol = 1 /* igDimStyleNTSNone */;
+    
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton3.oncommand = function(id,event){
+	if !seApp return; 
+	import solidedge.DraftDocument;
+    if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+	var seSht = seDFT.ActiveSheet;
+	var BBS = seSht.Balloons;
+	var ee = seDFT.getTopRecordMark(seSht);
+	ee = ee ? string.pack( ee[1] + 1 ) : "a";
+	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee, mainForm);
+	if !e return ; 
+	if (string.len(string.trim(e)) == 0) return ; 
+	var setBB = function(balloonItem, txt){
+    	with balloonItem {
+    		BalloonText = txt;
+    		BalloonType = 1; /* DimBalloonTypeConstants.igDimBalloonCircle */
+    		BalloonSize = 2; /* 形状是字体几倍数 */
+    		Leader = false; 
+    		Style.DrivenColor = 255;	/* ColorConstants.seColorRed */;    				
+    	}
+	}	
+	for (i = 1; BBS.Count) {
+		if BBS.Item(i).Leader continue; //跳过有引线的
+		select(BBS.Item(i).BalloonType) {
+			case 1 /* igDimBalloonCircle */ {
+    			setBB( BBS.Item(i), e);
+			}
+			case 7 /* igDimBalloonTriangle */ {
+				if table.indexOf({"F","S","X"},BBS.Item(i).BalloonText) continue;
+				setBB( BBS.Item(i), e);
+			}
+		}
+	}
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton4.oncommand = function(id,event){
+	if !seApp return; 
+	import solidedge.DraftDocument;
+	if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+	var seSht = seDFT.ActiveSheet;
+	var BBS = seSht.Balloons;
+	var ee = "a";
+	for (i = 1 ; BBS.Count) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		ee = BBS.Item(i).BalloonText;
+        		break;
+	}
+	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee, mainForm);
+	if !e return ; 
+	if (..string.len(..string.trim(e)) == 0) return ; 
+	
+	for (i = BBS.Count; 1 ;- 1 ) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		if (BBS.Item(i).BalloonText==e)
+        			BBS.Item(i).Delete();
+	}
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton5.oncommand = function(id,event){
+	if !seApp return; 
+	import solidedge.AssemblyDocument;
+	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+	select(seAsm.SelectSet.Count) {
+		case 1 {
+			if !seAsm.IsFileFamilyByDocument
+				seAsm.openDummy(seAsm.SelectSet.Item(1));
+			else {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);			
+			}
+		}
+		case 0 {
+			if seAsm.IsFileFamilyByDocument {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);				
+			}	
+		}
+		else {
+			return ; 
+		}
+	}
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+
+mainForm.tbutton6.oncommand = function(id,event){
+	if !seApp return; 
+	seApp.closeDft(false);
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton7.oncommand = function(id,event){
+	if !seApp return; 
+	seApp.closeDft(true);
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+mainForm.tbutton8.oncommand = function(id,event){
+	import QHC;
+	
+	var tlist = {
+		[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
+		[2] = "工单更改申请.xlsx";		
+		[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
+		[4] = "新产品BOM申请单模板-姓名-日期.xlsx";		
+		[5] = "新增--产成品申请-型号-姓名-申请日期.xlsx";		
+		[6] = "B2C_BOM_批量更改单.xlsx";
+	}
+	var opent = function(n){
+		import com.excel;
+		var excel = com.GetOrCreateObject("Excel.Application");
+		if !excel win.msgbox("请先打开Excel程序");
+		if !excel return ; 
+		if !config.settings.createNewFormsFromSharepoint
+			var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
+		else
+			var wb = excel.WorkBooks.Add(config.__formTemplateSharepointServer ++ tlist[n]);
+		
+		excel.Visible = true;
+		win.showForeground(excel.Application.hwnd);
+		mainForm.show(false);
+	}
+	
+	mainForm.popmenu1 = win.ui.popmenu(mainForm);//创建弹出菜单
+	mainForm.popmenu1.addTable({
+		{ "新建申请表"; {
+    			{ "专用号申请表";	λ() opent(1)};
+    			{ "工单更改申请";	λ() opent(2)};
+    			{ "BOM更改申请表";		λ() opent(3)};
+    			{ "新产品BOM申请表";	λ() opent(4)};
+    			{ "产成品编码申请表";	λ() opent(5)};
+    			{ "B2C BOM 批量更改单";		λ() opent(6)};
+			}
+		};
+		{"格式"; {
+				{"格式化BOM"; λ() QHC.formatBOM()};
+				{"格式化成本BOM"; λ() QHC.formatCostBom()}
+			}
+		}
+	})
+	win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	var pt = ::POINT();
+	::User32.GetCursorPos(pt);   		
+	mainForm.popmenu1.popup(pt.x,pt.y,true )
+}
+
+mainForm.tbutton9.oncommand = function(id,event){
+	import solidedge.AssemblyDocument;
+	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+	if (seAsm.SelectSet.Count != 1) return;
+	seAsm.replaceWithPartCopy(seAsm.SelectSet.Item(1));
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+/*}}*/
+/*按钮提示{{*/
+var tooltipCtrl = win.ui.tooltip( mainForm );//在窗口上创建tooltip控件
+tooltipCtrl.addTool(mainForm.tbutton1,"Re-Open as Read-Only" )
+tooltipCtrl.addTool(mainForm.tbutton2,"Edit Dim" )
+tooltipCtrl.addTool(mainForm.tbutton3,"Edit Balloon" )
+tooltipCtrl.addTool(mainForm.tbutton4,"Delete Balloon" )
+tooltipCtrl.addTool(mainForm.tbutton5,"Open Dummy" )
+tooltipCtrl.addTool(mainForm.tbutton6,"Close All DFT (discard changes)" )
+tooltipCtrl.addTool(mainForm.tbutton7,"Save && Close All DFT" )
+tooltipCtrl.addTool(mainForm.static2,"显示/隐藏导航按钮" )
+tooltipCtrl.addTool(mainForm.tbutton8,"常用表格模板" )
+tooltipCtrl.addTool(mainForm.tbutton9,"replace with part_copy" )
+/*}}*/
+/*折叠导航按钮{{*/
+mainForm.static2.tag = true;
+mainForm.static2.tag2 = mainForm.custom.left;
+mainForm.static2.oncommand = function(id,event){
+    if (mainForm.static2.tag){
+        mainForm.static2.text = '\uF03C';
+    	mainForm.static2.tag = false;
+		main_tbs.show ( false );
+		main_tbs.dropButton.hide = true;
+		mainForm.custom.left = 0;
+		
+	}else{
+		mainForm.static2.text = '\uF03B';
+    	mainForm.static2.tag = true;
+		main_tbs.show ( true );
+		main_tbs.dropButton.hide = false;
+		mainForm.custom.left = mainForm.static2.tag2;
+	}
+}
+
+if config.settings.simpleSAPmode
+	mainForm.static2.oncommand(); //simpleSAPmode
+/*}}*/
+
+/*快捷查询{{*/
+
+var hk_SearchSelected, hk_openTBM, hk_openRevMgr;
+
+//删除之前注册的热键,hkId如果是null空值，此函数可忽略不做任何操
+mainForm.unreghotkey(hk_SearchSelected);
+mainForm.unreghotkey(hk_openTBM);
+mainForm.unreghotkey(hk_openRevMgr);
+
+//重新注册系统热键;
+hk_SearchSelected = mainForm.reghotkey(
+	function(id,mod,vk){
+		loadcodex("\forms\Excel\Excel_notify_selection.aardio");
+	}	
+	,1/*_MOD_ALT*/, 'J'# 	
+);
+hk_openTBM = mainForm.reghotkey(
+	function(id,mod,vk){
+		if !seApp return ; 
+		main_tbs.selIndex = 1;
+		win.setForeground(mainForm.hwnd)
+		mainForm.show();
+		if main_tbs.currentTab == 1
+			main_tbs.forms[1].publish("refresh");
+	}	
+	,1/*_MOD_ALT*/, 'T'# 	
+);
+hk_openRevMgr = mainForm.reghotkey(
+	function(id,mod,vk){
+		if !seApp return ; 
+		main_tbs.selIndex = 2;
+		win.setForeground(mainForm.hwnd)
+		mainForm.show();
+	}	
+	,1/*_MOD_ALT*/, 'R'# 	
+);
+/*}}*/
+
+mainForm.button.oncommand = function(id,event){
+	seApp = solidedge.application();
+	if (seApp) owner.hide = true;
+}
+
+if !config.settings.startupMinimized or !config.settings.closeToTray
+		mainForm.show(_);
+/*
+subscribe("checkupdate",function(...){
+	fsys.update.simpleMain.checkUpdate(true);
+} )
+*/
+
+win.loopMessage(3 /*_SW_MAXIMIZE*/);
+return mainForm;

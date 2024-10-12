@@ -60,6 +60,7 @@ var refresh = function(){
 	
 	var titleRng = sht.range("A1:Z10");
 	var f = titleRng.find("物料描述") || titleRng.find("名称");
+	if !f return ; 
 	update_sap_item_form.titleRow = f.row;
 	titleRng = titleRng.value2[[update_sap_item_form.titleRow]];	//查找范围前10行
 	titleRng = tarray.replaceValue(titleRng,"专用号", "物料"); //考虑其它命名方式

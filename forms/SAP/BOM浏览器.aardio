@@ -26,15 +26,6 @@ import access;
 import com.excel;
 import godking.tableToDB;
 //import tarray;
-/*只允许一个实例{{*/
-var atom,hwnd = winform.atom("domisoft.aardio.tbm.bomviewer");
-if(!atom){ 
-	win.showForeground(hwnd);
-	win.setActive(hwnd);
-	win.quitMessage();	
-	return;
-}
-/*}}*/
 
 import win.ui.menu;
 
@@ -117,6 +108,7 @@ grid2.onClick = function(item,subItem,nmListView){
 			t[i]["缓存日期"] = domisoft.getFileDate(f);			
 	}
 	grid.source = t;
+	winform.edit.text = "";
 	grid.setTable(grid.source);
 	grid2.ColumnWidth := domisoft.setColumnWidth(grid, {50,50,50,120,250,50,50,50,50})
 	getTags(grid.source,{"中类","小类","属性","可选项分类","喷粉分类","温度等级"})

@@ -23,15 +23,7 @@ import tarray;
 import config;
 import process;
 import SAP;
-/*只允许一个实例{{*/
-var atom,hwnd = winform.atom("domisoft.aardio.tbm.orderviewer");
-if(!atom){ 
-	win.showForeground(hwnd);
-	win.setActive(hwnd);
-	win.quitMessage();	
-	return;
-}
-/*}}*/
+
 winform.grid = win.ui.grid(winform.listview);//创建数据视图
 var grid = winform.grid;
 grid.setReadonlyColumns(-1);
@@ -158,6 +150,7 @@ grid2.onClick = function(item,subItem,nmListView){
 	grid.source = getDetail(c, winform);
 	if !grid.source or !#grid.source return;
 	grid.clear();
+	winform.editDesp.text = "";
 	grid.onSortColumn(3, false);
 	grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,350,40,120,120})
 	winform.listview.fillParent(8);
