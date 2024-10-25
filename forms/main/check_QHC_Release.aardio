@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform_queryrev = win.form(text="QHC开发图纸下发记录";right=759;bottom=469)
-winform_queryrev.add(
+var winform = win.form(text="QHC开发图纸下发记录";right=759;bottom=469)
+winform.add(
 button={cls="button";text="查找";left=224;top=56;right=296;bottom=88;dl=1;dt=1;z=3};
 edit={cls="edit";left=48;top=56;right=200;bottom=88;dl=1;dt=1;edge=1;z=2};
 edit2={cls="edit";left=696;top=64;right=736;bottom=88;dr=1;dt=1;edge=1;z=4};
@@ -31,33 +31,32 @@ var searchQHCDB = function(pcode){
 /*}}*/
 
 import win.ui.grid;
-var grid = win.ui.grid(winform_queryrev.listview);//创建数据视图
+var grid = win.ui.grid(winform.listview);//创建数据视图
 
 var tab;
-winform_queryrev.button.oncommand = function(id,event){
-	winform_queryrev.edit.text = string.upper(winform_queryrev.edit.text);
-	tab = searchQHCDB(winform_queryrev.edit.text)
+winform.button.oncommand = function(id,event){
+	winform.edit.text = string.upper(winform.edit.text);
+	tab = searchQHCDB(winform.edit.text)
 	for(i=1;#tab){
 		tab[i].图纸下发时间 = time(tab[i].图纸下发时间,"%Y/%m/%d");
 	}
 	table.sort(tab, lambda(next) tonumber(owner.图纸版次) < tonumber(next.图纸版次))
   	grid.setTable(tab);
-  	winform_queryrev.edit2.text = #tab ? tab[#tab].图纸版次 : ""
+  	winform.edit2.text = #tab ? tab[#tab].图纸版次 : ""
 }
 
-winform_queryrev.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 
-winform_queryrev.show();
+winform.show();
 
-subscribe("qtip_search_5", function(...){
-	var pd = ... ;
-	if(pd){
-    	winform_queryrev.edit.text = pd;
-		winform_queryrev.button.oncommand();  	
-	}
-} )
+winform.qtip_search = function(pcode){
+	if !pcode return ; 
+    winform.edit.text = pcode;
+	winform.button.oncommand();  	
+}
+
 
 
 
 win.loopMessage();
-return winform_queryrev;
+return winform;

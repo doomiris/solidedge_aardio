@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var fill_in_sap_item_form = win.form(text="专用号填入itemmaster";right=759;bottom=469)
-fill_in_sap_item_form.add(
+var winform = win.form(text="专用号填入itemmaster";right=759;bottom=469)
+winform.add(
 button={cls="button";text="填入";left=552;top=368;right=752;bottom=408;dr=1;dt=1;z=1};
 combobox2={cls="combobox";left=136;top=40;right=728;bottom=64;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
 edit={cls="edit";left=0;top=416;right=760;bottom=472;ah=1;autohscroll=false;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=4};
@@ -20,9 +20,9 @@ import fsys.table;
 	console.open()
 */
 var fileTab = fsys.table(io.joinpath(config.dbServer.path,"itemmaster_lists.table")).default;
-fill_in_sap_item_form.listview.setTable(fileTab);
+winform.listview.setTable(fileTab);
 
-fill_in_sap_item_form.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable之后, 否则失效
+winform.bindConfig( config.itemMasterAppendNew,{	//绑定控件值, 在setTable之后, 否则失效
     listview = "selIndex"
 } );
 var excel_0 = com.excel(false);
@@ -32,7 +32,7 @@ com.enumRunning(
 			var s = com.GetTypeInfo(object).GetDocumentation().name;
 			if s = "_Workbook"
 				if string.keywords('ORDER_LIST_|tc_|新增--专用号申请|图纸明细|图纸下发|图纸下发台账').findOne(displayName)
-					fill_in_sap_item_form.combobox2.add(displayName);
+					winform.combobox2.add(displayName);
 		}
 	}
 )
@@ -40,16 +40,16 @@ var get_excel = function(wbname){
 	return com.GetObject(wbname).application; 
 }
 
-if fill_in_sap_item_form.combobox2.count {
+if winform.combobox2.count {
 	var findActiveWB;
 	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(fill_in_sap_item_form.combobox2.items, excel_0.ActiveWorkbook.Name)
-	fill_in_sap_item_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
+		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 
-fill_in_sap_item_form.button.oncommand = function(id,event){
-	if !#fill_in_sap_item_form.listview.selected return ; 
-	if !#fill_in_sap_item_form.combobox2.selText return ; 
+winform.button.oncommand = function(id,event){
+	if !#winform.listview.selected return ; 
+	if !#winform.combobox2.selText return ; 
 	
 	config.itemMasterAppendNew.save();
 	/*getTabFromRange{{*/
@@ -60,12 +60,12 @@ fill_in_sap_item_form.button.oncommand = function(id,event){
 		return eArr; 	
 	}
 	/*}}*/
-	var excel_2 = get_excel(fill_in_sap_item_form.combobox2.selText);
+	var excel_2 = get_excel(winform.combobox2.selText);
 	
 	var itemMaster = excel_0.WorkBooks(
-			fill_in_sap_item_form.listview.getItemText(fill_in_sap_item_form.listview.selIndex, 2)
+			winform.listview.getItemText(winform.listview.selIndex, 2)
 		).Sheets(
-			fill_in_sap_item_form.listview.getItemText(fill_in_sap_item_form.listview.selIndex, 3)
+			winform.listview.getItemText(winform.listview.selIndex, 3)
 		);
 	itemMaster.AutoFilterMode = false;
 	itemMaster.ListObjects("表1").AutoFilter.ShowAllData();
@@ -73,7 +73,7 @@ fill_in_sap_item_form.button.oncommand = function(id,event){
 	var itemCount = itemMaster.usedRange.rows.count;
 	var etab = getTabFromRange(itemMaster.range("A2:E" ++ itemCount));
 	
-	var fname = io.splitpath(fill_in_sap_item_form.combobox2.selText).file;
+	var fname = io.splitpath(winform.combobox2.selText).file;
 	
 	if string.startWith(fname, "新增") {
 		
@@ -99,7 +99,7 @@ fill_in_sap_item_form.button.oncommand = function(id,event){
 				var tarTab = {};
 		for (i=1; #otab){
 			if tarray.indexOfCol(etab, otab[i][1],1) {
-				fill_in_sap_item_form.edit.print(i,otab[i][1],"专用号存在了");
+				winform.edit.print(i,otab[i][1],"专用号存在了");
 				continue;
 			}
 			table.push(tarTab, {
@@ -118,24 +118,24 @@ fill_in_sap_item_form.button.oncommand = function(id,event){
 			itemMaster.Range(tar_b ++ ":" ++ tar_e).EntireRow.insert();
 			tarRng = itemMaster.range("A" ++ tar_b ++ ":B" ++ tar_e);			
 			tarRng.value2 = tarTab;
-			fill_in_sap_item_form.edit.print("专用号导入完成, 共 "++ #tarTab ++ " 行, 行号: " ++ tar_b ++ " - " ++ tar_e);	
+			winform.edit.print("专用号导入完成, 共 "++ #tarTab ++ " 行, 行号: " ++ tar_b ++ " - " ++ tar_e);	
 		}
 	
 	}
 	elseif string.keywords('ORDER_LIST_').findOne(fname) {
-		var sht = excel_2.WorkBooks(fill_in_sap_item_form.combobox2.text).sheets("Sheet1");
+		var sht = excel_2.WorkBooks(winform.combobox2.text).sheets("Sheet1");
 		var itemMaster_order = itemMaster.parent.sheets("订单");
 		win.msgbox("TODO");
 	}
 	//console.dumpTable(tarTab)
 	//console.pause(true);
-	//fill_in_sap_item_form.close();
+	//winform.close();
 }
-fill_in_sap_item_form.onDestroy = function(){
+winform.onDestroy = function(){
    	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
    	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
 }
-fill_in_sap_item_form.show();
+winform.show();
 
 win.loopMessage();
-return fill_in_sap_item_form;
+return winform;

@@ -146,10 +146,6 @@ spec_winform.show();
 initDeclare();
 loadPromptList();	//读取提示列表
 
-subscribe("refresh",function(){
-//		spec_winform.redraw();
-	}
-);
 
 win.loopMessage();
 return spec_winform;

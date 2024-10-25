@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var about_winform = win.form(text="aardio form";right=759;bottom=470;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-about_winform.add(
+var winform = win.form(text="aardio form";right=759;bottom=470;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+winform.add(
 button={cls="button";text='\uF085';left=232;top=16;right=264;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=7};
 button2={cls="button";text='\uF013';left=280;top=16;right=312;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=8};
 combobox={cls="combobox";left=85;top=442;right=168;bottom=462;clipch=1;db=1;dl=1;items={"SRDC";"QHC";"Local Disk"};mode="dropdownlist";transparent=1;z=5};
@@ -18,22 +18,23 @@ winver={cls="richedit";text="当前系统版本：";left=432;top=448;right=728;b
 
 import config;
 import fsys.version;
-about_winform.ver = fsys.version.getInfo(io._exepath);
-var ver = about_winform.ver.productVersion;
-about_winform.bindConfig( config.serverIndex,{
+winform.ver = fsys.version.getInfo(io._exepath);
+var ver = winform.ver.productVersion;
+winform.bindConfig( config.serverIndex,{
 	combobox = "selIndex";	
 } );
 
 var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");
-about_winform.button.hide = !adminSession;
+winform.button.hide = !adminSession;
 
-var loadUpdateLog = function(about_winform){
+var loadUpdateLog = function(winform){
 	var url = "https://doomiris.github.io/TBM/update_history.txt";
-	var richedit = about_winform.richedit;
+	var richedit = winform.richedit;
 	richedit.disabledText = null;
 	
 	import domisoft;
 	richedit.text = domisoft.getContentFromHTTP(url);
+
 }
 
 var checkUpdate = function(wform){
@@ -57,14 +58,14 @@ var checkUpdate = function(wform){
 }
 
 
-about_winform.lnkVersion.oncommand = function(id,event){
+winform.lnkVersion.oncommand = function(id,event){
 	owner.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250';text='checking...'}
-	thread.invoke( checkUpdate, about_winform);
+	thread.invoke( checkUpdate, winform);
 }
 
-about_winform.winver.text = string.format("当前版本：%s.%s [%s]", ver.major, ver.minor, ver.revision)
+winform.winver.text = string.format("当前版本：%s.%s [%s]", ver.major, ver.minor, ver.revision)
 
-about_winform.combobox.onListChange= function(){ 
+winform.combobox.onListChange= function(){ 
 	select(owner.selIndex) {
 		case 1 {
 			config.dbServer.path = "\\ccnsia1a\separts\Admin\SAP\db\";
@@ -74,28 +75,28 @@ about_winform.combobox.onListChange= function(){
 		}
 		case 3 {
 			import fsys.dlg.dir;
-			var path = fsys.dlg.dir(,about_winform,"指定DB所在目录");
+			var path = fsys.dlg.dir(,winform,"指定DB所在目录");
 			if !path return ; 
 			config.dbServer.path = io.joinpath(path,"\");
 		}
 	}
 	config.dbServer.save();
-	about_winform.static3.refresh();
+	winform.static3.refresh();
 }
 
-about_winform.show();
+winform.show();
 
-about_winform.richedit.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text ="正在查找更新记录..."}
+winform.richedit.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text ="正在查找更新记录..."}
 
-about_winform.button.oncommand = function(id,event){
+winform.button.oncommand = function(id,event){
 	mainForm.custom.loadForm("\forms\admin_only\QTIP_ADMIN.aardio");
 }
 
-about_winform.button2.oncommand = function(id,event){
+winform.button2.oncommand = function(id,event){
 	mainForm.custom.loadForm("\forms\main\settings.aardio");
 }
 
-about_winform.github.skin(
+winform.github.skin(
 	background = { 
 		hover = "/res/images/btn-hover.png";
 		focus = "/res/images/btn-focus.jpg";
@@ -103,23 +104,23 @@ about_winform.github.skin(
 		disabled = "/res/images/btn-disabled.png"; 
 	}
 )
-about_winform.github.oncommand = function(id,event){
+winform.github.oncommand = function(id,event){
 	thread.invoke( function(){
 		import process;
 		import config;
 		process.openUrl(config.__website);
 	}
-	, about_winform);
+	, winform);
 }
-thread.invoke(loadUpdateLog, about_winform)
+thread.invoke(loadUpdateLog, winform)
 
 import win.ui.tooltip;
-var tooltipCtrl = win.ui.tooltip( about_winform );
-tooltipCtrl.addTool(about_winform.lnkVersion,"点击检测更新" );
-tooltipCtrl.addTool(about_winform.github, config.__website);
+var tooltipCtrl = win.ui.tooltip( winform );
+tooltipCtrl.addTool(winform.lnkVersion,"点击检测更新" );
+tooltipCtrl.addTool(winform.github, config.__website);
 
 
-about_winform.static3.refresh = function(id,event){
+winform.static3.refresh = function(id,event){
 	owner.text = thread.invokeAndWait(
 		function(){
 			import win;
@@ -130,9 +131,9 @@ about_winform.static3.refresh = function(id,event){
 		}
 	)
 }
-about_winform.static3.oncommand = about_winform.static3.refresh;
+winform.static3.oncommand = winform.static3.refresh;
 
-about_winform.static3.refresh();
+winform.static3.refresh();
 
 win.loopMessage();
-return about_winform;
+return winform;

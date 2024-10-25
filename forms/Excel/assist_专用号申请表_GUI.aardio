@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var chk_excel_NewPart_form = win.form(text="填写专用号申请表";right=759;bottom=400)
-chk_excel_NewPart_form.add(
+var winform = win.form(text="填写专用号申请表";right=759;bottom=400)
+winform.add(
 button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1};
 combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
 listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
@@ -17,11 +17,6 @@ import fsys.table;
 import QHC;
 import domisoft;
 
-/*
-	import console
-	console.open()
-*/
-
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
@@ -32,17 +27,17 @@ com.enumRunning(
 			var s = com.GetTypeInfo(object).GetDocumentation().name;
 			if s = "_Workbook"
 				if string.keywords('新增|专用号|申请').findOne(displayName)
-					chk_excel_NewPart_form.combobox2.add(displayName);
+					winform.combobox2.add(displayName);
 		}
 	}
 )
 
 
-if chk_excel_NewPart_form.combobox2.count {
+if winform.combobox2.count {
 	var findActiveWB
 	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(chk_excel_NewPart_form.combobox2.items, excel_0.ActiveWorkbook.Name)
-	chk_excel_NewPart_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
+		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 
 /*etab相关函数{{*/
@@ -69,10 +64,10 @@ var getParentIndex = function(current_index){
 /*}}*/
 
 
-chk_excel_NewPart_form.button.oncommand = function(id,event){
-	if !#chk_excel_NewPart_form.combobox2.selText return ; 	
+winform.button.oncommand = function(id,event){
+	if !#winform.combobox2.selText return ; 	
 
-	sht = domisoft.getRunningWorkSheet(chk_excel_NewPart_form.combobox2.selText)
+	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText)
 	excel_2 = sht.Parent.Application;
 	
 	if sht.AutoFilterMode
@@ -93,240 +88,128 @@ chk_excel_NewPart_form.button.oncommand = function(id,event){
 	if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 
 
-	etab = (function(){
-			var fields = {
-				"序号";
-				"长度检查";
-				"申请人";
-				"申请日期";
-				"物料描述";
-				"基本计量单位";
-				"SAP物料组";
-				"产品大类";
-				"物料类型";
-				"属性";
-				"物料分类明细";
-				"材质分类";
-				"用途";
-				"SAP展开尺寸";
-				"SAP基本物料";
-				"SAP颜色分组";
-				"SAP是否为点焊中最大件";
-				"SAP密度";
-				"适用产品型号";
-				"换算关系";
-				"图号";
-				"是否关键部件";
-			};
-			var etr = function(){
-				for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-					if (sht.cells(i,"E").value2) return i;
-				}
-			}
-			
-			if !etr() return error("找不到物料描述");
-			
-			var tab = {};
-			var eArr = sht.Range("$A$3:$V$" ++ etr()).value2
-			for(i=1;#eArr;1){    
-	    		var d = table.array();
-	    		for (j=1;#fields;1){
-	    			d[fields[j]] = eArr[i][j];
-				}		
-				table.push(tab,d);
-			}
-			return tab; 
-	})()
-	
-	var etab_count = #etab;
-
-/*RULES_DESP{{*/
-	var rule_desp = {
-		[1] = "S-组不能是ROH";
-		[2] = "S-组只能是01,08,09";
-		[3] = "SA组只能是08";
-		[4] = "SG组只能是08,09";
-		[5] = "SD组只能是08";
-		[6] = "SH组只能是01";
-		[7] = "SC组只能是01";
-		[8] = "SB组需要填写展开尺寸";
-		[9] = "SB组需要填写基本物料";
-		[10] = "SC组需要填写颜色分组";
-		[11] = "SC组需要填写展开尺寸 (2021.03.26新增的要求, 用于系统计算粉末用量)";
-		[12] = "R-组必须是ROH";
-		[13] = "R-组必须是非配置";
-		[14] = "R-组不能是09";
-		[15] = "R-组不能填写:展开尺寸,基本物料,颜色分组,点焊";
-		[16] = "09 必须 是KMAT";
-		[17] = "09 必须 是配置";
-		[18] = "09 必须 是SG";
-		[19] = "09 不能是ROH";
-		[20] = "SG组只能是配置";
-		[21] = "HALB只能是S组";
-		[22] = "HALB只能是01,02, 08 ";
-		[23] = "ROH只能是R组";
-		[24] = "R-结尾数字需要和物料分类明细对应";
-		[25] = "ROH不能填写:展开尺寸,基本物料,颜色分组,点焊";
-		[26] = "ROH必须是非配置";
-		[27] = "SC组不需要填基本物料";
-		[28] = "KMAT必须是09";
-		[29] = "KMAT必须是SG";
-		[30] = "KMAT只能是配置";
-		[31] = "KMAT不能是ROH";
-		[32] = "物料描述结尾是可选项,分类明细必须是09";
-		[33] = "物料描述结尾是可选项,SAP物料组必须是SG";
-		[34] = "物料描述结尾是可选项,物料类型必须是KMAT";
-		[35] = "物料描述长度超过40";
-		[36] = "展开尺寸长度超过18";
-		[37] = "物料描述中间含有多余的空格,连字符,引号";
-		[38] = "物料描述首尾含有多余的空格";
-		[39] = "喷粉件为未喷粉在前，已喷粉在后";
-		[40] = "物料描述有重复行";
-		[41] = "点焊组件(未喷)是SH组";
-		[42] = "SH组不需要填写展开尺寸和基本物料";
-		[43] = "系统已存在同名物料";
-		[44] = "发泡组件需要SD";
-		[45] = "已喷物料应是SC组";
-		[46] = "'喷粉'请用'已喷粉'或'已喷'替代";
-		[47] = "没选择'用途'";
-		[48] = "没选择'是否是关键零件'";
-		[49] = "含有非法空格符号(字体改为AIGDT就能发现了)";
-		[50] = "展平尺寸格式错误"
+	//物料描述列???
+	var etr = function(){
+		for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
+			if (sht.cells(i,"E").value2) return i;
+		}
 	}
-
-/*}}*/
 	
-/*RULES{{*/
-	var sapErr={
-		[1] = function(i){return (etab[i].SAP物料组[[1]]=="S" and etab[i].物料类型 == "ROH")}
-		[2] = function(i){return (etab[i].SAP物料组[[1]]=="S" and !table.find({"01";"08";"09"}, etab[i].物料分类明细))}
-		[3] = function(i){return (etab[i].SAP物料组=="SA" and etab[i].物料分类明细 !== "08")}
-		[4] = function(i){return (etab[i].SAP物料组=="SG" and !table.find({"08";"09"}, etab[i].物料分类明细))}
-		[5] = function(i){return (etab[i].SAP物料组=="SD" and etab[i].物料分类明细 !== "08")}
-		[6] = function(i){return (etab[i].SAP物料组=="SH" and etab[i].物料分类明细 !== "01")}
-		[7] = function(i){return (etab[i].SAP物料组=="SC" and etab[i].物料分类明细 !== "01")}
-		[8] = function(i){return (etab[i].SAP物料组=="SB" and !etab[i].SAP展开尺寸)}
-		[9] = function(i){return (etab[i].SAP物料组=="SB" and !table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料))}
-		[10] = function(i){return (etab[i].SAP物料组=="SC" and !etab[i].SAP颜色分组)}
-		[11] = function(i){return (etab[i].SAP物料组=="SC" and !etab[i].SAP展开尺寸)}
-		[12] = function(i){return (etab[i].SAP物料组[[1]]=="R" and etab[i].物料类型 !== "ROH")}
-		[13] = function(i){return (etab[i].SAP物料组[[1]]=="R" and etab[i].属性 !== "非配置")}
-		[14] = function(i){return (etab[i].SAP物料组[[1]]=="R" and etab[i].物料分类明细 == "09")}
-		[15] = function(i){return (etab[i].SAP物料组[[1]]=="R" and (etab[i].SAP展开尺寸 or table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料) or etab[i].SAP颜色分组 or etab[i].SAP是否为点焊中最大件))}
-		[16] = function(i){return (etab[i].物料分类明细 == "09" and etab[i].物料类型 !== "KMAT")}
-		[17] = function(i){return (etab[i].物料分类明细 == "09" and etab[i].属性 !== "配置")}
-		[18] = function(i){return (etab[i].物料分类明细 == "09" and etab[i].SAP物料组 !== "SG")}
-		[19] = function(i){return (etab[i].物料分类明细 == "09" and etab[i].物料类型 == "ROH")}
-		[20] = function(i){return (etab[i].SAP物料组=="SG" and etab[i].属性 !== "配置") or (etab[i].SAP物料组 !== "SG" and etab[i].属性 == "配置")}
-		[21] = function(i){return (etab[i].物料类型=="HALB" and etab[i].SAP物料组[[1]] !== "S")}
-		[22] = function(i){return (etab[i].物料类型=="HALB" and !table.find({"01";"02";"08"}, etab[i].物料分类明细))}
-		[23] = function(i){return (etab[i].物料类型=="ROH" and etab[i].SAP物料组[[1]] !== "R")}
-		[24] = function(i){if etab[i].SAP物料组 !== "R05" and etab[i].物料分类明细 !== "16" return (etab[i].SAP物料组[[1]]=="R" and string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细)}
-		[25] = function(i){return (etab[i].物料类型=="ROH" and (etab[i].SAP展开尺寸 or table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料) or etab[i].SAP颜色分组 or etab[i].SAP是否为点焊中最大件))}
-		[26] = function(i){return (etab[i].物料类型=="ROH" and etab[i].属性 !== "非配置")}
-		[27] = function(i){return (etab[i].SAP物料组=="SC" and table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料))}
-		[28] = function(i){return (etab[i].物料类型 == "KMAT" and etab[i].物料分类明细 !== "09")}
-		[29] = function(i){return (etab[i].物料类型 == "KMAT" and etab[i].SAP物料组 !== "SG")}
-		[30] = function(i){return (etab[i].物料类型 == "KMAT" and etab[i].属性 !== "配置")}
-		[31] = function(i){return (etab[i].物料类型 == "KMAT" and etab[i].物料类型 == "ROH")}
-		[32] = function(i){return (string.right(etab[i].物料描述,3,true)=="可选项" and etab[i].物料分类明细 !== "09")}
-		[33] = function(i){return (string.right(etab[i].物料描述,3,true)=="可选项" and etab[i].SAP物料组 !== "SG")}
-		[34] = function(i){return (string.right(etab[i].物料描述,3,true)=="可选项" and etab[i].物料类型 !== "KMAT")}
-		[35] = function(i){return (string.len(etab[i].物料描述) > 40)}
-		[36] = function(i){if !!(etab[i].SAP展开尺寸) return (string.len(etab[i].SAP展开尺寸) > 18)}
-		[37] = function(i){
-				//return (string.indexOf(etab[i].物料描述,"  "))
-				return ( string.keywords('  |--|- -|~~|~ ~|&|“|”|"').findOne(etab[i].物料描述)); 
-			}
-		[38] = function(i){return (string.trim(etab[i].物料描述) !== etab[i].物料描述)}
-		[39] = function(i){
-			if etab[i].SAP物料组 == "SC" 
-				if etab[i-1]
-					return (string.replace(string.trim(etab[i].物料描述),"已喷","未喷") !== string.trim(etab[i-1].物料描述))
-		}
-		[40] = function(i){
-			for (j=i+1;#etab;1)
-				if (etab[j].物料描述==etab[i].物料描述) return true; 
-		}
-		[41] = function(i){if !string.indexOf(etab[i].物料描述,"已喷") return (string.indexOf(etab[i].物料描述,"点焊") and etab[i].SAP物料组 !== "SH")}
-		[42] = function(i){return (etab[i].SAP物料组=="SH" and (etab[i].SAP展开尺寸 or etab[i].SAP基本物料 or etab[i].SAP是否为点焊中最大件))}
-		[43] = function(i){
-			import QHC;
-			if #QHC.getSapItemByDesp(etab[i].物料描述) return true; 
-		}
-		[44] = function(i){
-			if etab[i].物料类型=="HALB"
-				if etab[i].物料分类明细 == "08"
-					if string.indexOf(etab[i].物料描述,"发泡")
-						if !string.indexOf(etab[i].物料描述,"总装")
-							return etab[i].SAP物料组!=="SD" ;
+	var tRng = sht.Range("A3:V" ++ etr());
 	
-		}
-		[45] = function(i){
-			if string.indexOf(etab[i].物料描述, "已喷")
-				return etab[i].SAP物料组!=="SC"; 
+	var etab = tRng.value;
+	var etab_count = #etab;
 	
-		}
-		[46] = function(i){
-			return string.indexOf(etab[i].物料描述, " 喷粉"); 
-	
-		}
-		[47] = function(i){
-			return !#etab[i].用途; 
-	
-		}
-		[48] = function(i){
-			return !#etab[i].是否关键部件; 	
-		}
-		[49] = function(i){
-				return (string.indexAny(etab[i].物料描述, 194)); 
-		}
-		[50] = function(i){
-				if etab[i].物料类型=="HALB" {
-					if etab[i].SAP展开尺寸 {
-						var d = string.split(etab[i].SAP展开尺寸, "*");
-						if #d !== 3
-							return true; 
-						else {
-							for (i=1; #d)
-								if !math.isNumber(d[i])
-									return true; 
-						}
-						
-					}
-				}
-		}
-	};
-	/*}}*/
-	
-	
-	var bar = chk_excel_NewPart_form.progress
+	var bar = winform.progress;
 	bar.min = 0;
 	bar.max = etab_count;
-	getErr = {};
-	getErr.fields = {"行"; "序号";"错误描述"}
-	for(i=1; etab_count){		
-		bar.pos = i;
-		for(j=1; #sapErr){
-			if sapErr[j](i)
-				table.push(getErr, {
-				"行":i+2;
-				"序号": etab[i].序号;
-				"错误描述": rule_desp[j];
-			})
-		}
+	
+	var str_today = function(separator){
+		var tm = time.now();
+		tm.format = string.join({"%Y";"%m";"%d"},separator);
+		return tostring(tm);
 	}
+	import config;
+	config.tbm.Designer :=  domisoft.showInputBox("姓名", "这是第一次使用, 请先输入姓名:","", winform) ;
+	config.tbm.save();
 	
+	var username = config.tbm.Designer;
 	
+	import string.keywords;
 	
-	chk_excel_NewPart_form.listview.setTable(getErr);
+	_plastics = 'PC|PVC|PS|PP|ABS|夜帘|橡胶';
+	_glass = '玻璃|钢化玻璃|有机玻璃';
+	_glass_sys = '钢化玻璃|钢化玻璃|有机玻璃';
+	_metal_sys = '铝合金|不锈钢板|焊接件|焊接件';
+	_metal = '铝合金|不锈钢|焊接件|铆接件';
+	_cooper = '管|TP2M|蒸发器|冷凝器|阀';
+	_cooper_sys = '铜管|铜管|蒸发器|冷凝器|阀';
 	
-	chk_excel_NewPart_form.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
-	chk_excel_NewPart_form.listview.setColumn({cx=120 ;fmt=0x2/*_LVCFMT_CENTER*/},2);
-    chk_excel_NewPart_form.listview.fillParent(3);
+	winform.listview.clear(true);
+	winform.listview.addItem(sht.parent.name);
+	
+	for(i=1; #etab){
+    	bar.pos = i;
+    	
+		for(j=1; 22 /* V */)
+			if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
+			
+		etab[i][1] = i;
+		etab[i][2] = "=len(E" ++ (i+2) ++ ")";
+		
+		if !#etab[i][3] etab[i][3] = username;
+		if !#etab[i][4] etab[i][4] = str_today("/");
+		if !#etab[i][7] etab[i][6 /* F */] = "ZA";
+		if !#etab[i][9] etab[i][8 /* H */] = "柜体";
+		if !#etab[i][13] etab[i][13 /* M */] = "新品BOM";
+		if !#etab[i][19] etab[i][19 /* S */] = table.shift(string.split(etab[i][5 /* E */]," "));
+		
+		var str = etab[i][5 /* E */];
+		
+		var ePush = function(val, index){
+			index := {7 /* G */,9 /* I */,10 /* J */,11 /* K */,12 /* L */, 22 /* V */};
+			for(k=1; #index)
+				if !#etab[i][index[k]] etab[i][index[k]] = val[k];
+			//TODO: 根据已经填写的信息计算空白内容
+		}	
+	
+		
+		if string.keywords('可选项').findOne(str)
+			ePush({"SG","KMAT","配置","09","可选项","否"});
+			
+		elseif string.keywords('总装|组装').findOne(str)
+			ePush({"SG","HALB","配置","08","总装","否"});
+			
+		elseif string.keywords('组件').findOne(str)	
+			ePush({"SA","HALB","非配置","08","总装","否"});
+			
+		elseif string.keywords('已喷').findOne(str)	
+			ePush({"SC","HALB","非配置","01","喷粉件","否"});
+			
+		elseif string.keywords(_plastics).findOne(str)
+			ePush({"R02","ROH","非配置","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)],"否"});
+	
+		elseif string.keywords('亚克力|EPS|尼龙|GFRP|GFK').findOne(str)
+			ePush({"R02","ROH","非配置","02","其他塑料件","否"});
+	
+		elseif string.keywords('底箱体|发泡板|发泡箱体').findOne(str)
+			ePush({"SD","HALB","非配置","08","发泡","否"});
+			
+		elseif string.keywords(_glass).findOne(str)		
+			ePush({"R14","ROH","非配置","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)],"否"});
+			
+		elseif string.keywords('点焊').findOne(str)
+			ePush({"SH","HALB","非配置","01","焊接件","否"});
+			
+		elseif string.keywords(_metal).findOne(str)
+			ePush({"R01","ROH","非配置","01", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
+			
+		elseif string.keywords('木包装').findOne(str)
+			ePush({"R05","ROH","非配置","16","木包装","否"});
+			
+		elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
+			ePush({"SB","HALB","非配置","01","钣金","否"});
+			
+		elseif string.keywords(_cooper).findOne(str)
+			ePush({"R07","ROH","非配置","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)],"否"});
+	
+	}
+	//table.sort(etab, lambda(b) owner[12]>b[12]);
+	sht.Columns(9 /* I */).ColumnWidth = #etab[1][9 /* I */] + 2.75;
+	sht.Columns(19 /* S */).ColumnWidth = #etab[1][19 /* S */] + 2.75;
+	
+	tRng.value2 = etab;
+	
+	var filename = sht.parent.name;
+	filename = string.replace(filename, "姓名", username);
+	filename = string.replace(filename, "型号", etab[1][19 /* S */]);
+	filename = string.replace(filename, "日期", str_today("."));
+	
+	import win.clip
+	win.clip.write(string.left(filename,#filename-1))
 	
 }
-chk_excel_NewPart_form.onDestroy = function(){
+winform.onDestroy = function(){
 	try{
    		if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
    		if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
@@ -334,7 +217,7 @@ chk_excel_NewPart_form.onDestroy = function(){
 }
 
 /*点击定位{{*/
-chk_excel_NewPart_form.listview.onSelChanged = function(selected,item,subItem,nmListView){
+winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	if !selected return ; 
 	if !item return ;
 	var row = owner.getItemText(item,1);
@@ -344,14 +227,14 @@ chk_excel_NewPart_form.listview.onSelChanged = function(selected,item,subItem,nm
 /*}}*/
 
 /*右键菜单{{*/
-chk_excel_NewPart_form.listview.onnotify = function(id,code,ptr){
+winform.listview.onnotify = function(id,code,ptr){
 	select(code) {
     	case 0xFFFFFFFB/*_NM_RCLICK*/ {
     		var selectedRow = owner.getSelection();
     		if !selectedRow return ; 
 			var x,y = win.getMessagePos();
 		
-			var menu = win.ui.popmenu(chk_excel_NewPart_form);			
+			var menu = win.ui.popmenu(winform);			
 			menu.add("隐藏可忽略项", function(){
 				var t = table.filter(getErr,
 					function(v,index){
@@ -359,18 +242,18 @@ chk_excel_NewPart_form.listview.onnotify = function(id,code,ptr){
 					}
 				);
 				t.fields = getErr.fields;
-				chk_excel_NewPart_form.listview.setTable(t);
+				winform.listview.setTable(t);
 			});
-			menu.add("显示可忽略项", λ() chk_excel_NewPart_form.listview.setTable(getErr));
+			menu.add("显示可忽略项", λ() winform.listview.setTable(getErr));
 			menu.popup(x,y,true);
     	}
     }
 }
 /*}}*/
 /* CTRLC复制模块 */
-chk_excel_NewPart_form.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 
-chk_excel_NewPart_form.show();
+winform.show();
 
 win.loopMessage();
-return chk_excel_NewPart_form;
+return winform;

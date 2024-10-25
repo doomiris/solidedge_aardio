@@ -1,0 +1,105 @@
+﻿loadfrmName = {
+	{
+		"\forms\main\frmPage1.aardio";
+		"\forms\main\frmPage2.aardio";
+		"\forms\main\frmPage4.aardio";
+		"\forms\main\frmPage5.aardio";
+	},
+	{
+		"\forms\Excel\check_BOM更改单_GUI.aardio";
+		"\forms\Excel\check_新BOM申请表_GUI.aardio";
+		"\forms\Excel\assist_专用号申请表_GUI.aardio";
+		"\forms\Excel\check_专用号申请表_GUI.aardio";
+		"\forms\Excel\update_SAP_ITEM.aardio";
+		"\forms\main\物料名称生成.aardio";
+	},
+	{
+		"\forms\main\QTIP.aardio";
+		"\forms\SAP\BOM浏览器.aardio";
+		"\forms\SAP\获取订单清单信息.aardio";
+		"\forms\SAP\OD_Query.aardio";
+		"\forms\SAP\download-cost-bom-va02.aardio";
+		"\forms\Excel\BOM-CALC.aardio";
+	},
+	{
+		"\forms\main\frmPage3.aardio";
+		"\forms\main\loader.aardio";
+	}
+}
+menuList = {
+    {
+        "\uF054,\uF078,Solid Edge",/*菜单图标，菜单选中时图标，菜单文本*/
+        {
+     		"\uF1EA,\uF1EA,TBM",
+      		"\uF11C,\uF11C,变更",
+      		"\uF0CB,\uF0CB,技术要求",
+      		"\uF1C1,\uF1C1,打印中心"
+        },
+        opened = true,/*展开*/
+        alwaysOpened =false/*总是展开*/
+	}, 
+    {
+        "\uF054,\uF078,Excel",
+        {
+     		"\uF1BE,\uF1CC,检查BOM更改单",
+      		"\uF1BE,\uF1CC,检查新品BOM",
+      		"\uF1BE,\uF1CC,智能填写专用号申请表",
+      		"\uF1BE,\uF1CC,检查专用号申请表",
+      		"\uF1DE,\uF1DE,更新itemmaster数据",
+      		"\uF1AA,\uF1AA,物料名称生成器"
+      		
+        },
+        opened = true,
+        alwaysOpened = false
+	}, 
+    {
+        "\uF054,\uF078,SAP",
+        {
+     		"\uF1B0,\uF1B0,物料查询",
+      		"\uF299,\uF299,BOM浏览器",
+      		"\uF2B7,\uF2B6,订单清单",
+      		"\uF268,\uF268,OD相关查询",
+      		"\uF200,\uF200,成本BOM",
+      		"\uF13D,\uF13D,原材料计算"      		
+        },
+        opened = true,
+        alwaysOpened = false
+	}, 
+    {
+        "\uF054,\uF078,其它",
+        {
+     		"\uF113,\uF113,关于",
+      		"\uF0C3,\uF0C3,扩展"   		
+        },
+        opened = true,
+        alwaysOpened = false
+	}
+}
+
+menuTheme = {
+	bgcolor = 0xB48246,/*组件背景色*/
+	hideOpenedIcon = true,/*隐藏菜单右边小三角图标*/
+	useGdip = false,/*使用gdip防锯齿*/
+	itemHeight = 30,/*菜单和项目高度*/
+	autoClose = false,/*自动关闭非当前菜单，对alwaysOpen的菜单无效*/
+	canCloseCurMenu = true,/*可以关闭当前展开的菜单，对alwaysOpen的菜单无效*/
+	menuFontName = "微软雅黑",/*菜单字体名称*/
+	menuFontH = 16,/*菜单字体高度，单位：像素*/
+	menuFontWeight = 400,/*菜单字体粗细，0～1000，正常为400*/
+	menuBgColor = 0x533100,/*菜单背景颜色*/
+	menuSelBgColor = 0x533100,/*菜单选中时背景颜色*/
+	menuTextColor = 0xD1D1D1,/*菜单文本颜色*/
+	menuSelTextColor = 0xD1D1D1,/*菜单选中时文本颜色*/
+	menuUnderlineColor = null,/*菜单下划线颜色，为null时没有下划线*/
+	itemFontName = "微软雅黑",/*项目字体名称*/
+	itemFontH = 14,/*项目字体高度，单位像素*/
+	itemFontWeight = 400,/*项目字体粗细，0～1000，正常为400*/
+	itemBgColor = 0xB48246,/*项目背景颜色*/
+	itemSelBgColor = 0x8FBC8F,/*项目选中时背景颜色*/
+	itemTextColor = 0xFFFFF0,/*项目文本颜色*/
+	itemSelTextColor = 0xFFFFFF,/*项目选中时文本颜色*/
+	itemUnderlineColor = null,/*项目下划线颜色，为null时没有下划线*/
+	holdSelectedItem = false /*点击菜单时，保持当前选中项目的选中状态*/
+}
+
+return loadfrmName, menuList, menuTheme; 

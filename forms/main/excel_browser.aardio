@@ -1,54 +1,37 @@
-import fonts.fontAwesome;
+//简单选项卡（ classic tab control ）
 import win.ui;
-import win.ui.tabs;
 /*DSG{{*/
-var winform = win.form(text="TBM工具集合";right=760;bottom=740;edge=1)
-winform.add(
-tab1={cls="plus";text="按钮示例";left=0;top=0;right=80;bottom=80;color=32768;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-30;name='FontAwesome');padding={bottom=10}};iconText='\uF00A';notify=1;textPadding={bottom=10};valign="bottom";z=1};
-tab2={cls="plus";text="按钮示例";left=0;top=80;right=80;bottom=160;color=32768;font=LOGFONT(h=-13);iconStyle={font=LOGFONT(h=-30;name='FontAwesome');padding={bottom=10}};iconText='\uF00A';notify=1;textPadding={bottom=10};valign="bottom";z=2};
-tabPanel={cls="custom";left=80;top=0;right=760;bottom=740;db=1;dl=1;dr=1;dt=1;z=3}
+var mainForm = win.form(text="使用简单选项卡控件（win.ui.ctrl.tab）";right=663;bottom=387)
+mainForm.add(
+button={cls="button";text="Button";left=152;top=7;right=237;bottom=25;z=2};
+tab={cls="tab";left=14;top=16;right=645;bottom=360;db=1;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
 
-var tabs = win.ui.tabs(winform.tab1,winform.tab2);
-tabs.clear();
+/*
+"简单选项卡（ classic tab control ）"使用指南：
+doc://library-guide/std/win/ui/ctrl/tab.md
 
-tabs.skin({
-    background={
-        active=0xFFFFFFFF;
-        default=0x00FFFFFF;
-        hover=0x38FFFFFF
-    };
-    color={
-        default=0xFF0F0000; 
-    };
-    checked={
-        background={default=0xFFFFFFFF;};
-        color={default=0xFF42A875;};
-    }
-})
+tab 选项卡的子页面可以直接加载一个窗体文件，例如：
+mainForm.tab.loadForm("\res\frmPage1.aardio")
+实际开发软件的时候建议用这种方法。
 
-var MoreToolsLists = {
-	[1] = {text = "检查BOM更改单"; iconText = '\uF0CB'; hasCloseButton = false; formPath = "\forms\Excel\check_BOM更改单_GUI.aardio"};
-	[2] = {text = "检查新品BOM"; iconText = '\uF0DB'; hasCloseButton = false; formPath = "\forms\Excel\check_新BOM申请表_GUI.aardio"};
-	[3] = {text = "检查专用号申请表"; iconText = '\uF1AA'; hasCloseButton = false; formPath = "\forms\Excel\check_专用号申请表_GUI.aardio"};
-	[4] = {text = "智能填写专用号申请表"; iconText = '\uF237'; hasCloseButton = false; formPath = "\forms\Excel\check_专用号申请表_GUI.aardio"};
-	[5] = {text = "更新itemmaster数据"; iconText = '\uF215'; hasCloseButton = false; formPath = "\forms\Excel\update_SAP_ITEM.aardio"};
-	[6] = {text = "物料名称生成器"; iconText = '\uF12E'; hasCloseButton = false; formPath = "\forms\main\物料名称生成.aardio"};
+也可以用 mainForm.tab.add() 函数直接创建窗口。
+mainForm.tab.add()的参数与 win.form的参数完全相同，
+直接从窗体设计器生成的代码中复制构建窗体的参数放到 mainForm.tab.add() 里面就可以。
+
+tab 子窗口并不需要与 tab 控件保持大小完全一致，不需要去计算坐标。
+aardio 窗体设计器可以通过控件的【固定边距】【自适应大小】等属性设置控件在运行时位置保持不变、或自动调整适应窗口大小。 
+*/
+ 
+//添加一个窗口作为选项卡的子页面 
+
+
+
+
+mainForm.button.oncommand = function(id,event){
+	mainForm.tab.loadForm("D:\users\CCL100100\aardio\project\solidedge_aardio\forms\main\QTIP.aardio")
 }
 
-tabs.addItems(MoreToolsLists);
-for tab,form,idx in tabs.each()
-	tabs.loadForm(idx, tab.formPath);
-	
-tabs.onSelchange = function(idx,tab,form){
-	winform.text = string.join({form.text, "TBM工具集合"}," - ");
-
-}
-
-tabs.selIndex = 1;
-
-winform.show(3 /*_SW_MAXIMIZE*/);
-
-
+mainForm.show(true) 
 win.loopMessage();

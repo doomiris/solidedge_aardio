@@ -357,14 +357,22 @@ downloadOrderList = function(winform, orderId){
 	    	dim startdate
 	    	dim lib_path
 	    	dim filename
+	    	dim stopScript
 	*/
 	vm.script.order = orderId;
-	vm.script.lib_path = io.joinpath(config.dbServer.path, "xl_lib");
+	vm.script.lib_path = config.__sapDownload;
 	vm.script = /*
 		session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
 		session.findById("wnd[0]").sendVKey 0
 		session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order
 		session.findById("wnd[0]").sendVKey 0
+		if session.findById("wnd[0]/sbar").text = "SD凭证" & order &" 没有在数据库中或已归档" then
+			session.findById("wnd[0]/tbar[0]/btn[12]").press
+			stopScript = true
+		end if
+	*/
+	if vm.script.stopScript	return ; 
+	vm.script = /*
 		'获取订单日期
 		startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
 	*/

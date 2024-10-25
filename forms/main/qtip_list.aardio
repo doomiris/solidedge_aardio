@@ -11,32 +11,37 @@ import process;
 import domisoft;
 //import godking.vlistEx;
 /*DSG{{*/
-var winform_qlist = win.form(text="aardio form";right=759;bottom=469)
-winform_qlist.add(
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
 listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
 
-winform_qlist.grid = win.ui.grid(winform_qlist.listview);
-winform_qlist.grid.setReadonlyColumns(-1);
-winform_qlist.grid.onSortColumn = function(column, desc){
+winform.grid = win.ui.grid(winform.listview);
+winform.grid.setReadonlyColumns(-1);
+var qtbs;
+if winform.parent
+	qtbs = winform.parent.parent.qtbs;
+	
+winform.grid.onSortColumn = function(column, desc){
 	var name = owner.source.fields[column];
 	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
 	owner.setTable( owner.source );
 	return true; //返回 true 允许当前列排序	
 };
-var saveInputList = function(str){
+winform.saveInput = function(str){
+	if !str return ; 
     if !(table.find(config.qTipLog, str)){
     	table.unshift(config.qTipLog, str);
     	if ( #config.qTipLog>15 ) table.pop(config.qTipLog);
     	config.qTipLog.save();
     };
-};
+}
 /*下载BOM{{*/
 var downloadbom = function(){
     var tab=table.array();
-    for (k, v in winform_qlist.listview.selected){
-        var bg = winform_qlist.listview.getItemText(v, 1);
+    for (k, v in winform.listview.selected){
+        var bg = winform.listview.getItemText(v, 1);
             table.push(tab,  bg);
     }  
     if !#tab return ;
@@ -44,12 +49,12 @@ var downloadbom = function(){
     	function(wform,tab){
 			import SAP;
 			SAP.downloadBOM(wform, tab);
-    	},winform_qlist,tab
+    	},winform,tab
     )
 };
 var copyPartNo = function(withDesp){
     var tab=table.array();
-    var listview = winform_qlist.listview;
+    var listview = winform.listview;
     for (k, v in listview.selected){
     	var pcode = listview.getItemText(v, 1);
     	var desp = listview.getItemText(v, 2);
@@ -65,14 +70,14 @@ var copyPartNo = function(withDesp){
 /*}}*/
 
 /*双击打开事件{{*/
-winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
+winform.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
     		var selectedRow = owner.getSelection();
     		if !selectedRow return ; 
     		var pcode = owner.getItemText(selectedRow, 1);
     	    qtbs.selIndex = 4;
-    	    qtbs.forms[4].publish("qtip_search_4", pcode);
+    	    qtbs.forms[4].qtip_search(pcode);
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/ {
     		var selectedRow = owner.getSelection();
@@ -80,8 +85,8 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
     		var pcode = owner.getItemText(selectedRow, 1);
     		var desp = owner.getItemText(selectedRow, 2);
 			var x,y = win.getMessagePos();
-			//var hItem,tvht = winform_qlist.listview.hitTest(x,y,true);
-			var menu = win.ui.popmenu(winform_qlist);			
+			//var hItem,tvht = winform.listview.hitTest(x,y,true);
+			var menu = win.ui.popmenu(winform);			
 
 			menu.add("下载BOM...", downloadbom);				
 			var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
@@ -138,12 +143,12 @@ winform_qlist.listview.onnotify = function(id,code,ptr){//code很多 select外�
 /*}}*/
 
 /*CTRLC复制模块{{*/
-winform_qlist.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 /*}}*/
 
 /*searchSapDB{{*/
 
-var searchSapDB = function(userinput, winform_qlist, filter_form){
+var searchSapDB = function(userinput, winform, filter_form){
 	import config
 	import sqlite;
 	import QHC;
@@ -160,8 +165,8 @@ console.open();
 	//var fields //= QHC.getColDef();
     if !#userinput return ; 
 
-    winform_qlist.listview.clear();
-    //winform_qlist.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
+    winform.listview.clear();
+    //winform.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
 
     userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
     
@@ -175,7 +180,7 @@ console.open();
 		userinputArr = table.unique(userinputArr);
     
     if (#userinputArr == 1)
-    	winform_qlist.publish("saveInput", userinputArr[1]);
+    	winform.saveInput(userinputArr[1]);
 
  	table.clear(sapTab);
 	sapTab={};
@@ -256,7 +261,7 @@ console.open();
 				table.assign(searchField, {类型 = domisoft.getSelectedText(filter_form.clOrderType)});
 		}		
 /*
-		if #winform_qlist.clLegacyType.checked
+		if #winform.clLegacyType.checked
 			sqlstr +=  " AND [物料] LIKE `H008`";
 */
 		sqlstr = sqlite.format(sqlstr, {searchField});
@@ -300,54 +305,28 @@ console.open();
 	/*调整列宽*/
 	
 	var formatListView = function(lv){
-		winform_qlist.grid.clear();
-		winform_qlist.grid.setTable(winform_qlist.grid.source);
-		winform_qlist.grid.columnWidth := domisoft.setColumnWidth(winform_qlist.grid, {90,350,60,60,60,50,50,50,50,120})
+		winform.grid.clear();
+		winform.grid.setTable(winform.grid.source);
+		winform.grid.columnWidth := domisoft.setColumnWidth(winform.grid, {90,350,60,60,60,50,50,50,50,120})
     	lv.fillParent(2);
 	}
 	//sapTab.fields = fields;
-	winform_qlist.grid.source = sapTab;
-	formatListView(winform_qlist.listview);
+	winform.grid.source = sapTab;
+	formatListView(winform.listview);
 }
 /*}}*/
 
-/*格式化BOM{{*/
-subscribe("dok", function(...){
-	//winform_qlist.button6.disabledText = null;
-	import win;
-	win.delay(3*1000);
-	
-	var ftab = ...;
-	if !ftab return ; 
-	thread.invoke( 
-		function(ftab){
-			import domisoft;
-			import console;
-			import QHC;
-			//for k, v in ftab {
-			var sht = domisoft.getRunningWorkSheet(ftab);
-			QHC.formatBOM(sht);
-			import fsys;
-			var destPath = io.joinpath(config.dbServer.path,"\xl_lib\");
-			if sht.ParentPath !== destPath
-				fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
-		}, ftab
-	)
-} )
-/*}}*/
-winform_qlist.show();
-subscribe("qtip_search_2", function(...){
-	var txt = ...;
+
+winform.show();
+
+winform.qtip_search = function(txt) {
 	var filter_form = qtbs.forms[1];
 	if txt
 		thread.invoke( 
-			searchSapDB, txt, winform_qlist, filter_form
+			searchSapDB, txt, winform, filter_form
 		);
-})
-subscribe("saveInput",function(...){
-	var txt = ...;
-	saveInputList(txt);
-} )
+}
+
 
 win.loopMessage();
-return winform_qlist;
+return winform;

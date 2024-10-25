@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-qtip_winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-qtip_winform.add(
+winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+winform.add(
 bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
 bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088};dl=1;dt=1;notify=1;z=6};
 bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;notify=1;z=8};
@@ -18,30 +18,31 @@ splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z
 )
 /*}}*/
 
-qtip_winform.show();
+winform.show();
 
 import win.ui.tabs;
-import win.ui.menu;
 import win.ui.tooltip; 
 import color;
 import config;
 import domisoft;
 
 /*拆分条{{*/
-qtip_winform.splitter.split(qtip_winform.editUser3, qtip_winform.custom);
-qtip_winform.splitter.ltMin = 32;
-qtip_winform.splitter.rbMin = 96;
+winform.splitter.split(winform.editUser3, winform.custom);
+winform.splitter.ltMin = 32;
+winform.splitter.rbMin = 96;
 /*}}*/
 /*TABS{{*/
 //qtbs 不用var声明, 所有子项就都能直接访问了.
-qtbs = win.ui.tabs(
-	qtip_winform.bkplus1,
-	qtip_winform.bkplus2,
-	qtip_winform.bkplus3,
-	qtip_winform.bkplus4,
-	qtip_winform.bkplus5
+winform.qtbs = win.ui.tabs(
+	winform.bkplus1,
+	winform.bkplus2,
+	winform.bkplus3,
+	winform.bkplus4,
+	winform.bkplus5
 );
-qtbs.skin({
+//var qtbs = winform.qtbs;
+
+winform.qtbs.skin({
 	foreground={
 		active=0xFFFFFFFF;
 		default=0x00FFFFFF;
@@ -55,60 +56,53 @@ qtbs.skin({
 		color={default=0xFF002E59;};
 	}
 })
-_qfName = {
+var qfName = {
 	[1] = "\forms\main\qtip_filter.aardio";
 	[2] = "\forms\main\qtip_list.aardio";
 	[3] = "\forms\main\sap_search.aardio";
 	[4] = "\forms\main\drawing_search.aardio";
 	[5] = "\forms\main\check_QHC_Release.aardio";
 }
-for k,v in _qfName
-	qtbs.loadForm(k, v);
+for k,v in qfName
+	winform.qtbs.loadForm(k, v);
 	
 
 
-qtbs.forms[1].publish("load") //加载
-qtbs.selIndex = 2; 
-qtbs.currentTab = 2;
-qtbs.lastTab = 2;
-qtbs.onSelchange = function(idx,strip,form){
-	if idx == qtbs.currentTab return ; 
-	qtbs.lastTab = qtbs.currentTab;
-	qtbs.currentTab = idx;
+winform.qtbs.forms[1].publish("preload") //仅触发加载,无响应事件
+winform.qtbs.selIndex = 2; 
+
+winform.qtbs.onSelchange = function(idx,tab,form){
+	//
 } 
 
-qtbs.open = function(selIndex,pcode){
-	qtbs.selIndex = selIndex;
-	qtbs.forms[selIndex].publish("qtip_search_"++selIndex, pcode);
+winform.qtbs.open = function(selIndex,pcode){
+	winform.qtbs.selIndex = selIndex;
+	winform.qtbs.forms[selIndex].qtip_search(pcode);
 }
 
 /*}}*/
 
 
 /*搜索按钮{{*/
-qtip_winform.button.oncommand = function(id,event){
+winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
-	var txt = qtip_winform.editUser3.text;
-	select(qtbs.currentTab) {
-		case 2 {}
-		else {
-			qtbs.selIndex = 2;
-		}
-	}
-	qtbs.forms[qtbs.currentTab].publish("qtip_search_2", txt);
+	var txt = winform.editUser3.text;
+	if winform.qtbs.selIndex == 1
+		winform.qtbs.selIndex = 2
+	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);
 }
 /*}}*/
 
 /*onclose{{*/
-qtip_winform.onClose = function(hwnd,message,wParam,lParam){
+winform.onClose = function(hwnd,message,wParam,lParam){
 	if (db) db.close();	
 }
 /*}}*/
 /*弹出历史记录菜单{{*/
-qtip_winform.buttonD.oncommand = function(id,event){
-	var historyMenu = win.ui.popmenu(qtip_winform);	
+winform.historyMenu = win.ui.popmenu(winform.buttonD);
+var createHistoryMenu = function(){
 	var getSelectedList = function(){
-		var lv = qtbs.forms[2].listview;		
+		var lv = winform.qtbs.forms[2].listview;		
 		var lst = lv.selected;
 		var tab = {};
 		for (i=1; #lv.items)
@@ -118,7 +112,7 @@ qtip_winform.buttonD.oncommand = function(id,event){
 	}
 	var addFav = function(){
 		var fav = config.qtip.fav;
-		var favName = domisoft.showInputBox("收藏", "请为要收藏的清单命名:","", qtip_winform)
+		var favName = domisoft.showInputBox("收藏", "请为要收藏的清单命名:","", winform)
 		if	!favName return ;
 		if #table.filter(fav, lambda(v,index) favName == v[["title"]]) 
 			if !win.msgboxTest("点击确认覆盖相同名称收藏","覆盖确认")
@@ -133,11 +127,11 @@ qtip_winform.buttonD.oncommand = function(id,event){
 	var readClipH = function(){
 		var t= domisoft.readClipHcode();
 		if t
-			qtip_winform.editUser3.text = string.join(t,'\r\n');
+			winform.editUser3.text = string.join(t,'\r\n');
 		
 	}
-	historyMenu.add("识别剪贴板图像",readClipH);
-	historyMenu.add();
+	winform.historyMenu.add("识别剪贴板图像",readClipH);
+	winform.historyMenu.add();
 	var favTab = {
     	[1] = "★ 收藏夹"; 
     	[2] = { 
@@ -159,7 +153,7 @@ qtip_winform.buttonD.oncommand = function(id,event){
 					var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
 					
 					if !shift and !ctrl	//无按钮时打开清单
-    					qtbs.forms[2].publish("qtip_search_2", string.join(fav[i]["list"],";"));
+    					winform.qtbs.forms[2].qtip_search(string.join(fav[i]["list"],";"));
     				if shift and !ctrl	//按shift时询问删除
     					if win.msgboxTest("确认删除此条收藏?","删除收藏")
     						fav[i] = null;
@@ -167,81 +161,62 @@ qtip_winform.buttonD.oncommand = function(id,event){
     					if win.msgboxTest("替换为当前选择的清单?","确认替换")
     						fav[i]["list"] = getSelectedList();
     				if shift and ctrl	//同时按询问修改名称
-    					fav[i]["title"] = domisoft.showInputBox("修改名称", "请输入新名称",fav[i]["title"] , qtip_winform);
+    					fav[i]["title"] = domisoft.showInputBox("修改名称", "请输入新名称",fav[i]["title"] , winform);
 	
     			}
     	})
     }
-	historyMenu.addTable({favTab})
-	historyMenu.add();//分隔线
+	winform.historyMenu.addTable({favTab})
+	winform.historyMenu.add();//分隔线
 	for (i=1; #config.qTipLog){
 		if !config.qTipLog[i] continue;
-    	historyMenu.add(
+    	winform.historyMenu.add(
     		text = config.qTipLog[i];
+/**
     		proc = function(id){
     		    var shift = ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
 				if !shift {
-    			qtip_winform.editUser3.text = config.qTipLog[i];
-    			qtip_winform.editUser3.setFocus();
+    			winform.editUser3.text = config.qTipLog[i];
+    			winform.editUser3.setFocus();
     			}else
     				config.qTipLog[i] = null;
     		}
+**/
     	);
 	}
-	var pt = ::POINT();
-	::User32.GetCursorPos(pt);
-	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
-	win.setForeground(qtip_winform.hwnd)
-	historyMenu.popup(pt.x,pt.y,true )
+
+}
+winform.setTimeout(createHistoryMenu);
+winform.historyMenu.onMenuItemClick = function(id){
+	winform.editUser3.text = winform.historyMenu.getString(id, 0);
+	winform.editUser3.setFocus();
+}
+winform.buttonD.oncommand = function(id,event){
+	var x,y = win.getMessagePos();  
+	winform.historyMenu.popup(x,y,true)
 }
 /*}}*/
 /*右键点击快速取消筛选{{*/
-qtip_winform.bkplus1.wndproc = function(hwnd,message,wParam,lParam){
-	if message == 0x205 /* _WM_RBUTTONUP */ qtbs.forms[1].syslink.onHyperlinkClick();
+winform.bkplus1.wndproc = function(hwnd,message,wParam,lParam){
+	if message == 0x205 /* _WM_RBUTTONUP */ winform.qtbs.forms[1].syslink.onHyperlinkClick();
 }
-var updateColor = function(btCtrl){
-	var t = #qtbs.forms[1].clSapType.selected + #qtbs.forms[1].clUnit.selected + #qtbs.forms[1].clOrderType.selected;
+winform.qtbs.updateColor = function(btCtrl){
+	var t = #winform.qtbs.forms[1].clSapType.selected + #winform.qtbs.forms[1].clUnit.selected + #winform.qtbs.forms[1].clOrderType.selected;
 	btCtrl.border = t ? {top=5;color=-16711936} : null;
 	btCtrl.redraw();
 }
-subscribe("filter_Changed",function(...){
-	updateColor(qtip_winform.bkplus1);
-})
+
 /*}}*/
 
 /*后退按钮{{*/
-qtip_winform.button2.oncommand = function(id,event){
+winform.button2.oncommand = function(id,event){
 	if event == 0/*_BN_CLICKED*/
-		qtbs.selIndex = 2;
-}
-/*
- (限制)
-低级鼠标钩子回调函数不要做耗时操作，
-如果耗时超过一秒或超过注册表限制的更小时间，系统会直接删除钩子。
-没有任何方法可以检查到删除操作，应当遵守规则避免滥用。
-
-耗时操作建议在钩子回调中创建线程，或使用 winform.setTimeout 延时异步执行。
-在超级热键回调函数中，如果返回一个函数也可以不阻塞异步执行。
-*/
-import mouse.hook;
-var hook = mouse.hook();
-//录制回调函数
-hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
-    if( injected ) return; //模拟鼠标不处理
-    select(msg) {
-		case 0x20C /* _WM_XBUTTONUP */ {
-			if ::HIWORD(mouseData) == 1	//后退
-				win.setTimeout(function(){qtbs.selIndex = 2})
-			else	//前进
-				win.setTimeout(function(){qtbs.selIndex = qtbs.lastTab})
-		}
-    }
+		winform.qtbs.selIndex = 2;
 }
 /*}}*/
 
-
-var tooltipCtrl = win.ui.tooltip( qtip_winform );//在窗口上创建tooltip控件
-tooltipCtrl.addTool(qtip_winform.buttonD, `
+var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件
+tooltipCtrl.addTool(winform.buttonD, `
 查看搜索历史记录和清单收藏夹
 > 创建清单时仅保存当前选择的物料, 无选择时保存整个清单
 - 按住SHIFT+点击:删除记录/收藏
@@ -250,4 +225,4 @@ tooltipCtrl.addTool(qtip_winform.buttonD, `
 `)
 
 win.loopMessage();
-return qtip_winform;
+return winform;

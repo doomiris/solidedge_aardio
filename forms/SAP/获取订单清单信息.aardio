@@ -1,6 +1,5 @@
 import win.ui;
 import win.ui.grid;
-import win.ui.atom;
 /*DSG{{*/
 var winform = win.form(text="订单清单浏览";right=759;bottom=469)
 winform.add(
@@ -30,15 +29,6 @@ grid.setReadonlyColumns(-1);
 winform.grid2 = win.ui.grid(winform.listview2);//创建数据视图
 var grid2 = winform.grid2;
 grid2.setReadonlyColumns(-1);
-/*
-import console
-console.open()
-*/
-/*
-winform.bindConfig( config.orderBom, {	//绑定控件值
-    edit = "text";
-} );
-*/
 
 
 
@@ -52,7 +42,7 @@ grid2.onSortColumn = grid.onSortColumn;
 
 
 var getFolderList = function(){
-	var list = fsys.list(io.joinpath(config.dbServer.path,"xl_lib"),,"ORDER_LIST_*.xlsx");
+	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
 	grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
 	for (i=1; #list){
 		var f = string.split(string.split(list[i],".")[1],"_");
@@ -77,7 +67,7 @@ var getDetail = function(wbpath, wform){
 	import access;
 	import config;
 	import domisoft;
-	var fullpath = io.joinpath(config.dbServer.path,"xl_lib", wbpath)
+	var fullpath = io.joinpath(config.__sapDownload, wbpath)
 	var newpath = string.replace(fullpath,"@@.xlsx",".xls");
 	if !io.exist(fullpath) return win.msgbox("文件不存在了, 请重新下载."++'\n'++fullpath); 
 	wform.grid.clear();
@@ -148,7 +138,8 @@ grid2.onClick = function(item,subItem,nmListView){
 	if item
 		winform.edit.text = grid2.source[item].订单号;
 	grid.source = getDetail(c, winform);
-	if !grid.source or !#grid.source return;
+	if !grid.source return ;
+	if !#grid.source return;
 	grid.clear();
 	winform.editDesp.text = "";
 	grid.onSortColumn(3, false);
@@ -253,8 +244,7 @@ winform.button3.oncommand = function(id,event){
 	if !#flist return ; 
 	for k, v in flist {
 		var xlsx = io.joinpath(
-			config.dbServer.path,
-			"xl_lib",
+			config.__sapDownload,
 			winform.listview2.getItemText(v, 3)
 		)
 		io.remove(xlsx);
@@ -267,7 +257,7 @@ if winform.listview2.count
 	grid2.onClick(1,1)
 
 
-winform.show(3/*_SW_MAXIMIZE*/);
+winform.show();
 
 winform.splitter.split(winform.listview, winform.listview2);
 winform.listview.doNotCopyColumns = {-1};

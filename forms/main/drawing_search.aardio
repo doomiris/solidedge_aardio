@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var winform_drawing = win.form(text="aardio form";right=639;bottom=359)
-winform_drawing.add(
+var winform = win.form(text="aardio form";right=639;bottom=359)
+winform.add(
 edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=2};
 listview2={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
@@ -25,15 +25,25 @@ console.open()
 /*}}*/
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
-    //filenumber :=  winform_drawing.editUser0.text;
+    //filenumber :=  winform.editUser0.text;
 
-	winform_drawing.edit2.text = "";
+	winform.edit2.text = "";
 
-    winform_drawing.listview2.clear();
+    winform.listview2.clear();
     
-    if !#filenumber return ; 
+    if !filenumber return ; 
     
-    //winform_drawing.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
+    filenumber = string.crlf(filenumber,'\r\n' /* 默认值 */);
+    
+    //分隔符号转换行
+	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} 
+		filenumber = string.replace(filenumber, v,'\r\n');    
+
+    var userinputArr = string.split(filenumber, '\r\n');
+
+	filenumber = table.shift(userinputArr);
+  
+    //winform.listview2.insertColumn("正在查找图纸, 请稍等...",300,1);
 	var searchFor = string.trimleft(filenumber,"H");
 
 	var fileTab = table.create(,{fields={[2]="文件名";[3]="路径";[1]="类型";[4]="版本"}});
@@ -46,8 +56,8 @@ var searchDocument = function (filenumber){
 	if (#flist == 0){
 		var maptab = flistDB.getTable("SELECT * FROM `Map`", { 专用号  =  searchFor });
 		if (#maptab > 0) {
-			if #maptab[1].图号 winform_drawing.edit2.text = maptab[1].图号;
-			winform_drawing.edit2.hide = !(#maptab[1].图号);
+			if #maptab[1].图号 winform.edit2.text = maptab[1].图号;
+			winform.edit2.hide = !(#maptab[1].图号);
 			sql = string.replace(sql, searchFor, maptab[1].图号);
 			flist = flistDB.getTable(sql);
 		}
@@ -62,28 +72,28 @@ var searchDocument = function (filenumber){
 	}
 	if !table.indexOf(fileTab.fields,"类型")
 		table.unshift(fileTab.fields, "类型");
-	winform_drawing.listview2.header = fileTab.fields;
+	winform.listview2.header = fileTab.fields;
 	
 	
-	winform_drawing.listview2.clear();
-	winform_drawing.listview2.setTable(fileTab);
+	winform.listview2.clear();
+	winform.listview2.setTable(fileTab);
 
 //调整列宽	
-	winform_drawing.listview2.coulumnWidth := domisoft.setColumnWidth(winform_drawing.listview2, {50,200,300,100})
+	winform.listview2.coulumnWidth := domisoft.setColumnWidth(winform.listview2, {50,200,300,100})
 /**
-	winform_drawing.listview2.setColumn({cx=50;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
-	winform_drawing.listview2.setColumn({cx=200;fmt=0x0/*_LVCFMT_LEFT*/},   2);
-	winform_drawing.listview2.setColumn({cx=300;fmt=0x0/*_LVCFMT_LEFT*/}, 3);
-	//winform_drawing.listview2.setColumn({cx=100 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
+	winform.listview2.setColumn({cx=50;fmt=0x2/*_LVCFMT_CENTER*/}, 1);
+	winform.listview2.setColumn({cx=200;fmt=0x0/*_LVCFMT_LEFT*/},   2);
+	winform.listview2.setColumn({cx=300;fmt=0x0/*_LVCFMT_LEFT*/}, 3);
+	//winform.listview2.setColumn({cx=100 ;fmt=0x2/*_LVCFMT_CENTER*/}, 4);
 **/
 
-    winform_drawing.listview2.fillParent(3);
+    winform.listview2.fillParent(3);
 
 }
 /*}}*/
 var refreshFiles = function(){
-	var t = winform_drawing.listview2.items;
-	var header = winform_drawing.listview2.header;
+	var t = winform.listview2.items;
+	var header = winform.listview2.header;
 	for (i=1; #t){
 		//console.log(io.joinpath(t[i][2/*路径*/],t[i][1/*文件名*/]))
 		if !io.exist(io.joinpath(t[i][table.indexOf(header,"路径")],t[i][table.indexOf(header,"文件名")]))
@@ -93,9 +103,9 @@ var refreshFiles = function(){
 	for (i=1; #t)
 		if t[i]
 			table.push(nt, t[i])
-	winform_drawing.listview2.items = nt;
+	winform.listview2.items = nt;
 }
-winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
+winform.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
     	    var header = owner.header;
@@ -114,13 +124,13 @@ winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select�
 			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")), pcode);
 
 			var x,y = win.getMessagePos();
-			var menu = win.ui.popmenu(winform_drawing);
+			var menu = win.ui.popmenu(winform);
 			menu.add("打开文件...", λ() process.execute(fullName));
 			menu.add("删除文件...", λ() io.remove(fullName));
 			menu.add("刷新", λ() refreshFiles());
 			;
 			menu.add("更多...", λ() godking.rightMenu(
-				winform_drawing/*父窗口*/,
+				winform/*父窗口*/,
 				fullName/*文件路径*/,
 				x/*菜单x*/,y/*菜单y*/,
 				false/*是否相对坐标*/,
@@ -133,7 +143,7 @@ winform_drawing.listview2.onnotify = function(id,code,ptr){//code很多 select�
 }
 
 
-winform_drawing.listview2.translateAccelerator = function( msg ){ 
+winform.listview2.translateAccelerator = function( msg ){ 
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam ;
     var header = owner.header;
@@ -152,14 +162,12 @@ winform_drawing.listview2.translateAccelerator = function( msg ){
     }
 }
 
-subscribe("qtip_search_4", function(...){
-	var pcode = ...;
-	if pcode
-		searchDocument(pcode);
-	//refreshFiles();
-});
+winform.qtip_search = function(pcode){
+	if !pcode return ; 
+	searchDocument(pcode);
+};
 
-winform_drawing.show();
+winform.show();
 
 win.loopMessage();
-return winform_drawing;
+return winform;

@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var winform_qfilter = win.form(text="filter";right=367;bottom=469)
-winform_qfilter.add(
+var winform = win.form(text="filter";right=367;bottom=469)
+winform.add(
 chkDisabled={cls="checkbox";text="不显示禁用件";left=240;top=24;right=360;bottom=40;bgcolor=16777215;checked=1;dl=1;dt=1;z=2};
 chkHideDuplicate={cls="checkbox";text="隐藏重复项";left=240;top=119;right=360;bottom=135;bgcolor=16777215;checked=1;dl=1;dt=1;z=10};
 chkHideUnknown={cls="checkbox";text="不显示没查到的";left=240;top=88;right=360;bottom=104;bgcolor=16777215;dl=1;dt=1;z=3};
@@ -15,26 +15,30 @@ syslink={cls="syslink";text="<a>清空选择</a>";left=104;top=8;right=208;botto
 )
 /*}}*/
 
-winform_qfilter.show();
-var refreshColor = λ() winform_qfilter.publish("filter_Changed");
+winform.show();
+var qtbs;
+if winform.parent
+	qtbs = winform.parent.parent.qtbs;
+	
+var refreshColor = λ() qtbs.updateColor(qtbs.tabList[1]);
 
-winform_qfilter.syslink.onHyperlinkClick = function(nmSysLink,url,id){
-	winform_qfilter.clLegacyType.selected = null;
-	winform_qfilter.clUnit.selected = null;
-	winform_qfilter.clOrderType.selected = null;
-	winform_qfilter.clSapType.selected = null;
+winform.syslink.onHyperlinkClick = function(nmSysLink,url,id){
+	winform.clLegacyType.selected = null;
+	winform.clUnit.selected = null;
+	winform.clOrderType.selected = null;
+	winform.clSapType.selected = null;
 	refreshColor();
 }
 
-for(name,ctrl in winform_qfilter.eachControl() ){
+for(name,ctrl in winform.eachControl() ){
 	ctrl.oncommand = refreshColor
 }
 
-winform_qfilter.chkMoreCols.oncommand = function(id,event){
+winform.chkMoreCols.oncommand = function(id,event){
 	qtbs.forms[2].grid.clear(true);
 	qtbs.forms[2].grid.columnWidth = null;
 	return true; 
 }
 
 win.loopMessage();
-return winform_qfilter;
+return winform;

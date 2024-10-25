@@ -1,6 +1,6 @@
 import fonts.fontAwesome;
 import win.ui;
-import win.ui.simpleWindow;
+//import win.ui.simpleWindow;
 import win.ui.atom;
 import win.ui.tabs;
 import win.ui.tooltip; 
@@ -13,23 +13,33 @@ import domisoft;
 import SAP;
 import solidedge.application;
 import godking.listboxEx;
+import fsys.table;
 /*DSG{{*/
-mainForm = win.form(text="TBM";right=750;bottom=550;bgcolor=15793151;border="none")
+mainForm = win.form(text="TBM";right=750;bottom=550;bgcolor=15793151)
 mainForm.add(
-button={cls="button";text='\uF127';left=36;top=4;right=68;bottom=36;bgcolor=255;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');hide=1;z=7};
-cLogo={cls="bkplus";left=70;top=8;right=94;bottom=32;background="\res\tbm3.ico";color=8388608;dl=1;dt=1;z=5};
-caption={cls="bkplus";text="domisoft";left=94;top=10;right=184;bottom=28;color=6052956;dl=1;dt=1;font=LOGFONT(h=-14);z=4};
-custom={cls="custom";left=140;top=40;right=750;bottom=550;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=2};
-listbox={cls="listbox";left=0;top=40;right=140;bottom=550;bgcolor=11829830;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');items={};ownerDraw=1;z=8};
-logo={cls="bkplus";left=36;top=5;right=65;bottom=30;background="\res\ENGINE.ICO";color=8388608;dl=1;dt=1;z=6};
-static2={cls="static";text='\uF03B';left=8;top=8;right=32;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-27;name='FontAwesome');notify=1;transparent=1;z=3};
+closeAll={cls="plus";left=715;top=10;right=747;bottom=35;align="left";color=3947580;dr=1;dt=1;font=LOGFONT(h=-16);iconStyle={font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF05C';notify=1;z=8};
+custom={cls="custom";left=140;top=40;right=750;bottom=550;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=2};
+foldchk={cls="plus";left=8;top=8;right=32;bottom=32;align="left";color=8388608;dl=1;dt=1;font=LOGFONT(h=-27);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome')};iconText='\uF03B';notify=1;textPadding={left=15};z=3};
+listbox={cls="listbox";left=0;top=40;right=140;bottom=550;ah=1;bgcolor=11224832;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');items={};ownerDraw=1;vscroll=1;z=4};
+splitter={cls="splitter";left=139;top=40;right=144;bottom=550;db=1;dt=1;z=5};
+stripTab1={cls="plus";text="tab1";left=145;top=16;right=245;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=6};
+stripTab2={cls="plus";text="tab2";left=245;top=16;right=345;bottom=40;dl=1;dt=1;iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=7};
 titleBar={cls="bkplus";left=0;top=0;right=750;bottom=40;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=1}
 )
 /*}}*/
 
+mainForm.closeAll.skin({
+	color={
+		active=0xFF00FF00;
+		default=0xFF3C3C3C;
+		disabled=0xFF6D6D6D;
+		hover=0xFFFF0000		
+	}
+})
+
 /*只允许一个实例{{*/
 var atom,hwnd = mainForm.atom("domisoft.aardio.tbm");
-if(!atom){ 
+if(!atom and !_STUDIO_INVOKED){ 
 	win.showForeground(hwnd);
 	win.setActive(hwnd);
 	win.quitMessage();	
@@ -49,9 +59,22 @@ mainForm.isDialogMessage = function(hwnd,msg){
 }
 /*}}*/
 			
-win.ui.simpleWindow( mainForm );
+//win.ui.simpleWindow( mainForm );
+mainForm.bindConfig( config.mainForm,{
+	splitter = "left";
+	listbox = "width";
+} );
 
-
+mainForm.foldchk.skin(
+    color = { 
+        hover = 0xFFFF0000; 
+        active = 0xFF00FF00;
+    }
+    checked = {
+    	//text = '';//' 勾选了'/*_FA_CHECK_SQUARE*/;;
+    	iconText = '\uF03C';
+    }
+)  
 /*托盘图标{{*/
 mainForm.tray = win.util.tray(mainForm);
 mainForm.onMinimize = function(lParam){
@@ -132,131 +155,193 @@ mainForm.popmenu2.add();//分隔线
 
 mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
-/*左侧导航按钮{{*/
-_frmName = {
-	[1] = "\forms\main\SE_browser.aardio";
-	[2] = "\forms\main\excel_browser.aardio";
-	[3] = "\forms\main\sap_browser.aardio";
-	[4] = "\forms\main\excel_browser.aardio";
-	[5] = "\forms\main\frmPage5.aardio";
-	[6] = "\forms\main\frmPage3.aardio";
-}
-var menuList = {
-        {
-        	"\uF054,\uF078,菜单一",/*菜单图标，菜单选中时图标，菜单文本*/
-        	{
-     			"\uF014,\uF015,项目1",/*项目图标，项目选中时图标，项目文本*/
-      			"\uF016,\uF017,项目2"
-        	},
-        	opened = true,/*展开*/
-        	alwaysOpened =false/*总是展开*/
-	    }, 
-        {
-        	"\uF054,\uF078,菜单二",
-        	{
-     			"\uF014,\uF015,项目1",
-      			"\uF016,\uF017,项目2"
-        	},
-        	opened = false,
-        	alwaysOpened = false
-	    },
-        {
-        	"\uF054,\uF078,菜单二",
-        	{
-     			"\uF014,\uF015,项目1",
-      			"\uF016,\uF017,项目2"
-        	},
-        	opened = false,
-        	alwaysOpened = false
-	    },
-        {
-        	"\uF054,\uF078,菜单二",
-        	{
-     			"\uF014,\uF015,项目1",
-      			"\uF016,\uF017,项目2"
-        	},
-        	opened = false,
-        	alwaysOpened = false
-	    }
-}
-var menuTheme = {
-	bgcolor = 0x4682b4,/*组件背景色*/
-	hideOpenedIcon = true,/*隐藏菜单右边小三角图标*/
-	useGdip = false,/*使用gdip防锯齿*/
-	itemHeight = 30,/*菜单和项目高度*/
-	autoClose = true,/*自动关闭非当前菜单，对alwaysOpen的菜单无效*/
-	canCloseCurMenu = false,/*可以关闭当前展开的菜单，对alwaysOpen的菜单无效*/
-	menuFontName = "微软雅黑",/*菜单字体名称*/
-	menuFontH = 16,/*菜单字体高度，单位：像素*/
-	menuFontWeight = 400,/*菜单字体粗细，0～1000，正常为400*/
-	menuBgColor = 0x302D29,/*菜单背景颜色*/
-	menuSelBgColor = 0x302D29,/*菜单选中时背景颜色*/
-	menuTextColor = 0xD1D1D1,/*菜单文本颜色*/
-	menuSelTextColor = 0xD1D1D1,/*菜单选中时文本颜色*/
-	menuUnderlineColor = null,/*菜单下划线颜色，为null时没有下划线*/
-	itemFontName = "微软雅黑",/*项目字体名称*/
-	itemFontH = 12,/*项目字体高度，单位像素*/
-	itemFontWeight = 400,/*项目字体粗细，0～1000，正常为400*/
-	itemBgColor = 0x3F3C38,/*项目背景颜色*/
-	itemSelBgColor = 0x6E6B67,/*项目选中时背景颜色*/
-	itemTextColor = 0xD1D1D1,/*项目文本颜色*/
-	itemSelTextColor = 0xD1D1D1,/*项目选中时文本颜色*/
-	itemUnderlineColor = null,/*项目下划线颜色，为null时没有下划线*/
-	holdSelectedItem = true/*点击菜单时，保持当前选中项目的选中状态*/
-}
-var navlb = godking.listboxEx(
-	mainForm.listbox/*列表框组件*/,
-	menuList/*菜单列表*/,
-	menuTheme/*主题,内容可通过智能提示 godking.listboxEx.theme 进行修改*/
-)
 
-navlb.onClick = function(index,subindex,text){
-/*
-	if subindex ..win.msgbox("您点击了项目："+text);
-	else ..win.msgbox("您点击了菜单："+text);
-*/
+mainForm.splitter.split(mainForm.listbox, mainForm.custom);
+{
+	var tWidth = mainForm.stripTab1.width;
+	mainForm.stripTab1.left = mainForm.listbox.width;
+	mainForm.stripTab1.width = tWidth;	
+	mainForm.stripTab2.left = mainForm.listbox.width + mainForm.stripTab1.width;
 }
+mainForm.mTabs = win.ui.tabs(mainForm.stripTab1, mainForm.stripTab2);
 
-
+/*tabStle{{*/
+mainForm.mTabs.margin = 40;
+mainForm.mTabs.clear();
+mainForm.mTabs.skin({
+    background={
+        active=0xFFFFFFFF;
+        default=0x00FFFFFF;
+        hover=0x38FFFFFF
+    };
+    color={
+        default=0xFF0F0000; 
+    };
+    checked={
+        background={default=0xFFFFFFFF;};
+        color={default=0xFF42A875;};
+		border = { 
+			default = {left=1;right=1;top=1;color=0xFF008000} 
+			disabled = {left=1;right=1;top=1;color=0xFF008000} 
+		}; 
+    }
+})
 /*}}*/
 
-
-
-/*折叠导航按钮{{*/
-mainForm.static2.tag = true;
-mainForm.static2.tag2 = mainForm.custom.left;
-mainForm.static2.oncommand = function(id,event){
-    if (mainForm.static2.tag){
-        mainForm.static2.text = '\uF03C';
-    	mainForm.static2.tag = false;
-    	mainForm.listbox.show(false)
-		mainForm.custom.left = 0;
-		
-	}else{
-		mainForm.static2.text = '\uF03B';
-    	mainForm.static2.tag = true;
-		mainForm.listbox.show(true)
-		mainForm.custom.left = mainForm.static2.tag2;
+mainForm.mTabs.onSelchange = function(idx,tab,form){
+	mainForm.text = string.join({tab.text, "TBM工具箱"}," - ");
+	mainForm.listbox.selected = null;
+	for (i=1; mainForm.listbox.count) {
+		var txt = table.pop(string.split(mainForm.listbox.items[i],","))
+		if txt == tab.text {
+			mainForm.listbox.selIndex = i;
+			break;
+		}
 	}
 }
 
-if config.settings.simpleSAPmode
-	mainForm.static2.oncommand(); //simpleSAPmode
+
+/*左侧导航按钮{{*/
+var loadfrmName, menuList, menuTheme = loadcodex("\menulist.aardio");
+var navlb = godking.listboxEx(
+	mainForm.listbox/*列表框组件*/,
+	menuList/*菜单列表*/,
+	menuTheme/*主题*/
+)
+var getExistTabIdx = function(tabname){
+	for(tab,form,idx in mainForm.mTabs.each() ){
+		if tab.text == tabname
+			return idx; 
+	}
+	return null; 
+}
+
+mainForm.listbox.getSelMenuInfo = function(selText){
+	selText := mainForm.listbox.selText
+	var navArr = string.split(selText,",");
+	return {
+		index:		tonumber(navArr[1]);
+		subindex:		tonumber(navArr[2]);
+		iconText:		string.unescape(navArr[3]);
+		ActiveIconText:	string.unescape(navArr[4]);
+		text:			navArr[5] ;
+	}; 
+}
+var rSelTab = null;
+mainForm.mTabPopMenu = win.ui.popmenu(mainForm); 
+mainForm.mTabPopMenu.add("重复打开此窗口",function(){
+	for (i=1; mainForm.listbox.count) {
+		var txt = table.pop(string.split(mainForm.listbox.items[i],","))
+		if txt == rSelTab.text {
+			var navItem = mainForm.listbox.getSelMenuInfo(mainForm.listbox.items[i]);
+			mainForm.listbox.addThisTab(navItem);
+			break;
+		}
+	}
+})
+mainForm.mTabPopMenu.add("关闭此窗口",λ() mainForm.mTabs.deleteByTab(rSelTab))
+mainForm.listbox.addThisTab = function(navItem){
+	win.setTimeout(function(){
+		navItem := mainForm.listbox.getSelMenuInfo();
+		mainForm.mTabs.selIndex = mainForm.mTabs.add(
+				{
+					text = navItem.text;
+					iconText = navItem.ActiveIconText;
+					hasCloseButton = true
+				}, loadfrmName[navItem.index][navItem.subindex]
+		);
+		mainForm.mTabs.selTab.onRightMouseUp = function(wParam,lParam){
+		    var x,y = win.getMessagePos();
+		    rSelTab = mainForm.mTabs.hitTest(x,y)
+			mainForm.mTabPopMenu.popup(x,y,true);
+		}
+	})
+}
+
+navlb.onClick = function(index,subindex,text){
+	if !subindex return ;
+	var checkIdx = getExistTabIdx(text);
+	if !checkIdx
+		mainForm.listbox.addThisTab();
+	else 
+		mainForm.mTabs.selIndex = checkIdx;
+}
+
 /*}}*/
 
 
-
-mainForm.button.oncommand = function(id,event){
-	seApp = solidedge.application();
-	if (seApp) owner.hide = true;
+/*折叠导航按钮{{*/
+var foldNave = function(){
+    if mainForm.foldchk.checked {
+    	mainForm.listbox.show(false);
+		mainForm.splitter.show(false);
+		mainForm.custom.left = 0;
+	} else {
+		mainForm.custom.left = mainForm.listbox.width + 3  ;
+		mainForm.splitter.width = 3;
+		mainForm.listbox.show(true);
+		mainForm.splitter.show(true);
+	}
 }
+mainForm.foldchk.oncommand = foldNave
+/*}}*/
+
+win.setTimeout(
+	function(){
+		mainForm.custom.loadForm(loadfrmName[4][1])
+	}
+)
 
 if !config.settings.startupMinimized or !config.settings.closeToTray
 		mainForm.show();
 if _STUDIO_INVOKED
-	mainForm.show(3/*_SW_MAXIMIZE*/);
+	mainForm.show();
 
+/*格式化BOM{{*/
+subscribe("dok", function(...){
+	import win;
+	win.delay(3*1000);
+	
+	var ftab = ...;
+	if !ftab return ; 
+	thread.invoke( 
+		function(ftab){
+			import domisoft;
+			import config;
+			import QHC;
+			var sht = domisoft.getRunningWorkSheet(ftab);
+			QHC.formatBOM(sht);
+			import fsys;
+			var destPath = io.joinpath(config.dbServer.path,"\xl_lib\");
+			if sht.ParentPath !== destPath
+				fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
+		}, ftab
+	)
+} )
+/*}}*/
 
+mainForm.closeAll.oncommand = mainForm.mTabs.clear;
+var tooltipCtrl = win.ui.tooltip( mainForm );
+mainForm.closeAll.tooltip = tooltipCtrl.addTool(mainForm.closeAll,"关闭所有窗口");
+mainForm.foldchk.tooltip = tooltipCtrl.addTool(mainForm.foldchk,"折叠左侧导航栏");
+
+mainForm.popmenu = win.ui.popmenu(mainForm); 
+mainForm.popmenu.add('在新窗口中打开', λ() mainForm.listbox.addThisTab());
+
+/*右键新建菜单{{*/
+mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
+	select( message ) { 
+		case 0x205/*_WM_RBUTTONUP*/{
+			var x,y = win.getMessagePos();  
+			var item = mainForm.listbox.hitTest(x,y,true); 
+			if( item ){
+				mainForm.listbox.selIndex = item;
+				mainForm.popmenu.popup(x,y,true)
+			}
+		}
+	}
+}
+/*}}*/
 
 win.loopMessage();
 return mainForm;

@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var chk_excel_BOM_REV_form = win.form(text="检查BOM更改单";right=759;bottom=400)
-chk_excel_BOM_REV_form.add(
+var winform = win.form(text="检查BOM更改单";right=759;bottom=400)
+winform.add(
 button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;default=1;dl=1;dt=1;tabstop=1;z=1};
 checkbox={cls="checkbox";text="自动修复部分简单错误";left=593;top=41;right=744;bottom=59;checked=1;color=16711680;dr=1;dt=1;tabstop=1;transparent=1;z=5};
 combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";tabstop=1;z=3};
@@ -19,7 +19,7 @@ import QHC;
 import domisoft;
 import inet.http;
 
-chk_excel_BOM_REV_form.bindConfig( config.checkGUI, {	//绑定控件值
+winform.bindConfig( config.checkGUI, {	//绑定控件值
     checkbox = "checked";
 } );
 
@@ -37,25 +37,25 @@ com.enumRunning(
 			var s = com.GetTypeInfo(object).GetDocumentation().name;
 			if s = "_Workbook"
 				if string.keywords('更改|BOM|变更').findOne(displayName)
-					chk_excel_BOM_REV_form.combobox2.add(displayName);
+					winform.combobox2.add(displayName);
 		}
 	}
 )
 
 
-if chk_excel_BOM_REV_form.combobox2.count {
+if winform.combobox2.count {
 	var findActiveWB
 	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(chk_excel_BOM_REV_form.combobox2.items, excel_0.ActiveWorkbook.Name)
-	chk_excel_BOM_REV_form.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
+		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
 var etab = {};
 var sht;
 var formRng;
-chk_excel_BOM_REV_form.button.oncommand = function(id,event){
-	if !#chk_excel_BOM_REV_form.combobox2.selText return ; 	
+winform.button.oncommand = function(id,event){
+	if !#winform.combobox2.selText return ; 	
 
-	sht = domisoft.getRunningWorkSheet(chk_excel_BOM_REV_form.combobox2.selText)
+	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText)
 	excel_2 = sht.Parent.Application;
 	var workbook_name = sht.Parent.Name;
 	var od_sht = sht.Parent.Sheets.Item("销售语句");
@@ -363,12 +363,12 @@ var top_rule_solver ={
 	
 	
 
-	var bar = chk_excel_BOM_REV_form.progress;
+	var bar = winform.progress;
 	bar.min = 0;
 	bar.max = etab_count;
 	getErr = {};
 	getErr.fields = {"行"; "相关物料号";"错误描述"; "自动纠正"}
-	var allowfix = chk_excel_BOM_REV_form.checkbox.checked;
+	var allowfix = winform.checkbox.checked;
 	for(i=1; etab_count){		
 		bar.pos = i;
 		for(j=1; #sapErr){
@@ -391,7 +391,7 @@ var top_rule_solver ={
 		})
 	}
 
-	if chk_excel_BOM_REV_form.checkbox.checked {
+	if winform.checkbox.checked {
 		//console.dump(etab)
 		var t = tarray.serialize(etab);
 		t = tarray.fillEmptyRow(t);	
@@ -404,39 +404,45 @@ var top_rule_solver ={
 **/
 	}
 		
-	chk_excel_BOM_REV_form.listview.setTable(getErr);
+	winform.listview.setTable(getErr);
 	
-	chk_excel_BOM_REV_form.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
-	chk_excel_BOM_REV_form.listview.setColumn({cx=120 ;fmt=0x2/*_LVCFMT_CENTER*/},2);
-    chk_excel_BOM_REV_form.listview.fillParent(3);
+	winform.listview.setColumn({cx=30 ;fmt=0x2/*_LVCFMT_CENTER*/},1);
+	winform.listview.setColumn({cx=120 ;fmt=0x2/*_LVCFMT_CENTER*/},2);
+    winform.listview.fillParent(3);
+    
+
+   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+    sht = null;
+    excel_2 = null;
+    excel_0 = null;
 	
-}
-chk_excel_BOM_REV_form.onDestroy = function(){
-	try{
-   		if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
-   		if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
-	}
 }
 
 /*点击定位{{*/
-chk_excel_BOM_REV_form.listview.onSelChanged = function(selected,item,subItem,nmListView){
+winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	if !selected return ; 
 	if !item return ;
 	var row = owner.getItemText(item,1);
-	if row
-		excel_2.ActiveWindow.ScrollRow = row;
+	if !row return ; 
+	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText);
+	if !sht return ; 
+	excel_2 = sht.Parent.Application;
+	excel_2.ActiveWindow.ScrollRow = row;
+	sht = null;
+	excel_2 = null;
 }
 /*}}*/
 
 /*右键菜单{{*/
-chk_excel_BOM_REV_form.listview.onnotify = function(id,code,ptr){
+winform.listview.onnotify = function(id,code,ptr){
 	select(code) {
     	case 0xFFFFFFFB/*_NM_RCLICK*/ {
     		var selectedRow = owner.getSelection();
     		if !selectedRow return ; 
 			var x,y = win.getMessagePos();
 		
-			var menu = win.ui.popmenu(chk_excel_BOM_REV_form);			
+			var menu = win.ui.popmenu(winform);			
 			menu.add("隐藏可忽略项", function(){
 				var t = table.filter(getErr,
 					function(v,index){
@@ -444,19 +450,19 @@ chk_excel_BOM_REV_form.listview.onnotify = function(id,code,ptr){
 					}
 				);
 				t.fields = getErr.fields;
-				chk_excel_BOM_REV_form.listview.setTable(t);
+				winform.listview.setTable(t);
 			});
-			menu.add("显示可忽略项", λ() chk_excel_BOM_REV_form.listview.setTable(getErr));
+			menu.add("显示可忽略项", λ() winform.listview.setTable(getErr));
 			menu.popup(x,y,true);
     	}
     }
 }
 /*}}*/
 /* CTRLC复制模块 */
-chk_excel_BOM_REV_form.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 
 
-chk_excel_BOM_REV_form.show();
+winform.show();
 
 win.loopMessage();
-return chk_excel_BOM_REV_form;
+return winform;

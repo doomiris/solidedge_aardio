@@ -1,25 +1,22 @@
 import win.ui;
 /*DSG{{*/
-var dft_list_form = win.form(text="DFT_LIST";right=663;bottom=471)
-dft_list_form.add(
+var winform = win.form(text="DFT_LIST";right=663;bottom=471)
+winform.add(
 listview={cls="listview";left=0;top=0;right=664;bottom=472;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
 progress={cls="progress";left=0;top=0;right=664;bottom=30;aw=1;dl=1;dr=1;dt=1;max=100;min=0;z=2}
 )
 /*}}*/
 
 import win.ui.grid;
-dft_list_form.grid = win.ui.grid(dft_list_form.listview);//创建数据视图
-
-var getDftList = function(dft_list_form){
+winform.grid = win.ui.grid(winform.listview);//创建数据视图
+winform.seDfts = null;
+var getDftList = function(wform){
 	import solidedge.application;
 	import solidedge.DraftDocument;
 	import domisoft;
-//	import win.ui;
-/*
-import console
-console.open();
 
-*/
+	wform.seDfts = null;
+	
 	seApp = solidedge.application();
 	if !seApp return ; 
 	var seDocuments = seApp.Documents;
@@ -30,13 +27,13 @@ console.open();
     		table.push(seDfts, seDocuments.item(i));
     		table.push(seDfts.seIndex, i);
     	}
-    dft_list_form.publish("dft_loaded", seDfts); //把dfts推送给上一层
+    wform.seDfts = seDfts; //把dfts推送给上一层
 	vtab = table.create(,{fields = {"物料","版本","型号","名称","属性"}})
-	dft_list_form.progress.min = 0;
-	dft_list_form.progress.max = #seDfts ;
-	dft_list_form.progress.hide = 0;
+	wform.progress.min = 0;
+	wform.progress.max = #seDfts ;
+	wform.progress.hide = 0;
 	for(i=1; #seDfts){
-		dft_list_form.progress.pos = i;
+		wform.progress.pos = i;
 		var seDft = solidedge.DraftDocument(seDfts[i]);
 		var t={};
 		var tb = seDft.getTitleBlock(seDft.getFirstSheet());
@@ -67,42 +64,42 @@ console.open();
 		//t.index = seDftIndex[i];
 		table.push(vtab, t)
 	}
-	dft_list_form.progress.hide = 1;
+	wform.progress.hide = 1;
 
-	dft_list_form.grid.setTable(vtab);
-	dft_list_form.listview.checkbox = true;
-	dft_list_form.listview.setChecked(0);
+	wform.grid.setTable(vtab);
+	wform.listview.checkbox = true;
+	wform.listview.setChecked(0);
 
-	dft_list_form.listview.setColumn({cx=120	;fmt=0x2/*_LVCFMT_CENTER*/},	1)
-	dft_list_form.listview.setColumn({cx=55	;fmt=0x2/*_LVCFMT_CENTER*/},	2)
-	dft_list_form.listview.setColumn({cx=120	;fmt=0x0/*_LVCFMT_LEFT*/},		3)
-	dft_list_form.listview.setColumn({cx=150	;fmt=0x0/*_LVCFMT_LEFT*/},		4)
-	dft_list_form.listview.setColumn({cx=50	;fmt=0x2/*_LVCFMT_CENTER*/},	5)
+	wform.listview.setColumn({cx=120	;fmt=0x2/*_LVCFMT_CENTER*/},	1)
+	wform.listview.setColumn({cx=55	;fmt=0x2/*_LVCFMT_CENTER*/},	2)
+	wform.listview.setColumn({cx=120	;fmt=0x0/*_LVCFMT_LEFT*/},		3)
+	wform.listview.setColumn({cx=150	;fmt=0x0/*_LVCFMT_LEFT*/},		4)
+	wform.listview.setColumn({cx=50	;fmt=0x2/*_LVCFMT_CENTER*/},	5)
 }
-dft_list_form.show();
+winform.show();
 
-thread.invoke(getDftList, dft_list_form);
+thread.invoke(getDftList, winform);
 
-subscribe("refresh_dft_list",function(...){
-    dft_list_form.grid.clear();
-	thread.invoke(getDftList, dft_list_form);
-} )
+winform.refresh_dft_list = function(){
+    winform.grid.clear();
+	thread.invoke(getDftList, winform);
+}
 import domisoft;
-dft_list_form.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 
-dft_list_form.listview.onnotify = function(id,code,ptr){
+winform.listview.onnotify = function(id,code,ptr){
     select(code) {
     	case 0xFFFFFFFB/*_NM_RCLICK*/  {
 			var x,y = win.getMessagePos();
-			var menu = win.ui.popmenu(dft_list_form);			
-			menu.add("全部", λ() dft_list_form.listview.setChecked(0));
-			menu.add("取消全选", λ() dft_list_form.listview.setChecked(0,false));
+			var menu = win.ui.popmenu(winform);			
+			menu.add("全部", λ() winform.listview.setChecked(0));
+			menu.add("取消全选", λ() winform.listview.setChecked(0,false));
 			menu.add("反向选择", function(){
-				if dft_list_form.listview.count {
+				if winform.listview.count {
 					var t = {};
-					for (i=1; dft_list_form.listview.count)
-						if !table.find(dft_list_form.listview.checked, i) table.push(t, i)
-					dft_list_form.listview.checked = t;
+					for (i=1; winform.listview.count)
+						if !table.find(winform.listview.checked, i) table.push(t, i)
+					winform.listview.checked = t;
 				}
 			})
 			
@@ -112,4 +109,4 @@ dft_list_form.listview.onnotify = function(id,code,ptr){
 }
 
 win.loopMessage();
-return dft_list_form;
+return winform;

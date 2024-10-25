@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.507" ProductVersion="1.5.0.507" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
-	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
-	<file name="main2" path="main2.aardio"/>
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.516" ProductVersion="1.5.0.516" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio">
+		<file name="menulist.aardio" path="menulist.aardio" comment="menulist.aardio"/>
+	</file>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
 			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\admin_only\add_QHC_Drawing_Release_List.aardio" comment="forms\admin_only\add_QHC_Drawing_Release_List.aardio"/>
@@ -20,7 +21,6 @@
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
-			<file name="assist_专用号申请表.aardio" path="forms\Excel\assist_专用号申请表.aardio" comment="forms\Excel\assist_专用号申请表.aardio"/>
 			<file name="BOM-CALC.aardio" path="forms\Excel\BOM-CALC.aardio" comment="forms\Excel\BOM-CALC.aardio"/>
 			<file name="check_BOM更改单_GUI.aardio" path="forms\Excel\check_BOM更改单_GUI.aardio" comment="forms\Excel\check_BOM更改单_GUI.aardio"/>
 			<file name="check_专用号申请表_GUI.aardio" path="forms\Excel\check_专用号申请表_GUI.aardio" comment="forms\Excel\check_专用号申请表_GUI.aardio"/>
@@ -30,12 +30,12 @@
 			<file name="fillin_item_master.aardio" path="forms\Excel\fillin_item_master.aardio" comment="forms\Excel\fillin_item_master.aardio"/>
 			<file name="update_SAP_ITEM.aardio" path="forms\Excel\update_SAP_ITEM.aardio" comment="forms\Excel\update_SAP_ITEM.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
+			<file name="assist_专用号申请表_GUI.aardio" path="forms\Excel\assist_专用号申请表_GUI.aardio" comment="forms\Excel\assist_专用号申请表_GUI.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
 			<file name="check_QHC_Release.aardio" path="forms\main\check_QHC_Release.aardio" comment="forms\main\check_QHC_Release.aardio"/>
 			<file name="drawing_search.aardio" path="forms\main\drawing_search.aardio" comment="forms\main\drawing_search.aardio"/>
-			<file name="excel_browser.aardio" path="forms\main\excel_browser.aardio" comment="forms\main\excel_browser.aardio"/>
 			<file name="frmclipboard.aardio" path="forms\main\frmclipboard.aardio" comment="forms\main\frmclipboard.aardio"/>
 			<file name="frmPage1.aardio" path="forms\main\frmPage1.aardio" comment="forms\main\frmPage1.aardio"/>
 			<file name="frmPage2.aardio" path="forms\main\frmPage2.aardio" comment="forms\main\frmPage2.aardio"/>
@@ -46,10 +46,8 @@
 			<file name="QTIP.aardio" path="forms\main\QTIP.aardio" comment="forms\main\QTIP.aardio"/>
 			<file name="qtip_filter.aardio" path="forms\main\qtip_filter.aardio" comment="forms\main\qtip_filter.aardio"/>
 			<file name="qtip_list.aardio" path="forms\main\qtip_list.aardio" comment="forms\main\qtip_list.aardio"/>
-			<file name="sap_browser.aardio" path="forms\main\sap_browser.aardio" comment="forms\main\sap_browser.aardio"/>
 			<file name="sap_search.aardio" path="forms\main\sap_search.aardio" comment="forms\main\sap_search.aardio"/>
 			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
-			<file name="SE_browser.aardio" path="forms\main\SE_browser.aardio" comment="forms\main\SE_browser.aardio"/>
 			<file name="物料名称生成.aardio" path="forms\main\物料名称生成.aardio" comment="forms\main\物料名称生成.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">

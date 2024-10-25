@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var print_winform = win.form(text="Printing Center";right=759;bottom=599;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-print_winform.add(
+var winform = win.form(text="Printing Center";right=759;bottom=599;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+winform.add(
 AllowSentToPdfLib={cls="checkbox";text="PDF自动保存到:";left=169;top=85;right=279;bottom=101;bgcolor=16777215;checked=1;dl=1;dt=1;hide=1;z=10};
 button={cls="button";text='    \uF0F6  Print Active';left=496;top=40;right=611;bottom=85;align="left";clipch=1;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');hide=1;tabstop=1;z=12};
 button2={cls="button";text='    \uF233  Print All';left=624;top=96;right=739;bottom=141;align="left";dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');tabstop=1;z=3};
@@ -30,15 +30,15 @@ import console
 console.open();
 */
 
-print_winform.bindConfig( config.printingCenter, {	//绑定控件值
+winform.bindConfig( config.printingCenter, {	//绑定控件值
     radiobutton = "checked";
     listbox = "selected";
     checkbox = "checked"
 } );
 
 
-print_winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.setbm.workingDir);
-print_winform.pdfLibPath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.__pdfLib);
+winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.setbm.workingDir);
+winform.pdfLibPath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.__pdfLib);
 
 import solidedge.application;
 import solidedge.DraftDocument;
@@ -47,9 +47,6 @@ import solidedge.DraftDocument;
 /*initDeclare{{*/
 var seApp, seDFT, seSht, tbs;
 var seDfts;
-subscribe("dft_loaded", function(...){
-	seDfts = ...;
-})
 var initDeclare = function(){
 	seApp = solidedge.application();
 	if (! seApp) return false; 
@@ -82,25 +79,26 @@ var startPrintAllLV = function(vtab){
 	if !seApp return ; 
 	seApp.DisplayAlerts = 0;
 	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+	seDfts = tbs[1].seDfts;
 	for x,j in tbs[1].listview.checked {
         	var	seDFT = solidedge.DraftDocument(seApp.Documents.item(seDfts.seIndex[j]));  //线程传出来的seDfts会丢失item内容
 			seDFT.Activate(); //如果不Activate,只会重复保存当前文件
-			//TODO: domisoft.getSelectedText(print_winform.listbox)
-			for y,k in print_winform.listbox.selected{
-				print_winform.progress.pos += 1 ;
+			//TODO: domisoft.getSelectedText(winform.listbox)
+			for y,k in winform.listbox.selected{
+				winform.progress.pos += 1 ;
 /*
 				var tip = "TBM正在打印";
 				tip = tip ++ vtab[j].物料;
-				tip = tip ++ print_winform.listbox.getItemText(k);
+				tip = tip ++ winform.listbox.getItemText(k);
 				tip = tip ++ "...";	
 */			
 				//tray.pop(tip, x ++ "/" ++ #tbs[1].listview.checked);
 				if !vtab[j] continue;
-				var fname = seDFT.getNameByExt(print_winform.listbox.getItemText(k), vtab[j], config.setbm.workingDir);
+				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k), vtab[j], config.setbm.workingDir);
 				var succ = seDFT.saveToExt(fname);
 				
 				if !mainForm or !mainForm.taskbar continue;
-				mainForm.taskbar.SetProgressValue(mainForm.hwnd, print_winform.progress.pos, print_winform.progress.max)	//win taskbar
+				mainForm.taskbar.SetProgressValue(mainForm.hwnd, winform.progress.pos, winform.progress.max)	//win taskbar
 			}
 	}
 	seApp.DisplayAlerts = 1;
@@ -112,83 +110,77 @@ var startPrintAllLV = function(vtab){
 
 //打印当前DFT
 /**
-print_winform.button.oncommand = function(id,event){
+winform.button.oncommand = function(id,event){
     if !seApp return ; 
     if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return ; 
 	var vtab = getListViewTable(tbs[1].listview);
 	for(i=1; #vtab)
 		if (string.upper(seApp.ActiveDocument.Name) !== string.upper(vtab[i].物料 ++ ".dft")) vtab[i] = null;
-	print_winform.progress.min = 0;
-	print_winform.progress.max = #print_winform.listbox.selected;
-	print_winform.progress.pos = 1;	
+	winform.progress.min = 0;
+	winform.progress.max = #winform.listbox.selected;
+	winform.progress.pos = 1;	
 	startPrintAllLV(vtab);
 }
 **/
 //打印所有DFT
-print_winform.button2.oncommand = function(id,event){
+winform.button2.oncommand = function(id,event){
     if !seApp return ; 
 	var vtab = getListViewTable(tbs[1].listview);
-	print_winform.progress.min = 0;
-	print_winform.progress.max = #tbs[1].listview.checked * #print_winform.listbox.selected;
-	print_winform.progress.pos = 1;
+	winform.progress.min = 0;
+	winform.progress.max = #tbs[1].listview.checked * #winform.listbox.selected;
+	winform.progress.pos = 1;
 	startPrintAllLV(vtab);
 }
 
-print_winform.outpath.onHyperlinkClick = function(nmSysLink,url,id){
+winform.outpath.onHyperlinkClick = function(nmSysLink,url,id){
 	process.explore(url);
 }
-print_winform.pdfLibPath.onHyperlinkClick = function(nmSysLink,url,id){
+winform.pdfLibPath.onHyperlinkClick = function(nmSysLink,url,id){
 	process.explore(url);
 }
-print_winform.button4.oncommand = function(id,event){
-	var path = fsys.dlg.dir(,print_winform,"指定TBM工作目录"); //反应慢?
+winform.button4.oncommand = function(id,event){
+	var path = fsys.dlg.dir(,winform,"指定TBM工作目录"); //反应慢?
 	if !path return ; 
 	config.setbm.workingDir = path;
 	config.setbm.save();
-	print_winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL",path);
+	winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL",path);
 }
-print_winform.button3.oncommand = function(id,event){
-    print_winform.progress.pos = 0;
-	tbs[1].publish("refresh_dft_list");
+winform.button3.oncommand = function(id,event){
+    winform.progress.pos = 0;
+	tbs[1].refresh_dft_list();
 }
 /*}}*/
 
-print_winform.show();
+winform.show();
 
 tbs = {
-	[1] = print_winform.tab.loadForm("\forms\printcenter\dft-list.aardio" );
-	[2] = print_winform.tab.loadForm("\forms\printcenter\psm2dxf.aardio" );
-	[3] = print_winform.tab.loadForm("\forms\printcenter\printpaper.aardio" );
-	[4] = print_winform.tab.loadForm("\forms\printcenter\bmp2png.aardio" );
+	[1] = winform.tab.loadForm("\forms\printcenter\dft-list.aardio" );
+	[2] = winform.tab.loadForm("\forms\printcenter\psm2dxf.aardio" );
+	[3] = winform.tab.loadForm("\forms\printcenter\printpaper.aardio" );
+	[4] = winform.tab.loadForm("\forms\printcenter\bmp2png.aardio" );
 }
 
 initDeclare();
 
-subscribe("refresh",function(){
-		//print_winform.redraw();
-		tbs[1].publish("refresh_dft_list");
-	}
-);
-
-print_winform.radNameRule0.oncommand = function(id,event){
+winform.radNameRule0.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ; 
-	print_winform.AllowSentToPdfLib.hide = owner.checked;
-	print_winform.pdfLibPath.hide = owner.checked;
+	winform.AllowSentToPdfLib.hide = owner.checked;
+	winform.pdfLibPath.hide = owner.checked;
 	config.printingCenter.save();
 	//console.log(seApp.useQhcNameRule)
 }
 
-print_winform.radNameRule2.oncommand = function(id,event){
+winform.radNameRule2.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ; 
-	print_winform.AllowSentToPdfLib.hide = !owner.checked;
-	print_winform.pdfLibPath.hide = !owner.checked;
+	winform.AllowSentToPdfLib.hide = !owner.checked;
+	winform.pdfLibPath.hide = !owner.checked;
 	config.printingCenter.save();
 	//console.log(seApp.useQhcNameRule);
 }
 
 
 
-print_winform.AllowSentToPdfLib.hide = !print_winform.radNameRule2.checked;
-print_winform.pdfLibPath.hide = !print_winform.radNameRule2.checked;
+winform.AllowSentToPdfLib.hide = !winform.radNameRule2.checked;
+winform.pdfLibPath.hide = !winform.radNameRule2.checked;
 win.loopMessage();
-return print_winform;
+return winform;

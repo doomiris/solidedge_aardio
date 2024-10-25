@@ -1,7 +1,7 @@
 import win.ui;
 /*DSG{{*/
-var winform_search = win.form(text="详细信息";right=470;bottom=400)
-winform_search.add(
+var winform = win.form(text="详细信息";right=470;bottom=400)
+winform.add(
 listview={cls="listview";left=0;top=0;right=472;bottom=400;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
@@ -14,8 +14,8 @@ import console
 console.open()
 */
 import win.ui.grid;
-var grid = win.ui.grid(winform_search.listview);
-winform_search.show();
+var grid = win.ui.grid(winform.listview);
+winform.show();
 var showDetail = function(pnumber){
 	if !pnumber return ; 
 	var t = QHC.getSapItem(pnumber);
@@ -40,7 +40,7 @@ var showDetail = function(pnumber){
 	
 	grid.setTable(tab);
 	
-	winform_search.listview.setColumn({cx=100 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
+	winform.listview.setColumn({cx=100 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
 }
 var showProductDetail = function(pnumber){
 	if !pnumber return ; 
@@ -68,20 +68,19 @@ var showProductDetail = function(pnumber){
 	
 	grid.setTable(tab);
 	
-	winform_search.listview.setColumn({cx=150 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
-	winform_search.listview.fillParent(2);
+	winform.listview.setColumn({cx=150 ;fmt=0x1/*_LVCFMT_RIGHT*/},1);
+	winform.listview.fillParent(2);
 }
 
-subscribe("qtip_search_3",function(...){
-	var pcode = ...;
+winform.qtip_search = function(pcode){
 	if !pcode return ; 
 	if string.startWith(pcode, "H", true)
 		showDetail(pcode);
 	if string.startWith(pcode, "BG", true)
 		showProductDetail(pcode);
-} )
+}
 
-winform_search.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 
 win.loopMessage();
-return winform_search;
+return winform;

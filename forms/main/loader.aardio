@@ -51,9 +51,21 @@ grid.ColumnWidth := domisoft.setColumnWidth(grid, {15,50,200,300})
 grid.onDoubleClick = function(item,subItem,nmListView){
 	if !winform.combobox.selIndex return ; 
 	var file = inet.url.append(site[winform.combobox.selIndex].url, list[item].filename);
-	loadcodex(inet.http().get(file));
-}
+	win.setTimeout(function(){
+		var mTabs = mainForm.mTabs;
+		var idx = mTabs.add(
+				{
+					text = list[item].name;
+					iconText = '\uF094';
+					hasCloseButton = true
+				}
+		);
+		mTabs.loadForm(idx, inet.http().get(file));
+		mTabs.selIndex = idx
+	})
 
+
+}
 
 
 winform.show();
