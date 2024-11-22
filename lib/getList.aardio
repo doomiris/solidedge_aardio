@@ -25,9 +25,9 @@ namespace getList{
 		console.open()
 */
 		_searchLoc := {
-			{"\\ccnsia1a\separts\Cabinet\PDF图纸库",	"*.*"};
-			{"\\ccnsia1a\separts\Cabinet\QHC图纸库",	"*.*"};
-			{"\\ccnsia1a\separts\Cabinet",	"H*.dft"};
+			{"\\CCNSIA1A\SEParts\Cabinet\PDF图纸库",	"*.*"};
+			{"\\CCNSIA1A\SEParts\Cabinet\QHC图纸库",	"*.*"};
+			{"\\CCNSIA1A\SEParts\Cabinet",	"H*.dft"};
 		};
 		import config;
 		import sqlite;

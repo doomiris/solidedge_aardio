@@ -2,6 +2,7 @@
 var table = ..table;
 var string = ..string;
 var math = ..math;
+var io = ..io;
 
 var replace = string.replace;
 var trim = string.trim;
@@ -54,10 +55,12 @@ getComAppPath = function(keyword){
 getRunningWorkSheet = function(workbookName,worksheetName){
 	import com;
 	var sht;
-	com.enumRunning( 
-		function(displayName,object){
-				if com.GetTypeInfo(object) {
-					if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+	for (i=1;5){
+		com.enumRunning( 
+			function(displayName,object){
+					if com.GetTypeInfo(object) {
+						if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
+							if !workbookName return object;							
 							if string.endWith(displayName, workbookName, true) {		
 								if worksheetName
 									sht = object.Sheets(worksheetName) : null; 
@@ -65,11 +68,24 @@ getRunningWorkSheet = function(workbookName,worksheetName){
 									sht = object.Sheets(1); 
 								return true; 
 							}
+						}
 					}
-				}
+			}
+		)
+		if !sht			sleep(500)
+		else break;
+	}
+	return sht; 
+}
+stopExcelCutCopyMode = function(){
+	import com;
+	com.enumRunning( 
+		function(displayName,object){
+				if com.GetTypeInfo(object) 
+					if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook")
+						object.Application.CutCopyMode = false;
 		}
 	)
-	return sht; 
 }
 taobaoURLsimple = function(url){
 	import inet.url;
@@ -102,7 +118,9 @@ copySelectedItem = function(ctrl){
 
         import win.clip;
         import win.clip.html;
-
+        
+		stopExcelCutCopyMode();
+		
 		var items = ctrl.items;
 		var selected = ctrl.selected; 
 		
@@ -253,17 +271,25 @@ setColumnWidth = function(lv, widthTab){
 	return true; 
 }
 getFileDate = function(filename, formatString = "%Y/%m/%d %H:%M:%S"){
+	if !io.exist(filename) return null; 
 	import fsys.file;
 	var file = fsys.file(filename);
+	if !file return null; 
 	var d = file.getTime().write.local();
-	file.close()
+	file.close();
+	file = null
 	if formatString d = ..time(d, formatString);
 	return d; 
 }
 sendFileTo = function(fullname, dest){
 	
 }
-
+listColSort = function(column, desc){
+	var name = owner.source.fields[column];
+	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
+	owner.setTable( owner.source );
+	return true; //返回 true 允许当前列排序	
+};
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框

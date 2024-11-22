@@ -132,7 +132,6 @@ mainForm.popmenu2.add('&Open TBM', function(){
 	
 });
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
 mainForm.popmenu2.add();//分隔线
@@ -172,7 +171,7 @@ mainForm.mTabs.skin({
     background={
         active=0xFFFFFFFF;
         default=0x00FFFFFF;
-        hover=0x38FFFFFF
+        hover=0xFF98FB98;
     };
     color={
         default=0xFF0F0000; 

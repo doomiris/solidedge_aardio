@@ -57,7 +57,7 @@ var getTabValArr = function(tab){
 }
 
 
-console.log("开始导入数据库")
+console.log("开始导入数据库...")
 
 import console.progress;
 var bar = console.progress()

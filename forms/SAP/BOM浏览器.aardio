@@ -27,8 +27,8 @@ import godking.tableToDB;
 //import tarray;
 
 import win.ui.menu;
-
-
+winform.listview.enableDoubleBuffering();
+winform.listview2.enableDoubleBuffering();
 var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
 var acc, err = access(path);
 
@@ -108,7 +108,9 @@ grid2.onClick = function(item,subItem,nmListView){
 	}
 	grid.source = t;
 	winform.edit.text = "";
-	grid.setTable(grid.source);
+
+	grid.setTable(grid.source)
+	
 	grid2.ColumnWidth := domisoft.setColumnWidth(grid, {50,50,50,120,250,50,50,50,50})
 	getTags(grid.source,{"中类","小类","属性","可选项分类","喷粉分类","温度等级"})
 }
@@ -130,6 +132,24 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 	}
 
 }
+grid.copyfiles = function(tab){
+	import win.clip.file;
+	win.clip.file.write(tab,"copy");
+}
+grid.getCopyFilesList = function(){
+	var tab = table.array();
+	var data = owner.getTable(owner.source.fields);
+	var selIndx = owner.selected;
+	for (i=1; #selIndx ){
+		var n = string.join({data[selIndx[i]]["物料"], data[selIndx[i]]["物料描述"]},"_") ++ ".xlsx";
+		n = string.replace(n," ","_");
+		var f = io.joinpath(config.__sapDownload, n);	
+		if io.exist(f)
+			table.push(tab, f);
+	}
+	return tab;   
+}
+
 
 var downloadbom = function(){
 	ctrl := grid;
@@ -163,6 +183,7 @@ var menu = win.ui.popmenu(winform);
 menu.add("复制[物料]", λ() grid.copyPartNo({"物料"}));
 menu.add("复制[物料][物料描述]", λ() grid.copyPartNo({"物料","物料描述"}));
 menu.add("下载...", downloadbom);
+menu.add("复制所选BOM文件...", λ() grid.copyfiles(grid.getCopyFilesList()));
 
 
 grid.onRightClick = function(item,subItem,nmListView){

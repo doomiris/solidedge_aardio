@@ -1,0 +1,30 @@
+import console; 
+import fsys;
+//import fsys.remove;
+var path = fsys.getTempDir();
+
+var folderlist = {0,0};
+var filelist =  {0,0};
+
+console.showLoading("查找并删除...")
+var list = fsys.enum( path, {"TCD*.tmp","{????????-????-????-????-????????????}","~df*.TMP","*- OProcSessId.dat","????????-????-????-????-*.tmp","mat-debug-*.log","tc_*.xlsm","wct????.tmp","accc*"},
+	function(dir,filename,fullpath,findData){ 
+		if(filename){ 
+			if io.remove(io.joinpath(path,filename))
+				filelist[1] +=1;
+					else
+						filelist[2] +=1;
+		}
+		else{
+			if fsys.delete(io.joinpath(path,dir))
+				folderlist[1] +=1;
+					else
+						folderlist[2] +=1;
+		}
+	} 
+	,false /*如果此参数为false则忽略子目录*/
+);
+
+console.log("共删除文件夹",folderlist[1],"失败:",folderlist[2]);
+console.log("共删除文件",filelist[1],"失败:",filelist[2]);
+console.pause();

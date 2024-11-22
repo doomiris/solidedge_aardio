@@ -1,15 +1,14 @@
 import console; 
 
-_tname = "qhc_dw_rel_list";
 import config;
 import sqlite;
-var db = sqlite(config.dbServer.path + "qhc_dw_rel_list.db");
+var db = sqlite(io.joinpath(config.dbServer.path, "qhc_dw_rel_list.db"));
 var sql = `
-delete   from qhc_dw_rel_list
-where    rowid not in
+DELETE   FROM [qhc_dw_rel_list]
+WHERE    rowid not in
          (
          select  min(rowid)
-         from    qhc_dw_rel_list
+         from    [qhc_dw_rel_list]
          group by
                 图纸下发时间
          ,      图纸号
@@ -22,4 +21,20 @@ db.exec(sql);
 console.log("更新完成");
 db.close();
 
+var db = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));
+var sql = `
+DELETE   FROM [Lib]
+WHERE    rowid not in
+         (
+         select  min(rowid)
+         from    [Lib]
+         group by
+                文件名
+         ,      路径
+         )
+`
+db.exec(sql);
+
+console.log("更新完成");
+db.close();
 console.pause(true);

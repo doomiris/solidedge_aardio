@@ -1,0 +1,110 @@
+import console; 
+import fsys;
+import config;
+import access.oleDb;
+import domisoft;
+import sqlite;
+/*
+var getOrderListTab = function(){
+	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
+	var tab = { fields = {[1]="订单号";[2]="凭证日期";[3] = "售达方";[4]="缓存日期"}};
+	for (i=1; #list){
+		var db = access(list[list[i]]);
+		var t = db.stepQuery("select * from [sheet1$]", {"项目(SD)":"10"});
+		table.push(tab, {
+			"订单号" = t["SD 凭证"];
+			"凭证日期" = tostring(t["凭证日期"],"yyyy/MM/dd" );
+			"售达方" = t["名称 1"];
+			"缓存日期" = domisoft.getFileDate(list[list[i]]);
+		});
+		db.close();
+	}
+	return tab; 
+}
+*/
+var updateOrderList = function(){
+	var sdb = sqlite(io.joinpath(config.__sapDownload,"ORDER_LIST.db"));
+	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
+	for (i=1; #list){
+		var adb = access(list[list[i]]);
+		var t = adb.stepQuery("select * from [sheet1$]", {"项目(SD)":"10"});
+		adb.close();
+		sdb.exec("UPDATE `list` SET ? WHERE ??",{{
+			//"订单号" = t["SD 凭证"];
+			//"凭证日期" = tostring(t["凭证日期"],"yyyy/MM/dd" );
+			"售达方" = t["售达方"];
+			//"名称 1" = t["名称 1"];
+			//"备注" = "";
+			"缓存文件" = list[i];
+			"缓存日期" = domisoft.getFileDate(list[list[i]]);
+		},{"SD 凭证" = t["SD 凭证"]}});
+		
+	}
+	sdb.close();
+}
+var testFile = function(filename){
+	if !io.exist(filename) return null;
+	else return domisoft.getFileDate(filename);  
+}
+
+var getOrderList = function(){
+	var sdb = sqlite(io.joinpath(config.__sapDownload,"ORDER_LIST.db"));
+	var list = sdb.getTable("SELECT * FROM [list]")
+	for (i=1; #list){
+		var adb = access(io.joinpath(config.__sapDownload, list[i]["缓存文件"]));
+		var t = adb.getTable(`
+			SELECT DISTINCT
+				[SD 凭证],
+				[项目(SD)],
+				[物料],
+				[描述],
+				[订单数量]
+			FROM
+				[Sheet1$]
+			WHERE
+				[拒绝原因] = "" OR [拒绝原因] IS NULL
+		`);
+		console.dump(list[i]);
+		adb.close();
+		var cmd = sdb.prepare("REPLACE INTO `content` VALUES (?,?,?,?,?,?,?,?)" );
+		for (j=1; #t){			
+			cmd.step({
+					t[j]['SD 凭证'],
+					t[j]['项目(SD)'],
+					t[j]['物料'],
+					t[j]['描述'],
+					(tonumber(t[j]['订单数量'])),
+					null,
+					null,
+					null
+			});
+			
+		}
+		cmd.finalize();
+	}
+	sdb.close();
+}
+var updateOrderListDate = function(){
+	var sdb = sqlite(io.joinpath(config.__sapDownload,"ORDER_LIST.db"));
+	var list = sdb.getTable("SELECT [SD 凭证],[项目(SD)],[物料] FROM `content`");
+	console.showLoading("wait...");
+	for (i=1; #list){
+		var b2c = io.joinpath(config.__sapDownload, string.join({"B2C", list[i]['SD 凭证'], list[i]['项目(SD)'], list[i]['物料']},"_") ++ ".xlsx");
+		var coois = io.joinpath(config.__sapDownload, string.join({"COOIS", list[i]['SD 凭证'], list[i]['项目(SD)']}, "_") ++ ".xlsx");
+
+		if !io.exist(b2c) and !io.exist(coois) continue;
+		sdb.exec("UPDATE `content` SET ? WHERE ??", {{
+			"B2C" = domisoft.getFileDate(b2c);
+			"COOIS" = domisoft.getFileDate(coois);
+			},{
+			"SD 凭证" = list[i]['SD 凭证'];
+			"项目(SD)" = list[i]['项目(SD)'];
+		}});
+		
+
+	}
+
+	sdb.close();
+}
+updateOrderListDate()
+console.pause();

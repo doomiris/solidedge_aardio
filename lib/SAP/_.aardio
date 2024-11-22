@@ -3,6 +3,8 @@ import web.script;
 
 var table = ..table;
 var string = ..string;
+var time = ..time;
+var io = ..io;
 
 namespace SAP;
 sapQuickOpen = function(index=1){
@@ -313,19 +315,20 @@ downloadB2CBOM = function(winform, orderId, itemList){
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press	
 	 	*/ 
-	 winform.publish("done_job");	
+	 winform.publish("done_job_b2c",orderId, itemList);	
 }
 downloadOrderList = function(winform, orderId){
 	import config;
-	import io;
 	import win;
 	import web.script;
 	var vm = web.script("VBScript") ;
 	
-	/*
+
+/*
 	import console; 
 	console.open();
-	*/
+
+*/
 	
 	vm.script = /*
 			If Not IsObject(application) Then
@@ -376,7 +379,7 @@ downloadOrderList = function(winform, orderId){
 		'获取订单日期
 		startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
 	*/
-	vm.script.startdate = tostring(time(vm.script.startdate,"%Y.%m.%d").addday(-90))
+	vm.script.startdate = tostring(..time(vm.script.startdate,"%Y.%m.%d").addday(-90))
 	vm.script = /*
 		session.findById("wnd[0]/mbar/menu[4]/menu[1]/menu[0]").select
 		session.findById("wnd[0]/usr/ctxtVBCOM-AUDAT").text = startdate
@@ -398,10 +401,10 @@ downloadOrderList = function(winform, orderId){
 		filename = "ORDER_LIST_" & order & ".xlsx"
 		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename
 	*/ 
-	var fullname = io.joinpath(vm.script.lib_path, vm.script.filename);
+	var fullname = ..io.joinpath(vm.script.lib_path, vm.script.filename);
 	var succ = true;
-	if io.exist(fullname)
-	 		succ = io.remove(fullname);
+	if ..io.exist(fullname)
+	 		succ = ..io.remove(fullname);
 	if succ {
 		vm.script = /*
 			session.findById("wnd[1]/tbar[0]/btn[11]").press
@@ -415,11 +418,10 @@ downloadOrderList = function(winform, orderId){
 	 	}
 	 	if wb {			
 	 		wb.Close(false);
-	 		if io.remove(fullname){
+	 		if ..io.remove(fullname){
 				vm.script = /*
 					session.findById("wnd[1]/tbar[0]/btn[11]").press
-		 		*/
-	 			winform.publish("down_order_list", vm.script.filename);
+		 		*/	 			
 	 		}
 	 	}else{
 	 		vm.script = /*
@@ -428,7 +430,7 @@ downloadOrderList = function(winform, orderId){
 	 		win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
 	 	}
 	}
-	winform.publish("order_list_job_done");
+	winform.publish("order_list_job_done",vm.script.filename);
 	vm.script = /*	
 		do while session.findById("wnd[0]/tbar[0]/btn[12]").Changeable
 			session.findById("wnd[0]/tbar[0]/btn[12]").press

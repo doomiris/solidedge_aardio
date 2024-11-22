@@ -416,6 +416,7 @@ var top_rule_solver ={
     sht = null;
     excel_2 = null;
     excel_0 = null;
+    collectgarbage("collect");
 	
 }
 

@@ -3,8 +3,8 @@ import win.ui;
 import config;
 import fsys;
 /*DSG{{*/
-var winform_getlist = win.form(text="admin数据库刷新工具";right=759;bottom=469)
-winform_getlist.add(
+var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469)
+winform.add(
 button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;z=1};
 button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;z=3};
 button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;z=4};
@@ -17,11 +17,13 @@ log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 /*}}*/
 
 /* 无法把对象传进线程 */
-winform_getlist.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
-
+winform.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
+global.onError = function( err,over ){ 
+	winform.log.print(err);
+}
 /*Get获取数据{{*/
-var getFromSAP = function(winform_getlist){
-	winform_getlist.log.print("连接SAP... ");
+var getFromSAP = function(winform){
+	winform.log.print("连接SAP... ");
     import web.script;
     var vm = web.script("VBScript") ;
 	vm.script = /*
@@ -46,9 +48,9 @@ var getFromSAP = function(winform_getlist){
 	On Error Goto 0
 	*/
 	if !vm.script.session
-		winform_getlist.log.print("无法连接, 检查SAP是否已经启动?");
+		winform.log.print("无法连接, 检查SAP是否已经启动?");
 	if vm.script.session
-		winform_getlist.log.print("连开成功, 开始获取清单...");
+		winform.log.print("连开成功, 开始获取清单...");
     vm.addCode(`
 		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
@@ -71,31 +73,31 @@ var getFromSAP = function(winform_getlist){
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
     `);
-	winform_getlist.publish("getFromSAP",true);
+	winform.publish("getFromSAP",true);
 }
 /*}}*/
 /*deal处理数据{{*/
-var dealWithXlsx = function(winform_getlist){
-	winform_getlist.log.print("等待3秒后开始处理数据...");
+var dealWithXlsx = function(winform){
+	winform.log.print("等待3秒后开始处理数据...");
 	sleep(3000) //等待workbook打开
 	_allcost_file := "allcost.xlsx";
 	//_path = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\allcost.xlsx";
 	import domisoft;
-	winform_getlist.log.print("获取worksheet...");
+	winform.log.print("获取worksheet...");
 	var sht = domisoft.getRunningWorkSheet(_allcost_file);
 	if !sht return error("sht null"); 
-	winform_getlist.log.print("获取usedrange...");
+	winform.log.print("获取usedrange...");
 	var rng = sht.usedrange.value2;
-	winform_getlist.log.print("打开step_db...");
+	winform.log.print("打开step_db...");
 	import config;
 	import sqlite;
-	var db = sqlite(winform_getlist.stepDBpath);
+	var db = sqlite(winform.stepDBpath);
 	if !db error("dberror");
-	winform_getlist.log.print("删除旧数据 ...");
+	winform.log.print("删除旧数据 ...");
 	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
 	db.exec("VACUUM");
 	db.exec("CREATE TABLE [all_cost](物料 TEXT collate nocase,物料描述 TEXT collate nocase,MTyp TEXT,物料组 TEXT,BUn TEXT,价格 NUMERIC,PGr TEXT);")  
-	winform_getlist.log.print("写入新数据 ...");
+	winform.log.print("写入新数据 ...");
 	db.beginTrans();
 	for (i=2; #rng) {
 		var cmd = db.prepare("INSERT INTO [all_cost] VALUES(@pcode,@textDesp,@mtype,@mgroup,@bun,@price,@pgr);");
@@ -111,146 +113,127 @@ var dealWithXlsx = function(winform_getlist){
 		)
 	}
 	db.commitTrans();
-	winform_getlist.log.print("完成, 关闭数据库");
+	
+	db.exec("UPDATE `all_cost` SET PGr = null WHERE PGr = '';");
+	db.exec("UPDATE `all_cost` SET 价格 = null WHERE 价格 = 0;");
+	
+	winform.log.print("完成, 关闭数据库");
 	db.close();
-	winform_getlist.log.print("关闭" + _allcost_file);
+	winform.log.print("关闭" + _allcost_file);
 	sht.parent.close(false);
-	winform_getlist.log.print("excel处理完成.");
-	winform_getlist.publish("sentSAPtoDB",true);
-	winform_getlist.button.disabledText = null;
+	winform.log.print("excel处理完成.");
+	winform.publish("sentSAPtoDB",true);
+	winform.button.disabledText = null;
 }
 /*}}*/
 subscribe("getFromSAP",function(...){
-	thread.invoke(dealWithXlsx, winform_getlist)
+	thread.invoke(dealWithXlsx, winform)
 } )
 
-winform_getlist.button.oncommand = function(id,event){
+winform.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
-	thread.invoke(getFromSAP, winform_getlist);
-	//thread.invoke(dealWithTxt, winform_getlist);
+	thread.invoke(getFromSAP, winform);
+	//thread.invoke(dealWithTxt, winform);
 }
 
 /*importFromQHC{{*/
-var importFromQHC = function(winform_getlist, path){
-/*
-	import console
-	console.open();
-*/
-	//import etip;
-	import tarray;
-	import com.excel;
-	var excel = com.excel(true);
+var importFromQHC2 = function(winform, path){
 
-	var qWb = excel.WorkBooks.Open(path);
-	if qWb
-		winform_getlist.log.print("打开成功");
-	var qSht = qWb.Sheets("Sheet1");
-	qSht.usedRange.RemoveDuplicates(1, 1 /*_xlYes*/);
-	qSht.Rows(1).Replace("是否禁用","禁用", 1 /* xlWhole */);
-	qSht.Rows(1).Replace("大小/量纲","生产展平尺寸", 1 /* xlWhole */);
-	qSht.Rows(1).Replace("行业标准描述","生产展平尺寸", 1 /* xlWhole */);
-	var qTab = qSht.usedRange.Value2;
-	var rc = #qTab;
-	if rc
-		winform_getlist.log.print("获取表格数据行数:", rc);
-	qWb.close(false);
-	qSht = null;
-	qWb = null;
-	excel.Quit();
-	winform_getlist.log.print("退出excel...");
-	qTab.fields = table.shift(qTab); /*提取第一行作为列名*/
-
-	
-	if !table.find(qTab.fields, "禁用")
-		winform_getlist.log.print("[禁用]列不存在!");
-	if !table.find(qTab.fields, "生产展平尺寸")
-		winform_getlist.log.print("[生产展平尺寸]列不存在!");
-/*
-	if !table.find(qTab.fields, "物料是可配置的")
-		winform_getlist.log.print("[可配置]列不存在");	
-*/
-
-	import config;
-	import sqlite;
-	winform_getlist.log.print("打开数据为库...", winform_getlist.stepDBpath);
-	var db = sqlite(winform_getlist.stepDBpath);
-	winform_getlist.log.print("删除旧数据...");
-	if db.existsTable("qhc_export") db.exec("DROP table qhc_export")
-	db.exec("VACUUM");
-	
-	var fields = qTab.fields;
-	fields = table.filter(fields, λ(v) v );	//去掉null值 (有时有空白列)
-	
-	fields= tarray.replaceValue(fields,"物料", "物料 TEXT collate nocase");
-	fields = tarray.replaceValue(fields,"物料描述", "物料描述 TEXT collate nocase");	
-
-	winform_getlist.log.print("开始写入数据...");
-
-	db.exec("CREATE TABLE [qhc_export](" ++ string.join(fields,", ") ++ ");")  
-
-	db.beginTrans();
-	var n = rc-1;
-	var vl = string.join(table.array(#fields,"?"),", ");
-
-	for(i=1; n){
-		var cmd = db.prepare("INSERT INTO [qhc_export] VALUES(" ++ vl ++ ");");
-		var item = qTab[i];
-
-		for (x=1; #qTab.fields)
-			if !item[[x]]
-				if qTab.fields[[x]]
-					item[x] = "";	/* 填充Null值, 否则展开后丢失参考*/
-					
-		item = table.filter(item, λ(v) v );	//去掉null值 (有时有空白列)
-		
-/*
-		if #qTab.fields !== #item {
-			console.dump(qTab.fields)
-			console.dump(item)
-			return error("fields和data列数不匹配"); 
-			}
-*/
-		cmd.bind.parameters(
-			table.unpack(item)
-		).step()
-	}
-	db.commitTrans();
-/*
-	var dual = db.getTable(`
-		SELECT 物料, 物料描述, COUNT(*) AS Count
-		FROM qhc_export
-		GROUP BY 物料
-		HAVING COUNT(*) > 1
+	import access.oleDb;
+	var adb = access(path);
+	var t = adb.getTable(`
+	SELECT
+		[物料], 
+		[是否禁用] AS [禁用],
+		[大小/量纲] AS [生产展平尺寸]
+	FROM [Sheet1$]
+	WHERE
+		[物料] <>''
+	`);
+	var f = adb.getTable(`
+		SELECT
+			[物料]
+		FROM [sheet1$]
+		WHERE [是否禁用] = '禁用'
 	`)
-	if #dual{
-		winform_getlist.log.print("错误: 有重复的物料");
-		winform_getlist.log.print(dual);
+	var p = adb.getTable(`
+		SELECT
+			[物料],
+			[大小/量纲] AS [生产展平尺寸]
+		FROM [sheet1$]
+		WHERE [大小/量纲]<> ''
+	`)
+
+
+	adb.close();
+
+	import sqlite
+	import config;
+	//var sdb = sqlite(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db");
+	var sdb = sqlite(io.joinpath(config.__sapDownload,"step_qhcsap.db"));
+	winform.log.print("删除旧数据...");
+	if sdb.existsTable("qhc_export") sdb.exec("DROP table qhc_export");
+	sdb.exec("CREATE TABLE qhc_export( 
+		[物料] TEXT,
+		[禁用] TEXT, 
+		[生产展平尺寸] TEXT,
+		UNIQUE (物料) 
+		);"
+	)
+	winform.log.print("添加新数据...");
+	var cmd = sdb.prepare("INSERT INTO [qhc_export] VALUES (?,?,?);");
+	
+	sdb.beginTrans();
+	for (i=1; #t){
+		cmd.step({
+			t[i]["物料"]
+		})
 	}
-	for (i=1; #dual){
-		//db.exec(`delete 1`,{"物料":dual[i].物料})
+	
+	sdb.commitTrans()
+	
+	winform.log.print("写入新物料.禁用..");
+	sdb.beginTrans();
+	var cmd = sdb.prepare("UPDATE `qhc_export` SET [禁用]=@a WHERE [物料]=@b");
+	for (i=1; #f){
+		var item = f[i];
+		cmd.step(
+			a = "禁用";
+			b = item["物料"]
+		)
 	}
-*/
-	db.close();
-	winform_getlist.log.print("写入STEP完成");
-	winform_getlist.button2.disabledText = null;
+	sdb.commitTrans()
+	winform.log.print("写入新物料.生产展平尺寸..");
+	sdb.beginTrans();
+	var cmd = sdb.prepare("UPDATE `qhc_export` SET [生产展平尺寸]=@a WHERE [物料]=@b");
+	for (i=1; #p){
+		var item = p[i];
+		cmd.step(
+			a = item["生产展平尺寸"];
+			b = item["物料"]
+		)
+	}
+	sdb.commitTrans()
+	sdb.close();
+	t = null;
+	winform.log.print("写入完成qhc_export");
+	winform.button2.disabledText = null;
 }
-/*}}*/
+winform.button2.oncommand = function(id,event){
 
-winform_getlist.button2.oncommand = function(id,event){
-
-	var path = winform_getlist.edit.text;
+	var path = winform.edit.text;
 	if !io.exist(path) return ; 
 	
 	config.admin.lastWorkingFolder = fsys.getParentDir(path);
 	config.admin.save();
 	
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
-	winform_getlist.log.print("打开 " ++ path );
-	thread.invoke(importFromQHC, winform_getlist, path);
+	winform.log.print("Accessing " ++ path );
+	thread.invoke(importFromQHC2, winform, path);
 }
 /*mergeDb{{*/
 
-var mergeDb = function(winform_getlist){
+var mergeDb = function(winform){
 	import win;
 	import config;
 	import sqlite;
@@ -258,8 +241,8 @@ var mergeDb = function(winform_getlist){
 import console
 console.open();
 */
-	var step_db = sqlite(winform_getlist.stepDBpath);
-	winform_getlist.log.print("合并临时数据...");	
+	var step_db = sqlite(winform.stepDBpath);
+	winform.log.print("合并临时数据...");	
 	if step_db.existsTable("所有物料")
 		step_db.exec("DROP table 所有物料;");
 	step_db.exec(`
@@ -281,13 +264,13 @@ console.open();
 	step_db.close();
 	var db = sqlite(io.joinpath(config.dbServer.path,"qhcsap.db"));
 
-	winform_getlist.log.print("备份数据...");
+	winform.log.print("备份数据...");
 	if (db.existsTable("所有物料") and db.existsTable("备份所有物料"))
 		db.exec("DROP table 备份所有物料;");
 	if db.existsTable("所有物料") db.exec("ALTER TABLE 所有物料 RENAME TO 备份所有物料;");
 	
-	winform_getlist.log.print("挂接新数据...");
-	db.exec("ATTACH DATABASE '" + winform_getlist.stepDBpath + "' as 'stepDB';")
+	winform.log.print("挂接新数据...");
+	db.exec("ATTACH DATABASE '" + winform.stepDBpath + "' as 'stepDB';")
 	db.exec(`
 		CREATE TABLE 所有物料 (
 			物料 TEXT UNIQUE COLLATE NOCASE,
@@ -306,16 +289,16 @@ console.open();
 		INSERT INTO main.所有物料 SELECT * FROM stepDB.所有物料;
 	`);
 	
-	winform_getlist.log.print("合并完成, 卸载挂接数据...");
+	winform.log.print("合并完成, 卸载挂接数据...");
 	db.exec("DETACH DATABASE 'stepDB';")
 	
-	winform_getlist.log.print("删除备份...");
+	winform.log.print("删除备份...");
 	if (db.existsTable("所有物料") and db.existsTable("备份所有物料"))
 		db.exec("DROP table 备份所有物料;");
-	winform_getlist.log.print("VACUUM...");
+	winform.log.print("VACUUM...");
 	db.exec("VACUUM");
 	
-	winform_getlist.log.print("更新索引...");
+	winform.log.print("更新索引...");
 	/*  https://stackoverflow.com/questions/44947414/sqlite-speed-up-select-with-collate-nocase
 		An index can be used to speed up a search only if it uses the same collation as the query.
 		By default, an index takes the collation from the table column, 
@@ -341,7 +324,7 @@ console.open();
 	//	db.exec("CREATE INDEX 禁用 on 所有物料 (禁用);")
 	}
 	db.close();
-	winform_getlist.button3.disabledText = null;
+	winform.button3.disabledText = null;
 	
 	import fsys.table;
 	var vtab = fsys.table(io.joinpath(config.dbServer.path,"dblog.table"));
@@ -350,27 +333,27 @@ console.open();
 	);
 	vtab.save();
 	
-	winform_getlist.log.print("合并数据完成.");
+	winform.log.print("合并数据完成.");
 	
 }
 
 /*}}*/
-winform_getlist.button3.oncommand = function(id,event){
+winform.button3.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."};
-	thread.invoke(mergeDb, winform_getlist);
+	thread.invoke(mergeDb, winform);
 }
 
-winform_getlist.button4.oncommand = function(id,event){
-	var copyfolder = function(winform_getlist, tart, dest){
+winform.button4.oncommand = function(id,event){
+	var copyfolder = function(winform, tart, dest){
 		import fsys;
-		winform_getlist.log.print("...正在复制到" + dest);
+		winform.log.print("...正在复制到" + dest);
 		fsys.copy(tart, dest, 0x4/*_FOF_SILENT*/ + 0x10/*_FOF_NOCONFIRMATION*/);
-		winform_getlist.log.print("完成:" + dest);
+		winform.log.print("完成:" + dest);
 	}
 	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
-	if !io.exist(_qhc_db) winform_getlist.log.print("无法访问:" + _qhc_db);
-	else thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.*", _qhc_db);
-	thread.invoke(copyfolder, winform_getlist, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
+	if !io.exist(_qhc_db) winform.log.print("无法访问:" + _qhc_db);
+	else thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", _qhc_db);
+	thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
 getXlsxDbPath = function(){
 	import fsys;
@@ -380,16 +363,16 @@ getXlsxDbPath = function(){
 		return list[list[#list]]; 
 }
 
-winform_getlist.button5.oncommand = function(id,event){
+winform.button5.oncommand = function(id,event){
 	import fsys.dlg;
-	winform_getlist.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件",config.admin.lastWorkingFolder,owner);
+	winform.edit.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件",config.admin.lastWorkingFolder,owner);
 }
 
-winform_getlist.button6.oncommand = function(id,event){
-	thread.invoke(dealWithXlsx, winform_getlist);
+winform.button6.oncommand = function(id,event){
+	thread.invoke(dealWithXlsx, winform);
 }
 
-winform_getlist.edit.text = getXlsxDbPath();
-winform_getlist.show();
+winform.edit.text = getXlsxDbPath();
+winform.show();
 win.loopMessage();
-return winform_getlist;
+return winform;

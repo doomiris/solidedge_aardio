@@ -22,136 +22,98 @@ import tarray;
 import config;
 import process;
 import SAP;
+import sqlite;
 
-winform.grid = win.ui.grid(winform.listview);//创建数据视图
-var grid = winform.grid;
-grid.setReadonlyColumns(-1);
-winform.grid2 = win.ui.grid(winform.listview2);//创建数据视图
-var grid2 = winform.grid2;
-grid2.setReadonlyColumns(-1);
+/*
+import console
+console.open()
 
+*/
 
-
-grid.onSortColumn = function(column, desc){
-	var name = owner.source.fields[column];
-	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
-	owner.setTable( owner.source );
-	return true; //返回 true 允许当前列排序	
-};
-grid2.onSortColumn = grid.onSortColumn;
-
-
-var getFolderList = function(){
-	var list = fsys.list(config.__sapDownload,,"ORDER_LIST_*.xlsx");
-	grid2.source={ fields = {[1]="订单号";[2]="下载日期";[3] = "缓存文件"}};
-	for (i=1; #list){
-		var f = string.split(string.split(list[i],".")[1],"_");
-		table.push(grid2.source, {
-			"订单号" = string.upper(f[3]) ;
-			"下载日期" = domisoft.getFileDate(list[list[i]]);
-			"缓存文件" = list[i];
-		});
-	}
-	grid2.onSortColumn(2, true);
-
-	//grid2.setTable(flist);
-	grid2.ColumnWidth := domisoft.setColumnWidth(winform.listview2, {80,120})
-	winform.listview2.fillParent(3);
-	winform.button.disabledText = null;
-}
-
-
-getFolderList();
-
-var getDetail = function(wbpath, wform){
-	import access;
-	import config;
-	import domisoft;
-	var fullpath = io.joinpath(config.__sapDownload, wbpath)
-	var newpath = string.replace(fullpath,"@@.xlsx",".xls");
-	if !io.exist(fullpath) return win.msgbox("文件不存在了, 请重新下载."++'\n'++fullpath); 
-	wform.grid.clear();
-	if !io.exist(newpath){
-		var succ = thread.invokeAndWait(
-			function(fullpath,newpath){
-				import com.excel;
-				var excel = com.excel(true);
-				excel.alerts = false;
-				var wb = excel.Open(fullpath);
-				wb.SaveAs(newpath, 56/*_xlExcel8*/)
-				wb.close();
-				excel.alerts = true;
-				excel.Quit();
-				return io.exist(newpath); 
-			},fullpath,newpath
-		)
-	}
-	var db, err = access(newpath);
-	if !db return ; 
-	var t = db.getTable(`
-		SELECT DISTINCT
-			[凭证日期],
-			[SD 凭证],
-			[项目(SD)],
-			[售达方],
-			[名称 1],
-			[选择],
-			[物料],
-			[描述],
-			[订单数量]
-		FROM
-			[Sheet1$]
-		WHERE
-			[拒绝原因] = "" OR [拒绝原因] IS NULL
+winform.listview.enableDoubleBuffering();
+winform.listview2.enableDoubleBuffering();
+var sdb = sqlite(io.joinpath(config.__sapDownload, "order_list.db"));
+/*如果表不存在则创建新表{{*/
+if !sdb.existsTable("list")
+	sdb.exec(`
+		CREATE TABLE "list" (
+			"SD 凭证"	TEXT UNIQUE,
+			"凭证日期"	TEXT,
+			"售达方"	TEXT,
+			"名称 1"	TEXT,
+			"备注"	TEXT,
+			"缓存日期"	TEXT,
+			PRIMARY KEY("SD 凭证")
+		);
 	`);
+if !sdb.existsTable("content")
+	sdb.exec(`
+		CREATE TABLE "content" (
+			"SD 凭证"	TEXT,
+			"项目(SD)"	INTEGER,
+			"物料"	TEXT,
+			"描述"	TEXT,
+			"订单数量"	INTEGER,
+			"备注"	TEXT,
+			"B2C"	TEXT,
+			"COOIS"	TEXT,
+			CONSTRAINT "ORDER_ID" UNIQUE("SD 凭证","项目(SD)")
+		);
+	`);
+/*}}*/
+winform.grid = win.ui.grid(winform.listview);//创建数据视图
+//var grid = winform.grid;
+winform.grid.setReadonlyColumns(1,2,3,4,5,7,8);
+winform.grid2 = win.ui.grid(winform.listview2);//创建数据视图
+//var grid2 = winform.grid2;
+winform.grid2.setReadonlyColumns(1,2,3,4,6,7)
 
-	db.close();
 
-	table.push(t.fields, "订单BOM缓存日期", "生产BOM缓存日期");
+winform.grid.onSortColumn = domisoft.listColSort;
+winform.grid2.onSortColumn = domisoft.listColSort;
 
-	for (i=1;#t){
-		var b2c_filename = string.join({"B2C", t[i]["SD 凭证"], t[i]["项目(SD)"], t[i]["物料"]},"_") ++ ".xlsx";
-		var coois_filename = string.join({"COOIS", t[i]["SD 凭证"], t[i]["项目(SD)"]},"_") ++ ".xlsx";
-		b2c_filename = io.joinpath(config.__sapDownload, b2c_filename);
-		coois_filename = io.joinpath(config.__sapDownload, coois_filename);
-		if io.exist(b2c_filename){
-			t[i]["订单BOM缓存日期"] = domisoft.getFileDate(b2c_filename);
-		}
-		if io.exist(coois_filename){
-			t[i]["生产BOM缓存日期"] = domisoft.getFileDate(coois_filename);
-		}
-	}
-	
-	return table.map(t, function(v){
-		 v["凭证日期"] = tostring(v["凭证日期"],"yyyy/MM/dd" );
-		 v["项目(SD)"] = tonumber(v["项目(SD)"]);
-		 v["订单数量"] = tonumber(v["订单数量"]);
-		 v["选择"] = "";
-		 return v; 
-	}); 
+winform.grid2.onEditChanged = function(text,iItem,iSubItem){
+	sdb.exec("UPDATE `list` SET ? WHERE ??",{{"备注":text},{"SD 凭证":owner.source[iItem]["SD 凭证"]}});
+}
+winform.grid.onEditChanged = function(text,iItem,iSubItem){
+	sdb.exec("UPDATE `content` SET ? WHERE ??",{{"备注":text},{
+		"SD 凭证":owner.source[iItem]["SD 凭证"];
+		"项目(SD)":owner.source[iItem]["项目(SD)"];
+	}});
+}
+/*获取订单清单{{*/
+winform.getFolderList = function(newItemAdded){
+	var t = sdb.getTable("SELECT * FROM [list]")
+	winform.grid2.source = t
+	winform.grid2.onSortColumn(6, true);
+	winform.grid2.ColumnWidth := domisoft.setColumnWidth(winform.listview2, {70,70,5,120,80,80})
+	winform.listview2.fillParent(3);	
+}
+/*}}*/
+winform.getFolderList();
+
+var getDetailFromDb = function(orderId){
+	var t = sdb.getTable("SELECT * FROM [content]", {"SD 凭证":orderId});
+	return t; 
 }
 
-grid2.onClick = function(item,subItem,nmListView){
+winform.grid2.onClick = function(item,subItem,nmListView){
 	if !item and ! winform.listview2.selIndex return ; 
-	var c =  grid2.source[item || winform.listview2.selIndex].缓存文件;
+	var c =  winform.grid2.source[item || winform.listview2.selIndex][["SD 凭证"]];
 	if !c return; 
 	if item
-		winform.edit.text = grid2.source[item].订单号;
-	grid.source = getDetail(c, winform);
-	if !grid.source return ;
-	if !#grid.source return;
-	grid.clear();
+		winform.edit.text = winform.grid2.source[item][["SD 凭证"]];
+	winform.grid.source = getDetailFromDb(c);
+	if !winform.grid.source return ;
+	if !#winform.grid.source return;
+	winform.grid.clear();
 	winform.editDesp.text = "";
-	grid.onSortColumn(3, false);
-	grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,80,40,80,120,10,100,350,40,120,120})
-	winform.listview.fillParent(8);
+	winform.grid.onSortColumn(2, false);
+	winform.grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,40,80,350,40,80,120,120})
+	winform.listview.fillParent(4);
 }
-grid2.onDoubleClick = function(item,subItem,nmListView){
-	var c = owner.source[item].缓存文件;
-	if !c return; 
-	process.execute(io.joinpath(config.__sapDownload,c))
-}
-grid.onDoubleClick = function(item,subItem,nmListView){
+
+winform.grid.onDoubleClick = function(item,subItem,nmListView){
 	var nData = owner.getTable(owner.source.fields);
 	var t = nData[item];
 	var c = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
@@ -185,6 +147,25 @@ winform.grid.onRightClick = function(item,subItem,nmListView){
 	if io.exist(m)
 		menu.add("打开COOIS生产订单BOM...", λ() process.execute(m));
 	menu.add("下载COOIS生产订单BOM...", λ() SAP.downloadManufactureBOM(winform, t["SD 凭证"], itemList));
+	menu.add("添加备注...", λ() winform.grid.beginEdit(item,6 /*备注列*/));
+	menu.popup(x,y,true);
+}
+winform.grid2.onRightClick = function(item,subItem,nmListView){
+	var x,y = win.getMessagePos();
+	var menu = win.ui.popmenu(winform);
+	menu.add("添加备注...", λ() winform.grid2.beginEdit(item,5 /*备注列*/));
+	menu.add("刷新此订单记录...", function(){
+		var order_number = winform.grid2.source[item]["SD 凭证"];
+		if !order_number return ; 
+		thread.invoke(SAP.downloadOrderList, winform, order_number)
+	});
+	menu.add("删除此订单记录...", function(){		
+		var order_number = winform.grid2.source[item]["SD 凭证"];
+		if !win.msgboxTest("确认删除此订单所有记录?" + '\n' + order_number,"需要确认",winform.hwnd) return; 
+		sdb.exec("DELETE * FROM `list`",{"SD 凭证":order_number})
+		sdb.exec("DELETE * FROM `content`",{"SD 凭证":order_number})
+		winform.publish("getFolderList",true);
+	});
 	menu.popup(x,y,true);
 }
 winform.editDesp.onChange = function(){ 
@@ -193,12 +174,12 @@ winform.editDesp.onChange = function(){
 	if !str return ; 
 	str = string.trim(owner.text);
 	if !str or !#str {
-		grid.setTable(grid.source);
+		winform.grid.setTable(winform.grid.source);
 	}else{
-		var t = table.filter(grid.source, λ(v) string.find(v["描述"], "@@"+str));
-		t.fields = grid.source.fields;
-		grid.clear();
-		grid.setTable(t);
+		var t = table.filter(winform.grid.source, λ(v) string.find(v["描述"], "@@"+str));
+		t.fields = winform.grid.source.fields;
+		winform.grid.clear();
+		winform.grid.setTable(t);
 	}
 }
 
@@ -206,69 +187,140 @@ winform.button.oncommand = function(id,event){
 	var order_number = string.trim(winform.edit.text);
 	if !order_number return ; 
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"};
-	thread.invoke(SAP.downloadOrderList, winform, order_number)
+	thread.invoke(
+		SAP.downloadOrderList, winform, order_number
+	)
 }
 
-subscribe("down_b2c_bom",function(...){
-	var filename = ...;	
+subscribe("down_b2c_bom",function(filename){
+	//var filename = ...;
 	win.delay(3*1000);
-	thread.invoke( 
+	thread.invoke(
 		function(filename){
 			import domisoft;
 			var sht = domisoft.getRunningWorkSheet(filename);
 			import QHC;
-			QHC.formatBOM(sht)
+			QHC.formatBOM(sht);
 		}, filename
 	)
-} )
+	var t = string.split(filename,"_");
+	t[3] = tonumber(t[3]);
+	var d = domisoft.getFileDate(io.joinpath(config.__sapDownload,filename));
+	sdb.exec("UPDATE `content` SET ? WHERE ??",{{"B2C":d},{
+		"SD 凭证":t[2];
+		"项目(SD)":t[3];
+	}});
+	//win.msgbox(t);
+	for (i=1; #winform.grid.source) {
+		if winform.grid.source[i]["项目(SD)"] == t[3] {
+			winform.grid.beginEdit(i,7);
+			winform.grid.editBox.text = d;
+			winform.grid.editBox.close();
+			break;
+		}
+	}	
+})
+subscribe("downloadManufactureBOM",function(filename){
+	//var filename = ...;
+	win.delay(2*1000);
+	var t = string.split(filename,"_");
+	t[3] = tonumber(t[3]);
+	var d = domisoft.getFileDate(io.joinpath(config.__sapDownload,filename));
+	sdb.exec("UPDATE `content` SET ? WHERE ??",{{"COOIS":d},{
+		"SD 凭证":t[2];
+		"项目(SD)":t[3];
+	}});
+	for (i=1; #winform.grid.source) {
+		if winform.grid.source[i]["项目(SD)"] == t[3] {
+			winform.grid.beginEdit(i,8);
+			winform.grid.editBox.text = d;
+			winform.grid.editBox.close();
+			break;
+		}
+	}
+})
+subscribe("done_job_b2c", function(orderId, itemList){
 
-subscribe("done_job", grid2.onClick); 
-subscribe("order_list_job_done", getFolderList); 
-subscribe("down_order_list",function(...){
+	
+}); 
+
+var getNewListFromXlsx = function(filename,wform){
+	import sqlite;
+	import config;
+	import domisoft;
+	var sdb = sqlite(io.joinpath(config.__sapDownload, "order_list.db"));
+	var sht = domisoft.getRunningWorkSheet(filename);	
+	var etab = sht.usedRange.value2;
+	var Text = sht.Parent.Application.WorksheetFunction.Text;
+	var fields = table.shift(etab);
+	var cmd = sdb.prepare("REPLACE INTO `LIST` VALUES(?,?,?,?,?,?)");
+	cmd.step({
+	 	etab[1][1 /* A */],
+	 	Text(etab[1][7 /* G */],"yyyy/mm/dd"),
+	 	etab[1][17 /* Q */],
+	 	etab[1][24 /* X */],
+	 	null,
+	 	(tostring(time(),"%Y/%m/%d %H:%M:%S"))
+	})
+	cmd.finalize();	 		
+	var cmd = sdb.prepare("REPLACE INTO `content` VALUES (?,?,?,?,?,?,?,?)");
+	for (j=1; #etab){			
+		cmd.step({
+			etab[j][1 /* A */],
+			etab[j][2 /* B */],
+			etab[j][22 /* V */],
+			etab[j][5 /* E */],
+			(tonumber(etab[j][19 /* S */])),
+			null,
+			null,
+			null
+		});
+	}
+	cmd.finalize();
+	sht.Parent.Close(false);
+	wform.button.disabledText = null;
+	wform.publish("getFolderList",true);
+}
+subscribe("getFolderList", winform.getFolderList);
+subscribe("order_list_job_done",function(...){
 	var filename = ...;	
-	win.delay(5*1000);
-	thread.invoke(
-		function(filename){
-			import domisoft;
-			var sht = domisoft.getRunningWorkSheet(filename);	
-	 		if sht
-	 			sht.Parent.Close(false);
-		}, filename
-	)
+	win.delay(3*1000);
+	thread.invoke(getNewListFromXlsx, filename , winform);
 } )	
 	
-winform.button2.oncommand = getFolderList;
+winform.button2.oncommand = winform.getFolderList;
 
 winform.button3.oncommand = function(id,event){
-	var flist = winform.listview2.selected;
-	if !#flist return ; 
-	for k, v in flist {
-		var xlsx = io.joinpath(
-			config.__sapDownload,
-			winform.listview2.getItemText(v, 3)
-		)
-		io.remove(xlsx);
-		io.remove(string.replace(xlsx,"@@.xlsx",".xls"));
-	}
-	getFolderList();
+	var selected = winform.listview2.selected;
+	var flist = {};
+	if !#selected return ; 
+	for (i=1; #selected)
+		table.push(flist, winform.grid2.source[selected[i]]["SD 凭证"]);
+	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + flist,"需要确认",winform.hwnd) return; 
+	sdb.exec("DELETE * FROM `list`",{"SD 凭证":flist});
+	sdb.exec("DELETE * FROM `content`",{"SD 凭证":flist});
+	winform.publish("getFolderList",true);
 }
 
 if winform.listview2.count
-	grid2.onClick(1,1)
+	winform.grid2.onClick(1,1)
 
 
 winform.show();
 
 winform.splitter.split(winform.listview, winform.listview2);
-winform.listview.doNotCopyColumns = {-1};
+
 
 winform.edit.onChange = function(){ 
 	if(owner.onModified)owner.onModified(true);
-	var txt = owner.text;
-	winform.listview2.selIndex = table.indexOf(tarray.getCol(grid2.source, 1), txt) : null;
+	winform.listview2.selIndex = null;
+	var txt = string.upper(owner.text);
+	winform.listview2.selIndex = table.indexOf(tarray.getCol(winform.grid2.source, 1), txt) : null;
+	
 	
 }
-winform.listview.doNotCopyColumns = {10,11}
+winform.listview.doNotCopyColumns = {6,7,8}
+winform.listview2.doNotCopyColumns = {5,6,7}
 winform.listview.translateAccelerator = domisoft.ctrlC;	
 winform.listview2.translateAccelerator = domisoft.ctrlC;
 

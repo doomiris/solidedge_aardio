@@ -21,7 +21,6 @@ namespace config {
 	__appVersion = "1.5.22.01";
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
-	//__sapDownload = io.joinpath(lib.dbServer , "xl_lib");
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
 	__pdfLib = lib.pdfLib;
 	__templateLib = lib.templateLib;
