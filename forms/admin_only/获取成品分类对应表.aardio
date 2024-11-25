@@ -4,10 +4,41 @@ import config;
 
 //TODO
 
-_title = "成品分类表";
-_fieldsName = {"成品编码","分类"};
-var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
-if db.existsTable(_title) db.exec("DROP table " + _title);
-db.exec("CREATE TABLE "+ _title +"( " + string.join(_fieldsName,", ") + ");");
-var t = db.getTable("SELECT 成品编码, 分类 FROM [默认值]");
+_title = "喷粉类别";
+_fieldsName = {"物料","喷粉类别"};
+
+console.log("accessing...喷粉调研表...")
+var path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\1.喷粉调研表\喷粉调研表-20240411.xlsx"
+import access.oleDb;
+var adb = access(path);
+var t = adb.getTable("SELECT * FROM `成品分组411 $`");
+adb.close();
+
+console.log("打开数据库qhc_OD_lib.db");
+var sdb = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));
+console.log("删除旧数据...");
+if sdb.existsTable(_title) sdb.exec("DROP table " + _title);
+
+sdb.exec("CREATE TABLE 喷粉类别( 
+	[物料] TEXT UNIQUE,
+	[喷粉类别] TEXT
+	);"
+)
+console.log("添加新数据...");
+var cmd = sdb.prepare("INSERT INTO `喷粉类别` VALUES (?,?);");
+
+sdb.beginTrans();
+for (i=1; #t){
+	cmd.step({
+		t[i]["产品编码_Productcode"],
+		t[i]["类别_Class"]
+	})
+}
+
+sdb.commitTrans()
+
+sdb.close();
+t = null;
+	console.log("写入完成喷粉类别");
+
 console.pause(true);
