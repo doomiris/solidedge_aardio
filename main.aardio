@@ -124,6 +124,7 @@ mainForm.wndproc =  function(hwnd,message,wParam,lParam){
 	
 /*}}*/
 /*托盘右键菜单{{*/
+
 mainForm.popmenu2 = win.ui.popmenu(mainForm);//创建弹出菜单
 mainForm.popmenu2.add('&Open TBM', function(){
 	//在下面输入菜单响应代码
@@ -135,10 +136,14 @@ mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
 mainForm.popmenu2.add();//分隔线
-//mainForm.popmenu2.add('ChatGPT...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\chatgpt.aardio")));
-//mainForm.popmenu2.add('AI绘图...', λ() thread.invoke(λ() loadcodex("\forms\OpenAI\AI_Draw.aardio")));
-//mainForm.popmenu2.add('修复DegMgr...', λ() seApp.fixDesMgr());
-mainForm.popmenu2.add('SE导出当前截图...', λ() seApp.exportViewAsPng());
+mainForm.popmenu2.add('SE导出当前截图...', λ()	thread.invoke( 
+		function(){
+			import solidedge.application;
+			var seApp = solidedge.application();
+			seApp.exportViewAsPng();
+		}
+	)
+);
 mainForm.popmenu2.add('SAP一键登入1', function(){
 	thread.invoke(SAP.sapQuickOpen)
 	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/

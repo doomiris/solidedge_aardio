@@ -72,14 +72,17 @@ namespace application{
 		return 123; 
 	};
 	exportViewAsPng = function(filename){
-
+		import config;
 		var view = owner.ActiveWindow.view;
-		
-		var bmp_path = ..io.joinpath(..io.appData("temp"),  owner.ActiveDocument.Name +".bmp");
-		view.SaveAsImage(bmp_path);
+
+		var timeString = tostring(..time.now(), "%Y%m%d%H%M%S");
+		if !filename
+			filename = ..string.join({owner.ActiveDocument.Name,timeString,"bmp"},".");
+		var bmp_path = ..io.joinpath(config.setbm.workingDir,  filename);
+		view.SaveAsImage(bmp_path); //这里要优化
 		
 		var bmp = ..gdip.bitmap(bmp_path);
-		var png_path = filename ? filename : ..string.replace(bmp_path,"@bmp","png");
+		var png_path = ..string.replace(bmp_path,"@.bmp",".png");
 		
 		bmp.save(png_path);
 		bmp.dispose();
