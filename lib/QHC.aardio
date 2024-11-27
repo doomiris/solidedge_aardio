@@ -332,10 +332,12 @@ getPriceList= function(){
 	import com.excel;
 	import config;
 	var excel = com.excel(false);
+	if !excel
+		excel = com.GetOrCreateObject("Excel.Application");
 	excel.alerts = false;
 	
 	import fsys.dlg;
-	var fl = fsys.dlg.openEx("cost文件|cost_*.xlsx",'请选择要打开的 cost 文件',config.__sapDownload)
+	var fl = fsys.dlg.openEx("cost文件|cost_*.xlsx|.xlsx|*.xlsx",'请选择要打开的 cost 文件',config.__sapDownload)
 	var tab = {};
 	tab.fields = {"物料","物料描述","原材料","Labour","Burden","总价"};
 	
