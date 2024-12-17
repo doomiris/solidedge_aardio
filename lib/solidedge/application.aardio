@@ -97,6 +97,32 @@ namespace application{
 		var HCU = win.reg("HKEY_CURRENT_USER\Software\Siemens\Solid Edge\Version 220\General",true);
 		HCU.delKeyTree("DesignManager");
 	};
+	openDummy = function(){
+			import solidedge.AssemblyDocument;
+			if (owner.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+			var seAsm = solidedge.AssemblyDocument(owner.ActiveDocument); 
+			select(seAsm.SelectSet.Count) {
+				case 1 {
+					if !seAsm.IsFileFamilyByDocument
+						seAsm.openDummy(seAsm.SelectSet.Item(1));
+					else {
+						var ofn = ..table.shift(..string.split(seAsm.FullName,"!"))
+						seAsm.Close(false);
+						owner.Open(ofn, false);			
+					}
+				}
+				case 0 {
+					if seAsm.IsFileFamilyByDocument {
+						var ofn = ..table.shift(..string.split(seAsm.FullName,"!"))
+						seAsm.Close(false);
+						owner.Open(ofn, false);				
+					}	
+				}
+				else {
+					return ; 
+				}
+			}
+	}
 		_topointer = lambda() owner.seApp;	
 	);
 }	

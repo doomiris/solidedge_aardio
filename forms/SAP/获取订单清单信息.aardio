@@ -84,6 +84,8 @@ winform.grid.onEditChanged = function(text,iItem,iSubItem){
 /*获取订单清单{{*/
 winform.getFolderList = function(newItemAdded){
 	var t = sdb.getTable("SELECT * FROM [list]")
+	for(i=1;#t)
+		t[i]["凭证日期"] = time(t[i]["凭证日期"],"%Y/%m/%d");
 	winform.grid2.source = t
 	winform.grid2.onSortColumn(6, true);
 	winform.grid2.ColumnWidth := domisoft.setColumnWidth(winform.listview2, {70,70,5,120,80,80})

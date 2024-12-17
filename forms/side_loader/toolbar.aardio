@@ -1,0 +1,220 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
+custom={cls="custom";text="自定义控件";left=36;top=31;right=703;bottom=70;z=1};
+custom2={cls="custom";text="自定义控件";left=40;top=90;right=707;bottom=129;z=2}
+)
+/*}}*/
+
+import console;
+//console.open();
+
+import win.ui.menu;
+import win.ui.toolbar;
+
+
+var opendummy = function(id){
+	thread.invoke(function(){
+		import win;
+		import solidedge.application;
+		var seApp = solidedge.application();
+		seApp.openDummy();
+		win.setActive(seApp.hWnd);
+	})	
+}
+var tbutton2 = function(id,event){
+	if !seApp return; 
+    if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+    var SelSet = seApp.ActiveDocument.SelectSet;
+    if SelSet.Count !== 1 return; 
+    if (SelSet(1).Type !== 488188096 /* igDimension */) return;
+    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L", mainForm);
+    if !s return; 
+    if ..string.len(..string.trim(s)) == 0 return ; 
+    SelSet(1).OverrideString = s;
+    SelSet(1).Style.NTSSymbol = 1 /* igDimStyleNTSNone */;
+    
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+var tbutton3 = function(id,event){
+	if !seApp return; 
+	import solidedge.DraftDocument;
+    if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+	var seSht = seDFT.ActiveSheet;
+	var BBS = seSht.Balloons;
+	var ee = seDFT.getTopRecordMark(seSht);
+	ee = ee ? string.pack( ee[1] + 1 ) : "a";
+	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee, mainForm);
+	if !e return ; 
+	if (string.len(string.trim(e)) == 0) return ; 
+	var setBB = function(balloonItem, txt){
+    	with balloonItem {
+    		BalloonText = txt;
+    		BalloonType = 1; /* DimBalloonTypeConstants.igDimBalloonCircle */
+    		BalloonSize = 2; /* 形状是字体几倍数 */
+    		Leader = false; 
+    		Style.DrivenColor = 255;	/* ColorConstants.seColorRed */;    				
+    	}
+	}	
+	for (i = 1; BBS.Count) {
+		if BBS.Item(i).Leader continue; //跳过有引线的
+		select(BBS.Item(i).BalloonType) {
+			case 1 /* igDimBalloonCircle */ {
+    			setBB( BBS.Item(i), e);
+			}
+			case 7 /* igDimBalloonTriangle */ {
+				if table.indexOf({"F","S","X"},BBS.Item(i).BalloonText) continue;
+				setBB( BBS.Item(i), e);
+			}
+		}
+	}
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+var tbutton4 = function(id,event){
+	if !seApp return; 
+	import solidedge.DraftDocument;
+	if seApp.Documents.Count==0 return ; 
+    if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
+	var seSht = seDFT.ActiveSheet;
+	var BBS = seSht.Balloons;
+	var ee = "a";
+	for (i = 1 ; BBS.Count) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		ee = BBS.Item(i).BalloonText;
+        		break;
+	}
+	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee, mainForm);
+	if !e return ; 
+	if (..string.len(..string.trim(e)) == 0) return ; 
+	
+	for (i = BBS.Count; 1 ;- 1 ) {	
+		if BBS.Item(i).BalloonType == 1 /* igDimBalloonCircle */
+    		if !BBS.Item(i).Leader
+        		if (BBS.Item(i).BalloonText==e)
+        			BBS.Item(i).Delete();
+	}
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+var tbutton5 = function(id,event){
+	if !seApp return; 
+	import solidedge.AssemblyDocument;
+	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+	select(seAsm.SelectSet.Count) {
+		case 1 {
+			if !seAsm.IsFileFamilyByDocument
+				seAsm.openDummy(seAsm.SelectSet.Item(1));
+			else {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);			
+			}
+		}
+		case 0 {
+			if seAsm.IsFileFamilyByDocument {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);				
+			}	
+		}
+		else {
+			return ; 
+		}
+	}
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+
+var tbutton6 = function(id,event){
+	if !seApp return; 
+	seApp.closeDft(false);
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+var tbutton7 = function(id,event){
+	if !seApp return; 
+	seApp.closeDft(true);
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+
+var tbutton8 = function(id,event){
+	import QHC;
+	
+	var tlist = {
+		[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
+		[2] = "工单更改申请.xlsx";		
+		[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
+		[4] = "新产品BOM申请单模板-姓名-日期.xlsx";		
+		[5] = "新增--产成品申请-型号-姓名-申请日期.xlsx";		
+		[6] = "B2C_BOM_批量更改单.xlsx";
+	}
+	var opent = function(n){
+		import com.excel;
+		var excel = com.GetOrCreateObject("Excel.Application");
+		if !excel win.msgbox("请先打开Excel程序");
+		if !excel return ; 
+		if !config.settings.createNewFormsFromSharepoint
+			var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
+		else
+			var wb = excel.WorkBooks.Add(config.__formTemplateSharepointServer ++ tlist[n]);
+		
+		excel.Visible = true;
+		win.showForeground(excel.Application.hwnd);
+		mainForm.show(false);
+	}
+	
+	mainForm.popmenu1 = win.ui.popmenu(mainForm);//创建弹出菜单
+	mainForm.popmenu1.addTable({
+		{ "新建申请表"; {
+    			{ "专用号申请表";	λ() opent(1)};
+    			{ "工单更改申请";	λ() opent(2)};
+    			{ "BOM更改申请表";		λ() opent(3)};
+    			{ "新产品BOM申请表";	λ() opent(4)};
+    			{ "产成品编码申请表";	λ() opent(5)};
+    			{ "B2C BOM 批量更改单";		λ() opent(6)};
+			}
+		};
+		{"格式"; {
+				{"格式化BOM"; λ() QHC.formatBOM()};
+				{"格式化成本BOM"; λ() QHC.formatCostBom()}
+			}
+		}
+	})
+	win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	var pt = ::POINT();
+	::User32.GetCursorPos(pt);   		
+	mainForm.popmenu1.popup(pt.x,pt.y,true )
+}
+
+var tbutton9 = function(id,event){
+	import solidedge.AssemblyDocument;
+	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+	if (seAsm.SelectSet.Count != 1) return;
+	seAsm.replaceWithPartCopy(seAsm.SelectSet.Item(1));
+    mainForm.show(false); //隐藏窗口
+	if seApp win.setActive(seApp.hWnd);
+}
+var tbar = win.ui.toolbar(winform.custom);
+tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
+tbar.showLabel = true; //在按钮上显示文字
+tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
+tbar.add("open dummy", opendummy, /*img*/ , /* id */, 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
+tbar.add("edit dim", editDim, /*img*/ , /* id */, 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
+winform.show();
+win.loopMessage();

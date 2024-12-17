@@ -12,15 +12,20 @@ ScriptControl 控件的不同版本每行字数上限在 1000 字到 2000 字以
 namespace SAP;
 class vm{
 	ctor( ... ){
+		this.instance = ...;
 		this.ovm = ..web.script("VBScript");
 		this.ovm.allowUi = true;
 		this.ovm.script = /*
+			dim instance
+			instance = 0
 			If Not IsObject(application) Then
    				Set SapGuiAuto  = GetObject("SAPGUI")
    				
    				Set application = SapGuiAuto.GetScriptingEngine
 			End If
 		*/
+		if this.instance
+			this.ovm.script.instance = tonumber(this.instance);
 		this.ovm.script = /*
 			on error resume next
 			If Not IsObject(connection) Then
@@ -33,7 +38,7 @@ class vm{
 		if !this.ovm.script.connection return null;
 		this.ovm.script = /*
 			If Not IsObject(session) Then
-   				Set session = connection.Children(0)
+   				Set session = connection.Children(CLng(instance))
 			End If
 		*/
 		this.ovm.script = /*

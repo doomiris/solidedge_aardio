@@ -87,7 +87,7 @@ winform.qtbs.open = function(selIndex,pcode){
 winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
 	var txt = winform.editUser3.text;
-	if winform.qtbs.selIndex == 1
+	//if winform.qtbs.selIndex == 1
 		winform.qtbs.selIndex = 2
 	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);
 }

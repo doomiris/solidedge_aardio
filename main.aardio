@@ -324,9 +324,17 @@ subscribe("dok", function(...){
 } )
 /*}}*/
 
-mainForm.closeAll.oncommand = mainForm.mTabs.clear;
+//mainForm.closeAll.oncommand = mainForm.mTabs.clear;
+mainForm.closeAll.onMouseClick = function(wParam,lParam){
+    //var x,y = win.getMessagePos(lParam);
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
+    if !ctrl
+		mainForm.mTabs.delete(mainForm.mTabs.selIndex);
+	else 
+		mainForm.mTabs.clear();
+}
 var tooltipCtrl = win.ui.tooltip( mainForm );
-mainForm.closeAll.tooltip = tooltipCtrl.addTool(mainForm.closeAll,"关闭所有窗口");
+mainForm.closeAll.tooltip = tooltipCtrl.addTool(mainForm.closeAll,"点击: 关闭当前子窗口" ++ '\r\n' ++ "CTRL+点击: 关闭所有子窗口");
 mainForm.foldchk.tooltip = tooltipCtrl.addTool(mainForm.foldchk,"折叠左侧导航栏");
 
 mainForm.popmenu = win.ui.popmenu(mainForm); 
