@@ -199,7 +199,7 @@ winform.button9.oncommand = function() winform.listbox.clear();
 listEdit.onEditChanged = win.debounce(function(text,selIndex){
 	winform.listbox.refreshList()
 	winform.listbox.selIndex = selIndex;
-	win.msgbox(text);
+	//win.msgbox(text);
 }, 200)
 
 
