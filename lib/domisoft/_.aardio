@@ -8,7 +8,7 @@ var replace = string.replace;
 var trim = string.trim;
 
 math.isNumber = function(str){
-	return #str = #tostring((tonumber(str))); 
+	return !!string.match(str, "^[+-]?\d+\.?\d*$")) ; 
 }
 table.toHTML = function(tab){
     var html = "<table border=1>";

@@ -138,14 +138,17 @@ winform.button.oncommand = function(id,event){
 
 /*importFromQHC{{*/
 var importFromQHC2 = function(winform, path){
+import console
+console.open();
 
 	import access.oleDb;
 	var adb = access(path);
+	
 	var t = adb.getTable(`
 	SELECT
 		[物料], 
 		[是否禁用] AS [禁用],
-		[大小/量纲] AS [生产展平尺寸]
+		[行业标准描述] AS [生产展平尺寸]
 	FROM [Sheet1$]
 	WHERE
 		[物料] <>''
@@ -159,9 +162,9 @@ var importFromQHC2 = function(winform, path){
 	var p = adb.getTable(`
 		SELECT
 			[物料],
-			[大小/量纲] AS [生产展平尺寸]
+			[行业标准描述] AS [生产展平尺寸]
 		FROM [sheet1$]
-		WHERE [大小/量纲]<> ''
+		WHERE [行业标准描述]<> ''
 	`)
 
 

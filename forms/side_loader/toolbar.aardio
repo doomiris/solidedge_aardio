@@ -30,16 +30,15 @@ var tbutton2 = function(id,event){
     var SelSet = seApp.ActiveDocument.SelectSet;
     if SelSet.Count !== 1 return; 
     if (SelSet(1).Type !== 488188096 /* igDimension */) return;
-    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L", mainForm);
+    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L");
     if !s return; 
     if ..string.len(..string.trim(s)) == 0 return ; 
     SelSet(1).OverrideString = s;
     SelSet(1).Style.NTSSymbol = 1 /* igDimStyleNTSNone */;
     
-    mainForm.show(false); //隐藏窗口
+    //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-
 var tbutton3 = function(id,event){
 	if !seApp return; 
 	import solidedge.DraftDocument;
@@ -50,7 +49,7 @@ var tbutton3 = function(id,event){
 	var BBS = seSht.Balloons;
 	var ee = seDFT.getTopRecordMark(seSht);
 	ee = ee ? string.pack( ee[1] + 1 ) : "a";
-	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee, mainForm);
+	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee);
 	if !e return ; 
 	if (string.len(string.trim(e)) == 0) return ; 
 	var setBB = function(balloonItem, txt){
@@ -74,10 +73,9 @@ var tbutton3 = function(id,event){
 			}
 		}
 	}
-    mainForm.show(false); //隐藏窗口
+    //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-
 var tbutton4 = function(id,event){
 	if !seApp return; 
 	import solidedge.DraftDocument;
@@ -93,7 +91,7 @@ var tbutton4 = function(id,event){
         		ee = BBS.Item(i).BalloonText;
         		break;
 	}
-	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee, mainForm);
+	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee);
 	if !e return ; 
 	if (..string.len(..string.trim(e)) == 0) return ; 
 	
@@ -103,10 +101,9 @@ var tbutton4 = function(id,event){
         		if (BBS.Item(i).BalloonText==e)
         			BBS.Item(i).Delete();
 	}
-    mainForm.show(false); //隐藏窗口
+    //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-
 var tbutton5 = function(id,event){
 	if !seApp return; 
 	import solidedge.AssemblyDocument;
@@ -133,25 +130,21 @@ var tbutton5 = function(id,event){
 			return ; 
 		}
 	}
-    mainForm.show(false); //隐藏窗口
+    //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-
-
 var tbutton6 = function(id,event){
 	if !seApp return; 
 	seApp.closeDft(false);
-    mainForm.show(false); //隐藏窗口
+    //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-
 var tbutton7 = function(id,event){
 	if !seApp return; 
 	seApp.closeDft(true);
-    mainForm.show(false); //隐藏窗口
+   // mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-
 var tbutton8 = function(id,event){
 	import QHC;
 	
@@ -175,11 +168,11 @@ var tbutton8 = function(id,event){
 		
 		excel.Visible = true;
 		win.showForeground(excel.Application.hwnd);
-		mainForm.show(false);
+		//mainForm.show(false);
 	}
 	
-	mainForm.popmenu1 = win.ui.popmenu(mainForm);//创建弹出菜单
-	mainForm.popmenu1.addTable({
+	winform.popmenu1 = win.ui.popmenu(winform);//创建弹出菜单
+	winform.popmenu1.addTable({
 		{ "新建申请表"; {
     			{ "专用号申请表";	λ() opent(1)};
     			{ "工单更改申请";	λ() opent(2)};
@@ -195,26 +188,78 @@ var tbutton8 = function(id,event){
 			}
 		}
 	})
-	win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+	win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	var pt = ::POINT();
 	::User32.GetCursorPos(pt);   		
-	mainForm.popmenu1.popup(pt.x,pt.y,true )
+	winform.popmenu1.popup(pt.x,pt.y,true )
 }
-
 var tbutton9 = function(id,event){
+	import solidedge.application;
+	var seApp = solidedge.application();
 	import solidedge.AssemblyDocument;
 	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
 	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
 	if (seAsm.SelectSet.Count != 1) return;
 	seAsm.replaceWithPartCopy(seAsm.SelectSet.Item(1));
-    mainForm.show(false); //隐藏窗口
+    //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+
+var tools = {
+	{
+		Name = "Edit Dim";
+		img = "";
+		proc = tbutton2;
+	};
+	{
+		Name = "Edit Balloon";
+		img = "";
+		proc = tbutton3;
+	};
+	{
+		Name = "delete Balloon";
+		img = "";
+		proc = tbutton4;
+	};
+	{
+		Name = "openDummy";
+		img = "";
+		proc = tbutton5;
+	};
+	{
+		Name = "closeDft(discardChanges)";
+		img = "";
+		proc = tbutton6;
+	};
+	{
+		Name = "closeDft(saveChanges)";
+		img = "";
+		proc = tbutton7;
+	};
+	{
+		Name = "New Sheet";
+		img = "";
+		proc = tbutton8;
+	};
+	{
+		Name = "replaceWithPartCopy";
+		img = "";
+		proc = tbutton9;
+	};
+}
+
 var tbar = win.ui.toolbar(winform.custom);
 tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
 tbar.showLabel = true; //在按钮上显示文字
 tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
-tbar.add("open dummy", opendummy, /*img*/ , /* id */, 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
-tbar.add("edit dim", editDim, /*img*/ , /* id */, 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
+for (i=1; #tools)
+	tbar.add(
+		tools[i].Name,
+		λ() thread.invoke(tools[i].proc),
+		tools[i].img /* img */,
+		i /* id */,
+		4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/
+	)
+
 winform.show();
 win.loopMessage();

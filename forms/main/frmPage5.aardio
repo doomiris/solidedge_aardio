@@ -158,6 +158,7 @@ tbs = {
 	[2] = winform.tab.loadForm("\forms\printcenter\psm2dxf.aardio" );
 	[3] = winform.tab.loadForm("\forms\printcenter\printpaper.aardio" );
 	[4] = winform.tab.loadForm("\forms\printcenter\bmp2png.aardio" );
+	[5] = winform.tab.loadForm("\forms\printcenter\pdf_combine.aardio" );
 }
 
 initDeclare();
