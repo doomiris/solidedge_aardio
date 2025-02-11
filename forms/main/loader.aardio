@@ -37,6 +37,7 @@ var list = {
 	{ name = "获取文件名清单", filename = "获取文件名清单.aardio"}
 	{ name = "淘宝链接简化", filename = "淘宝链接简化.aardio"}
 	{ name = "关闭代理", filename = "关闭代理.aardio"}
+	{ name = "(新办公室)", filename = "注册表.aardio"}
 }
 
 for (i=1; #site)	
