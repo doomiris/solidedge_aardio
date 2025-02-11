@@ -1,0 +1,23 @@
+//入门
+import console;
+//sys.reg 的代码只有几句，提供简单的写注册表功能
+import sys.reg;
+//写注册表，根键不用指定，默认为 HKEY_CURRENT_USER
+//sys.reg.setValue("键","值","Software\aardio\test.aardio.code")
+
+//win.reg 提供更多的读写注册表功能
+import win.reg;
+ 
+//仅打开已存在的路径
+var reg = win.reg("HKEY_CURRENT_USER\Software\Siemens\Solid Edge\Version 220\Global",true); 
+
+reg.setValue(
+	"AdminOptionsFile",
+	"C:\Temp\SE\Settings\Options_CCR_2025_sharepoint.xml"
+)
+
+
+if reg
+	reg.close();
+
+console.pause(true);
