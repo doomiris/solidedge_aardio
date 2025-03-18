@@ -34,7 +34,7 @@ chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272
 groupbox={cls="groupbox";text='\uF016  当前文件';left=16;top=9;right=488;bottom=47;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='FontAwesome');z=5};
 rd_M={cls="radiobutton";text="自制件(&E)";left=24;top=328;right=96;bottom=344;bgcolor=16777215;db=1;dl=1;group=1;z=30};
 rd_P={cls="radiobutton";text="外购件(&F)";left=96;top=328;right=160;bottom=344;bgcolor=16777215;db=1;dl=1;z=31};
-seDocPath={cls="static";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
+seDocPath={cls="static";text="点击此处刷新";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
 static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
 static10={cls="static";text="唤起快捷键 Alt+T";left=168;top=320;right=272;bottom=336;align="right";color=32768;db=1;dr=1;transparent=1;z=34};
 static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20};
@@ -44,7 +44,7 @@ static5={cls="static";text="材料";left=15;top=106;right=45;bottom=125;dl=1;dt=
 static6={cls="static";text="型号";left=269;top=63;right=299;bottom=82;dr=1;dt=1;transparent=1;z=24};
 static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;dt=1;transparent=1;z=25};
 static8={cls="static";text="版本";left=15;top=149;right=45;bottom=168;dl=1;dt=1;transparent=1;z=26};
-static9={cls="static";text='\uF0E2';left=24;top=24;right=40;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=33};
+static9={cls="static";text='\uF0E2';left=24;top=24;right=40;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');notify=1;transparent=1;z=33};
 version={cls="edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1;font=LOGFONT(h=-13);z=7}
 )
 /*}}*/
@@ -394,8 +394,7 @@ winform.button7.oncommand = function(id,event){
 	menu.popup(pt.x,pt.y,true );	
 }
 
-
-
+winform.static9.oncommand = winform.frmReLoad;
 
 win.loopMessage();
 return winform;

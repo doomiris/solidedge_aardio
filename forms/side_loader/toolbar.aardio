@@ -13,18 +13,20 @@ import console;
 import win.ui.menu;
 import win.ui.toolbar;
 
-
+/*
 var opendummy = function(id){
 	thread.invoke(function(){
 		import win;
-		import solidedge.application;
+		
 		var seApp = solidedge.application();
 		seApp.openDummy();
 		win.setActive(seApp.hWnd);
 	})	
 }
+*/
 var tbutton2 = function(id,event){
-	if !seApp return; 
+	import solidedge.application;
+	var seApp = solidedge.application();
     if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
     var SelSet = seApp.ActiveDocument.SelectSet;
@@ -40,7 +42,8 @@ var tbutton2 = function(id,event){
 	if seApp win.setActive(seApp.hWnd);
 }
 var tbutton3 = function(id,event){
-	if !seApp return; 
+	import solidedge.application;
+	var seApp = solidedge.application();
 	import solidedge.DraftDocument;
     if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
@@ -77,7 +80,8 @@ var tbutton3 = function(id,event){
 	if seApp win.setActive(seApp.hWnd);
 }
 var tbutton4 = function(id,event){
-	if !seApp return; 
+	import solidedge.application;
+	var seApp = solidedge.application();
 	import solidedge.DraftDocument;
 	if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
@@ -105,7 +109,8 @@ var tbutton4 = function(id,event){
 	if seApp win.setActive(seApp.hWnd);
 }
 var tbutton5 = function(id,event){
-	if !seApp return; 
+	import solidedge.application;
+	var seApp = solidedge.application();
 	import solidedge.AssemblyDocument;
 	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
 	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
@@ -134,13 +139,15 @@ var tbutton5 = function(id,event){
 	if seApp win.setActive(seApp.hWnd);
 }
 var tbutton6 = function(id,event){
-	if !seApp return; 
+	import solidedge.application;
+	var seApp = solidedge.application();
 	seApp.closeDft(false);
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
 var tbutton7 = function(id,event){
-	if !seApp return; 
+	import solidedge.application;
+	var seApp = solidedge.application();
 	seApp.closeDft(true);
    // mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
@@ -194,6 +201,7 @@ var tbutton8 = function(id,event){
 	winform.popmenu1.popup(pt.x,pt.y,true )
 }
 var tbutton9 = function(id,event){
+	import console;
 	import solidedge.application;
 	var seApp = solidedge.application();
 	import solidedge.AssemblyDocument;

@@ -3,39 +3,20 @@ import win.ui;
 var winform = win.form(text="aardio form";right=741;bottom=429)
 winform.add(
 listview={cls="listview";left=307;top=37;right=738;bottom=417;db=1;dr=1;dt=1;edge=1;z=2};
-splitter={cls="splitter";left=297;top=35;right=302;bottom=417;frame=1;z=3};
-treeview={cls="treeview";left=4;top=38;right=295;bottom=419;asel=false;bgcolor=16777215;db=1;dl=1;dt=1;edge=1;vscroll=1;z=1}
+splitter={cls="splitter";left=297;top=35;right=302;bottom=417;db=1;dt=1;frame=1;z=3};
+treeview={cls="treeview";left=4;top=38;right=295;bottom=419;bgcolor=16777215;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1}
 )
 /*}}*/
+
 winform.splitter.split(winform.treeview,winform.listview);
 
-//sys.reg 的代码只有几句，提供简单的写注册表功能
-import sys.reg;
-
-//写注册表，根键不用指定，默认为 HKEY_CURRENT_USER
-//sys.reg.setValue("键","值","Software\aardio\test.aardio.code")
-
-//win.reg 提供更多的读写注册表功能
+import win.ui.menu;
 import win.reg;
+import win.ui.grid;
 
-//创建新的注册表路径
-/*
-var reg = win.reg("HKEY_CURRENT_USER\Software\aardio\test.aardio.code") 
-console.log(reg.queryValue("键")); //读注册表值
-
-reg.renameKey("test.aardio.code.new"); //修改键名
-reg.setDwValue("testaaa",123); //设置新值
-reg.delValue("testaaa"); //删除指定的值
-reg.save("/backup.bin"); //导出注册表
-reg.load("/backup.bin"); //导入注册表
-reg.close();
-*/
-
-
- 
-//仅打开已存在的路径
-//var HKCU = win.reg("HKEY_CURRENT_USER",true); 
-var root = winform.treeview.insertItem( text = "HKEY_CURRENT_USER" );
+var grid = win.ui.grid(winform.listview);
+grid.setColumns({"key";"value";}) //可选自定义显示列名
+grid.setReadonlyColumns(1)
 
 var getChild = function(path, parent){
 	winform.treeview.clear(parent);
@@ -43,12 +24,23 @@ var getChild = function(path, parent){
 	if !reg return ;
 	var keys = reg.keys();	
 	winform.treeview.insertTable(keys, parent)
+	reg.close();
 }
 
-getChild("HKEY_CURRENT_USER",root);
+/*
+winform.listview.insertColumn("key",200);
+winform.listview.insertColumn("value",100);
+*/
 
-winform.listview.insertColumn("k",200)
-winform.listview.insertColumn("v",100)
+var root = winform.treeview.insertItem( {text = "HKEY_CURRENT_USER"; cChildren = 1});
+getChild("HKEY_CURRENT_USER", root);
+for hChild in winform.treeview.each(root){
+	var ctext = winform.treeview.getItemPath(hChild)
+	getChild(ctext, hChild)
+}
+winform.treeview.expand(root);
+
+
 winform.treeview.onClick = function(hItem,data){
 	var text = winform.treeview.getItemPath(hItem)
 	getChild(text,hItem);
@@ -56,18 +48,65 @@ winform.treeview.onClick = function(hItem,data){
 	var reg = win.reg(winform.treeview.getItemPath(hItem));
 	if reg {		
 		winform.listview.clear();
-		var vt =reg.queryValueTable()
+		var vt = reg.queryValueTable()
 		for k, v in vt
 			winform.listview.addItem({text = {k,v}});
+		reg.close();
 	}
-	//winform.listview.setTable({});
-	
+
 	for hChild in winform.treeview.each(hItem){
 		var ctext = winform.treeview.getItemPath(hChild)
 		getChild(ctext, hChild)
 	}
+
+}
+winform.treeview.onnotify = function(id,code,ptr){
+ 	 if( code = 0xFFFFFE3A/*_TVN_ITEMEXPANDINGW*/){  
+ 	 	var nmtv = winform.treeview.getNotifyMessage(code,ptr) 
+ 	 	if(nmtv.action & 2/*_TVE_EXPAND*/) { 
+ 	 		winform.treeview.onClick(nmtv.itemNew.hItem)
+		}
+ 	 }
+}
+winform.treeview.onRightClick = function(hItem,data){
+    winform.treeview.setSelected(hItem);
+    
+    var menu = win.ui.popmenu(winform)
+    menu.add("删除",
+        function(){ 
+            var reg = win.reg(winform.treeview.getItemPath(winform.treeview.getParentItem(hItem)));
+            if !reg return ; 
+            if win.msgboxTest("删除此项及所有子项?"+'\n'+winform.treeview.getItemPath(hItem),"确认",winform.hwnd)
+                if reg.delKeyTree(winform.treeview.getItemText(hItem))
+                	winform.treeview.delItem(hItem);
+            reg.close();
+        }
+    )
+
+    menu.popup(x,y,true);
 }
 
+grid.onEditChanged = function(text,iItem,iSubItem){
+	var reg = win.reg(winform.treeview.getItemPath(winform.treeview.getSelection()));
+	if !reg return;
+	var keyname = winform.listview.getItemText(iItem,1);
+	reg.setValue(keyname, text);
+	reg.close();	
+}
+grid.onRightClick = function(item,subItem,nmListView){
+    var menu = win.ui.popmenu(winform)
+    menu.add("删除",
+        function(){ 
+            var reg = win.reg(winform.treeview.getItemPath(winform.treeview.getSelection()));
+            if !reg return ;
+            var keyname = winform.listview.getItemText(iItem,1);
+            if reg.delValue(keyname)
+                winform.listview.delItem(item)
+            reg.close();                	
+        }
+    )
+    menu.popup(x,y,true);
+}
 
 winform.show();
 win.loopMessage();

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="false" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.529" ProductVersion="1.5.0.529" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.537" ProductVersion="1.5.0.537" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio">
 		<file name="menulist.aardio" path="menulist.aardio" comment="menulist.aardio"/>
 	</file>
@@ -64,35 +64,6 @@
 			<file name="SAP-job2.aardio" path="forms\obsolete\SAP-job2.aardio" comment="forms\obsolete\SAP-job2.aardio"/>
 			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
 		</folder>
-		<folder name="OpenAI" path="forms\OpenAI" comment="forms\OpenAI" local="false" embed="false" ignored="true">
-			<file name="AI-Icon-17-512.webp" path="forms\OpenAI\AI-Icon-17-512.webp" comment="forms\OpenAI\AI-Icon-17-512.webp"/>
-			<file name="AI_Draw.aardio" path="forms\OpenAI\AI_Draw.aardio" comment="forms\OpenAI\AI_Draw.aardio"/>
-			<file name="chatgpt.aardio" path="forms\OpenAI\chatgpt.aardio" comment="forms\OpenAI\chatgpt.aardio"/>
-			<file name="chatgpt.html" path="forms\OpenAI\chatgpt.html" comment="forms\OpenAI\chatgpt.html"/>
-			<folder name="node_modules" path="forms\OpenAI\node_modules" comment="forms\OpenAI\node_modules" local="false" embed="false" ignored="false">
-				<folder name="babel-standalone" path="forms\OpenAI\node_modules\babel-standalone" comment="forms\OpenAI\node_modules\babel-standalone" local="false" embed="false" ignored="false">
-					<file name="babel.min.js" path="forms\OpenAI\node_modules\babel-standalone\babel.min.js" comment="forms\OpenAI\node_modules\babel-standalone\babel.min.js"/>
-				</folder>
-				<folder name="@chatui" path="forms\OpenAI\node_modules\@chatui" comment="forms\OpenAI\node_modules\chatui" local="false" embed="false" ignored="false">
-					<folder name="core" path="forms\OpenAI\node_modules\@chatui\core" comment="forms\OpenAI\node_modules\@chatui\core" local="false" embed="false" ignored="false">
-						<folder name="dist" path="forms\OpenAI\node_modules\@chatui\core\dist" comment="forms\OpenAI\node_modules\@chatui\core\dist" local="false" embed="false" ignored="false">
-							<file name="index.css" path="forms\OpenAI\node_modules\@chatui\core\dist\index.css" comment="forms\OpenAI\node_modules\@chatui\core\dist\index.css"/>
-							<file name="index.js" path="forms\OpenAI\node_modules\@chatui\core\dist\index.js" comment="forms\OpenAI\node_modules\@chatui\core\dist\index.js"/>
-						</folder>
-					</folder>
-				</folder>
-				<folder name="react" path="forms\OpenAI\node_modules\react" comment="forms\OpenAI\node_modules\react">
-					<folder name="umd" path="forms\OpenAI\node_modules\react\umd" comment="forms\OpenAI\node_modules\react\umd">
-						<file name="react.production.min.js" path="forms\OpenAI\node_modules\react\umd\react.production.min.js" comment="forms\OpenAI\node_modules\react\umd\react.production.min.js"/>
-					</folder>
-				</folder>
-				<folder name="react-dom" path="forms\OpenAI\node_modules\react-dom" comment="forms\OpenAI\node_modules\react-dom">
-					<folder name="umd" path="forms\OpenAI\node_modules\react-dom\umd" comment="forms\OpenAI\node_modules\react-dom\umd">
-						<file name="react-dom.production.min.js" path="forms\OpenAI\node_modules\react-dom\umd\react-dom.production.min.js" comment="forms\OpenAI\node_modules\react-dom\umd\react-dom.production.min.js"/>
-					</folder>
-				</folder>
-			</folder>
-		</folder>
 		<folder name="printcenter" path="forms\printcenter" comment="forms\printcenter" local="false" embed="false" ignored="false">
 			<file name="bmp2png.aardio" path="forms\printcenter\bmp2png.aardio" comment="forms\printcenter\bmp2png.aardio"/>
 			<file name="dft-list.aardio" path="forms\printcenter\dft-list.aardio" comment="forms\printcenter\dft-list.aardio"/>
@@ -109,10 +80,13 @@
 		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="true">
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
 			<file name="clear_sys_temp_folder.aardio" path="forms\side_loader\clear_sys_temp_folder.aardio" comment="forms\side_loader\clear_sys_temp_folder.aardio"/>
+			<file name="registry.aardio" path="forms\side_loader\registry.aardio" comment="forms\side_loader\registry.aardio"/>
 			<file name="toolbar.aardio" path="forms\side_loader\toolbar.aardio" comment="forms\side_loader\toolbar.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
+			<file name="合并PDF.aardio" path="forms\side_loader\合并PDF.aardio" comment="forms\side_loader\合并PDF.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
+			<file name="注册表.aardio" path="forms\side_loader\注册表.aardio" comment="forms\side_loader\注册表.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
 		</folder>

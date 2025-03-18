@@ -105,6 +105,13 @@ var refreshFiles = function(){
 			table.push(nt, t[i])
 	winform.listview2.items = nt;
 }
+var localMapping = function(fullpath){
+	import string;	
+	fullpath = string.replace(fullpath,"@\\CCNSIA1A\SEParts\Cabinet\","D:\users\CCL100100\Carrier Corporation\CCR Detail Design - S - S\") 
+	return fullpath; 
+}
+
+
 winform.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
     select(code) {
     	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
@@ -113,6 +120,7 @@ winform.listview2.onnotify = function(id,code,ptr){//code很多 select外放代�
     		if !selectedRow return;
     		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
 			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")),pcode);
+			fullName = localMapping(fullName);
 			if io.exist(fullName)
 				process.execute(fullName);
     	}
@@ -122,7 +130,7 @@ winform.listview2.onnotify = function(id,code,ptr){//code很多 select外放代�
     		var header = owner.header;
     		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
 			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")), pcode);
-
+			fullName = localMapping(fullName)
 			var x,y = win.getMessagePos();
 			var menu = win.ui.popmenu(winform);
 			menu.add("打开文件...", λ() process.execute(fullName));
@@ -151,9 +159,10 @@ winform.listview2.translateAccelerator = function( msg ){
 		var tab = table.array();
 		for (i=1; owner.count){
 			if (table.find(owner.selected,i)){
-				var fullname = owner.getItemText(i, table.indexOf(header,"路径")) ++ owner.getItemText(i, table.indexOf(header,"文件名"));
-				if io.exist(fullname)
-					table.push(tab, fullname);
+				var fullName = owner.getItemText(i, table.indexOf(header,"路径")) ++ owner.getItemText(i, table.indexOf(header,"文件名"));
+				fullName = localMapping(fullName)
+				if io.exist(fullName)
+					table.push(tab, fullName);
 			}
 		}     
 		if #tab
