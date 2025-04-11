@@ -26,8 +26,9 @@ _plugins_keywords := {
 }
 _plugins_parent := "com.teamcenter.rac.";
 _tc_install_path := string.trimright(fsys.lnk.searchLnk(,"Teamcenter 13", 0 /*_CSIDL_DESKTOP*/), "\portal\portal.bat");
+_tc_install_path := "C:\Program Files\Siemens\Teamcenter13";
 _plugins_folder := io.joinpath(_tc_install_path, "\portal\plugins");
-_plugins_server := "\\CCNSIA1A\SEPARTS\Admin\Software\TeamCenter_install\00-PLM二次开发安装包";
+_plugins_server := "\\CCNSIA1A.carcgl.com\SEPARTS\Admin\Software\TeamCenter_install\00-PLM二次开发安装包";
 _plugins_registry_cmd := io.joinpath(_tc_install_path, "\portal\registry\genregxml.bat");
 
 if !io.exist(_plugins_server) win.msgbox("目前不存在 " + '\r' + _plugins_server);

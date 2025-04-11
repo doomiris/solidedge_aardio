@@ -43,18 +43,20 @@ var initDeclare = function(){
 }
 /*}}*/
 
-import config;
-var dbpath =io.joinpath(config.dbServer.path,"tbm.db");
-
-import sqlite;
-var dbRs = sqlite(dbpath);	//打开数据库连接
 
 //import console;
 //console.open();
 
 /*loadLists{{*/
 var loadPromptList = function(){
+	import config;
+	var dbpath =io.joinpath(config.dbServer.path,"tbm.db");
+	
+	import sqlite;
+	var dbRs = sqlite(dbpath);	//打开数据库连接
+
 	var tab = dbRs.getTable("select * from SE_SPEC_TEMPLATE order by [ID]");
+	dbRs.close();
 	var hitem = spec_winform.treeview.insertItem( text="模板清单" );
 	//spec_winform.treeview.insertTable(tab);
 	//var hSubItem;
@@ -79,6 +81,12 @@ spec_winform.treeview.onnotify = function(id,code,ptr){
 			spec_winform.checklist.clear();
 			var hItem = spec_winform.treeview.getSelection();
 			if(hItem and spec_winform.treeview.getParentItem(hItem)){
+				import config;
+				var dbpath =io.joinpath(config.dbServer.path,"tbm.db");
+				
+				import sqlite;
+				var dbRs = sqlite(dbpath);	//打开数据库连接
+
 				var tab;
 				tab = dbRs.stepQuery("select tCombine,tSelect from SE_SPEC_TEMPLATE", { tName = spec_winform.treeview.getItemText(hItem) } );
 				var v = string.split(tab.tCombine,",")
@@ -89,6 +97,7 @@ spec_winform.treeview.onnotify = function(id,code,ptr){
 					spec_winform.checklist.addItem(replacePara(tab.sTxt));
 					spec_winform.checklist.setChecked(i, (vs[i]==1) );
 				}
+				dbRs.close();
 			}
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/  {

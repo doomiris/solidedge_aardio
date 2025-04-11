@@ -23,7 +23,7 @@ edit3={cls="edit";left=152;top=298;right=312;bottom=495;autohscroll=false;db=1;d
 )
 /*}}*/
 
-var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");
+var adminSession = string.getenv("USERDOMAIN") == "CARCGL" and string.getenv("USERNAME") == "ccl100100";
 winform_admin.button9.hide = !adminSession;
 winform_admin.button13.hide = !adminSession;
 

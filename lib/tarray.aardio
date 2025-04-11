@@ -1,23 +1,25 @@
 ﻿// tarray
-var pop = ..table.pop;
-var map = ..table.map;
-var mapDeep = ..table.mapDeep;
-var slice = ..table.slice;
-var splice = ..table.splice;
-var push = ..table.push;
-var escape = ..string.escape;
-var math = ..string.match;
-var next = ..table.next;
-var eachName = ..table.eachName;
-var eachIndex = ..table.eachIndex;
-var eachValue = ..table.eachValue;
-var eachArgs = ..table.eachArgs;
-var indexOf = ..table.indexOf;
-var mixin = ..table.assign;
-var join = ..string.join;
-var unique = ..table.unique;
-var trim = ..string.trim;
-var len = ..string.len;
+var table = ..table;
+var string = ..string;
+var pop = table.pop;
+var map = table.map;
+var mapDeep = table.mapDeep;
+var slice = table.slice;
+var splice = table.splice;
+var push = table.push;
+var escape = string.escape;
+var math = string.match;
+var next = table.next;
+var eachName = table.eachName;
+var eachIndex = table.eachIndex;
+var eachValue = table.eachValue;
+var eachArgs = table.eachArgs;
+var indexOf = table.indexOf;
+var mixin = table.assign;
+var join = string.join;
+var unique = table.unique;
+var trim = string.trim;
+var len = string.len;
 
 namespace tarray;
 /* column operation */
@@ -278,7 +280,15 @@ trimAll = function(arr){
 		return trim(v);
 	})
 }
-
+endwith = function(str, tail, cap = false){
+	if type(tail) == "string"
+		return string.endsWith(str, tail, cap);
+	if type(tail) == "table"
+		if table.isArray(tail)
+			for (i=1; #tail)
+				if string.endsWith(str, tail[i], cap)
+					return string.endsWith(str, tail[i], cap); 	
+}
 
 /**intellisense()
 tarray = array列操作扩展库
@@ -299,6 +309,7 @@ tarray.cNum(str) = 转为数值
 tarray.indexContains(single_lvl_arr, what) = 是单层字符串数组内查找指定字符, 返回索引
 tarray.findKeyWords(arr, keywords) = keywords用|分隔 \n!tFindItem.
 tarray.findString(arr, what) = 查找值, 返回{index, value} \n!tFindStrItem.
+tarray.endwith(str, tail, cap = false) = 代替sting.endwith允许传入数组
 !tFindItem.row = 行
 !tFindItem.col = 列
 !tFindItem.value = 值 

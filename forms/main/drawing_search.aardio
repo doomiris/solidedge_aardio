@@ -20,13 +20,15 @@ import console;
 console.open()
 */
 
-/*sqliteDB{{*/
-	var flistDB = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));	//打开数据库连接
-/*}}*/
+
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
     //filenumber :=  winform.editUser0.text;
-
+/*sqliteDB{{*/
+	import sqlite;
+	import config;
+	var flistDB = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));	//打开数据库连接
+/*}}*/
 	winform.edit2.text = "";
 
     winform.listview2.clear();
@@ -88,7 +90,7 @@ var searchDocument = function (filenumber){
 **/
 
     winform.listview2.fillParent(3);
-
+	flistDB.close();
 }
 /*}}*/
 var refreshFiles = function(){
@@ -106,8 +108,10 @@ var refreshFiles = function(){
 	winform.listview2.items = nt;
 }
 var localMapping = function(fullpath){
-	import string;	
-	fullpath = string.replace(fullpath,"@\\CCNSIA1A\SEParts\Cabinet\","D:\users\CCL100100\Carrier Corporation\CCR Detail Design - S - S\") 
+	import string;
+	var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
+	
+	fullpath = string.replace(fullpath,"@\\CCNSIA1A\SEParts\Cabinet", io.joinpath(OneDriveCommercial,"CCR Detail Design - S - S")) 
 	return fullpath; 
 }
 

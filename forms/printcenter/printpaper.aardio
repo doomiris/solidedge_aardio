@@ -24,6 +24,8 @@ var grid = win.ui.grid(printpaper_form.listview);//创建数据视图
 import fsys.lnk;
 var aid;
 var apath = fsys.lnk.search("AcroRd32.exe");
+if !io.exist(apath)
+	apath = fsys.lnk.searchInDesktop("Acrobat.exe")
 
 var tab;
 var renew = function(){

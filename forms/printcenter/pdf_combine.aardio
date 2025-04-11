@@ -22,7 +22,7 @@ import fsys.dlg;
 var tab;
 var renew = function(){
 	tab = {};	
-	tab.fields = {[1] = "文件名"; [2]="Path"; [3] = "output"}
+	tab.fields = {[1] = "文件名"; [2]="Path"; [3] = "type"}
 }
 renew();
 
@@ -38,7 +38,7 @@ winform.onDropFiles = function(files){
 			table.push(tab,	{
 					"文件名" =  fn;
 					"Path" = fp;
-					"output" = "";
+					"type" = tarray.endwith(fn, {".jpg",".jpeg",".png",".gif",".bmp"}, true) ? "image" : "pdf";
 			})
 	}
 	winform.listview.setTable(tab);
@@ -53,8 +53,22 @@ winform.onDropFiles = function(files){
 winform.button.oncommand = function(id,event){
 	var mergedPdf = fsys.pdfium();
 	for (i=1; winform.listview.count){
-		var fn = io.joinpath(winform.listview.getItemText(i,2) , winform.listview.getItemText(i,1));
-		mergedPdf.importPages(fn,,);
+		var item = tab[i];
+		var filename = winform.listview.getItemText(i,1);
+		var filepath = io.joinpath(winform.listview.getItemText(i,2) , winform.listview.getItemText(i,1));
+		if(item.type == "pdf"){
+            mergedPdf.importPages(filepath,,);//导入所有页面
+        }
+        elseif(item.type == "image"){
+            // 将图片转换为 PDF 页
+            var img = gdip.image(filepath);
+            if(img){
+                var pdfPage = mergedPdf.newPage(img.getWidth(), img.getHeight());
+                var canvas = pdfPage.render(img,0,0,img.getWidth(),img.getHeight());
+                img.close(); // 释放图片资源
+            }
+        }
+
 	}
 	var path = fsys.dlg.save('PDF文件|*.PDF|所有文件|*.*|',,config.setbm.workingDir,winform,,"合并PDF文件");
 	if path

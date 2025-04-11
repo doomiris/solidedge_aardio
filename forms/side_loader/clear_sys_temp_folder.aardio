@@ -25,6 +25,10 @@ var list = fsys.enum( path, {"TCD*.tmp","{????????-????-????-????-????????????}"
 	,false /*如果此参数为false则忽略子目录*/
 );
 
+
+var f2 = "C:\Users\ccl100100\Teamcenter\RAC"
+var f3 = "C:\Users\ccl100100\" //fcc.*.log;fcc.*.log.lck
+
 console.log("共删除文件夹",folderlist[1],"失败:",folderlist[2]);
 console.log("共删除文件",filelist[1],"失败:",filelist[2]);
 console.pause();

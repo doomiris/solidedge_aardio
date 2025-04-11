@@ -2,11 +2,11 @@
 
 import fsys.config;
 import fsys.ini;
-
+import fsys.knownFolder
 
 
 config = fsys.config(io.appData("/domisoft/SETBM/"));
-var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED?  "D:\users\CCL100100\Downloads" : io._exedir, "TBM.ini"));
+var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED ?  fsys.knownFolder("{374DE290-123F-4565-9164-39C4925E467B}") : io._exedir, "TBM.ini"));
 var lib = ini.getSection("lib");
 
 var table = ..table;

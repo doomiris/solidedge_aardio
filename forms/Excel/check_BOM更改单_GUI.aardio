@@ -95,12 +95,7 @@ winform.button.oncommand = function(id,event){
 	
 	var etab_count = #etab;
 	
-	var pcodeOffset = function(pcode, offset = 1){
-		if !pcode return ;
-		pcode = string.trimleft(pcode, "H00");
-		pcode = tonumber(pcode) + offset;
-		return "H00" ++ pcode;  
-	}
+
 	
 	var bar = winform.progress;
 	bar.min = 0;

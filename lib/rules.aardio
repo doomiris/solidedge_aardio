@@ -5,7 +5,12 @@ var QHC = ..QHC;
 var string = ..string;
 var math = ..math;
 var tarray = ..tarray;
-
+var pcodeOffset = function(pcode, offset = 1){
+	if !pcode return ;
+	pcode = string.trimleft(pcode, "H00");
+	pcode = tonumber(pcode) + offset;
+	return "H00" ++ pcode;  
+}
 namespace rules {
     // 规则描述
 	rule_desp = {

@@ -1,6 +1,9 @@
 import console; 
-_qhc_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)"
-_ccr_path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - 开利研发部"
+
+var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
+
+_qhc_path = io.joinpath(OneDriveCommercial, "SAP数据整理 - QHC开发部(只读,仅用于参考)")
+_ccr_path = io.joinpath(OneDriveCommercial, "SAP数据整理 - 开利研发部")
 //_local_path = "d:\temp\testod"
 _skip_dir_name = "归档|存档|副本|旧版本|操作手册|Archieve"
 import fsys;

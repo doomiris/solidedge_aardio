@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.537" ProductVersion="1.5.0.537" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.539" ProductVersion="1.5.0.539" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio">
 		<file name="menulist.aardio" path="menulist.aardio" comment="menulist.aardio"/>
 	</file>
@@ -50,6 +50,7 @@
 			<file name="sap_search.aardio" path="forms\main\sap_search.aardio" comment="forms\main\sap_search.aardio"/>
 			<file name="settings.aardio" path="forms\main\settings.aardio" comment="forms\main\settings.aardio"/>
 			<file name="物料名称生成.aardio" path="forms\main\物料名称生成.aardio" comment="forms\main\物料名称生成.aardio"/>
+			<file name="toolbar.aardio" path="forms\main\toolbar.aardio" comment="forms\main\toolbar.aardio"/>
 		</folder>
 		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">
 			<file name="BOM-CALC.aardio" path="forms\obsolete\BOM-CALC.aardio" comment="forms\obsolete\BOM-CALC.aardio"/>
@@ -83,10 +84,8 @@
 			<file name="registry.aardio" path="forms\side_loader\registry.aardio" comment="forms\side_loader\registry.aardio"/>
 			<file name="toolbar.aardio" path="forms\side_loader\toolbar.aardio" comment="forms\side_loader\toolbar.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
-			<file name="合并PDF.aardio" path="forms\side_loader\合并PDF.aardio" comment="forms\side_loader\合并PDF.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
-			<file name="注册表.aardio" path="forms\side_loader\注册表.aardio" comment="forms\side_loader\注册表.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
 		</folder>
@@ -113,11 +112,10 @@
 			<file name="winform1.aardio" path="forms\TEST\winform1.aardio" comment="forms\TEST\winform1.aardio"/>
 			<file name="加减法.aardio" path="forms\TEST\加减法.aardio" comment="forms\TEST\加减法.aardio"/>
 			<file name="动态提示下拉框winform1.aardio" path="forms\TEST\动态提示下拉框winform1.aardio" comment="forms\TEST\动态提示下拉框winform1.aardio"/>
-			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\TEST\将选中区域提取为一维字符串数组.aardio" comment="forms\TEST\将选中区域提取为一维字符串数组.aardio"/>
 			<file name="提取原材料用量追加到物料后列.aardio" path="forms\TEST\提取原材料用量追加到物料后列.aardio" comment="forms\TEST\提取原材料用量追加到物料后列.aardio"/>
 			<file name="查找图号.aardio" path="forms\TEST\查找图号.aardio" comment="forms\TEST\查找图号.aardio"/>
 			<file name="查找图号填入excel.aardio" path="forms\TEST\查找图号填入excel.aardio" comment="forms\TEST\查找图号填入excel.aardio"/>
-			<file name="淘宝链接简化.aardio" path="forms\TEST\淘宝链接简化.aardio" comment="forms\TEST\淘宝链接简化.aardio"/>
+			<file name="获取订单清单.aardio" path="forms\TEST\获取订单清单.aardio" comment="forms\TEST\获取订单清单.aardio"/>
 			<file name="默认值view.aardio" path="forms\TEST\默认值view.aardio" comment="forms\TEST\默认值view.aardio"/>
 		</folder>
 		<folder name="webview" path="forms\webview" comment="forms\webview" local="false" embed="false" ignored="true">
