@@ -12,17 +12,8 @@ import console;
 import win.ui.menu;
 import win.ui.toolbar;
 
-/*
-var opendummy = function(id){
-	thread.invoke(function(){
-		import win;
-		
-		var seApp = solidedge.application();
-		seApp.openDummy();
-		win.setActive(seApp.hWnd);
-	})	
-}
-*/
+
+/*tbutton2{{*/
 var tbutton2 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
@@ -40,6 +31,8 @@ var tbutton2 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+/*}}*/
+/*tbutton3{{*/
 var tbutton3 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
@@ -78,6 +71,8 @@ var tbutton3 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+/*}}*/
+/*tbutton4{{*/
 var tbutton4 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
@@ -107,6 +102,8 @@ var tbutton4 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+/*}}*/
+/*tbutton5{{*/
 var tbutton5 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
@@ -137,6 +134,8 @@ var tbutton5 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+/*}}*/
+/*tbutton6{{*/
 var tbutton6 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
@@ -144,6 +143,8 @@ var tbutton6 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+/*}}*/
+/*tbutton7{{*/
 var tbutton7 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
@@ -151,54 +152,66 @@ var tbutton7 = function(id,event){
    // mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
-var tbutton8 = function(id,event){
-	import QHC;
+/*}}*/
+/*菜单{{*/
+import win.ui;
+import win.ui.menu;
+import QHC;
+var tlist = {
+	[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
+	[2] = "工单更改申请.xlsx";		
+	[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
+	[4] = "新产品BOM申请单模板-姓名-日期.xlsx";		
+	[5] = "新增--产成品申请-型号-姓名-申请日期.xlsx";		
+	[6] = "B2C_BOM_批量更改单.xlsx";
+}
+var opent = function(n){
+	import com.excel;
+	var excel = com.GetOrCreateObject("Excel.Application");
+	if !excel win.msgbox("请先打开Excel程序");
+	if !excel return ; 
+	if !config.settings.createNewFormsFromSharepoint
+		var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
+	else
+		var wb = excel.WorkBooks.Add(config.formTemplateSharepointServer ++ tlist[n]);
 	
-	var tlist = {
-		[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
-		[2] = "工单更改申请.xlsx";		
-		[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
-		[4] = "新产品BOM申请单模板-姓名-日期.xlsx";		
-		[5] = "新增--产成品申请-型号-姓名-申请日期.xlsx";		
-		[6] = "B2C_BOM_批量更改单.xlsx";
-	}
-	var opent = function(n){
-		import com.excel;
-		var excel = com.GetOrCreateObject("Excel.Application");
-		if !excel win.msgbox("请先打开Excel程序");
-		if !excel return ; 
-		if !config.settings.createNewFormsFromSharepoint
-			var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
-		else
-			var wb = excel.WorkBooks.Add(config.__formTemplateSharepointServer ++ tlist[n]);
-		
-		excel.Visible = true;
-		win.showForeground(excel.Application.hwnd);
-		//mainForm.show(false);
-	}
-	
-	winform.popmenu1 = win.ui.popmenu(winform);//创建弹出菜单
-	winform.popmenu1.addTable({
-		{ "新建申请表"; {
-    			{ "专用号申请表";	λ() opent(1)};
-    			{ "工单更改申请";	λ() opent(2)};
-    			{ "BOM更改申请表";		λ() opent(3)};
-    			{ "新产品BOM申请表";	λ() opent(4)};
-    			{ "产成品编码申请表";	λ() opent(5)};
-    			{ "B2C BOM 批量更改单";		λ() opent(6)};
-			}
-		};
-		{"格式"; {
-				{"格式化BOM"; λ() QHC.formatBOM()};
-				{"格式化成本BOM"; λ() QHC.formatCostBom()}
-			}
+	excel.Visible = true;
+	win.showForeground(excel.Application.hwnd);
+	//mainForm.show(false);
+}
+winform.popmenu1 = win.ui.popmenu(winform);//创建弹出菜单
+winform.popmenu1.addTable({
+	{ "新建申请表"; {
+    		{ "专用号申请表";	λ() opent(1)};
+    		{ "工单更改申请";	λ() opent(2)};
+    		{ "BOM更改申请表";		λ() opent(3)};
+    		{ "新产品BOM申请表";	λ() opent(4)};
+    		{ "产成品编码申请表";	λ() opent(5)};
+    		{ "B2C BOM 批量更改单";		λ() opent(6)};
 		}
-	})
+	};
+	{"格式"; {
+			{"格式化BOM"; λ() QHC.formatBOM()};
+			{"格式化成本BOM"; λ() QHC.formatCostBom()}
+		}
+	}
+})
+winform.popmenu = function(){
 	win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	var pt = ::POINT();
 	::User32.GetCursorPos(pt);   		
-	winform.popmenu1.popup(pt.x,pt.y,true )
+	winform.popmenu1.popup(pt.x,pt.y,true)
 }
+
+
+/*}}*/
+/*tbutton8{{*/
+var tbutton8 = function(wform){
+	import console;
+	wform.popmenu();
+}
+/*}}*/
+/*tbutton9{{*/
 var tbutton9 = function(id,event){
 	import console;
 	import solidedge.application;
@@ -211,7 +224,9 @@ var tbutton9 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 	if seApp win.setActive(seApp.hWnd);
 }
+/*}}*/
 
+/*toolsDefineTable{{*/
 var tools = {
 	{
 		Name = "Edit Dim";
@@ -254,6 +269,7 @@ var tools = {
 		proc = tbutton9;
 	};
 }
+/*}}*/
 
 var tbar = win.ui.toolbar(winform.custom);
 tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
@@ -262,7 +278,7 @@ tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
 for (i=1; #tools)
 	tbar.add(
 		tools[i].Name,
-		λ() thread.invoke(tools[i].proc),
+		λ() thread.invoke(tools[i].proc,winform),
 		tools[i].img /* img */,
 		i /* id */,
 		4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/
