@@ -1,0 +1,93 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="批量向图纸添加展平图";right=759;bottom=469)
+winform.add(
+button={cls="button";text="查找图纸内表格专用号";left=25;top=358;right=181;bottom=388;z=2};
+button2={cls="button";text="清空";left=650;top=356;right=707;bottom=386;z=5};
+button3={cls="button";text="展平图加入图纸";left=542;top=389;right=739;bottom=443;z=6};
+checkbox={cls="checkbox";text="如果没有展平自动展平";left=28;top=399;right=371;bottom=419;z=7};
+checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=27;top=422;right=370;bottom=442;z=9};
+combobox={cls="combobox";left=31;top=46;right=710;bottom=72;edge=1;items={};mode="dropdown";z=3};
+edit2={cls="edit";text="Edit";left=138;top=9;right=699;bottom=37;edge=1;z=8};
+listview={cls="listview";left=27;top=86;right=707;bottom=350;edge=1;z=1};
+static2={cls="static";text="在此文件夹查找";left=32;top=22;right=146;bottom=44;transparent=1;z=4}
+)
+/*}}*/
+import com;
+import console;
+import win.ui;
+console.open();
+// 创建 Solid Edge 应用程序对象
+var seApp = com.GetObject("SolidEdge.Application");
+
+// 确保 Solid Edge 可见
+seApp.Visible = true;
+//seApp.ShowForeground();
+
+// 定义文件路径列表（替换为你的 SheetMetal 文件路径）
+var psmPath = "E:\Users\work_dominic\CCR\Cabinets\Monaxis\"
+var psmFileList = {"H0080180688 Monaxis SE LU 210 蒸发器盖板.psm", "H0080163664 Monaxis SE LU 125 蒸发器盖板.psm", "H0080163665 Monaxis SE LU 188 蒸发器盖板.psm", "H0080163666 Monaxis SE LU 250 蒸发器盖板.psm", "H0080163667 Monaxis SE LU 375 蒸发器盖板.psm"}
+
+var sheetMetalFiles = {};
+
+for (i=1; #psmFileList) table.push(sheetMetalFiles,io.joinpath(psmPath,psmFileList[i]))
+
+
+
+
+// 创建或打开一个新的图纸文件
+var draftDoc = seApp.Documents.Add("SolidEdge.DraftDocument");
+var activeSheet = draftDoc.ActiveSheet;
+
+// 放置 Flat Pattern
+var yOffset = 0; // 用于垂直偏移以避免重叠
+for (i = 1; #sheetMetalFiles) {
+    var filePath = sheetMetalFiles[i];
+    console.log("处理文件: ", filePath);
+        
+    var partDoc = draftDoc.ModelLinks.Add(filePath);
+    if (!partDoc) {
+        console.error("无法打开文件: ", filePath);
+    }
+
+    // 获取 Flat Pattern 模型
+    var flatPatternModel = partDoc.ModelDocument.FlatPatternModels.Item(1);
+    if (!flatPatternModel) {
+        console.error("无法获取 Flat Pattern 模型: ", filePath);
+        
+    }
+    // 在图纸中放置 Flat Pattern 视图
+    var drawingView = activeSheet.DrawingViews.AddSheetMetalView(
+        partDoc,
+        1, //igTopView
+        1, //scale
+        0, // X 坐标 (左对齐)
+        yOffset, // Y 坐标 (垂直偏移)
+        2 // seSheetMetalFlatView
+    );
+	drawingView.CaptionDefinitionTextPrimary = filePath;
+    // 更新视图
+    drawingView.Update();
+
+    // 计算下一个视图的垂直偏移（基于视图的高度）
+    var a,b,c,d = drawingView.Range();
+    var viewHeight = d-b;
+    yOffset += viewHeight + 0.05; // 添加一些间距
+
+    // 关闭 SheetMetal 文件,不保存更改
+
+}
+
+// 保存图纸文件
+var draftFilePath = "E:\Downloads\Draft.dft";
+draftDoc.SaveAs(draftFilePath);
+console.log("图纸已保存到: ", draftFilePath);
+
+// 关闭 Solid Edge 应用程序
+//seApp.Quit();
+
+console.log("操作完成。");
+console.pause(true);
+
+winform.show();
+win.loopMessage();
