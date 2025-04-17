@@ -35,19 +35,28 @@ namespace SheetMetalDocument{
              	..table.push(fTab, objFaces.Item(i).Area || 0);
       	}
       	var m = ..table.indexOf(fTab, ..math.max(..table.unpack(fTab)));
-    	var objFace = objFaces.Item(m);
-    	var objEdges = objFace.Edges;
+    	var maxFace = objFaces.Item(m);
+    	if maxFace.type !== 167551075 /*igFace */
+    		console.error("maxFace error")
+    	var objEdges = maxFace.Edges;
       	var fTab={};
       	for (i=1; objEdges.Count){
              	var edge =objEdges.Item(i);
+             	if edge.IsClosed continue;
              	var d = 0;
              	if edge.StartVertex and edge.EndVertex 
              		d = objDoc.MeasureDistance(edge.StartVertex,  edge.EndVertex, 1 /* MeasureDistanceTypeConstants_MinimumDistance */);
              	..table.push(fTab,d);
       	}
        	var m = ..table.indexOf(ftab, ..math.max(..table.unpack(fTab)));
-    	var objEdge = objEdges.Item(m);
-    	var objFP = objFPM.FlatPatterns.Add(objEdge, objFace, objEdge.EndVertex, 2 /* igFlattenPatternModelTypeFlattenAnything */);
+    	var longestEdge = objEdges.Item(m);
+    	if longestEdge.type !== 167551093 /*igEdge */
+    		console.error("longestEdge error")
+    	var objFP	
+    	try{
+    	 	objFP = objFPM.FlatPatterns.Add(longestEdge, maxFace, longestEdge.EndVertex, 2 /* igFlattenPatternModelTypeFlattenAnything */);
+	    }    
+	    return objFP; 
 	}
 	psm2dxf = function(fname){
 		var smDoc = owner.sePSM;
