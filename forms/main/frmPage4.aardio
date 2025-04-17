@@ -53,7 +53,7 @@ var loadPromptList = function(){
 	var dbpath =io.joinpath(config.dbServer.path,"tbm.db");
 	
 	import sqlite;
-	var dbRs = sqlite(dbpath);	//打开数据库连接
+	var dbRs = sqlite(dbpath,,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
 
 	var tab = dbRs.getTable("select * from SE_SPEC_TEMPLATE order by [ID]");
 	dbRs.close();

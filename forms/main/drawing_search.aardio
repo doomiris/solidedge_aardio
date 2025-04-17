@@ -27,7 +27,7 @@ var searchDocument = function (filenumber){
 /*sqliteDB{{*/
 	import sqlite;
 	import config;
-	var flistDB = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));	//打开数据库连接
+	var flistDB = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"),,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
 /*}}*/
 	winform.edit2.text = "";
 

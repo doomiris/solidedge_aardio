@@ -17,10 +17,9 @@ import win.ui.tooltip;
 var tooltipCtrl = win.ui.tooltip( update_sap_item_form );//在窗口上创建tooltip控件
 tooltipCtrl.addTool(update_sap_item_form.button3,"为Excel选中的列添加 H开头" )
 import config;
-import sqlite;
-var db = sqlite(io.joinpath(config.dbServer.path,"QHCSAP.db"));
-
 import QHC;
+var db = QHC.openDb(QHC.sap_db_path);
+
 var tab = {};	//可用列
 table.push(tab, QHC.getColDef());
 table.push(tab, table.array(#tab[1],"")); //对应列号初始化

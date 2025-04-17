@@ -24,10 +24,10 @@ cb_designer={cls="combobox";left=48;top=185;right=178;bottom=210;dl=1;dt=1;items
 cb_material={cls="combobox";left=47;top=103;right=235;bottom=129;dl=1;dt=1;edge=1;items={};mode="dropdown";z=3};
 cb_model_no={cls="combobox";left=300;top=58;right=488;bottom=84;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 cb_name_cn={cls="combobox";left=47;top=58;right=235;bottom=84;dl=1;dt=1;edge=1;items={};mode="dropdown";z=1};
-cb_paint_std={cls="combobox";left=210;top=147;right=332;bottom=173;dl=1;dt=1;edge=1;items={"Q/LD J52005";"GB/T 21363-2018"};mode="dropdown";z=36};
+cb_paint_std={cls="combobox";left=210;top=147;right=332;bottom=173;dl=1;dt=1;edge=1;items={"Q/LD J52005","GB/T 21363-2018"};mode="dropdown";z=36};
 cb_review_date={cls="edit";left=215;top=216;right=300;bottom=240;dl=1;dt=1;z=14};
 cb_reviewer={cls="combobox";left=48;top=215;right=178;bottom=240;dl=1;dt=1;items={};mode="dropdown";z=12};
-cb_tol={cls="combobox";left=358;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m";"GB/T 1804-c";"GB/T 1804-v"};mode="dropdown";z=18};
+cb_tol={cls="combobox";left=358;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m","GB/T 1804-c","GB/T 1804-v"};mode="dropdown";z=18};
 cb_weight={cls="combobox";left=300;top=103;right=488;bottom=129;dr=1;dt=1;edge=1;items={};mode="dropdown";z=4};
 chkPaint={cls="checkbox";text="喷粉标准";left=136;top=152;right=207;bottom=170;bgcolor=16777215;dl=1;dt=1;z=8};
 chkReplaceTB={cls="checkbox";text="自动替换成新版图框";left=344;top=272;right=480;bottom=296;checked=1;color=16711680;db=1;dr=1;hide=1;z=29};
@@ -132,7 +132,7 @@ var loadDefaults = function(){
 /*loadLists{{*/
 var loadPromptList = function(){
 	var dbpath = io.joinpath(config.dbServer.path, "tbm.db"); 
-	var dbRs = sqlite(dbpath);	//打开数据库连接
+	var dbRs = sqlite(dbpath,,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
 	winform.promTab = dbRs.getTable("select * from SE_TBM_Lists");
 	dbRs.close();
 	var getSuggest = function(tab, cType, keyword){

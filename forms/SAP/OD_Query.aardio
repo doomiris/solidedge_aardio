@@ -29,7 +29,7 @@ console.open();
 /*sqliteDB{{*/
 import config;
 import sqlite;
-var db, err = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"));	//打开数据库连接
+var db, err = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"),,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
 if err win.msgbox(err);
 /*}}*/
 

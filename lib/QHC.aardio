@@ -125,7 +125,7 @@ class 发泡料用量{
 }
 
 openDb = function(path){
-	return ..sqlite(path);
+	return ..sqlite(path,,1/*_SQLITE_OPEN_READONLY*/);
 }
 getColDef =function(){
 	var db,err = openDb(sap_db_path);
