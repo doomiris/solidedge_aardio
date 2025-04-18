@@ -507,6 +507,44 @@ namespace DraftDocument{
 		
 
 	};
+	addFlatPatterns = function(shtFileLists){
+		var DFT = owner;
+		var Sht = DFT.ActiveSheet;
+		var sheetHeight = sht.SheetSetup.SheetHeight;		
+		var sheetWidth = sht.SheetSetup.SheetWidth;
+		var xOffset, yOffset = 0, 0;
+		for (i = 1; #shtFileLists) {
+    		var filePath = shtFileLists[i];
+    		var partDoc = DFT.ModelLinks.Add(filePath);
+    		// 获取 Flat Pattern 模型
+/*
+    		var flatPatternModel = partDoc.ModelDocument.FlatPatternModels.Item(1);
+    		if (!flatPatternModel) {
+        		console.error("无法获取 Flat Pattern 模型: ", filePath);
+        		
+    		}
+*/
+    		// 在图纸中放置 Flat Pattern 视图
+    		var drawingView = Sht.DrawingViews.AddSheetMetalView(
+        		partDoc,
+        		1, //igTopView
+        		1, //scale
+        		0, // X 坐标 (左对齐)
+        		yOffset, // Y 坐标 (垂直偏移)
+        		2 // seSheetMetalFlatView
+    		);
+			drawingView.CaptionDefinitionTextPrimary = filePath;
+    		// 更新视图
+    		drawingView.Update();
+		
+    		// 计算下一个视图的垂直偏移（基于视图的高度）
+    		var a,b,c,d = drawingView.Range();
+    		var viewHeight = d-b;
+    		yOffset += 1.05*viewHeight; // 添加一些间距
+		}
+		
+
+	};
 	_topointer = lambda() owner.seDFT;	
   )
 }
