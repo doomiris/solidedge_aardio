@@ -9,6 +9,7 @@ class application{
 	ctor( ... ){
 		this.seApp = ..com.TryGetObject("SolidEdge.Application") 
 		if( ! this.seApp ) return null,"请先打开SolidEdge";
+		this.seApp.Visible = true;
 	};
 	@_metaProperty;
 };

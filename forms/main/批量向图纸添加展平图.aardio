@@ -10,8 +10,8 @@ checkbox={cls="checkbox";text="如果没有展平自动展平";left=28;top=399;r
 checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=27;top=422;right=370;bottom=442;checked=1;db=1;dl=1;z=8};
 combobox={cls="combobox";left=151;top=46;right=710;bottom=72;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 edit={cls="edit";left=5;top=88;right=131;bottom=354;ah=1;autohscroll=false;border=1;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='Consolas');multiline=1;z=11};
-edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;dl=1;dt=1;readonly=1;z=7};
-listview={cls="listview";left=149;top=88;right=704;bottom=355;aw=1;border=1;db=1;dr=1;dt=1;z=9};
+edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;bgcolor=15780518;dl=1;dt=1;readonly=1;z=7};
+listview={cls="listview";left=149;top=88;right=704;bottom=355;acceptfiles=1;aw=1;border=1;db=1;dr=1;dt=1;z=9};
 splitter={cls="splitter";left=144;top=88;right=149;bottom=354;ah=1;border=1;db=1;dt=1;edge=1;z=13};
 static={cls="static";text="图纸";left=16;top=19;right=128;bottom=41;dl=1;dt=1;transparent=1;z=12};
 static2={cls="static";text="在此文件夹查找";left=152;top=18;right=264;bottom=40;dr=1;dt=1;transparent=1;z=3}
@@ -31,20 +31,31 @@ winform.splitter.split(
 )
 winform.splitter.ltMin = 100;
 
+winform.combobox.saveFolder = function(){
+	var path = owner.text;	
+	if !io.exist(path) return false; 
+	if !table.indexOf(owner.items,path)
+		owner.add(path);
+	config.SE_working_folders.save();
+	return true;
+}
+winform.combobox.onDropDown = winform.combobox.saveFolder;
+
 var getCurrentDftInfo = function(){
 	import solidedge.application;
 	var seApp = solidedge.application();
-	if seApp.ActiveDocumentType = 2 /*Draft Document Type*/
-	return seApp.ActiveDocument.Name; 
+	if seApp.ActiveDocumentType == 2 /*Draft Document Type*/		
+		return seApp.ActiveDocument.Name; 
 }
 winform.edit2.text = thread.invokeAndWait(getCurrentDftInfo);
 
 var getColContent = function(keyword="专用号"){
 	import solidedge.application;
 	var seApp = solidedge.application();
-	if seApp.ActiveDocumentType != 2 /*Draft Document Type*/ return {}; 
-	
+	if !seApp return {}; 
+	if seApp.ActiveDocumentType != 2 /*Draft Document Type*/ return {}; 	
 	var dftDoc = seApp.ActiveDocument;
+	if !dftDoc return {}; 
 	var seTables = dftDoc.Tables;
 	var partNumbers = {};
 
@@ -88,9 +99,9 @@ var findFilesByKeywords = function(keywordList, folderPath) {
     return fileList;
 };
 
-var addFlatPatterns = function(sheetMetalFiles, folder){
+var addFlatPatterns = function(sheetMetalFiles){
 	import solidedge.application;
-	import console;
+	//import console;
 	var seApp = solidedge.application();
 	var dftDoc = seApp.ActiveDocument;
 	var activeSheet = dftDoc.ActiveSheet;
@@ -98,18 +109,17 @@ var addFlatPatterns = function(sheetMetalFiles, folder){
 	// 放置 Flat Pattern
 	var yOffset = 0; // 用于垂直偏移以避免重叠
 	for (i = 1; #sheetMetalFiles) {
-    	var filePath = io.joinpath(folder, sheetMetalFiles[i]);
-    	console.log("处理文件: ", filePath);
+    	var filePath = sheetMetalFiles[i];
+    	 //console.log("处理文件: ", filePath);
         	
     	var partDoc = dftDoc.ModelLinks.Add(filePath);
     	if (!partDoc) {
-        	console.error("无法打开文件: ", filePath);
-    	}
-	
+        	//console.error("无法打开文件: ", filePath);
+    	}	
     	// 获取 Flat Pattern 模型
     	var flatPatternModel = partDoc.ModelDocument.FlatPatternModels.Item(1);
     	if (!flatPatternModel) {
-    	    console.log("没有找到此文件的flatpattern,尝试创建...", filePath);
+    	    //console.log("没有找到此文件的flatpattern,尝试创建...", filePath);
     	    import solidedge.SheetMetalDocument;
     	    var psm = seApp.Open(filePath, false);
     	    var sePsm = solidedge.SheetMetalDocument(psm);
@@ -118,11 +128,9 @@ var addFlatPatterns = function(sheetMetalFiles, folder){
         		sePsm.close(true);
         	else {
         	    sePsm.close(false);
-    	    	console.error("创建失败了, 请手动创建吧, 此次跳过此文件", filePath);
+    	    	//console.error("创建失败了, 请手动创建吧, 此次跳过此文件", filePath);
     	    	continue;
-    	    }
-
-        	
+    	    }        	
     	}
     	// 在图纸中放置 Flat Pattern 视图
     	var drawingView = activeSheet.DrawingViews.AddSheetMetalView(
@@ -135,14 +143,13 @@ var addFlatPatterns = function(sheetMetalFiles, folder){
     	);
 		drawingView.CaptionDefinitionTextPrimary = ..io.splitpath(filePath).file;
 		drawingView.PrimaryCaptionTextSize = 0.025
-    	drawingView.Update();
-	
+    	drawingView.Update();	
     	// 计算下一个视图的垂直偏移（基于视图的高度）
     	var a,b,c,d = drawingView.Range();
     	var viewHeight = d-b;
     	yOffset += viewHeight + 0.05; // 添加一些间距
-
 	}
+	return 1; 
 }
 
 winform.button.oncommand = function(id,event){
@@ -154,12 +161,12 @@ var getPsmFileList = function(pcode, path){
 	if !pcode or !#pcode return ; 
 	var pfiles = findFilesByKeywords(pcode, path);
 	var ftab = {};
-	ftab.fields = {[1] = "name"; [2] = "ext"}
+	ftab.fields = {[1] = "name"; [2] = "dir"}
 	for (i=1; #pfiles){
 		var info = io.splitpath(pfiles[i])
 		table.push(ftab, {
 			name = info.file;
-			ext = info.ext;
+			dir = info.dir;
 			}
 		)
 	}
@@ -173,9 +180,13 @@ winform.button4.oncommand = function(){
 
 winform.button3.oncommand = function(id,event){
 	var listFile = grid.getTable()
-	import tarray;	
-	var psmFiles = tarray.getCol(listFile, 1);
-	addFlatPatterns(psmFiles);
+	var psmFiles = {}
+	for (i=1; #listFile)
+		table.push(psmFiles, io.joinpath(listFile[i][2], listFile[i][1]))
+	winform.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "waiting"}	
+	if thread.invokeAndWait(addFlatPatterns,psmFiles)
+		winform.button3.disabledText = null;
+	
 }
 
 winform.show();
@@ -187,8 +198,7 @@ import win.debounce;
 winform.edit.onChange = win.debounce(function(){
 	var path = winform.combobox.text;	
 	if !io.exist(path) return; 
-	if !table.indexOf(winform.combobox.items,path)
-		winform.combobox.add(path);
+	if !winform.combobox.saveFolder() return; 
 	if !winform.edit.text return ; 
 	var lines = string.splitEx(winform.edit.text);
 	var pcode = {};
@@ -200,12 +210,40 @@ winform.edit.onChange = win.debounce(function(){
 	var tab = getPsmFileList(pcode, path);
 	grid.setTable(tab);
 }, 1000)
-
-winform.edit.text = string.join(thread.invokeAndWait(getColContent), '\r\n');
-
+{
+	var currentTxt = thread.invokeAndWait(getColContent);
+	if currentTxt and #currentTxt
+		winform.edit.text = string.join(currentTxt, '\r\n');
+}
 winform.button2.oncommand = function(){
 	grid.clear();
 }
+
+winform.listview.onDropFiles = function(files){
+	import tarray;
+	var tab = owner.getTable();
+	var t = {}
+	for (i=1; #files){
+		var info = io.splitpath(files[i]);
+		var ext = info.ext;
+		if !string.cmp(ext,".psm") continue
+		var name = info.file;
+		var dir = info.dir;
+		
+		if !table.find(tarray.getCol(tab, 1), name)
+			table.push(tab,	{
+					"name" =  name;
+					"dir" = dir;
+			})
+	}
+	owner.setTable(tab);
+}
+
+winform.edit2.oncommand = function(id,event){
+	if event !== 256 return ; 
+	winform.edit2.text = getCurrentDftInfo();
+}
+
 
 
 winform.edit.onChange();

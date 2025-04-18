@@ -42,9 +42,9 @@ namespace SheetMetalDocument{
     	if maxFace.type !== 167551075 /*igFace */
     		console.error("maxFace error");
     	var objEdges = maxFace.Edges;
-      	var longestEdge , max_d
+      	var longestEdge , max_d;
       	for (i=1; objEdges.Count){
-             	var edge =objEdges.Item(i);
+             	var edge = objEdges.Item(i);
              	if edge.IsClosed continue;
              	longestEdge := edge;
              	var d = 0;
