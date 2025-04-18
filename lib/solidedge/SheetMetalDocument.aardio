@@ -3,7 +3,10 @@ import solidedge.application;
 namespace solidedge;
 class SheetMetalDocument{
 	ctor( sePSM ){
-		this.sePSM = sePSM;
+		if !sePSM
+			this.sePSM = ..solidedge.application().ActiveDocument;
+		else
+			this.sePSM = sePSM;
 	};
 	@_metaProperty;
 }
@@ -26,7 +29,7 @@ namespace SheetMetalDocument{
 	} 
 	addFlatPattern = function(objDoc){
 		import console
-		console.open();
+		//console.open();
        	if !objDoc objDoc = owner.sePSM;
        	var objFPM = objDoc.FlatPatternModels.Add(objDoc.Models.Item(1));
       	var objFaces = objFPM.Body.Faces(6 /* igQueryPlane */);
@@ -37,21 +40,23 @@ namespace SheetMetalDocument{
       	var m = ..table.indexOf(fTab, ..math.max(..table.unpack(fTab)));
     	var maxFace = objFaces.Item(m);
     	if maxFace.type !== 167551075 /*igFace */
-    		console.error("maxFace error")
+    		console.error("maxFace error");
     	var objEdges = maxFace.Edges;
-      	var fTab={};
+      	var longestEdge , max_d
       	for (i=1; objEdges.Count){
              	var edge =objEdges.Item(i);
              	if edge.IsClosed continue;
+             	longestEdge := edge;
              	var d = 0;
              	if edge.StartVertex and edge.EndVertex 
              		d = objDoc.MeasureDistance(edge.StartVertex,  edge.EndVertex, 1 /* MeasureDistanceTypeConstants_MinimumDistance */);
-             	..table.push(fTab,d);
+             	max_d := d
+             	if d>max_d {
+             		max_d = d;
+             		longestEdge = edge;
+             	}
       	}
-       	var m = ..table.indexOf(ftab, ..math.max(..table.unpack(fTab)));
-    	var longestEdge = objEdges.Item(m);
-    	if longestEdge.type !== 167551093 /*igEdge */
-    		console.error("longestEdge error")
+
     	var objFP	
     	try{
     	 	objFP = objFPM.FlatPatterns.Add(longestEdge, maxFace, longestEdge.EndVertex, 2 /* igFlattenPatternModelTypeFlattenAnything */);

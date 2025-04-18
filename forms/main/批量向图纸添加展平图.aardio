@@ -2,28 +2,51 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="批量向图纸添加展平图";right=759;bottom=469)
 winform.add(
-button={cls="button";text="查找图纸内表格专用号";left=25;top=358;right=181;bottom=388;z=2};
-button2={cls="button";text="清空";left=650;top=356;right=707;bottom=386;z=5};
-button3={cls="button";text="展平图加入图纸";left=542;top=389;right=739;bottom=443;z=6};
-checkbox={cls="checkbox";text="如果没有展平自动展平";left=28;top=399;right=371;bottom=419;z=7};
-checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=27;top=422;right=370;bottom=442;z=9};
-combobox={cls="combobox";left=31;top=46;right=710;bottom=72;edge=1;items={};mode="dropdown";z=3};
-edit2={cls="edit";text="Edit";left=138;top=9;right=699;bottom=37;edge=1;z=8};
-listview={cls="listview";left=27;top=86;right=707;bottom=350;edge=1;z=1};
-static2={cls="static";text="在此文件夹查找";left=32;top=22;right=146;bottom=44;transparent=1;z=4}
+button={cls="button";text="查找图纸内表格专用号";left=15;top=358;right=141;bottom=388;db=1;dl=1;z=1};
+button2={cls="button";text="清空";left=709;top=89;right=744;bottom=119;dr=1;dt=1;z=4};
+button3={cls="button";text="展平图加入图纸";left=542;top=389;right=739;bottom=443;db=1;dr=1;z=5};
+button4={cls="button";text="查找专用号对应钣金";left=153;top=358;right=269;bottom=388;db=1;dl=1;z=10};
+checkbox={cls="checkbox";text="如果没有展平自动展平";left=28;top=399;right=371;bottom=419;checked=1;db=1;dl=1;z=6};
+checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=27;top=422;right=370;bottom=442;checked=1;db=1;dl=1;z=8};
+combobox={cls="combobox";left=151;top=46;right=710;bottom=72;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
+edit={cls="edit";left=5;top=88;right=131;bottom=354;ah=1;autohscroll=false;border=1;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='Consolas');multiline=1;z=11};
+edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;dl=1;dt=1;readonly=1;z=7};
+listview={cls="listview";left=149;top=88;right=704;bottom=355;aw=1;border=1;db=1;dr=1;dt=1;z=9};
+splitter={cls="splitter";left=144;top=88;right=149;bottom=354;ah=1;border=1;db=1;dt=1;edge=1;z=13};
+static={cls="static";text="图纸";left=16;top=19;right=128;bottom=41;dl=1;dt=1;transparent=1;z=12};
+static2={cls="static";text="在此文件夹查找";left=152;top=18;right=264;bottom=40;dr=1;dt=1;transparent=1;z=3}
 )
 /*}}*/
 
-import com;
-import console;
-import win.ui;
-import console; 
+import win.ui.grid;
+var grid = win.ui.grid(winform.listview)
+import config;
+winform.bindConfig( config.SE_working_folders,{
+	combobox = "items";
+} );
+
+winform.splitter.split(
+	{winform.static, winform.edit2, winform.edit},
+	{winform.static2, winform.listview, winform.combobox}
+)
+winform.splitter.ltMin = 100;
+
+var getCurrentDftInfo = function(){
+	import solidedge.application;
+	var seApp = solidedge.application();
+	if seApp.ActiveDocumentType = 2 /*Draft Document Type*/
+	return seApp.ActiveDocument.Name; 
+}
+winform.edit2.text = thread.invokeAndWait(getCurrentDftInfo);
+
 var getColContent = function(keyword="专用号"){
 	import solidedge.application;
 	var seApp = solidedge.application();
+	if seApp.ActiveDocumentType != 2 /*Draft Document Type*/ return {}; 
+	
 	var dftDoc = seApp.ActiveDocument;
 	var seTables = dftDoc.Tables;
-	var specialNumbers = {};
+	var partNumbers = {};
 
 	for (i = 1; seTables.Count) {
     	var seTable = seTables.Item(i);
@@ -39,19 +62,15 @@ var getColContent = function(keyword="专用号"){
             	for (row = 1; rowCount) {
                 	var cellValue = seTable.Cell(row, col).value;
                 	if (cellValue) {
-                    	table.push(specialNumbers, cellValue);
+                    	table.push(partNumbers, cellValue);
                 	}
             	}
         	}
     	}
 	}
-	return specialNumbers; 
+	return partNumbers; 
 }
 
-
-/*
-#写一个函数通过getColContent函数获取关键词清单, 然后在path文件夹内查找以清单内字符开头的文件, 扩展名是.psm, 返回一个新的由找到的文件名组成的清单
-*/
 var findFilesByKeywords = function(keywordList, folderPath) {
     import fsys;
     var fileList = {};
@@ -69,8 +88,9 @@ var findFilesByKeywords = function(keywordList, folderPath) {
     return fileList;
 };
 
-var addFlatPatterns = function(sheetMetalFiles){
+var addFlatPatterns = function(sheetMetalFiles, folder){
 	import solidedge.application;
+	import console;
 	var seApp = solidedge.application();
 	var dftDoc = seApp.ActiveDocument;
 	var activeSheet = dftDoc.ActiveSheet;
@@ -78,7 +98,7 @@ var addFlatPatterns = function(sheetMetalFiles){
 	// 放置 Flat Pattern
 	var yOffset = 0; // 用于垂直偏移以避免重叠
 	for (i = 1; #sheetMetalFiles) {
-    	var filePath = sheetMetalFiles[i];
+    	var filePath = io.joinpath(folder, sheetMetalFiles[i]);
     	console.log("处理文件: ", filePath);
         	
     	var partDoc = dftDoc.ModelLinks.Add(filePath);
@@ -114,28 +134,80 @@ var addFlatPatterns = function(sheetMetalFiles){
         	2 // seSheetMetalFlatView
     	);
 		drawingView.CaptionDefinitionTextPrimary = ..io.splitpath(filePath).file;
-    	// 更新视图
+		drawingView.PrimaryCaptionTextSize = 0.025
     	drawingView.Update();
 	
     	// 计算下一个视图的垂直偏移（基于视图的高度）
     	var a,b,c,d = drawingView.Range();
     	var viewHeight = d-b;
     	yOffset += viewHeight + 0.05; // 添加一些间距
-	
-    	// 关闭 SheetMetal 文件,不保存更改
-	
+
 	}
 }
-var path = "E:\Users\work_dominic\CCR\Cabinets\Monaxis";
-var pcode = getColContent()
-console.dump(pcode)
-console.more(,true)
-var pfile = findFilesByKeywords(pcode, path)
-console.dump(pfile)
-console.more(,true)
-addFlatPatterns(pfile)
-console.pause();
 
+winform.button.oncommand = function(id,event){
+	var pcode = getColContent();
+	winform.edit.text = string.join(pcode, '\r\n');
+}
+var getPsmFileList = function(pcode, path){
+	if !path return; 
+	if !pcode or !#pcode return ; 
+	var pfiles = findFilesByKeywords(pcode, path);
+	var ftab = {};
+	ftab.fields = {[1] = "name"; [2] = "ext"}
+	for (i=1; #pfiles){
+		var info = io.splitpath(pfiles[i])
+		table.push(ftab, {
+			name = info.file;
+			ext = info.ext;
+			}
+		)
+	}
+	return ftab;
+}
+winform.button4.oncommand = function(){
+	var path = winform.combobox.text;	
+	if !io.exist(path) return win.msgboxErr(path,"不存在的位置"); 
+	winform.edit.onChange();
+}
+
+winform.button3.oncommand = function(id,event){
+	var listFile = grid.getTable()
+	import tarray;	
+	var psmFiles = tarray.getCol(listFile, 1);
+	addFlatPatterns(psmFiles);
+}
 
 winform.show();
+
+if #winform.combobox.items > 0
+	winform.combobox.selText = winform.combobox.items[1];
+
+import win.debounce;
+winform.edit.onChange = win.debounce(function(){
+	var path = winform.combobox.text;	
+	if !io.exist(path) return; 
+	if !table.indexOf(winform.combobox.items,path)
+		winform.combobox.add(path);
+	if !winform.edit.text return ; 
+	var lines = string.splitEx(winform.edit.text);
+	var pcode = {};
+	for (i=1; #lines)
+		if string.len(string.trim(lines[i]))
+			table.push(pcode, string.trim(lines[i]))
+	if !#pcode return ; 
+
+	var tab = getPsmFileList(pcode, path);
+	grid.setTable(tab);
+}, 1000)
+
+winform.edit.text = string.join(thread.invokeAndWait(getColContent), '\r\n');
+
+winform.button2.oncommand = function(){
+	grid.clear();
+}
+
+
+winform.edit.onChange();
+
 win.loopMessage();
