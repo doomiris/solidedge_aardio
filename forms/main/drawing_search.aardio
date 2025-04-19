@@ -109,9 +109,15 @@ var refreshFiles = function(){
 }
 var localMapping = function(fullpath){
 	import string;
-	var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
+	fullpath = string.lower(fullpath);
 	
-	fullpath = string.replace(fullpath,"@\\CCNSIA1A\SEParts\Cabinet", io.joinpath(OneDriveCommercial,"CCR Detail Design - S - S")) 
+	if string.getenv("OneDriveCommercial"){
+		var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");		
+		fullpath = string.replace(fullpath,"@\\ccnsia1a\separts\cabinet", io.joinpath(OneDriveCommercial,"CCR Detail Design - S - S")) 
+	}else{
+		import config;
+		fullpath = string.replace(fullpath,"@\\ccnsia1a\separts\cabinet", config.__cabinetModelServer);		
+	}
 	return fullpath; 
 }
 

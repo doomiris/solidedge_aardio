@@ -16,12 +16,15 @@ import win.ui.toolbar;
 /*tbutton2{{*/
 var tbutton2 = function(id,event){
 	import solidedge.application;
+	
 	var seApp = solidedge.application();
     if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
     var SelSet = seApp.ActiveDocument.SelectSet;
     if SelSet.Count !== 1 return; 
     if (SelSet(1).Type !== 488188096 /* igDimension */) return;
+    
+    import domisoft;
     var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L");
     if !s return; 
     if ..string.len(..string.trim(s)) == 0 return ; 

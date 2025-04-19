@@ -6,7 +6,8 @@ import fsys.knownFolder
 
 
 config = fsys.config(io.appData("/domisoft/SETBM/"));
-var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED ?  fsys.knownFolder("{374DE290-123F-4565-9164-39C4925E467B}") : io._exedir, "TBM.ini"));
+var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED ?  "\" : io._exedir, "TBM.ini"));
+
 var lib = ini.getSection("lib");
 
 var table = ..table;
@@ -24,8 +25,11 @@ namespace config {
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
 	__pdfLib = lib.pdfLib;
 	__templateLib = lib.templateLib;
+	__cabinetModelServer = lib.cabinetModelServer;
 	__formTemplateSharepointServer = `https://carcgl.sharepoint.com/sites/CCRSAPUsers/Shared Documents/General/各种申请表最新版(只读)/`;
 }
+
+	
 if !config.dbServer.path
 	config.dbServer.path = lib.dbServer;
 
@@ -51,7 +55,8 @@ if !config.admin.lastWorkingFolder
 if !config.printingCenter.AllowSentToPdfLib
 	config.printingCenter.AllowSentToPdfLib = true;
 
-
+if !config.webview.lang
+	config.webview.lang = "zh-cn";
 /**intellisense(config)
 __appName = 应用程序名
 __appVersion = 应用程序内部版本号

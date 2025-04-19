@@ -1,6 +1,6 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="批量向图纸添加展平图";right=759;bottom=469)
+var winform = win.form(text="批量向图纸添加展平图";right=759;bottom=469;acceptfiles=1)
 winform.add(
 button={cls="button";text="查找图纸内表格专用号";left=15;top=358;right=141;bottom=388;db=1;dl=1;z=1};
 button2={cls="button";text="清空";left=709;top=89;right=744;bottom=119;dr=1;dt=1;z=4};
@@ -11,7 +11,7 @@ checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=
 combobox={cls="combobox";left=151;top=46;right=710;bottom=72;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 edit={cls="edit";left=5;top=88;right=131;bottom=354;ah=1;autohscroll=false;border=1;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='Consolas');multiline=1;z=11};
 edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;bgcolor=15780518;dl=1;dt=1;readonly=1;z=7};
-listview={cls="listview";left=149;top=88;right=704;bottom=355;acceptfiles=1;aw=1;border=1;db=1;dr=1;dt=1;z=9};
+listview={cls="listview";left=149;top=88;right=704;bottom=355;aw=1;border=1;db=1;dr=1;dt=1;z=9};
 splitter={cls="splitter";left=144;top=88;right=149;bottom=354;ah=1;border=1;db=1;dt=1;edge=1;z=13};
 static={cls="static";text="图纸";left=16;top=19;right=128;bottom=41;dl=1;dt=1;transparent=1;z=12};
 static2={cls="static";text="在此文件夹查找";left=152;top=18;right=264;bottom=40;dr=1;dt=1;transparent=1;z=3}
@@ -219,24 +219,23 @@ winform.button2.oncommand = function(){
 	grid.clear();
 }
 
-winform.listview.onDropFiles = function(files){
+winform.onDropFiles = function(files){
 	import tarray;
-	var tab = owner.getTable();
+	var tab = winform.listview.getTable({"name","dir"})
 	var t = {}
 	for (i=1; #files){
 		var info = io.splitpath(files[i]);
-		var ext = info.ext;
-		if !string.cmp(ext,".psm") continue
+		var ext = info.ext;		
+		if string.lower(ext) !== ".psm" continue;		
 		var name = info.file;
 		var dir = info.dir;
-		
-		if !table.find(tarray.getCol(tab, 1), name)
+		if !table.find(tarray.getCol(tab, "name"), name)
 			table.push(tab,	{
 					"name" =  name;
 					"dir" = dir;
 			})
 	}
-	owner.setTable(tab);
+	winform.listview.setTable(tab);
 }
 
 winform.edit2.oncommand = function(id,event){

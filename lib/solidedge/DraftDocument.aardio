@@ -419,7 +419,8 @@ namespace DraftDocument{
 	/* 优化代码 : 不太理想,现在必须打开DFT才能用*/
 
 	replaceNewTitleBlock = function(DFT){
-		_tPath = "\\ccnsia1a\separts\Admin\Templates\Solidedge_Template\Template_2020\Draft.dft";
+		import config
+		_tPath = ..io.joinpath(config.__templateLib, "Draft.dft");
 		DFT := owner;
 		var Sht = DFT.ActiveSheet;
 		var x,y = DFT.getTitleBlockOrigin(Sht);
