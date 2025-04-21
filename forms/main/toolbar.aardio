@@ -6,8 +6,10 @@ custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=467;d
 )
 /*}}*/
 
+/*
 import console;
 console.open();
+*/
 
 import win.ui.menu;
 import win.ui.toolbar;

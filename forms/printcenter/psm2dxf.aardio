@@ -1,11 +1,12 @@
 import win.ui;
 /*DSG{{*/
-var psm2dxf_form = win.form(text="psm2dxf";right=759;bottom=469;acceptfiles=1)
-psm2dxf_form.add(
+var winform = win.form(text="psm2dxf";right=759;bottom=469;acceptfiles=1)
+winform.add(
 button={cls="button";text="export DXF";left=648;top=424;right=752;bottom=456;db=1;dr=1;z=2};
 listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-static={cls="static";text="把psm文件拖放进来";left=8;top=432;right=312;bottom=456;db=1;dl=1;transparent=1;z=3};
-static2={cls="syslink";text="<a>清空列表</a>";left=576;top=432;right=632;bottom=448;db=1;dr=1;transparent=1;z=4}
+static={cls="static";text="可以把psm文件拖放进来";left=10;top=423;right=316;bottom=441;db=1;dl=1;transparent=1;z=3};
+static2={cls="syslink";text="<a>清空列表</a>";left=576;top=432;right=632;bottom=448;db=1;dr=1;transparent=1;z=4};
+syslink={cls="syslink";text="<a>也可以自动查找当前图纸中的1:1展平图</a>";left=8;top=444;right=287;bottom=461;db=1;dl=1;notify=1;transparent=1;z=5}
 )
 /*}}*/
 
@@ -28,7 +29,7 @@ var renew = function(){
 renew();
 
 import tarray;
-psm2dxf_form.onDropFiles = function(files){
+winform.onDropFiles = function(files){
 	
 
 	var t = {}
@@ -46,20 +47,20 @@ psm2dxf_form.onDropFiles = function(files){
 					"output" = tf;
 			})
 	}
-	psm2dxf_form.listview.setTable(tab);
-	psm2dxf_form.listview.adjust = function(cx,cy){
-	    psm2dxf_form.listview.fillParent(1);
-	    psm2dxf_form.listview.fillParent(2);
-	    psm2dxf_form.listview.fillParent(3);
+	winform.listview.setTable(tab);
+	winform.listview.adjust = function(cx,cy){
+	    winform.listview.fillParent(1);
+	    winform.listview.fillParent(2);
+	    winform.listview.fillParent(3);
 	}
 }
 
-psm2dxf_form.button.oncommand = function(id,event){
-	for (i=1; psm2dxf_form.listview.count){
-		var fn = psm2dxf_form.listview.getItemText(i,2) ++ "\" ++ psm2dxf_form.listview.getItemText(i,1);
+winform.button.oncommand = function(id,event){
+	for (i=1; winform.listview.count){
+		var fn = winform.listview.getItemText(i,2) ++ "\" ++ winform.listview.getItemText(i,1);
 		var psm = seApp.Open(fn, false);
 		var sePSM = solidedge.SheetMetalDocument(psm);
-		sePSM.psm2dxf(psm2dxf_form.listview.getItemText(i,3));
+		sePSM.psm2dxf(winform.listview.getItemText(i,3));
 		sePSM.close(true /* SaveChanges */);
 	}
 	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
@@ -67,12 +68,26 @@ psm2dxf_form.button.oncommand = function(id,event){
 	//win.msgboxTimeout("done", "dxf", 5 * 1000);
 }
 
-psm2dxf_form.static2.onHyperlinkClick = function(nmSysLink,url,id){
-	psm2dxf_form.listview.clear(true);
+winform.static2.onHyperlinkClick = function(nmSysLink,url,id){
+	winform.listview.clear(true);
 	renew();
 }
 
 
-psm2dxf_form.show();
+winform.syslink.onHyperlinkClick = function(nmSysLink,url,id){
+	import solidedge.DraftDocument;
+	var seDft = solidedge.DraftDocument();
+	var sht = seDft.ActiveSheet;
+	var dViews = sht.DrawingViews;
+	var flatViewFiles = {};
+	for (i=1; dViews.Count){
+		if dViews.item(i).ViewType !== 2 /* Flat sheet metal */ continue;
+		if dViews.item(i).ScaleFactor !== 1 continue;
+		table.push(	flatViewFiles, dViews.item(i).ModelLink.FileName)	
+	}
+	winform.onDropFiles(flatViewFiles);
+}
+
+winform.show();
 win.loopMessage();
-return psm2dxf_form;
+return winform;

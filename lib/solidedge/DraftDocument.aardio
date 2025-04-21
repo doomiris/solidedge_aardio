@@ -1,9 +1,16 @@
 ﻿//DraftDocument 常用函数
 import domisoft;
+import solidedge.application;
 namespace solidedge;
 class DraftDocument{
 	ctor( seDFT ){
-		this.seDFT = seDFT;
+		if seDFT
+			this.seDFT = seDFT;
+		else{
+			var seApp = ..solidedge.application();
+			if seApp.ActiveDocumentType == 2 /*Draft Document Type*/
+				this.seDFT = seApp.ActiveDocument;
+			}
 	};
 	@_metaProperty;
 }
