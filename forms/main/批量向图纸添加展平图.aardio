@@ -6,6 +6,7 @@ button={cls="button";text="查找图纸内表格专用号";left=15;top=358;right
 button2={cls="button";text="清空";left=709;top=89;right=744;bottom=119;dr=1;dt=1;z=4};
 button3={cls="button";text="展平图加入图纸";left=542;top=389;right=739;bottom=443;db=1;dr=1;z=5};
 button4={cls="button";text="查找专用号对应钣金";left=153;top=358;right=269;bottom=388;db=1;dl=1;z=10};
+button5={cls="button";text="展平图导出DXF";left=333;top=390;right=530;bottom=444;db=1;dr=1;z=14};
 checkbox={cls="checkbox";text="如果没有展平自动展平";left=28;top=399;right=371;bottom=419;checked=1;db=1;dl=1;z=6};
 checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=27;top=422;right=370;bottom=442;checked=1;db=1;dl=1;z=8};
 combobox={cls="combobox";left=151;top=46;right=710;bottom=72;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
@@ -141,7 +142,7 @@ var addFlatPatterns = function(sheetMetalFiles){
         	yOffset, // Y 坐标 (垂直偏移)
         	2 // seSheetMetalFlatView
     	);
-		drawingView.CaptionDefinitionTextPrimary = ..io.splitpath(filePath).file;
+		drawingView.CaptionDefinitionTextPrimary = "%{File Name|G}";
 		drawingView.PrimaryCaptionTextSize = 0.025
     	drawingView.Update();	
     	// 计算下一个视图的垂直偏移（基于视图的高度）
@@ -152,6 +153,27 @@ var addFlatPatterns = function(sheetMetalFiles){
 	return 1; 
 }
 
+var exportFlatPatternsAsDXF = function(sheetMetalFiles){
+	import solidedge.application;
+	import solidedge.SheetMetalDocument
+	import config;
+	//import console;
+	var seApp = solidedge.application();
+	
+	for (i = 1; #sheetMetalFiles) {		
+    	var filePath = sheetMetalFiles[i];
+    	var psm = seApp.Open(filePath, false);
+        var sePsm = solidedge.SheetMetalDocument(psm);	
+		sePsm.psm2dxf(
+			io.joinpath(
+				config.setbm.workingDir,
+				..io.splitpath(filePath).name ++ ".dxf"
+			)
+		)
+		sePsm.close(true /* SaveChanges */);
+	}
+	return 1; 
+}
 winform.button.oncommand = function(id,event){
 	var pcode = getColContent();
 	winform.edit.text = string.join(pcode, '\r\n');
@@ -243,7 +265,15 @@ winform.edit2.oncommand = function(id,event){
 	winform.edit2.text = getCurrentDftInfo();
 }
 
-
+winform.button5.oncommand = function(id,event){
+	var listFile = grid.getTable()
+	var psmFiles = {}
+	for (i=1; #listFile)
+		table.push(psmFiles, io.joinpath(listFile[i][2], listFile[i][1]))
+	winform.button5.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "waiting"}	
+	if thread.invokeAndWait(exportFlatPatternsAsDXF,psmFiles)
+		winform.button5.disabledText = null;
+}
 
 winform.edit.onChange();
 
