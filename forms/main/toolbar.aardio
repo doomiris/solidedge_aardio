@@ -7,10 +7,13 @@ custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=467;d
 /*}}*/
 
 import console;
-//console.open();
+console.open();
 
 import win.ui.menu;
 import win.ui.toolbar;
+
+import win.imageList;
+var imgList = win.imageList.shell( 0/*_SHIL_LARGE*/ )
 
 
 /*tbutton2{{*/
@@ -183,22 +186,24 @@ var opent = function(n){
 	//mainForm.show(false);
 }
 winform.popmenu1 = win.ui.popmenu(winform);//创建弹出菜单
+
 winform.popmenu1.addTable({
 	{ "新建申请表"; {
-    		{ "专用号申请表";	λ() opent(1)};
+    		{ "专用号申请表"; λ() opent(1)};
     		{ "工单更改申请";	λ() opent(2)};
     		{ "BOM更改申请表";		λ() opent(3)};
     		{ "新产品BOM申请表";	λ() opent(4)};
     		{ "产成品编码申请表";	λ() opent(5)};
     		{ "B2C BOM 批量更改单";		λ() opent(6)};
-		}
+		};
 	};
 	{"格式"; {
 			{"格式化BOM"; λ() QHC.formatBOM()};
 			{"格式化成本BOM"; λ() QHC.formatCostBom()}
-		}
+		};
 	}
 })
+
 winform.popmenu = function(){
 	win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	var pt = ::POINT();
@@ -233,42 +238,42 @@ var tbutton9 = function(id,event){
 var tools = {
 	{
 		Name = "Edit Dim";
-		img = "";
+		img = 13;
 		proc = tbutton2;
 	};
 	{
 		Name = "Edit Balloon";
-		img = "";
+		img = 23;
 		proc = tbutton3;
 	};
 	{
 		Name = "delete Balloon";
-		img = "";
+		img = 28;
 		proc = tbutton4;
 	};
 	{
 		Name = "openDummy";
-		img = "";
+		img = 46;
 		proc = tbutton5;
 	};
 	{
 		Name = "closeDft(discardChanges)";
-		img = "";
+		img = 11;
 		proc = tbutton6;
 	};
 	{
 		Name = "closeDft(saveChanges)";
-		img = "";
+		img = 7;
 		proc = tbutton7;
 	};
 	{
 		Name = "New Sheet";
-		img = "";
+		img = 20;
 		proc = tbutton8;
 	};
 	{
 		Name = "replaceWithPartCopy";
-		img = "";
+		img = 25;
 		proc = tbutton9;
 	};
 }
@@ -277,7 +282,8 @@ var tools = {
 var tbar = win.ui.toolbar(winform.custom);
 tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
 tbar.showLabel = true; //在按钮上显示文字
-tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
+//tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
+tbar.imageList = imgList;
 for (i=1; #tools)
 	tbar.add(
 		tools[i].Name,
