@@ -18,8 +18,7 @@ var wbname = {
 if !io.exist(wbname[1][1]) console.log("找不到开发表", wbname[1][1]);
 if !io.exist(wbname[2][1]) console.log("找不到研发表", wbname[2][1]);
 
-console.pause(true)
-return ; 
+
 /*getTabFromRange{{*/
 var getTabFromRange = function(range){
 	var simpleName = function(str){
