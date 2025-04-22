@@ -276,5 +276,8 @@ winform.button5.oncommand = function(id,event){
 }
 
 winform.edit.onChange();
+winform.frmReLoad = function(){
+	winform.edit2.text = getCurrentDftInfo();
+}
 
 win.loopMessage();

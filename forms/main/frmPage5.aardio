@@ -151,17 +151,6 @@ winform.button3.oncommand = function(id,event){
 }
 /*}}*/
 
-winform.show();
-
-/*
-tbs = {
-	[1] = winform.tab.loadForm("\forms\printcenter\dft-list.aardio" );
-	[2] = winform.tab.loadForm("\forms\printcenter\psm2dxf.aardio" );
-	[3] = winform.tab.loadForm("\forms\printcenter\printpaper.aardio" );
-	[4] = winform.tab.loadForm("\forms\printcenter\bmp2png.aardio" );
-	[5] = winform.tab.loadForm("\forms\printcenter\pdf_combine.aardio" );
-}
-*/
 var frms = {
 	"\forms\printcenter\dft-list.aardio",
 	"\forms\printcenter\psm2dxf.aardio",
@@ -170,9 +159,14 @@ var frms = {
 	"\forms\printcenter\pdf_combine.aardio",	
 }
 
+table.reverse(frms);
+
 var tbs = {};
-for (i=1; #frms)
-	table.push(tbs, winform.tab.loadForm(frms[i]));
+for (i=1; #frms)	
+	win.setTimeout( λ()
+		tbs[i] = winform.tab.loadForm(frms[i])
+	)
+winform.show();
 
 initDeclare();
 

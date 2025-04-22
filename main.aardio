@@ -46,18 +46,6 @@ if(!atom and !_STUDIO_INVOKED){
 	return;
 }
 /*}}*/
-/*closeOnEscPress{{*/
-mainForm.isDialogMessage = function(hwnd,msg){ 
-	if( msg.message == 0x100/*_WM_KEYDOWN*/){
-		if( msg.wParam == 0x1B/*_VK_ESC*/ ){	//按Esc退出窗口
-			mainForm.close();
-			return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
-		} 
-	}
-	//检测并响应默认快捷键
-	return win.isDialogMessage(hwnd,msg);
-}
-/*}}*/
 			
 //win.ui.simpleWindow( mainForm );
 mainForm.bindConfig( config.mainForm,{
@@ -83,11 +71,10 @@ mainForm.onMinimize = function(lParam){
 }
 	
 mainForm.onClose = function(hwnd,message,wParam,lParam){
-	if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe")){
+	if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
 		win.quitMessage();
-		return 0;
-	}
-	if _STUDIO_INVOKED	win.quitMessage();
+	if _STUDIO_INVOKED
+		win.quitMessage();
 	mainForm.onMinimize();
 	return true;
 }
@@ -202,6 +189,8 @@ mainForm.mTabs.onSelchange = function(idx,tab,form){
 			break;
 		}
 	}
+	if form.frmReLoad
+		form.frmReLoad();
 }
 
 
@@ -259,6 +248,8 @@ mainForm.listbox.addThisTab = function(navItem){
 		    rSelTab = mainForm.mTabs.hitTest(x,y)
 			mainForm.mTabPopMenu.popup(x,y,true);
 		}
+		if mainForm.mTabs.forms[mainForm.mTabs.selIndex].frmReLoad
+			mainForm.mTabs.forms[mainForm.mTabs.selIndex].frmReLoad();
 	})
 }
 
@@ -267,8 +258,12 @@ navlb.onClick = function(index,subindex,text){
 	var checkIdx = getExistTabIdx(text);
 	if !checkIdx
 		mainForm.listbox.addThisTab();
-	else 
+	else {
 		mainForm.mTabs.selIndex = checkIdx;
+		if mainForm.mTabs.forms[checkIdx].frmReLoad
+			mainForm.mTabs.forms[checkIdx].frmReLoad();
+	}
+		
 }
 
 /*}}*/
@@ -355,9 +350,6 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 }
 /*}}*/
 
-import mouse.hook;
-var hook = mouse.hook();
-
 
 
 import win.ui.statusbar; 
@@ -367,19 +359,6 @@ statusbar.addItem("", 100/*宽度*/);
 statusbar.addItem("", 400/*宽度*/);
 statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
 
-//录制回调函数
-hook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
-	if( injected ) return; //模拟鼠标不处理
-    select(msg) {
-    	case 0x20C/*_WM_XBUTTONUP*/{
-    	    var backButtonUp = (::HIWORD(mouseData) == 1);
-    	    if backButtonUp
-    	    	statusbar.setText("back", 2/*第几个分块*/);
-    	    else
-    	    	statusbar.setText("forward", 2/*第几个分块*/);    	    
-    	}
-    }   
-}
 
 win.loopMessage();
 return mainForm;

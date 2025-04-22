@@ -3,7 +3,6 @@ import win.ui;
 /*DSG{{*/
 var mainForm = win.form(text="使用简单选项卡控件（win.ui.ctrl.tab）";right=663;bottom=387)
 mainForm.add(
-button={cls="button";text="Button";left=152;top=7;right=237;bottom=25;z=2};
 tab={cls="tab";left=14;top=16;right=645;bottom=360;db=1;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
@@ -26,12 +25,42 @@ aardio 窗体设计器可以通过控件的【固定边距】【自适应大小�
  
 //添加一个窗口作为选项卡的子页面 
 
+import console
+console.open()
+var exApps = {};
+var hwndTab = {};
+com.enumRunning( 
+	function(displayName,object){  
+		if object
+			if object.application
+				var hwnd = object.application.hwnd;
+				if !table.find(hwndTab,hwnd){
+					table.push(hwndTab, hwnd)
+					table.push(exApps, object.application)
+				}
+	}
+)
+var fms = {}
+for (i=1; #hwndTab)
+	table.push(fms, mainForm.tab.add( text = "Excel" + hwndTab[i]))
 
-
-
-mainForm.button.oncommand = function(id,event){
-	mainForm.tab.loadForm("D:\users\CCL100100\aardio\project\solidedge_aardio\forms\main\QTIP.aardio")
+for (i=1; #fms){
+	for object,interface,name,index in com.eachRunning() {
+		if object
+			if object.application
+				if object.application.hwnd == hwndTab[i]{
+					fms[i].add(
+						edit = { 
+							cls="edit";bottom=500;right=500;left=0;top=0;z=1;edge=1;multiline=1;
+						}; 
+					)
+					fms[i].edit.print (index,name)
+				}
+					//console.log(fms[i].text,index,name,object.application.hwnd)
+	}
 }
+
+
 
 mainForm.show(true) 
 win.loopMessage();
