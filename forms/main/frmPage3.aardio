@@ -3,23 +3,27 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=470;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text='\uF085';left=232;top=16;right=264;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=7};
-button2={cls="button";text='\uF013';left=280;top=16;right=312;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=8};
-combobox={cls="combobox";left=85;top=442;right=168;bottom=462;clipch=1;db=1;dl=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=5};
-custom={cls="custom";text="loading...";left=0;top=72;right=760;bottom=432;db=1;dl=1;dr=1;dt=1;z=2};
-github={cls="plus";left=731;top=445;right=755;bottom=469;align="right";color=8388608;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');iconColor=2960685;iconStyle={font=LOGFONT(h=-19;name='FontAwesome')};iconText='\uF09B';notify=1;paddingLeft=20;z=9};
-lnkVersion={cls="plus";text="检查新版本";left=543;top=8;right=752;bottom=57;align="left";color=8388608;dr=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="right";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF021';notify=1;paddingLeft=20;z=3};
+button={cls="button";text='\uF085';left=232;top=16;right=264;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=6};
+button2={cls="button";text='\uF013';left=280;top=16;right=312;bottom=48;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=7};
+combobox={cls="combobox";left=85;top=442;right=168;bottom=462;clipch=1;db=1;dl=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=4};
+custom={cls="custom";text="loading...";left=0;top=72;right=760;bottom=432;db=1;dl=1;dr=1;dt=1;z=10};
+github={cls="plus";left=731;top=445;right=755;bottom=469;align="right";color=8388608;db=1;dr=1;font=LOGFONT(h=-19;name='FontAwesome');iconColor=2960685;iconStyle={font=LOGFONT(h=-19;name='FontAwesome')};iconText='\uF09B';notify=1;paddingLeft=20;z=8};
+lnkVersion={cls="plus";text="检查新版本";left=543;top=8;right=752;bottom=57;align="left";color=8388608;dr=1;dt=1;font=LOGFONT(h=-16);iconStyle={align="right";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF021';notify=1;paddingLeft=20;z=2};
 static={cls="static";text="TBM工具组";left=8;top=8;right=248;bottom=56;color=8388608;dl=1;dt=1;font=LOGFONT(h=-37;name='Microsoft YaHei UI');transparent=1;z=1};
-static2={cls="static";text='\uF216  服务器:';left=10;top=445;right=80;bottom=464;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=6};
-static3={cls="static";left=175;top=445;right=287;bottom=461;center=1;db=1;dl=1;notify=1;transparent=1;z=10};
-winver={cls="richedit";text="当前系统版本：";left=432;top=448;right=728;bottom=468;align="right";aw=1;db=1;dr=1;readonly=1;transparent=1;z=4}
+static2={cls="static";text='\uF216  服务器:';left=10;top=445;right=80;bottom=464;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=5};
+static3={cls="static";left=175;top=445;right=287;bottom=461;center=1;db=1;dl=1;notify=1;transparent=1;z=9};
+winver={cls="richedit";text="当前系统版本：";left=432;top=448;right=728;bottom=468;align="right";aw=1;db=1;dr=1;readonly=1;transparent=1;z=3}
 )
 /*}}*/
 
 import config;
+import web.form.simpleMarkdown;
+var wb = web.form.simpleMarkdown(winform.custom);
+
 import fsys.version;
 winform.ver = fsys.version.getInfo(io._exepath);
 var ver = winform.ver.productVersion;
+
 winform.bindConfig( config.serverIndex,{
 	combobox = "selIndex";	
 } );
@@ -27,18 +31,14 @@ winform.bindConfig( config.serverIndex,{
 var adminSession = string.indexOf(string.lower(io.getSpecial(0x1a/*_CSIDL_APPDATA*/)),"ccl100100");
 winform.button.hide = !adminSession;
 
-import web.form.simpleMarkdown;
-var wb = web.form.simpleMarkdown(winform.custom);
-
 winform.show();
 
 var loadUpdateLog = function(){
 	var url = "https://doomiris.github.io/TBM/update_history.md";	
 	import domisoft;
-	var text = thread.invokeAndWait(domisoft.getContentFromHTTP,url);	
+	var text = thread.invokeAndWait(domisoft.getContentFromHTTP, url);	
 	if text 
-		wb.write(text);
-	wb.scrollPos(,1,1);
+		wb.writeDelta(text);
 }
 
 var checkUpdate = function(wform){
@@ -88,9 +88,6 @@ winform.combobox.onListChange= function(){
 	winform.static3.refresh();
 }
 
-
-
-winform.custom.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text ="正在查找更新记录..."}
 
 winform.button.oncommand = function(id,event){
 	mainForm.custom.loadForm("\forms\admin_only\QTIP_ADMIN.aardio");

@@ -36,6 +36,19 @@ winform.bindConfig( config.printingCenter, {	//绑定控件值
     checkbox = "checked"
 } );
 
+//winform.tab.add()
+var frms = {
+	"\forms\printcenter\dft-list.aardio",
+	"\forms\printcenter\psm2dxf.aardio",
+	"\forms\printcenter\printpaper.aardio",
+	"\forms\printcenter\bmp2png.aardio",
+	"\forms\printcenter\pdf_combine.aardio",	
+}
+//table.reverse(frms)
+var tbs = {};
+for (i=1; #frms)	
+		tbs[i] = winform.tab.loadForm(frms[i])
+
 
 winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.setbm.workingDir);
 winform.pdfLibPath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.__pdfLib);
@@ -45,7 +58,7 @@ import solidedge.DraftDocument;
 
 
 /*initDeclare{{*/
-var seApp, seDFT, seSht, tbs;
+var seApp, seDFT, seSht;
 var seDfts;
 var initDeclare = function(){
 	seApp = solidedge.application();
@@ -125,6 +138,7 @@ winform.button.oncommand = function(id,event){
 //打印所有DFT
 winform.button2.oncommand = function(id,event){
     if !seApp return ; 
+  	
 	var vtab = getListViewTable(tbs[1].listview);
 	winform.progress.min = 0;
 	winform.progress.max = #tbs[1].listview.checked * #winform.listbox.selected;
@@ -145,27 +159,16 @@ winform.button4.oncommand = function(id,event){
 	config.setbm.save();
 	winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL",path);
 }
+
 winform.button3.oncommand = function(id,event){
     winform.progress.pos = 0;
 	tbs[1].refresh_dft_list();
 }
 /*}}*/
 
-var frms = {
-	"\forms\printcenter\dft-list.aardio",
-	"\forms\printcenter\psm2dxf.aardio",
-	"\forms\printcenter\printpaper.aardio",
-	"\forms\printcenter\bmp2png.aardio",
-	"\forms\printcenter\pdf_combine.aardio",	
-}
 
-table.reverse(frms);
 
-var tbs = {};
-for (i=1; #frms)	
-	win.setTimeout( λ()
-		tbs[i] = winform.tab.loadForm(frms[i])
-	)
+
 winform.show();
 
 initDeclare();
