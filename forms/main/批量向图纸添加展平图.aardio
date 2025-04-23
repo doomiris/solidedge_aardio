@@ -2,25 +2,31 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="批量向图纸添加展平图";right=759;bottom=469;acceptfiles=1)
 winform.add(
-button={cls="button";text="查找图纸内表格专用号";left=15;top=358;right=141;bottom=388;db=1;dl=1;z=1};
+button={cls="syslink";text="[自动]查找图纸内表格专用号";left=6;top=364;right=177;bottom=381;db=1;dl=1;z=1};
 button2={cls="button";text="清空";left=709;top=89;right=744;bottom=119;dr=1;dt=1;z=4};
-button3={cls="button";text="展平图加入图纸";left=542;top=389;right=739;bottom=443;db=1;dr=1;z=5};
-button4={cls="button";text="查找专用号对应钣金";left=153;top=358;right=269;bottom=388;db=1;dl=1;z=10};
-button5={cls="button";text="展平图导出DXF";left=333;top=390;right=530;bottom=444;db=1;dr=1;z=14};
-checkbox={cls="checkbox";text="如果没有展平自动展平";left=28;top=399;right=371;bottom=419;checked=1;db=1;dl=1;z=6};
-checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加标题";left=27;top=422;right=370;bottom=442;checked=1;db=1;dl=1;z=8};
+button3={cls="button";text="展平图加入图纸";left=585;top=411;right=740;bottom=465;db=1;dr=1;z=5};
+button4={cls="syslink";text="[自动]查找专用号对应钣金";left=5;top=395;right=165;bottom=410;db=1;dl=1;z=10};
+button5={cls="button";text="展平图导出DXF";left=432;top=412;right=579;bottom=466;db=1;dr=1;z=14};
+checkbox={cls="checkbox";text="如果没有展平自动展平";left=11;top=445;right=172;bottom=465;checked=1;db=1;disabled=1;dl=1;z=6};
+checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加文件名做为标题";left=11;top=424;right=280;bottom=444;checked=1;db=1;disabled=1;dl=1;z=8};
 combobox={cls="combobox";left=151;top=46;right=710;bottom=72;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 edit={cls="edit";left=5;top=88;right=131;bottom=354;ah=1;autohscroll=false;border=1;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='Consolas');multiline=1;z=11};
 edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;bgcolor=15780518;dl=1;dt=1;readonly=1;z=7};
 listview={cls="listview";left=149;top=88;right=704;bottom=355;aw=1;border=1;db=1;dr=1;dt=1;z=9};
 splitter={cls="splitter";left=144;top=88;right=149;bottom=354;ah=1;border=1;db=1;dt=1;edge=1;z=13};
-static={cls="static";text="图纸";left=16;top=19;right=128;bottom=41;dl=1;dt=1;transparent=1;z=12};
-static2={cls="static";text="在此文件夹查找";left=152;top=18;right=264;bottom=40;dr=1;dt=1;transparent=1;z=3}
+static={cls="static";text="当前图纸";left=16;top=19;right=128;bottom=41;dl=1;dt=1;transparent=1;z=12};
+static2={cls="static";text="在此文件夹查找";left=152;top=18;right=264;bottom=40;dr=1;dt=1;transparent=1;z=3};
+static3={cls="static";text="(也可手动添加专用号)";left=177;top=363;right=323;bottom=383;db=1;dl=1;transparent=1;z=15};
+static4={cls="static";text="(也可向列表手动拖入钣金文件)";left=162;top=395;right=345;bottom=414;db=1;dl=1;transparent=1;z=16}
 )
 /*}}*/
 
 import win.ui.grid;
 var grid = win.ui.grid(winform.listview)
+
+winform.button.text = string.format("<a>%s</a>",winform.button.text)
+winform.button4.text = string.format("<a>%s</a>",winform.button4.text)
+
 import config;
 winform.bindConfig( config.SE_working_folders,{
 	combobox = "items";
@@ -179,7 +185,7 @@ var exportFlatPatternsAsDXF = function(sheetMetalFiles){
 	}
 	return 1; 
 }
-winform.button.oncommand = function(id,event){
+winform.button.onHyperlinkClick = function(nmSysLink,url,id){
 	var pcode = getColContent();
 	winform.edit.text = string.join(pcode, '\r\n');
 }
@@ -199,7 +205,7 @@ var getPsmFileList = function(pcode, path){
 	}
 	return ftab;
 }
-winform.button4.oncommand = function(){
+winform.button4.onHyperlinkClick = function(nmSysLink,url,id){
 	var path = winform.combobox.text;	
 	if !io.exist(path) return win.msgboxErr(path,"不存在的位置"); 
 	winform.edit.onChange();
@@ -236,6 +242,7 @@ winform.edit.onChange = win.debounce(function(){
 
 	var tab = getPsmFileList(pcode, path);
 	grid.setTable(tab);
+	winform.listview.fillParent(1);
 }, 1000)
 {
 	var currentTxt = thread.invokeAndWait(getColContent);
