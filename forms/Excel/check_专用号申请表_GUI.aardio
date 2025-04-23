@@ -26,24 +26,28 @@ var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
 var etab = {};
-com.enumRunning( 
-	function(displayName,object){
-		try{
-			var s = com.GetTypeInfo(object).GetDocumentation().name;
-			if s = "_Workbook"
-				if string.keywords('新增|专用号|申请').findOne(displayName)
-					winform.combobox2.add(displayName);
+winform.frmReLoad = function(){
+	winform.combobox2.clear();
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s = "_Workbook"
+					if string.keywords('新增|专用号|申请').findOne(displayName)
+						winform.combobox2.add(displayName);
+			}
 		}
+	)
+	if winform.combobox2.count {
+		var findActiveWB;
+		excel_0 = com.excel(false);
+		if excel_0.ActiveWorkbook
+			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 	}
-)
-
-
-if winform.combobox2.count {
-	var findActiveWB
-	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
+winform.frmReLoad();
+winform.combobox2.onDropDown = winform.frmReLoad;
 
 /*etab相关函数{{*/
 /*
@@ -89,7 +93,7 @@ winform.button.oncommand = function(id,event){
 		}
 	}
 	
-	if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表:"+ '\n\n' ++sht.parent.name +"$["+sht.name+"]"); 
+	if !sht.Rows("2:2").find("物料描述") return error("专用号申请表格式错误"); 
 	if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 
 
@@ -119,9 +123,7 @@ winform.button.oncommand = function(id,event){
 				"是否关键部件";
 			};
 			var etr = function(){
-				for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-					if (sht.cells(i,"E").value2) return i;
-				}
+				return  sht.usedrange.rows[sht.usedrange.rows.count].row;
 			}
 			
 			if !etr() return error("找不到物料描述");
@@ -245,8 +247,9 @@ winform.button.oncommand = function(id,event){
 					return (string.replace(string.trim(etab[i].物料描述),"已喷","未喷") !== string.trim(etab[i-1].物料描述))
 		}
 		[40] = function(i){
-			for (j=i+1;#etab;1)
-				if (etab[j].物料描述==etab[i].物料描述) return true; 
+			if etab[i].物料描述
+				for (j=i+1; #etab)
+					if (etab[j].物料描述==etab[i].物料描述) return true; 
 		}
 		[41] = function(i){if !string.indexOf(etab[i].物料描述,"已喷") return (string.indexOf(etab[i].物料描述,"点焊") and etab[i].SAP物料组 !== "SH")}
 		[42] = function(i){return (etab[i].SAP物料组=="SH" and (etab[i].SAP展开尺寸 or etab[i].SAP基本物料 or etab[i].SAP是否为点焊中最大件))}
@@ -262,23 +265,23 @@ winform.button.oncommand = function(id,event){
 							return etab[i].SAP物料组!=="SD" ;
 	
 		}
-		[45] = function(i){
-			if string.indexOf(etab[i].物料描述, "已喷")
-				return etab[i].SAP物料组!=="SC"; 
+		[45] = function(i){			
+				if string.indexOf(etab[i].物料描述, "已喷")
+					return etab[i].SAP物料组!=="SC"; 
 	
 		}
-		[46] = function(i){
-			return string.indexOf(etab[i].物料描述, " 喷粉"); 
+		[46] = function(i){			
+				return string.indexOf(etab[i].物料描述, " 喷粉"); 
 	
 		}
 		[47] = function(i){
 			return !#etab[i].用途; 
 	
 		}
-		[48] = function(i){
-			return !#etab[i].是否关键部件; 	
+		[48] = function(i){			
+				return !#etab[i].是否关键部件; 	
 		}
-		[49] = function(i){
+		[49] = function(i){			
 				return (string.indexAny(etab[i].物料描述, 194)); 
 		}
 		[50] = function(i){
@@ -299,21 +302,21 @@ winform.button.oncommand = function(id,event){
 	};
 	/*}}*/
 	
-	
 	var bar = winform.progress
 	bar.min = 0;
 	bar.max = etab_count;
 	getErr = {};
 	getErr.fields = {"行"; "序号";"错误描述"}
-	for(i=1; etab_count){		
+	for(i=1; etab_count){
 		bar.pos = i;
-		for(j=1; #sapErr){
+		if !etab[i].物料描述 or !string.len(etab[i].物料描述) continue;
+		for(j=1; #sapErr){			
 			if sapErr[j](i)
 				table.push(getErr, {
-				"行":i+2;
-				"序号": etab[i].序号;
-				"错误描述": rule_desp[j];
-			})
+					"行":i+2;
+					"序号": etab[i].序号;
+					"错误描述": rule_desp[j];
+				})
 		}
 	}
 	
@@ -360,7 +363,8 @@ winform.listview.onnotify = function(id,code,ptr){
 			menu.add("隐藏可忽略项", function(){
 				var t = table.filter(getErr,
 					function(v,index){
-						return !string.indexOf(v["错误描述"], "可忽略"); 
+						if v["错误描述"]
+							return !string.indexOf(v["错误描述"], "可忽略"); 
 					}
 				);
 				t.fields = getErr.fields;

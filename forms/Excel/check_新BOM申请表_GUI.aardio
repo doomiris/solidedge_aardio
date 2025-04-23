@@ -23,26 +23,29 @@ import domisoft;
 */
 
 var excel_0 = com.excel(false);
-
-
-com.enumRunning( 
-	function(displayName,object){
-		try{
-			var s = com.GetTypeInfo(object).GetDocumentation().name;
-			if s = "_Workbook"
-				if string.keywords('BOM|申请|BG').findOne(displayName)
-					winform.combobox2.add(displayName);
+winform.frmReLoad = function(){
+	winform.combobox2.clear();
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s = "_Workbook"
+					if string.keywords('BOM|申请|BG').findOne(displayName)
+						winform.combobox2.add(displayName);
+			}
 		}
+	)
+	
+	if winform.combobox2.count {
+		var findActiveWB;
+		excel_0 = com.excel(false);
+		if excel_0.ActiveWorkbook
+			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 	}
-)
-
-if winform.combobox2.count {
-	var findActiveWB;
-	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
-
+winform.frmReLoad();
+winform.combobox2.onDropDown = winform.frmReLoad;
 
 var excel_2;
 
@@ -365,8 +368,9 @@ winform.listview.onnotify = function(id,code,ptr){
 			var menu = win.ui.popmenu(winform);	
 			menu.add("隐藏可忽略项", function(){
 				var t = table.filter(mylist,
-					function(v,index){
-						return !string.indexOf(v["错误描述"], "可忽略"); 
+					function(v, index){
+						if v["错误描述"]
+							return !string.indexOf(v["错误描述"], "可忽略"); 
 					}
 				);
 				//t.fields = getErr.fields;

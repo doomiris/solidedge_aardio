@@ -181,6 +181,7 @@ getProductInfo = function(hcode){
 	return t; 
 };
 getSapItemByDesp = function(Desp){
+	if !Desp return null; 
 	var db,err = openDb(sap_db_path);
 	Desp = string.replace(Desp, "*", "%");
 	var symbol = string.indexOf(Desp, "%") ? "LIKE" : "=";
@@ -498,7 +499,12 @@ formatAllCostBom = function(fl){
 	}
 	excel.alerts = true;
 }
-
+pcodeOffset = function(pcode, offset = 1){
+	if !pcode return ;
+	pcode = string.trimleft(pcode, "H00");
+	pcode = tonumber(pcode) + offset;
+	return "H00" ++ pcode;  
+}
 /**intellisense()
 QHC.openDb(sap_db_path) = 返回DB
 QHC.getSapItem(hcode) = 返回hitem\n!QHC_hitem.
@@ -512,6 +518,7 @@ QHC.formatCostBom(sht) = 格式化成本BOM
 QHC.formatAllCostBom(filelist) = 批量格式化成本BOM
 QHC.formatAllBOM() = 批量格式化BOM
 QHC.getPriceList() = 批量获取成本BOM价格列表
+QHC.pcodeOffset(pcode, offset = 1) = 获取下一个号
 !QHC_hitem.物料 = 物料
 !QHC_hitem.物料描述 = 物料描述
 !QHC_hitem.MTyp = 类型

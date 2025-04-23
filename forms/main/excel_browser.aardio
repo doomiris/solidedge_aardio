@@ -42,7 +42,8 @@ com.enumRunning(
 )
 var fms = {}
 for (i=1; #hwndTab)
-	table.push(fms, mainForm.tab.add( text = "Excel" + hwndTab[i]))
+	if exApps[i].name = "Microsoft Excel"
+		table.push(fms, mainForm.tab.add( text = "Excel" + hwndTab[i]))
 
 for (i=1; #fms){
 	for object,interface,name,index in com.eachRunning() {
@@ -54,7 +55,8 @@ for (i=1; #fms){
 							cls="edit";bottom=500;right=500;left=0;top=0;z=1;edge=1;multiline=1;
 						}; 
 					)
-					fms[i].edit.print (index,name)
+					fms[i].edit.print (object.visible)
+					fms[i].edit.print (object.application.workbooks.Count)
 				}
 					//console.log(fms[i].text,index,name,object.application.hwnd)
 	}

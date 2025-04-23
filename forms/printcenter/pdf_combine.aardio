@@ -10,7 +10,7 @@ static2={cls="syslink";text="<a>清空列表</a>";left=576;top=432;right=632;bot
 /*}}*/
 
 import tarray;
-import fsys.pdfium;
+global.import("fsys.pdfium");
 
 
 /*

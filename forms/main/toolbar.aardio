@@ -2,7 +2,7 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=469)
 winform.add(
-custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=467;db=1;dl=1;dr=1;dt=1;z=1}
+custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=467;bkImage="\res\SE BG.jpg";db=1;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
 

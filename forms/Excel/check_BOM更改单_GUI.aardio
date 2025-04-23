@@ -30,29 +30,33 @@ winform.bindConfig( config.checkGUI, {	//绑定控件值
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
-
-com.enumRunning( 
-	function(displayName,object){
-		try{
-			var s = com.GetTypeInfo(object).GetDocumentation().name;
-			if s = "_Workbook"
-				if string.keywords('更改|BOM|变更').findOne(displayName)
-					winform.combobox2.add(displayName);
+winform.frmReLoad = function(){
+	winform.combobox2.clear();
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s = "_Workbook"
+					if string.keywords('更改|BOM|变更').findOne(displayName)
+						winform.combobox2.add(displayName);
+			}
 		}
+	)
+	if winform.combobox2.count {
+		var findActiveWB;
+		excel_0 = com.excel(false);
+		if excel_0.ActiveWorkbook
+			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 	}
-)
-
-
-if winform.combobox2.count {
-	var findActiveWB
-	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
+winform.frmReLoad();
+winform.combobox2.onDropDown = winform.frmReLoad;
+
 var etab = {};
 var sht;
 var formRng;
-import rules;
+global.import("rules");
 winform.button.oncommand = function(id,event){
 	if !#winform.combobox2.selText return ; 	
 
@@ -94,8 +98,6 @@ winform.button.oncommand = function(id,event){
 	})();
 	
 	var etab_count = #etab;
-	
-
 	
 	var bar = winform.progress;
 	bar.min = 0;
@@ -184,7 +186,8 @@ winform.listview.onnotify = function(id,code,ptr){
 			menu.add("隐藏可忽略项", function(){
 				var t = table.filter(getErr,
 					function(v,index){
-						return !string.indexOf(v["错误描述"], "可忽略"); 
+						if v["错误描述"]
+							return !string.indexOf(v["错误描述"], "可忽略"); 
 					}
 				);
 				t.fields = getErr.fields;

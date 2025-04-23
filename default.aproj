@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.545" ProductVersion="1.5.0.545" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.551" ProductVersion="1.5.0.551" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -51,19 +51,6 @@
 			<file name="toolbar.aardio" path="forms\main\toolbar.aardio" comment="forms\main\toolbar.aardio"/>
 			<file name="批量向图纸添加展平图.aardio" path="forms\main\批量向图纸添加展平图.aardio" comment="forms\main\批量向图纸添加展平图.aardio"/>
 			<file name="物料名称生成.aardio" path="forms\main\物料名称生成.aardio" comment="forms\main\物料名称生成.aardio"/>
-		</folder>
-		<folder name="obsolete" path="forms\obsolete" comment="forms\obsolete" local="false" embed="false" ignored="true">
-			<file name="BOM-CALC.aardio" path="forms\obsolete\BOM-CALC.aardio" comment="forms\obsolete\BOM-CALC.aardio"/>
-			<file name="BOM_export.aardio" path="forms\obsolete\BOM_export.aardio" comment="forms\obsolete\BOM_export.aardio"/>
-			<file name="check_专用号申请表.aardio" path="forms\obsolete\check_专用号申请表.aardio" comment="forms\obsolete\check_专用号申请表.aardio"/>
-			<file name="check_新BOM申请表.aardio" path="forms\obsolete\check_新BOM申请表.aardio" comment="forms\obsolete\check_新BOM申请表.aardio"/>
-			<file name="Excel_notify_selection.aardio" path="forms\obsolete\Excel_notify_selection.aardio" comment="forms\obsolete\Excel_notify_selection.aardio"/>
-			<file name="Excel_update_info.aardio" path="forms\obsolete\Excel_update_info.aardio" comment="forms\obsolete\Excel_update_info.aardio"/>
-			<file name="printpaper.aardio" path="forms\obsolete\printpaper.aardio" comment="forms\obsolete\printpaper.aardio"/>
-			<file name="refresh_QHC_Drawing_Release_List.aardio" path="forms\obsolete\refresh_QHC_Drawing_Release_List.aardio" comment="forms\obsolete\refresh_QHC_Drawing_Release_List.aardio"/>
-			<file name="SAP-job.aardio" path="forms\obsolete\SAP-job.aardio" comment="forms\obsolete\SAP-job.aardio"/>
-			<file name="SAP-job2.aardio" path="forms\obsolete\SAP-job2.aardio" comment="forms\obsolete\SAP-job2.aardio"/>
-			<file name="SAP-job3.aardio" path="forms\obsolete\SAP-job3.aardio" comment="forms\obsolete\SAP-job3.aardio"/>
 		</folder>
 		<folder name="printcenter" path="forms\printcenter" comment="forms\printcenter" local="false" embed="false" ignored="false">
 			<file name="bmp2png.aardio" path="forms\printcenter\bmp2png.aardio" comment="forms\printcenter\bmp2png.aardio"/>

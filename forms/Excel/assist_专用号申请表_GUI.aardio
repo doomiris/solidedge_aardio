@@ -21,24 +21,30 @@ var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
 var etab = {};
-com.enumRunning( 
-	function(displayName,object){
-		try{
-			var s = com.GetTypeInfo(object).GetDocumentation().name;
-			if s = "_Workbook"
-				if string.keywords('新增|专用号|申请').findOne(displayName)
-					winform.combobox2.add(displayName);
+winform.frmReLoad = function(){
+	winform.combobox2.clear();
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s = "_Workbook"
+					if string.keywords('新增|专用号|申请').findOne(displayName)
+						winform.combobox2.add(displayName);
+			}
 		}
+	)
+	
+	
+	if winform.combobox2.count {
+		var findActiveWB;
+		excel_0 = com.excel(false);
+		if excel_0.ActiveWorkbook
+			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 	}
-)
-
-
-if winform.combobox2.count {
-	var findActiveWB
-	if excel_0.ActiveWorkbook
-		findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-	winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
 }
+winform.frmReLoad();
+winform.combobox2.onDropDown = winform.frmReLoad;
 
 /*etab相关函数{{*/
 /*
@@ -84,19 +90,17 @@ winform.button.oncommand = function(id,event){
 		}
 	}
 	
-	if !sht.Columns("A:A").find("4.基本计量:后附") return error("不是专用号申请表:"+ '\n\n' ++sht.parent.name +"$["+sht.name+"]"); 
+	if !sht.Rows("2:2").find("物料描述") return error("专用号申请表格式错误"); 
 	if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
 
 
 	//物料描述列???
 	var etr = function(){
-		for (i=sht.range("A:A").find("4.基本计量:后附").row-4; 3; -1){
-			if (sht.cells(i,"E").value2) return i;
-		}
+		return  sht.usedrange.rows[sht.usedrange.rows.count].row;
 	}
 	
 	var tRng = sht.Range("A3:V" ++ etr());
-	
+
 	var etab = tRng.value;
 	var etab_count = #etab;
 	
@@ -133,7 +137,7 @@ winform.button.oncommand = function(id,event){
     	
 		for(j=1; 22 /* V */)
 			if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
-			
+		if !etab[i].物料描述 or !string.len(etab[i].物料描述) continue;
 		etab[i][1] = i;
 		etab[i][2] = "=len(E" ++ (i+2) ++ ")";
 		
@@ -197,12 +201,12 @@ winform.button.oncommand = function(id,event){
 	//table.sort(etab, lambda(b) owner[12]>b[12]);
 	sht.Columns(9 /* I */).ColumnWidth = #etab[1][9 /* I */] + 2.75;
 	sht.Columns(19 /* S */).ColumnWidth = #etab[1][19 /* S */] + 2.75;
-	
-	tRng.value2 = etab;
+		tRng.value2 = etab;
 	
 	var filename = sht.parent.name;
 	filename = string.replace(filename, "姓名", username);
-	filename = string.replace(filename, "型号", etab[1][19 /* S */]);
+	if etab[1][19 /* S */]
+		filename = string.replace(filename, "型号", etab[1][19 /* S */]);
 	filename = string.replace(filename, "日期", str_today("."));
 	
 	import win.clip
@@ -238,7 +242,8 @@ winform.listview.onnotify = function(id,code,ptr){
 			menu.add("隐藏可忽略项", function(){
 				var t = table.filter(getErr,
 					function(v,index){
-						return !string.indexOf(v["错误描述"], "可忽略"); 
+						if v["错误描述"]
+							return !string.indexOf(v["错误描述"], "可忽略"); 
 					}
 				);
 				t.fields = getErr.fields;
