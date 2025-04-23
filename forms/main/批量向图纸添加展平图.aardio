@@ -142,8 +142,13 @@ var addFlatPatterns = function(sheetMetalFiles){
         	yOffset, // Y 坐标 (垂直偏移)
         	2 // seSheetMetalFlatView
     	);
-		drawingView.CaptionDefinitionTextPrimary = "%{File Name|G}";
-		drawingView.PrimaryCaptionTextSize = 0.025
+    	with drawingView {
+			CaptionDefinitionTextPrimary = "%{File Name|G}";
+			PrimaryCaptionTextSize = 0.025;
+			PrimaryCaptionFont = "Arial";
+			PrimaryCaptionFontStyle = 1 /*igDimStyleFontNormal*/
+    	}
+   	
     	drawingView.Update();	
     	// 计算下一个视图的垂直偏移（基于视图的高度）
     	var a,b,c,d = drawingView.Range();
