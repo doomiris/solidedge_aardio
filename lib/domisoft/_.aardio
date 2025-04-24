@@ -83,7 +83,9 @@ stopExcelCutCopyMode = function(){
 		function(displayName,object){
 				if com.GetTypeInfo(object) 
 					if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook")
-						object.Application.CutCopyMode = false;
+						try{
+							object.Application.CutCopyMode = false
+						}
 		}
 	)
 }

@@ -82,7 +82,6 @@ winform.qtbs.open = function(selIndex,pcode){
 
 /*}}*/
 
-
 /*搜索按钮{{*/
 winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
@@ -92,14 +91,8 @@ winform.button.oncommand = function(id,event){
 	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);
 }
 /*}}*/
-
-/*onclose{{*/
-winform.onClose = function(hwnd,message,wParam,lParam){
-	if (db) db.close();	
-}
-/*}}*/
 /*弹出历史记录菜单{{*/
-winform.historyMenu = win.ui.popmenu(winform.buttonD);
+winform.historyMenu = win.ui.popmenu(winform);
 var createHistoryMenu = function(){
 	var getSelectedList = function(){
 		var lv = winform.qtbs.forms[2].listview;		
@@ -118,19 +111,18 @@ var createHistoryMenu = function(){
 			if !win.msgboxTest("点击确认覆盖相同名称收藏","覆盖确认")
 				return ;
 		for (i=1; #fav)
-			if fav[i][["title"]]==favName
-				fav[i] = null;
+			if fav[i][["title"]]==favName{
+				fav[i] = null; /*删除已经有的同名收藏*/
+			}
 
 		table.push(fav, {["title"] = favName; ["list"] = getSelectedList()});
 		config.qitp.save();		
 	}
-	var readClipH = function(){
-		var t= domisoft.readClipHcode();
+	winform.historyMenu.add("识别剪贴板图像", function(){
+		var t = domisoft.readClipHcode();
 		if t
-			winform.editUser3.text = string.join(t,'\r\n');
-		
-	}
-	winform.historyMenu.add("识别剪贴板图像",readClipH);
+			winform.editUser3.text = string.join(t,'\r\n');		
+	});
 	winform.historyMenu.add();
 	var favTab = {
     	[1] = "★ 收藏夹"; 
@@ -152,16 +144,27 @@ var createHistoryMenu = function(){
 					var shift = ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
 					var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
 					
-					if !shift and !ctrl	//无按钮时打开清单
+					if !shift and !ctrl	/*无按钮时打开清单*/
     					winform.qtbs.forms[2].qtip_search(string.join(fav[i]["list"],";"));
-    				if shift and !ctrl	//按shift时询问删除
-    					if win.msgboxTest("确认删除此条收藏?","删除收藏")
+    				if shift and !ctrl	/*按shift时询问删除*/
+    					if win.msgboxTest("确认删除此条收藏?","删除收藏"){
     						fav[i] = null;
-    				if !shift and ctrl //按ctrl时替换为当前清单
-    					if win.msgboxTest("替换为当前选择的清单?","确认替换")
+    						winform.historyMenu.delete(id, 0/*_MF_BYCOMMAND*/)
+    						config.qtip.save();
+    					}
+    				if !shift and ctrl /*按ctrl时替换为当前清单*/
+    					if win.msgboxTest("替换为当前选择的清单?","确认替换") {
     						fav[i]["list"] = getSelectedList();
-    				if shift and ctrl	//同时按询问修改名称
-    					fav[i]["title"] = domisoft.showInputBox("修改名称", "请输入新名称",fav[i]["title"] , winform);
+    						config.qtip.save();
+    					}
+    				if shift and ctrl	/*同时按询问修改名称*/ {
+    				    var newFavName = domisoft.showInputBox("修改名称", "请输入新名称",fav[i]["title"] , winform);
+    				    if newFavName {
+    						fav[i]["title"] = newFavName;
+    						winform.historyMenu.setString(id, newFavName, 0/*_MF_BYCOMMAND*/);
+    						config.qtip.save();
+    					}
+    				}
 	
     			}
     	})
@@ -192,7 +195,7 @@ winform.historyMenu.onMenuItemClick = function(id){
 	winform.editUser3.setFocus();
 }
 winform.buttonD.oncommand = function(id,event){
-	var x,y = win.getMessagePos();  
+	var x,y = win.getMessagePos(); 
 	winform.historyMenu.popup(x,y,true)
 }
 /*}}*/
