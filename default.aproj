@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.551" ProductVersion="1.5.0.551" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.558" ProductVersion="1.5.0.558" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -119,7 +119,6 @@
 	</folder>
 	<folder name="res" path="res" comment="res" local="false" embed="true" ignored="false">
 		<file name="ENGINE.ICO" path="res\ENGINE.ICO" comment="res\ENGINE.ICO"/>
-		<file name="SE BG.jpg" path="res\SE BG.jpg" comment="res\SE BG.jpg"/>
 		<file name="tbm3.ico" path="res\tbm3.ico" comment="res\tbm3.ico"/>
 	</folder>
 </project>

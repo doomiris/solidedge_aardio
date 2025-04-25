@@ -355,8 +355,8 @@ winform.button4.oncommand = function(id,event){
 	}
 	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
 	if !io.exist(_qhc_db) winform.log.print("无法访问:" + _qhc_db);
-	else thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", _qhc_db);
-	thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
+	else thread.invoke(copyfolder, winform, config.dbServer.path ++ "\*.*", _qhc_db);
+	//thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
 getXlsxDbPath = function(){
 	import fsys;

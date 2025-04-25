@@ -21,6 +21,19 @@ console.open()
 */
 
 
+
+
+var fileLibMap = function(fullpath){
+	if !fullpath return ; 
+	import config;
+	var maps = {
+		"{config.__pdfLib}" = config.__pdfLib,
+		"{config.__qhcLib}" = config.__qhcLib,
+		"{config.__cabinetModelServer}" = config.__cabinetModelServer
+	}
+	fullpath = string.replace(fullpath,'%{}', maps)
+	return fullpath; 
+}
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
     //filenumber :=  winform.editUser0.text;
@@ -76,6 +89,9 @@ var searchDocument = function (filenumber){
 		table.unshift(fileTab.fields, "类型");
 	winform.listview2.header = fileTab.fields;
 	
+	for(i=1; #fileTab)
+		fileTab[i]["路径"] = fileLibMap(fileTab[i]["路径"]);
+	
 	
 	winform.listview2.clear();
 	winform.listview2.setTable(fileTab);
@@ -107,10 +123,14 @@ var refreshFiles = function(){
 			table.push(nt, t[i])
 	winform.listview2.items = nt;
 }
+
+
+
 var localMapping = function(fullpath){
 	import string;
 	fullpath = string.lower(fullpath);
 	
+/*
 	if string.getenv("OneDriveCommercial"){
 		var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");		
 		fullpath = string.replace(fullpath,"@\\ccnsia1a\separts\cabinet", io.joinpath(OneDriveCommercial,"CCR Detail Design - S - S")) 
@@ -118,6 +138,10 @@ var localMapping = function(fullpath){
 		import config;
 		fullpath = string.replace(fullpath,"@\\ccnsia1a\separts\cabinet", config.__cabinetModelServer);		
 	}
+*/
+	
+	
+
 	return fullpath; 
 }
 

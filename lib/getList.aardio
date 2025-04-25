@@ -1,42 +1,52 @@
 ﻿import fsys;
 import fsys.table;
 import string.keywords;
+
 //__skip_dir_name = "delete|obsolete|temp|ref"
 namespace getList{
+	import global;
 	deepSearchFile = function(path, filter = "H*.dft"){
 		var t = {};
-		..fsys.enum( path, filter,
+		fsys.enum( path, filter,
 			function(dirname,filename,fullpath,findData){
 				if(filename){
-					..table.push(t,filename);
+					table.push(t,filename);
 					t[filename]=fullpath;
 				}
 			},
 			function(dirpath, dirname){ //忽略目录
-				if ..string.keywords("delete|obsolete|temp|ref").findOne(dirname) return false; 
+				if string.keywords("delete|obsolete|temp|ref").findOne(dirname) return false; 
 				else return true;
 			} 
 		);
 		return t; 
 	}
 	saveFolderDB = function(){
+		import config;
 /*
 		import console
 		console.open()
 */
+/*
 		_searchLoc := {
 			{"\\CCNSIA1A\SEParts\Cabinet\PDF图纸库",	"*.*"};
 			{"\\CCNSIA1A\SEParts\Cabinet\QHC图纸库",	"*.*"};
 			{"\\CCNSIA1A\SEParts\Cabinet",	"H*.dft"};
 		};
+*/
+		_searchLoc := {
+			{config.__pdfLib,	"*.*"};
+			{config.__qhcLib,	"*.*"};
+			{config.__cabinetModelServer,	"H*.dft"};
+		};
 		import config;
 		import sqlite;
 		
-		var db = sqlite(..io.joinpath(config.dbServer.path, "drawing_lists.db"));
+		var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"));
 		_libName := "Lib";
 		var flist={};
 		for (i=1; #_searchLoc)
-			..table.push(flist, deepSearchFile(_searchLoc[i][1],_searchLoc[i][2]));
+			table.push(flist, deepSearchFile(_searchLoc[i][1],_searchLoc[i][2]));
 
 		if (db.existsTable(_libName)) db.exec("DROP TABLE [" ++ _libName ++ "];");
 		db.exec("CREATE TABLE '" ++ _libName ++ "'('文件名' TEXT, '路径' TEXT);");
@@ -47,9 +57,18 @@ namespace getList{
 			for(i=1; #flist[j]){
 				filename = flist[j][i];
 				fullpath = flist[j][filename];
-				filename = ..string.replace(filename, "'", "''"); /* 文件名里含有单引号 插入时报错, 提前replace成 '' */
-				fullpath = ..string.replace(fullpath, "'", "''");
-				fullpath = ..string.trimright(fullpath, filename); /* 仅保留文件夹 */
+				
+				filename = string.replace(filename, "'", "''"); /* 文件名里含有单引号 插入时报错, 提前replace成 '' */
+				fullpath = string.replace(fullpath, "'", "''");
+				
+				fullpath = string.trimright(fullpath, filename); /* 仅保留文件夹 */
+				
+				fullpath = string.replace(fullpath, "@" + _searchLoc[1][1],"{config.__pdfLib}")
+				fullpath = string.replace(fullpath, "@" + _searchLoc[2][1],"{config.__qhcLib}")
+				fullpath = string.replace(fullpath, "@" + _searchLoc[3][1],"{config.__cabinetModelServer}")
+				
+				fullpath = string.trim(fullpath,"\");
+				
 				db.exec("INSERT INTO [" ++ _libName ++ "](文件名, 路径) VALUES('" ++ filename ++ "', '" ++ fullpath ++ "');");
 			}
 			db.commitTrans();

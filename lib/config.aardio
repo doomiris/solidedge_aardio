@@ -3,7 +3,7 @@
 import fsys.config;
 import fsys.ini;
 import fsys.knownFolder
-
+import domisoft;
 
 config = fsys.config(io.appData("/domisoft/SETBM/"));
 var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED ?  "\" : io._exedir, "TBM.ini"));
@@ -15,6 +15,7 @@ var string = ..string;
 var math = ..math;
 var config = ..config;
 var io = ..io;
+var domisoft = ..domisoft;
 
 //不需要序列化的配置名字前请添加下划线
 namespace config {
@@ -23,15 +24,16 @@ namespace config {
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
-	__pdfLib = lib.pdfLib;
-	__templateLib = lib.templateLib;
-	__cabinetModelServer = lib.cabinetModelServer;
+	__pdfLib = domisoft.envFix(lib.pdfLib);
+	__qhcLib = domisoft.envFix(lib.qhcLib);
+	__templateLib = domisoft.envFix(lib.templateLib);
+	__cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
 	__formTemplateSharepointServer = `https://carcgl.sharepoint.com/sites/CCRSAPUsers/Shared Documents/General/各种申请表最新版(只读)/`;
 }
 
 	
 if !config.dbServer.path
-	config.dbServer.path = lib.dbServer;
+	config.dbServer.path = domisoft.envFix(lib.dbServer);
 
 //import VBASettingIO;
 if !config.tbm.Designer

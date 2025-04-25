@@ -292,6 +292,20 @@ listColSort = function(column, desc){
 	owner.setTable( owner.source );
 	return true; //返回 true 允许当前列排序	
 };
+envFix = function(str){
+	if !str return ; 
+	var outStr = str;
+	var matches = string.matches(str, "%%%");
+	if !matches or !#matches return ; 
+	for k, v in matches {
+		if #v
+			var envVar = string.getenv(string.trim(v[1],"%"));
+		if envVar 
+			outStr = string.replace(outStr, "@"+v[1], envVar);
+	}
+	outStr = string.replace(outStr,"@OneDrive - Carrier Corporation","Carrier Corporation");	/*bugfix*/
+	return outStr;
+}
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
@@ -307,5 +321,6 @@ formatWindowsFileName(nameStr) = 替换Windows文件名非法字符为全角＼"
 setColumnWidth(listview, widthTable) = 设置列宽
 copyTable(tab, selectedIndex) = 复制表格
 getFileDate(filename, formatString) = 获取文件修改时间
+envFix(str) = 查找并替换%组成的系统参数
 end intellisense**/
 
