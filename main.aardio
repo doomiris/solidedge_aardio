@@ -355,8 +355,12 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 import win.ui.statusbar; 
 var statusbar = win.ui.statusbar( mainForm );
 
-statusbar.addItem("", 100/*宽度*/);
-statusbar.addItem("", 400/*宽度*/);
+var ver;
+with config.__appVersion{	
+	ver = ..string.format("%s.%s [%s]", major, minor, revision)
+}
+
+statusbar.addItem(ver, 100/*宽度*/);
 statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
 
 

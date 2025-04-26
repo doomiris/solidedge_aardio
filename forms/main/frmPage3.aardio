@@ -20,10 +20,6 @@ import config;
 import web.form.simpleMarkdown;
 var wb = web.form.simpleMarkdown(winform.custom);
 
-import fsys.version;
-winform.ver = fsys.version.getInfo(io._exepath);
-var ver = winform.ver.productVersion;
-
 winform.bindConfig( config.serverIndex,{
 	combobox = "selIndex";	
 } );
@@ -67,7 +63,11 @@ winform.lnkVersion.oncommand = function(id,event){
 	thread.invoke( checkUpdate, winform);
 }
 
-winform.winver.text = string.format("当前版本：%s.%s [%s]", ver.major, ver.minor, ver.revision)
+var ver;
+with config.__appVersion {
+	ver = ..string.format("当前版本：%s.%s [%s]", major, minor, revision)
+}
+winform.winver.text = ver;
 
 winform.combobox.onListChange= function(){ 
 	select(owner.selIndex) {

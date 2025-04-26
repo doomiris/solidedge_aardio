@@ -2,7 +2,8 @@
 
 import fsys.config;
 import fsys.ini;
-import fsys.knownFolder
+import fsys.knownFolder;
+import fsys.version;
 import domisoft;
 
 config = fsys.config(io.appData("/domisoft/SETBM/"));
@@ -16,11 +17,12 @@ var math = ..math;
 var config = ..config;
 var io = ..io;
 var domisoft = ..domisoft;
+var fsys = ..fsys;
 
 //不需要序列化的配置名字前请添加下划线
 namespace config {
 	__appName = "TBM";
-	__appVersion = "1.5.22.01";
+	__appVersion = fsys.version.getInfo(io._exepath).productVersion;
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");

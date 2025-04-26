@@ -1,6 +1,5 @@
-﻿// tarray
-var table = ..table;
-var string = ..string;
+﻿//tarray
+import global;
 var pop = table.pop;
 var map = table.map;
 var mapDeep = table.mapDeep;
