@@ -38,36 +38,47 @@ var loadUpdateLog = function(){
 }
 
 var checkUpdate = function(wform){
-	var url = "https://doomiris.github.io/TBM/version.json";
+/*
+	import console;
+	console.open();
+*/
+	import global;
+	import fsys.version;
+	import ide;
 	import domisoft;
-	t = domisoft.getContentFromHTTP(url, true);
-	var server_ver = t.version;
-	var user_ver = wform.ver.productVersion;
-	var compareVer = function(v1, v2){
-		if v1.major < v2.major	return true; 
-		elseif v1.minor < v2.minor	return true; 
-		elseif v1.revision < v2.revision	return true; 
-		else	return false;	
-	}
-	if	compareVer(user_ver,server_ver){
-		var label = wform.lnkVersion;
-		label.disabledText = null;
-		label.text = string.format("发现新版本: %s.%s [%s]", server_ver.major, server_ver.minor, server_ver.revision)
-		label.iconText = '\uF0AB'
+
+	var current_exe_path = io._exedir;
+	if _STUDIO_INVOKED
+		current_exe_path = ide.getPublishPath();
+	var current_version = fsys.version.getInfo(current_exe_path).productVersion;
+
+	var url = "https://doomiris.github.io/TBM/version.json";
+	
+	var t = domisoft.getContentFromHTTP(url, true);
+	var new_version = fsys.version(t.productVersion);
+
+	with wform.lnkVersion {
+		disabledText = null;
+		if	new_version < current_version {
+			text = "已是最新版.";
+			iconText = '\uF00C';
+		}else{
+			text = "发现新版本:" + tostring(new_version);
+			iconText = '\uF0AB';
+		}
 	}
 }
-
 
 winform.lnkVersion.oncommand = function(id,event){
-	owner.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250';text='checking...'}
-	thread.invoke( checkUpdate, winform);
+	if string.startsWith(owner.text,"发现新版本"){
+		win.msgboxTimeout("此功能还没准备好...", config.__appName);
+	}else{
+		owner.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250';text='checking...'}
+		thread.invoke(checkUpdate, winform);
+	}
 }
 
-var ver;
-with config.__appVersion {
-	ver = ..string.format("当前版本：%s.%s [%s]", major, minor, revision)
-}
-winform.winver.text = ver;
+winform.winver.text = tostring(config.__appVersion);
 
 winform.combobox.onListChange= function(){ 
 	select(owner.selIndex) {

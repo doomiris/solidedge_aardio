@@ -71,14 +71,24 @@ mainForm.onMinimize = function(lParam){
 }
 	
 mainForm.onClose = function(hwnd,message,wParam,lParam){
-	if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
-		win.quitMessage();
+	mainForm.onMinimize();
 	if _STUDIO_INVOKED
 		win.quitMessage();
-	mainForm.onMinimize();
+	var hasNewVer = thread.invokeAndWait(
+		function(current_version){
+			import win;
+			import global;
+			import fsys.version;
+			import config;
+			if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
+				var new_ver = fsys.version.getInfo("update\se_tbm.exe").productVersion;
+				if new_ver > current_version
+					return true;
+		}, config.__appVersion
+	)
+	if hasNewVer win.quitMessage();
 	return true;
 }
-
 mainForm.onDestroy = function(){
 	if(mainForm.tray){
 		mainForm.tray.delete()
@@ -355,12 +365,8 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 import win.ui.statusbar; 
 var statusbar = win.ui.statusbar( mainForm );
 
-var ver;
-with config.__appVersion{	
-	ver = ..string.format("%s.%s [%s]", major, minor, revision)
-}
 
-statusbar.addItem(ver, 100/*宽度*/);
+statusbar.addItem(tostring(config.__appVersion), 100/*宽度*/);
 statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
 
 
