@@ -34,7 +34,6 @@ winform.frmReLoad = function(){
 		}
 	)
 	
-	
 	if winform.combobox2.count {
 		var findActiveWB;
 		excel_0 = com.excel(false);
@@ -45,30 +44,6 @@ winform.frmReLoad = function(){
 }
 winform.frmReLoad();
 winform.combobox2.onDropDown = winform.frmReLoad;
-
-/*etab相关函数{{*/
-/*
-var getUpLevel = function(currentLevel){
-	return string.left(currentLevel, #currentLevel - 2) ++ string.right(currentLevel, 1) - 1;
-}
-
-var  getSubLevel = function(currentLevel){
-	return string.left(currentLevel, 1) ++ string.left(currentLevel, #currentLevel - 1) ++ string.right(currentLevel, 1) + 1
-}
-
-var hasChild = function(z){
-	if etab[z+1] return etab[z].层级数 < etab[z+1].层级数;
-	else return false; 
-}
-var getParentIndex = function(current_index){
-	for (i= current_index-1 ; 1; -1) {
-		if etab[i].层级数 == (etab[current_index].层级数-1)
-			return i; 
-	}
-}
-*/
-/*}}*/
-
 
 winform.button.oncommand = function(id,event){
 	if !#winform.combobox2.selText return ; 	
@@ -137,7 +112,7 @@ winform.button.oncommand = function(id,event){
     	
 		for(j=1; 22 /* V */)
 			if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
-		if !etab[i].物料描述 or !string.len(etab[i].物料描述) continue;
+		if !string.len(etab[i][5 /* E 物料描述 */]) continue;
 		etab[i][1] = i;
 		etab[i][2] = "=len(E" ++ (i+2) ++ ")";
 		

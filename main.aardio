@@ -130,6 +130,11 @@ mainForm.popmenu2.add('&Open TBM', function(){
 	
 });
 mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add("check_专用号申请表",  λ() thread.invoke(λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio")));
+mainForm.popmenu2.add("check_BOM更改单",  λ() thread.invoke(λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio")));
+mainForm.popmenu2.add("check_新BOM申请表",  λ() thread.invoke(λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio")));
+mainForm.popmenu2.add("fill_专用号申请表", λ() thread.invoke( λ() loadcodex("\forms\Excel\assist_专用号申请表_GUI.aardio")));
+mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
 mainForm.popmenu2.add();//分隔线
@@ -360,6 +365,18 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 }
 /*}}*/
 
+
+var hkId;
+	//删除之前注册的热键,hkId如果是null空值，此函数可忽略不做任何操
+mainForm.unreghotkey(hkId);
+//重新注册系统热键;
+hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
+	function(id,mod,vk){
+		
+	},
+	4 /*_MOD_SHIFT*/,
+	0x70 /*_VK_F1*/
+);
 
 
 import win.ui.statusbar; 

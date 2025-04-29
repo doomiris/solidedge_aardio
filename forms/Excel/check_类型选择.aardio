@@ -1,0 +1,71 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="检查BOM更改单";right=759;bottom=400)
+winform.add(
+combobox2={cls="combobox";left=8;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";tabstop=1;z=1}
+)
+/*}}*/
+
+import tarray;
+import com.excel;
+import string.keywords;
+import config;
+import fsys.table;
+import QHC;
+import domisoft;
+
+/*
+winform.bindConfig( config.checkGuide, {	//绑定控件值
+    checkbox = "checked";
+} );
+*/
+
+import console
+	//console.open()
+
+var excel_0 = com.excel(false);
+var excel_2;
+var getErr = {};
+winform.frmReLoad = function(){
+	winform.combobox2.clear();
+	com.enumRunning( 
+		function(displayName,object){
+			try{
+				var s = com.GetTypeInfo(object).GetDocumentation().name;
+				if s = "_Workbook"
+					if string.keywords('更改|BOM|变更|新增|专用号|申请|BG').findOne(displayName)
+						winform.combobox2.add(displayName);
+			}
+		}
+	)
+	if winform.combobox2.count {
+		var findActiveWB;
+		excel_0 = com.excel(false);
+		if excel_0.ActiveWorkbook
+			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
+		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
+	}
+}
+winform.frmReLoad();
+winform.combobox2.onDropDown = winform.frmReLoad;
+
+var etab = {};
+var sht;
+
+/*
+mainForm.popmenu2.add("check_专用号申请表", λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"));
+mainForm.popmenu2.add("check_BOM更改单", λ() loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio"));
+mainForm.popmenu2.add("check_新BOM申请表", λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio"));
+mainForm.popmenu2.add("fill_专用号申请表", λ() loadcodex("\forms\Excel\assist_专用号申请表_GUI.aardio"));
+
+*/
+
+
+
+
+
+
+winform.show();
+
+win.loopMessage();
+return winform;

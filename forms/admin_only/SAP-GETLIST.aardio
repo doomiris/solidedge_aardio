@@ -139,7 +139,7 @@ winform.button.oncommand = function(id,event){
 /*importFromQHC{{*/
 var importFromQHC2 = function(winform, path){
 import console
-console.open();
+//console.open();
 
 	import access.oleDb;
 	var adb = access(path);
