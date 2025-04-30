@@ -347,15 +347,33 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.button4.oncommand = function(id,event){
+	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
+
+	var fileList = {
+		"itemmaster_lists.table",
+		"BOM.db", 
+		"qhc_product_info_lib.db", 
+		"info.db", 
+		"drawing_lists.db", 
+		"dblog.table", 
+		"qhcsap.db", 
+		"qhc_OD_lib.db", 
+		"tbm.db", 
+		"qhc_dw_rel_list.db", 
+		"BOM_LIB.xls"
+	};
+	for (i=1; #fileList)
+		fileList[i] = io.joinpath(config.dbServer.path, fileList[i]);
 	var copyfolder = function(winform, tart, dest){
 		import fsys;
 		winform.log.print("...正在复制到" + dest);
 		fsys.copy(tart, dest, 0x4/*_FOF_SILENT*/ + 0x10/*_FOF_NOCONFIRMATION*/);
 		winform.log.print("完成:" + dest);
 	}
-	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
 	if !io.exist(_qhc_db) winform.log.print("无法访问:" + _qhc_db);
-	else thread.invoke(copyfolder, winform, config.dbServer.path ++ "\*.*", _qhc_db);
+	else {
+		thread.invoke(copyfolder, winform, fileList, _qhc_db);
+	}
 	//thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
 }
 getXlsxDbPath = function(){
