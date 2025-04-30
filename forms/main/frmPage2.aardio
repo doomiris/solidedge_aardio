@@ -190,12 +190,13 @@ winform.button3.oncommand = function(id,event){
 
 winform.show();
 winform.frmReLoad = function(){
-    var initSucc = initDeclare()
+    var initSucc = initDeclare();
+    winform.seDocPath.text = initSucc ? seDFT.FullName : "无法获取DFT信息, 点击此处刷新重试";
 	if !initSucc return ; 
 	loadFromTab(seLbs);	//读取当前内容
 	winform.cb_desp.setFocus();
 	loadDefaults();	//读取默认值(新图纸)
-	winform.seDocPath.text = seDFT.FullName ? seDFT.FullName : "无法获取DFT信息, 点击此处刷新重试";
+	
 }
 
 winform.button4.oncommand = function(id,event){

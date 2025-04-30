@@ -86,7 +86,7 @@ update_sap_item_form.button2.oncommand = function(id,event){
 }
 
 var update = function(update_sap_item_form, tab){
-	//import console;
+	import console;
 	//console.open();
 	import win;
 	import com.excel;
@@ -113,24 +113,42 @@ var update = function(update_sap_item_form, tab){
 	var key = tarray.mapAsItem(tab,  tab.fields[1], tab.fields[2]); //字段和列号对应起来
 	var ucol =  update_sap_item_form.listview.checked;	//用户选中的列
 	var keyCol = sht.range(key.物料 ++ sht.usedRange.rows[1].row + ":" ++ key.物料 ++ tCount).value2; //获取物料专用号所在列
-		
+
+    var fieldMapping = {
+        "物料类型" = "MTyp";
+        "单位" = "BUn";
+        "采购组" = "PGr";
+    };
+    var columnUpdates = {}; // 创建一个表来存储按列分组的更新数据
+    
 	for (i = start_row; end_row){
 		if !keyCol[i][1] continue;	//如果title行之前有空行,string.startWith会报错
 		if !string.startWith(keyCol[i][1],"H") and !string.startWith(keyCol[i][1],"BG") continue;
-		var hitem = QHC.getSapItem(keyCol[i][1]);
+		var hitem = QHC.getSapItem(keyCol[i][1]); //查询数据库获得最新数据
 		//console.log(i, keyCol[i][1])
 		if !hitem continue;
 		for (j=1; #ucol){
 			var hitemname = items[ucol[j]][1];
-			if hitemname == "物料类型" hitemname="MTyp";
-			if hitemname == "单位" hitemname="BUn";
-			if hitemname == "采购组" hitemname="PGr";
-			sht.cells(i, items[ucol[j]][2]).value2 = hitem[hitemname];
+            // 使用映射表进行字段名称转换,如果映射表中不存在则使用原始名称
+            var mappedName = fieldMapping[[hitemname]] : hitemname;
+            var col =  items[ucol[j]][2];
+            // 初始化列数据数组
+            if !columnUpdates[col] 
+                columnUpdates[col] = table.array(end_row - start_row + 1, "");
+			columnUpdates[col][i - start_row + 1] = {hitem[mappedName]};
+
 		}
 	}
+
+    // 按列批量写入数据到 Excel
+    for (col in columnUpdates) {
+        var rangeStr = col ++ start_row ++ ":" ++ col ++ end_row;
+        sht.range(rangeStr).value2 = columnUpdates[col];
+        //win.msgbox(columnUpdates[col],rangeStr)
+    }
+
 	excel.alerts = true;
 	update_sap_item_form.button.disabledText = null;
-	//win.loopMessage();
 }
 
 update_sap_item_form.button.oncommand = function(id,event){
@@ -138,10 +156,13 @@ update_sap_item_form.button.oncommand = function(id,event){
 	thread.invoke(update, update_sap_item_form, tab);
 }
 update_sap_item_form.onDestroy = function(){
-   	if excel excel.alerts = true;    //防止意外关闭后Excel假死
+   	if excel 	excel.alerts = true;    //防止意外关闭后Excel假死
+    if excel 	excel = null;
+    if sht    	sht = null;
 }
 
 update_sap_item_form.button3.oncommand = function(id,event){
+	if !win.msgboxTest("为当前活动单元格所在列所有专用号添加H开头?","确认",update_sap_item_form)	return ; 
 	update_sap_item_form.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = " "};
 	thread.invoke( 
 		function(update_sap_item_form){
@@ -154,7 +175,13 @@ update_sap_item_form.button3.oncommand = function(id,event){
 refresh();
 
 
-
+update_sap_item_form.onDestroy = function(){
+    if excel
+    	excel = null;
+    if sht
+    	sht = null;
+    
+}
 
 update_sap_item_form.show();
 win.loopMessage();

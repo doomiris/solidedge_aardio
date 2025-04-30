@@ -237,7 +237,7 @@ mainForm.listbox.getSelMenuInfo = function(selText){
 }
 var rSelTab = null;
 mainForm.mTabPopMenu = win.ui.popmenu(mainForm); 
-mainForm.mTabPopMenu.add("重复打开此窗口",function(){
+mainForm.mTabPopMenu.add("重复打开此标签页",function(){
 	for (i=1; mainForm.listbox.count) {
 		var txt = table.pop(string.split(mainForm.listbox.items[i],","))
 		if txt == rSelTab.text {
@@ -247,7 +247,17 @@ mainForm.mTabPopMenu.add("重复打开此窗口",function(){
 		}
 	}
 })
-mainForm.mTabPopMenu.add("关闭此窗口",λ() mainForm.mTabs.deleteByTab(rSelTab))
+mainForm.mTabPopMenu.add("在新窗口中打开此标签页",function(){
+	for (i=1; mainForm.listbox.count) {
+		var txt = table.pop(string.split(mainForm.listbox.items[i],","))
+		if txt == rSelTab.text {
+			var navItem = mainForm.listbox.getSelMenuInfo(mainForm.listbox.items[i]);
+			mainForm.listbox.openThisTabAsWindow(navItem);
+			break;
+		}
+	}
+})
+mainForm.mTabPopMenu.add("关闭此标签页",λ() mainForm.mTabs.deleteByTab(rSelTab))
 mainForm.listbox.addThisTab = function(navItem){
 	win.setTimeout(function(){
 		navItem := mainForm.listbox.getSelMenuInfo();
@@ -267,7 +277,12 @@ mainForm.listbox.addThisTab = function(navItem){
 			mainForm.mTabs.forms[mainForm.mTabs.selIndex].frmReLoad();
 	})
 }
-
+mainForm.listbox.openThisTabAsWindow = function(navItem){
+	win.setTimeout(function(){
+		navItem := mainForm.listbox.getSelMenuInfo();
+		mainForm.loadForm(loadfrmName[navItem.index][navItem.subindex]);
+	})
+}
 navlb.onClick = function(index,subindex,text){
 	if !subindex return ;
 	var checkIdx = getExistTabIdx(text);
@@ -348,8 +363,8 @@ mainForm.closeAll.tooltip = tooltipCtrl.addTool(mainForm.closeAll,"点击: 关�
 mainForm.foldchk.tooltip = tooltipCtrl.addTool(mainForm.foldchk,"折叠左侧导航栏");
 
 mainForm.popmenu = win.ui.popmenu(mainForm); 
-mainForm.popmenu.add('在新窗口中打开', λ() mainForm.listbox.addThisTab());
-
+mainForm.popmenu.add('在新选项卡中打开', λ() mainForm.listbox.addThisTab());
+mainForm.popmenu.add('在新窗口中打开', λ() mainForm.listbox.openThisTabAsWindow());
 /*右键新建菜单{{*/
 mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 	select( message ) { 

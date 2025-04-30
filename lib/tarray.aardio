@@ -1,5 +1,9 @@
 ﻿//tarray
-import global;
+import table.zip;
+
+var table = ..table;
+var string = ..string;
+
 var pop = table.pop;
 var map = table.map;
 var mapDeep = table.mapDeep;
@@ -34,20 +38,21 @@ serialize = function(arr){
 	return t; 
 }
 detach = function(arr){
-	var t={};
-	var f = {}
-	for k,v in arr {
-		push(t, v:"")
-		push(f, k:"")
+	var keys={};
+	var values = {}
+	for k, v in arr {
+		push(values, v : "");
+		push(keys, k : "");
 	}
-	return t,f; 
+	return keys, values; 
 }
-detachBy = function(arr,fields){
-	var t={};
+detachBy = function(arr, fields){
+	var result = {};
 	for k, v in fields 
-		push(t, arr[v]:"");
-	return t; 
+		push(result, arr[v]:"");
+	return result; 
 }
+/*
 transpose0 = function(arr){	
 	if #arr.fields arr = serialize(arr);
 	return map(arr[1], function(col, i){	//TODO: 单行转列有问题啊
@@ -55,6 +60,11 @@ transpose0 = function(arr){
 		 	return row[i]; 
 		})
 	}) 
+}
+*/
+transpose0 = function(arr){    
+ if #arr.fields arr = serialize(arr);
+ return table.zip(arr);
 }
 transposeSingle = function(arr){	
 	return map(arr, function(col, i){	// 单行转列
@@ -66,6 +76,7 @@ transpose = function(arr){
 	if #t == 1 return t[1];
 	else return t; 
 }
+/*
 mapfields = function(arr, fields){
 	var t={}
 	if !fields if #arr.fields fields = arr.fields;
@@ -78,6 +89,18 @@ mapfields = function(arr, fields){
 	}
 	t.fields = fields;
 	return t; 
+}
+*/
+mapfields = function(arr, fields){
+	arr = fillEmptyRow(arr);
+	var t = {};
+	if !fields if #arr.fields fields = arr.fields;
+	if (#fields == 1) fields = fields[1];
+	for(i=1; #arr; 1){
+ 		t[i] = table.zip(true, fields, arr[i]);
+	}
+	t.fields = fields;
+	return t;
 }
 popCol = function(arr,...){
 	var fields = arr.fields
@@ -103,7 +126,7 @@ sliceCol = function(arr,a,b){
 	arr = transpose0(arr);
 	return mapfields(arr,fields); 
 }
-spliceCol = function(arr,a,n =1){;
+spliceCol = function(arr,a,n =1){
 	for k,v in arr
 		splice(v,a,n);
 	return arr; 
@@ -126,15 +149,26 @@ uniqueByCol = function(arr,col){
 		if !v	continue;//跳过空值
 		if indexOf(ct, v[col]){ //跳过重复值
 			push(t, v);
-			..table.removeByValue(ct,v[col]);
+			table.removeByValue(ct,v[col]);
 		}
 	}
 	return t; 
 }
+/*
 getCol = function(arr, col){
 	var colindex = #arr.fields ? indexOf(arr.fields, col) : col;
 	return transpose0(arr)[colindex]; 
 }
+*/
+getCol = function(arr, col){
+ 	var colindex = #arr.fields ? indexOf(arr.fields, col) : col;
+ 	var result = [];
+ 	for (i=1; #arr; 1) {
+     	push(result, arr[i][colindex]);
+ 	}
+ 	return result;
+}
+
 replaceValue = function(arr, searchFor, replaceBy){
 	return mapDeep(arr,lambda(v,k) v == searchFor ? replaceBy : v); 
 }
@@ -146,10 +180,10 @@ drop = function(arr, index){
 				arr[i][j] = null;
 	return arr;
 }
-dropByFields = function(arr, fields){
+dropByFields = function(arr, fieldName){
 	for(i=1; #arr)
 		for(j=1; #arr[i])
-			if j==index 
+			if j==fieldName 
 				arr[i][j] = null;
 	return arr;
 }
@@ -180,7 +214,7 @@ findValue = function(arr, what){ //一维数组不可用
 			if !cellValue continue;
 			if type(cellValue) == "number"
 				cellValue = tostring(cellValue);
-			if ..string.find(cellValue, "@" + what)
+			if string.find(cellValue, "@" + what)
 				return {
 					row = rowIndex;
 					col = colIndex;
@@ -195,7 +229,7 @@ findString = function(arr, what){ //一维数组专用
 		if !Value continue;
 		if type(Value) == "number"
 			Value = tostring(Value);
-		if ..string.find(Value, "@@" + what)
+		if string.find(Value, "@@" + what)
 			return {
 				index = index;
 				value = Value;
@@ -221,7 +255,7 @@ findKeyWords = function(arr, what){ //一维数组不可用
 }
 indexContains = function(arr, what){
 	for k, v in arr
-			if ..string.indexOf(v, what)
+			if string.indexOf(v, what)
 				return k; 
 }
 cNum = function(str){
@@ -231,7 +265,7 @@ cNum = function(str){
 		}
 		case "string" {
 			var n = tonumber(str);
-			if #str !== ..string.len(tostring(n)) return null; 
+			if #str !== string.len(tostring(n)) return null; 
 			return n; 
 		}
 		case "boolean" {
@@ -245,22 +279,22 @@ cNum = function(str){
 
 }
 clearEmptyRows = function(arr){
-	return  ..table.filter(arr, function(v,index){
-		return ..table.count(v); // 如果没有[1]键,#操作不能识别数组, 但是count操作包含fields等非数字键
+	return  table.filter(arr, function(v,index){
+		return table.count(v); // 如果没有[1]键,#操作不能识别数组, 但是count操作包含fields等非数字键
 	})
 }
 countNumKey = function(arr){
 	var n = 0;
-	for k,v in ..table.eachArgs(arr)
+	for k,v in table.eachArgs(arr)
  		if v	n++;
 	return n; 
 }
 
-fillEmptyCell = function(arr, what = "", colCount){
-	colCount := #arr;
+fillEmptyCell = function(row, what = "", colCount){
+	colCount := #row;
 	for (i=1; colCount)
-		arr[i] = arr[[i]] || what;	//map会忽略null值和键
-	return arr; 
+		row[i] = row[[i]] || what;	//map会忽略null值和键
+	return row; 
 }
 
 fillEmptyRow = function(arr, what= ""){
@@ -288,6 +322,15 @@ endwith = function(str, tail, cap = false){
 				if string.endsWith(str, tail[i], cap)
 					return string.endsWith(str, tail[i], cap); 	
 }
+startsWith = function(str, prefix, cap = false){
+	if type(prefix) == "string"
+		return string.startsWith(str, prefix, cap);
+	if type(prefix) == "table"
+		if table.isArray(prefix)
+			for (i=1; #prefix)
+				if string.startsWith(str, prefix[i], cap)
+					return string.startsWith(str, prefix[i], cap); 	
+}
 
 /**intellisense()
 tarray = array列操作扩展库
@@ -308,7 +351,8 @@ tarray.cNum(str) = 转为数值
 tarray.indexContains(single_lvl_arr, what) = 是单层字符串数组内查找指定字符, 返回索引
 tarray.findKeyWords(arr, keywords) = keywords用|分隔 \n!tFindItem.
 tarray.findString(arr, what) = 查找值, 返回{index, value} \n!tFindStrItem.
-tarray.endwith(str, tail, cap = false) = 代替sting.endwith允许传入数组
+tarray.endwith(str, tail, cap = false) = 代替sting.endwith, 参数2允许传入数组
+tarray.startsWith(str, prefix, cap = false) = 代替sting.startsWith, 参数2允许传入数组
 !tFindItem.row = 行
 !tFindItem.col = 列
 !tFindItem.value = 值 
