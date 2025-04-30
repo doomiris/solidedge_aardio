@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.564" ProductVersion="1.5.0.564" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.565" ProductVersion="1.5.0.565" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -98,6 +98,7 @@
 			<file name="odview.aardio" path="forms\TEST\odview.aardio" comment="forms\TEST\odview.aardio"/>
 			<file name="RENAME.aardio" path="forms\TEST\RENAME.aardio" comment="forms\TEST\RENAME.aardio"/>
 			<file name="shortcut.aardio" path="forms\TEST\shortcut.aardio" comment="forms\TEST\shortcut.aardio"/>
+			<file name="VBASettingIO.aardio" path="forms\TEST\VBASettingIO.aardio" comment="forms\TEST\VBASettingIO.aardio"/>
 			<file name="winform1.aardio" path="forms\TEST\winform1.aardio" comment="forms\TEST\winform1.aardio"/>
 			<file name="加减法.aardio" path="forms\TEST\加减法.aardio" comment="forms\TEST\加减法.aardio"/>
 			<file name="动态提示下拉框winform1.aardio" path="forms\TEST\动态提示下拉框winform1.aardio" comment="forms\TEST\动态提示下拉框winform1.aardio"/>
