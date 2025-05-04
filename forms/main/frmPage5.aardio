@@ -49,9 +49,10 @@ var tbs = {};
 for (i=1; #frms)	
 		tbs[i] = winform.tab.loadForm(frms[i])
 
-
-winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.setbm.workingDir);
-winform.pdfLibPath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.__pdfLib);
+if config.setbm.workingDir
+	winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.setbm.workingDir);
+if  config.__pdfLib
+	winform.pdfLibPath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.__pdfLib);
 
 import solidedge.application;
 import solidedge.DraftDocument;
