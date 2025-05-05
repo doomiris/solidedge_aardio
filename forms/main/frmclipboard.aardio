@@ -23,28 +23,43 @@ var wb = web.view(winform.static);
 wb.external = {
 	log = function(str){ 
 		import win.clip;
-		win.clip.write(str)
+		win.clip.write(str);
 	};
+
+	getData = function(){
+		import config;
+		var fav = config.qTipLog;		
+		var t={};
+		for (i=1; #fav)
+			table.push(t, {"name" = fav[i]})
+		import JSON;
+		return JSON.stringifyArray(t); 
+	}
 }
 
-wb.html = /********
-<!doctype html>
-<html><head>
-	<meta charset="utf-8">
-	<style type="text/css">html,body{ height:100%; margin:0; } </style>
+wb.external.dblclick = function(str){
+    import win.clip;
+    win.clip.write(str);
+}
+import config;
+var fav = config.qTipLog;
 
-</head>
-<body>
-<select id="list" size="10" style="width:100%;height:100%;" 
-	onchange="aardio.log(this.value)">
-	<option>选项1</option>
-	<option>选项2</option>
-	<option>选项3</option>
-</select>
+import wsock.tcp.simpleHttpServer;
 
-</body></html>
-********/
 
-winform.show();
+winform.show()
+
+if _STUDIO_INVOKED
+	wb.go("http://localhost:4000/clipviewer.html");
+else
+	wb.go("\web\clipviewer.html");
+
+
+/*
+wb.waitEle("#list",function(){
+	wb.invoke("list.addOption", fav);
+})
+*/
+
 win.loopMessage();
 return winform;
