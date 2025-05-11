@@ -8,11 +8,11 @@ import win.ui;
 
 import win.ui.grid;
 /*DSG{{*/
-var notify_excel_form = win.form(text="aardio form";right=743;bottom=271;bgcolor=15780518;border="none";exmode="toolwindow";parent=...;topmost=1)
+var notify_excel_form = win.form(text="aardio form";right=743;bottom=271;bgcolor=0xF0CAA6;border="none";exmode="toolwindow";parent=...;topmost=1)
 notify_excel_form.add(
 button={cls="button";text="X";left=720;top=0;right=744;bottom=24;default=1;flat=1;z=1};
 edit={cls="edit";left=56;top=72;right=112;bottom=120;edge=1;hide=1;multiline=1;z=4};
-listview={cls="listview";left=0;top=24;right=744;bottom=272;bgcolor=12639424;border=1;z=3};
+listview={cls="listview";left=0;top=24;right=744;bottom=272;bgcolor=0xC0DCC0;border=1;z=3};
 static={cls="static";text="SAP物料速查";left=8;top=0;right=312;bottom=24;font=LOGFONT(h=-16;weight=700);transparent=1;z=2}
 )
 /*}}*/
@@ -31,7 +31,7 @@ if (err) error(err)
 var searchSapDB = function(inarr){
 
 /*
-    if table.isArray(inarr){
+    if table.isArrayLikeLike(inarr){
     	 inarr = textjoin(inarr)
     }else{
          inarr = string.replace(inarr,'\t',",");
@@ -69,13 +69,13 @@ if (sht.parent.WindowState !== -4140) {
     str = string.split(txt, '\t');
     
 /*
-    if !table.isArray(st) table.push(str, st);
+    if !table.isArrayLikeLike(st) table.push(str, st);
     else str = table.flat(st);
 */
 }
 else {
     var st = win.clip.read();
-    if !table.isArray(st) table.push(str, st);
+    if !table.isArrayLike(st) table.push(str, st);
     else str = table.flat(st);
 }
 

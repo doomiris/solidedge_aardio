@@ -87,7 +87,7 @@ winform.button.oncommand = function(id,event){
 		var ot = {}
 		var getotv= sht.range("B2:B"+sht.usedrange.rows.count).value2;
 
-		if !table.isArray(getotv) table.push(ot, {getotv})	//只有一个单元格时识别为string
+		if !table.isArrayLike(getotv) table.push(ot, {getotv})	//只有一个单元格时识别为string
 		else ot = getotv
 		var otab = {};
 		for (i=1; #ot) {

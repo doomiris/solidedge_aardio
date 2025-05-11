@@ -317,7 +317,7 @@ endwith = function(str, tail, cap = false){
 	if type(tail) == "string"
 		return string.endsWith(str, tail, cap);
 	if type(tail) == "table"
-		if table.isArray(tail)
+		if table.isArrayLike(tail)
 			for (i=1; #tail)
 				if string.endsWith(str, tail[i], cap)
 					return string.endsWith(str, tail[i], cap); 	
@@ -326,7 +326,7 @@ startsWith = function(str, prefix, cap = false){
 	if type(prefix) == "string"
 		return string.startsWith(str, prefix, cap);
 	if type(prefix) == "table"
-		if table.isArray(prefix)
+		if table.isArrayLike(prefix)
 			for (i=1; #prefix)
 				if string.startsWith(str, prefix[i], cap)
 					return string.startsWith(str, prefix[i], cap); 	
