@@ -66,6 +66,23 @@ var copyPartNo = function(withDesp){
     if #tab
     	return string.join(tab, '\n');
 }
+var copyBomFormat = function(){
+    var tab=table.array();
+    var listview = winform.listview;
+    for (k, v in listview.selected){
+        table.push(tab,
+        	string.join([
+        		listview.getItemText(v, 1),
+        		listview.getItemText(v, 2),
+        		1,
+        		listview.getItemText(v, 3),
+        		listview.getItemText(v, 4)
+        	],'\t')
+        )       
+    }  
+    if #tab
+    	return string.join(tab, '\n');
+}
 
 /*}}*/
 
@@ -105,6 +122,7 @@ winform.listview.onnotify = function(id,code,ptr){//code很多 select外放代�
 
 			menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
 			menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
+			menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
 			menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
 			menu.add("查找图纸...", λ() qtbs.open(4,pcode));
 			menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));

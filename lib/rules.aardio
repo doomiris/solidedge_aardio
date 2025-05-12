@@ -1,0 +1,265 @@
+﻿//RULES
+import tarray;
+import QHC;
+
+var QHC = ..QHC;
+var string = ..string;
+var math = ..math;
+var tarray = ..tarray;
+
+namespace rules {
+    // 规则描述
+	rule_desp = {
+		[1] = "前后父项物料不匹配(不要改变原有模版公式)";
+		[2] = "项目类别固定值:L";
+		[3] = "新增子项:子项需写在右侧";
+		[4] = "删除子项:子项需写在左侧";
+		[5] = "更改用量:前后相同";
+		[6] = "用量:小数位数不超过3位 (手动删除或使用round函数, 直接调整显示状态也不行)";
+		[7] = "检查单位是否正确,ZA单位对应数量一般是整数, KG/M允许有小数";
+		[8] = "物料类型/单位与SAP内不一致/新号可能未生效请确认"; 
+		[9] = "ROH不可有下级物料"; 
+		[10] = "单位用量错误: 非数字/没填/0值"; 
+		[11] = "给09组新增子项时确认是否有OD"; 
+		[12] = "父项物料被禁用, 请先申请解禁再更改BOM";
+		[13] = "子项物料被禁用, 请先申请解禁再更改BOM";
+		[14] = "相同内容重复操作(在此行之前有重复项,检查此行之前的条目)";
+		[15] = "缺少更改备注";
+		[16] = "操作KMAT请标记出是否有OD变更, 如OD不变可忽略";
+		[17] = "请移除空行(末尾空行可忽略)";
+		[18] = "替换子项前后无区别";
+		[19] = "已喷物料和未喷物料号码相隔太远(如特殊情况请确认是否可忽略)";
+		[20] = "删除子项:右侧新子项需要留空";
+		[21] = "子项物料与父项相同";
+		[22] = "可选项子项数量只能是1"; //K3规则SAP不再限制了
+		[23] = "替换子项缺少原子项"; 
+		/* 此处增加规则需要在desp/rule/solver三处都添加子项 */
+	}
+	top_rule_desp = {
+		[1] = "涉及语句变更的, 文件名部分需要指定:-是-否";
+		[2] = "[第二页]新增的特性值描述不能超过30个字符";
+	}
+    // 错误检测函数
+	sapErr = {
+		[1] = function(i, etab){
+			if etab[i][["原父项"]]
+				return etab[i][["原父项"]] !== etab[i][["新父项"]]; 
+		};
+		[2] = function(i, etab){
+			if etab[i].原父项
+				return etab[i][["项目类别"]] !== "L"; 
+		};
+		[3] = function(i, etab){
+			if etab[i][["更改备注"]] == "新增子项" or etab[i][["更改备注"]] == "新增BOM"
+				return #etab[i][["原子项"]] and !#etab[i][["新子项"]];
+		};
+		[4] = function(i, etab){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项"
+				return !#etab[i][["原子项"]] and #etab[i][["新子项"]];
+		};
+		[5] = function(i, etab){
+			if etab[i][["更改备注"]] == "更改用量"
+				return etab[i][["原子项数量"]] == etab[i][["新子项数量"]]; 
+		};
+		[6] = function(i, etab){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
+			var n = tarray.cNum(etab[i][["新子项数量"]]);
+			var a = string.split(tostring(n),".");
+			if #a>1
+				return #a[2]>3; 
+		};
+		[7] = function(i, etab){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
+			if etab[i][["新子项单位"]]  == "ZA"
+				if !string.indexOf(etab[i][["新子项描述"]],"胶带")
+						return !math.isInteger(tarray.cNum(etab[i][["新子项数量"]]));  
+		};
+		[8] = function(i, etab){
+			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return; 
+			if !etab[i][["新子项"]] return ; 
+			var item = QHC.getSapItem(etab[i][["新子项"]]);
+			return item[["MTyp"]] !== etab[i][["新子项类型"]] or item[["BUn"]] !== etab[i][["新子项单位"]]; 
+		};
+		[9] = function(i, etab){
+			if etab[i][["更改备注"]] =="新增子项" or etab[i][["更改备注"]] =="新增BOM" {
+				var item = QHC.getSapItem(etab[i][["原父项"]]);
+				return item[["MTyp"]] == "ROH"; 
+			}
+		};
+		[10] = function(i, etab){
+			if !etab[i][["更改备注"]] or etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
+			if !etab[i][["新子项"]] return ; 
+			return !(tarray.cNum(etab[i][["新子项数量"]]))
+		};
+		[11] = function(i, etab){
+			if etab[i][["原父项"]] and string.startWith(etab[i][["原父项"]], "H00809")
+				return etab[i][["是否有OD"]] !== "√"
+		};
+		[12] = function(i, etab){	//仅检查禁用状态, 忽略新号问题
+			var item = QHC.getSapItem(etab[i][["原父项"]]);
+			return item[["禁用"]] =="禁用"
+		};
+		[13] = function(i, etab){	//仅检查禁用状态, 忽略新号问题
+			//if !#etab[i].新子项 return ; 
+			var item = QHC.getSapItem(etab[i][["新子项"]]);
+			return item[["禁用"]] =="禁用"
+		};
+		[14] = function(i, etab){
+			if i==1 return ; 
+			if !etab[i][["原父项"]] return ; 
+			for(j=1; i-1){
+				if #etab[j][["原子项"]] and etab[j][["原父项"]] == etab[i][["原父项"]] and 
+					etab[j][["原子项"]] == etab[i][["原子项"]]
+							return true;
+				if #etab[j][["新子项"]] and etab[j][["原父项"]] == etab[i][["原父项"]] and 
+						etab[j][["新子项"]] == etab[i][["新子项"]]
+							return true;
+			}
+		}
+		[15] = function(i, etab){
+			if etab[i][["原父项"]]
+				return !etab[i][["更改备注"]]; 
+		}
+		[16] = function(i, etab){
+			if etab[i][["原子项类型"]] == "KMAT" || etab[i][["新子项类型"]] == "KMAT"
+				return !etab[i][["是否有OD"]]; 
+		}
+		[17] = function(i, etab){
+			if i<#etab
+				if !etab[i][["原父项"]]
+					return !etab[i][["新父项"]] || etab[i][["新父项"]] ==0
+		}
+		[18] = function(i, etab){
+			if etab[i][["更改备注"]] == "替换子项"
+				return etab[i][["原子项"]] == etab[i][["新子项"]];
+	
+		}
+		[19] = function(i, etab){
+			if etab[i][["更改备注"]] == "新增BOM"
+				if etab[i][["新子项描述"]] and string.indexOf(etab[i][["新子项描述"]],"未喷")
+					return etab[i][["原父项"]] !== QHC.pcodeOffset(etab[i][["新子项"]]);
+		}
+		[20] = function(i, etab){
+			if etab[i][["更改备注"]] == "删除子项" or etab[i][["更改备注"]] == "删除BOM"
+					return !!etab[i][["新子项"]] or !!etab[i][["新子项描述"]] or !!etab[i][["新子项数量"]];
+		}
+		[21] = function(i, etab){
+			if etab[i][["原父项"]]
+				return etab[i][["原父项"]] == etab[i][["新子项"]];
+		}
+		[22] = function(i, etab){
+			/* K3规则SAP不再限制了*/
+		}
+		[23] = function(i, etab){
+			if etab[i][["更改备注"]] == "替换子项"
+				return !etab[i][["原子项"]] ;
+		}
+	};
+
+    // 修复函数
+	solver = {
+		[1] = function(i, etab){
+				etab[i]["新父项"] = "=B" ++ (i+8); //etab[i]["原父项"];			 
+				return true; 
+		}
+		[2] = function(i, etab){
+			etab[i]["项目类别"] = "L"
+			return true; 
+		}
+		[3] = function(i, etab){
+			var a = {"原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"};
+			var b = {"新子项"; "新子项描述"; "新子项数量"; "新子项单位"; "新子项类型"};
+			for (j=1; #a)
+				etab[i][a[j]], etab[i][b[j]] = etab[i][b[j]], etab[i][a[j]];
+			return true; 
+		}
+		[4] = function(i, etab){
+			var a = {"原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"};
+			var b = {"新子项"; "新子项描述"; "新子项数量"; "新子项单位"; "新子项类型"};
+			for (j=1; #a)
+				etab[i][a[j]], etab[i][b[j]] = etab[i][b[j]], etab[i][a[j]];
+			return true; 
+		}
+		[5] = function(i, etab){}
+		[6] = function(i, etab){
+			var n = tarray.cNum(etab[i][["新子项数量"]]);
+			etab[i]["新子项数量"]  = math.round(n, 3);
+			return true;
+		}
+		[7] = function(i, etab){
+			
+		}
+		[8] = function(i, etab){
+			
+		}
+		[9] = function(i, etab){
+			
+		}
+		[10] = function(i, etab){
+			
+		}
+		[11] = function(i, etab){
+			
+		}
+		[12] = function(i, etab){
+			
+		}
+		[13] = function(i, etab){
+			
+		}
+		[14] = function(i, etab){
+			
+		}
+		[15] = function(i, etab){
+			
+		}
+		[16] = function(i, etab){
+			
+		}
+		[17] = function(i, etab){
+			etab[i]["新父项"] =null;
+			etab[i]["项目类别"] =null;		
+			return true; 	
+		}
+		[18] = function(i, etab){
+			
+		}
+		[19] = function(i, etab){
+			
+		}
+		[20] = function(i, etab){
+			
+		}
+		[21] = function(i, etab){
+			
+		}
+		[22] = function(i, etab){
+			/* K3规则SAP不再限制了*/
+		}
+		[21] = function(i, etab){
+			
+		}
+	};
+	top_rule_err = {
+		[1] = function(od_sht, workbook_name){	
+			var col_c = od_sht.usedrange.columns("C").value2;
+			col_c = table.filter(col_c, λ(v, index) #v);			
+			var od_added = (#col_c !== 4)
+			return !string.indexOf(workbook_name,"-是-") == od_added;
+		}
+		[2] = function(od_sht){		
+			var col_e = od_sht.usedRange.Columns("E").value2;
+			for (i=1; #col_e){
+				if !col_e[i][[1]] continue;
+				if col_e[i][[1]] == "特性" break;
+				if string.len(col_e[i][[1]])>30 return true; 
+			}	
+		}
+	}
+	top_rule_solver ={
+		[1] = function(){
+		}
+		[2] = function(){
+		}
+	}
+}

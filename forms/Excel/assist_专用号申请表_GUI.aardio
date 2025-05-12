@@ -232,7 +232,7 @@ winform.listview.onnotify = function(id,code,ptr){
 /*}}*/
 /* CTRLC复制模块 */
 winform.listview.translateAccelerator = domisoft.ctrlC;
-
+winform.combobox2.listBox.ellipsis = "path";
 winform.show();
 
 win.loopMessage();
