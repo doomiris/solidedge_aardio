@@ -1,13 +1,21 @@
 import win.ui;
 /*DSG{{*/
-var winform_calc = win.form(text="原材料用量计算 (ctrl复制板材料用量, alt复制粉末用量, ctrl+alt同时复制, 选择多行时用\分隔) 价格仅供参考";right=1215;bottom=575)
-winform_calc.add(
-button={cls="button";text="计算";left=80;top=8;right=152;bottom=32;dl=1;dt=1;z=3};
-checkbox={cls="checkbox";text="去除重复项";left=8;top=8;right=80;bottom=24;z=6};
-edit={cls="edit";left=8;top=56;right=152;bottom=568;ah=1;db=1;dl=1;dt=1;edge=1;font=LOGFONT(h=-16);multiline=1;vscroll=1;z=1};
-listview={cls="listview";left=160;top=8;right=1208;bottom=568;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-13);z=2};
-static={cls="syslink";text="<a>清空列表</a>";left=8;top=32;right=64;bottom=48;dl=1;dt=1;transparent=1;z=4};
-static2={cls="syslink";text="<a>copyall</a>";left=94;top=33;right=150;bottom=49;dl=1;dt=1;transparent=1;z=5}
+var winform = win.form(text="原材料用量计算 (ctrl复制板材料用量, alt复制粉末用量, ctrl+alt同时复制, 选择多行时用\分隔) 价格仅供参考";right=1215;bottom=575)
+winform.add(
+button={cls="button";text="计算";left=80;top=8;right=150;bottom=52;dl=1;dt=1;z=5};
+checkbox={cls="checkbox";text="去除重复项";left=160;top=37;right=255;bottom=54;dl=1;dt=1;z=8};
+edit={cls="edit";left=8;top=56;right=152;bottom=568;ah=1;db=1;dl=1;dt=1;edge=1;font=LOGFONT(h=-16);multiline=1;vscroll=1;z=3};
+groupbox={cls="groupbox";text="钣材选择";left=285;top=4;right=843;bottom=57;dl=1;dt=1;edge=1;z=2};
+groupbox2={cls="groupbox";text="喷粉面数";left=878;top=4;right=1096;bottom=57;dl=1;dt=1;edge=1;z=1};
+listview={cls="listview";left=160;top=59;right=1208;bottom=568;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-13);z=4};
+radiobutton={cls="radiobutton";text="热锌板";left=443;top=26;right=504;bottom=43;dl=1;dt=1;group=1;z=9};
+radiobutton2={cls="radiobutton";text="不锈钢";left=510;top=26;right=575;bottom=43;dl=1;dt=1;z=10};
+radiobutton3={cls="radiobutton";text="双面喷粉";left=908;top=26;right=984;bottom=43;checked=1;dl=1;dt=1;group=1;z=12};
+radiobutton4={cls="radiobutton";text="单面喷粉";left=1000;top=26;right=1079;bottom=43;dl=1;dt=1;z=13};
+radiobutton5={cls="radiobutton";text="根据主数据自动选择";left=293;top=26;right=434;bottom=43;checked=1;dl=1;dt=1;z=11};
+radiobutton6={cls="radiobutton";text="塑料板";left=581;top=26;right=646;bottom=43;dl=1;dt=1;z=14};
+static={cls="syslink";text="清空列表";left=9;top=38;right=65;bottom=54;dl=1;dt=1;transparent=1;z=6};
+static2={cls="syslink";text="copyall";left=1148;top=37;right=1204;bottom=53;align="right";dr=1;dt=1;transparent=1;z=7}
 )
 /*}}*/
 
@@ -15,9 +23,10 @@ static2={cls="syslink";text="<a>copyall</a>";left=94;top=33;right=150;bottom=49;
 import console;
 console.open();
 */
+winform.group();
 
 import win.ui.grid;
-var grid = win.ui.grid(winform_calc.listview);//创建数据视图
+var grid = win.ui.grid(winform.listview);//创建数据视图
 
 import win.clip;
 import QHC;
@@ -26,6 +35,7 @@ import domisoft;
 
 var tab = {};
 var fields =  {
+	"SAP原材料";
 	"生产尺寸";
 	"长,宽,厚";
 	"原材料";
@@ -36,28 +46,45 @@ var fields =  {
 	"喷粉后总价";
 }
 
-winform_calc.button.oncommand = function(id,event){
-	var txt = winform_calc.edit.text;
+winform.button.oncommand = function(id,event){
+	var txt = winform.edit.text;
 	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} 
 		txt = string.replace(txt, v,'\r\n');		
 	var pArr = string.split(txt,'\r\n');
-	if winform_calc.checkbox.checked pArr = table.unique(pArr);
-	winform_calc.edit.text = string.replace( string.join(pArr,'\r\n'), '\r\n\r\n', '\r\n'); //失效了
+	if winform.checkbox.checked pArr = table.unique(pArr);
+	winform.edit.text = string.replace( string.join(pArr,'\r\n'), '\r\n\r\n', '\r\n'); //失效了
 
-	table.clear(tab)
+	table.clear(tab);
 	
-	for (i=1;#pArr;1){
+	var mental_type,  painting_faces;
+	winform.enumControl( function(ctrl){
+		select(ctrl.getParent().text){
+			case "钣材选择" {
+				if ctrl.checked
+					mental_type = ctrl.text;
+			}
+			case "喷粉面数" {
+				if ctrl.checked
+					painting_faces = (ctrl.text=="双面喷粉" ? 2 : 1);
+			}
+		}
+	}, "radiobutton")
+
+	for (i=1; #pArr){
 		if !pArr[i] continue;
 		//var d_size = pArr[i];
-		var m_size;	
-		if string.startWith(pArr[i],"H",true) {
-			var hitem = QHC.getSapItem(pArr[i]);
+		var mental_flat_size;	
+		var hitem;
+		if string.startWith(pArr[i], "H", true) {
+			hitem = QHC.getSapItem(pArr[i]);
 			if !hitem continue;
 			//d_size = hitem.设计展平尺寸 : "";
-			m_size = hitem.生产展平尺寸;
+			mental_flat_size = hitem.生产展平尺寸;
 		}
-		m_size := pArr[i];
-		var rez = QHC.下料尺寸( m_size );
+		if string.len( mental_type ) > 3
+				mental_type =  hitem ? hitem.SAP原材料 : "热锌板";
+		mental_flat_size := pArr[i];
+		var rez = QHC.下料尺寸( mental_flat_size , mental_type, painting_faces );
 		var t={};
 		if rez {
 			var qitem = QHC.getSapItem(rez.raw.物料);
@@ -65,7 +92,8 @@ winform_calc.button.oncommand = function(id,event){
 				qitem = rez.raw;
 			var pitem = QHC.getSapItem(rez.powderItem.物料);
 			//t["设计尺寸"] = d_size;
-			t["生产尺寸"] = m_size;
+			t["SAP原材料"] = mental_type;
+			t["生产尺寸"] = mental_flat_size;
 			t["长,宽,厚"] = string.join({rez.l, rez.w, rez.t}, ",");
 			t["原材料"] = rez.raw.物料 ;
 			t["原材料描述"] = rez.raw.物料描述 ;
@@ -83,15 +111,15 @@ winform_calc.button.oncommand = function(id,event){
 	grid.source = tab
 	grid.setTable(grid.source);
 
-	var col_width = {120;120;120;250;50;50;80;100};
+	var col_width = {100;120;120;120;250;50;50;80;100};
 	for (i=1; #col_width)
-		winform_calc.listview.setColumn({cx=col_width[i]}, i);
+		winform.listview.setColumn({cx=col_width[i]}, i);
 
 
 }
 
 /*CTRLC复制模块{{*/
-winform_calc.listview.translateAccelerator = function( msg ){ 
+winform.listview.translateAccelerator = function( msg ){ 
 	
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
 //    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
@@ -101,15 +129,15 @@ winform_calc.listview.translateAccelerator = function( msg ){
 
 	if (vk == 'C'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {	//CTRL_C 复制钣金用量
 	    	var tab = {};
-	    	for (k, v in winform_calc.listview.selected){
-	        	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
+	    	for (k, v in winform.listview.selected){
+	        	table.push(tab, winform.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
 	    	}           
 			win.clip.write(string.join(tab,"\"));
 	}
 	if (vk == 'C'#) && !ctrl && alt && (msg.message == 0x104/*_WM_SYSKEYDOWN*/){ //ALT_C 复制粉末用量
         	var tab = {};
-        	for (k, v in winform_calc.listview.selected){
-            	table.push(tab, winform_calc.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
+        	for (k, v in winform.listview.selected){
+            	table.push(tab, winform.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
         	}           
 			win.clip.write(string.join(tab,"\"));
 	}
@@ -117,9 +145,9 @@ winform_calc.listview.translateAccelerator = function( msg ){
 	    	var t={};
 	    	var tab1 = {};
 	    	var tab2 = {};
-	    	for (k, v in winform_calc.listview.selected){
-	        	table.push(tab1, winform_calc.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
-	        	table.push(tab2, winform_calc.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
+	    	for (k, v in winform.listview.selected){
+	        	table.push(tab1, winform.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
+	        	table.push(tab2, winform.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
 	    	} 
 	    	table.push(t, string.join(tab1,"\"));
 	    	table.push(t, string.join(tab2,"\"));
@@ -129,13 +157,15 @@ winform_calc.listview.translateAccelerator = function( msg ){
 }
 /*}}*/
 
-winform_calc.static.onHyperlinkClick = function(nmSysLink,url,id){
-	winform_calc.edit.text = "";
-	winform_calc.listview.clear(true);
-}
+winform.static.text = "<a>" + winform.static.text + "</a>";
+winform.static2.text = "<a>" + winform.static2.text + "</a>";
 
-winform_calc.static2.onHyperlinkClick = function(nmSysLink,url,id){
-	domisoft.copyTable(winform_calc.listview.items);
+winform.static.onHyperlinkClick = function(nmSysLink,url,id){
+	winform.edit.text = "";
+	winform.listview.clear(true);
+}
+winform.static2.onHyperlinkClick = function(nmSysLink,url,id){
+	domisoft.copyTable(winform.listview.items);
 }
 
 grid.onRightClick = function(item,subItem,nmListView){
@@ -164,7 +194,7 @@ grid.onRightClick = function(item,subItem,nmListView){
 	}
 
 	var x,y = win.getMessagePos();
-	var menu = win.ui.popmenu(winform_calc);
+	var menu = win.ui.popmenu(winform);
 
 	menu.add("复制:板材原材料[专用号+物料描述+用量+KG+ROH]",
 		λ() domisoft.copyTable(钣金tab)
@@ -178,6 +208,6 @@ grid.onRightClick = function(item,subItem,nmListView){
 }
 
 
-winform_calc.show();
+winform.show();
 win.loopMessage();
-return winform_calc;
+return winform;
