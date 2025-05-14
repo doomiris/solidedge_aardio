@@ -1,11 +1,11 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="pdf combine";right=759;bottom=469;acceptfiles=1)
+var winform = win.form(text="合并PDF";right=759;bottom=469;acceptfiles=1)
 winform.add(
 button={cls="button";text="合并PDF";left=648;top=424;right=752;bottom=456;db=1;dr=1;z=2};
-listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-static={cls="static";text="把PDF文件拖放进来";left=8;top=432;right=312;bottom=456;db=1;dl=1;transparent=1;z=3};
-static2={cls="syslink";text="<a>清空列表</a>";left=576;top=432;right=632;bottom=448;db=1;dr=1;transparent=1;z=4}
+listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;msel=false;z=1};
+static={cls="static";text="把要合并的文件拖放进来, 支持.pdf 和图片 .jpg .bmp .png .gif";left=8;top=429;right=354;bottom=445;db=1;dl=1;transparent=1;z=3};
+static2={cls="static";text="放进来后在文件名上点击右键调整顺序, 也可拖动调整顺序";left=8;top=448;right=354;bottom=464;db=1;dl=1;transparent=1;z=4}
 )
 /*}}*/
 
@@ -19,26 +19,25 @@ console.open()
 */
 import config;
 import fsys.dlg;
+
 var tab;
+
 var renew = function(){
 	tab = {};	
 	tab.fields = {[1] = "文件名"; [2]="Path"; [3] = "type"}
 }
 renew();
 
-import tarray;
+
 winform.onDropFiles = function(files){
 	var t = {}
-	for (i=1;#files){
-		var fn = string.match(files[i],".+\\(.+)$");
-		var fp = string.match(files[i],"^(.+)\\.+$");
-
-		
-		if !table.find(tarray.getCol(tab, 1), fn)
+	for (i=1; #files){
+		var fileinfo = io.splitpath(files[i]);		
+		if !table.find(tarray.getCol(tab, "文件名"), fileinfo.file) and !table.find(tarray.getCol(tab, "Path"), fileinfo.dir)
 			table.push(tab,	{
-					"文件名" =  fn;
-					"Path" = fp;
-					"type" = tarray.endwith(fn, {".jpg",".jpeg",".png",".gif",".bmp"}, true) ? "image" : "pdf";
+				"文件名" =  fileinfo.file;
+				"Path" = fileinfo.dir;
+				"type" = table.indexOf([".jpg",".jpeg",".png",".gif",".bmp"], fileinfo.ext) ? "image" : "pdf"
 			})
 	}
 	winform.listview.setTable(tab);
@@ -49,6 +48,93 @@ winform.onDropFiles = function(files){
 	}
 }
 
+/*
+# 创建右键菜单, 在右键菜单里可以对listview里的选中项的: 上移, 下移, 删除操作.
+*/
+// 创建右键菜单
+winform.popmenu = win.ui.popmenu(winform);
+winform.popmenu.add('上移', function(id){
+    var selIndex = winform.listview.selIndex;
+    if(selIndex > 1){
+        var temp = tab[selIndex];
+        tab[selIndex] = tab[selIndex - 1];
+        tab[selIndex - 1] = temp;
+        winform.listview.setTable(tab);
+        winform.listview.selIndex = selIndex - 1;
+    }
+});
+
+winform.popmenu.add('下移', function(id){
+    var selIndex = winform.listview.selIndex;
+    if(selIndex < winform.listview.count){
+        var temp = tab[selIndex];
+        tab[selIndex] = tab[selIndex + 1];
+        tab[selIndex + 1] = temp;
+        winform.listview.setTable(tab);
+        winform.listview.selIndex = selIndex + 1;
+    }
+});
+
+winform.popmenu.add('删除', function(id){
+    var selIndex = winform.listview.selIndex;
+    if(selIndex > 0){
+        table.remove(tab, selIndex);
+        winform.listview.setTable(tab);
+    }
+});
+
+winform.popmenu.add('清空', function(id){
+	winform.listview.clear(true);
+	renew();
+});
+
+// 右键点击列表项触发此事件
+winform.listview.onRightClick = function(item, subItem, nmListView){
+    if(item > 0){
+        winform.listview.selIndex = item;
+        winform.popmenu.popup();
+    }
+};
+
+/*
+# 实现可以通过拖动选中项对listview条目执行: 上移, 下移操作.
+*/
+// 实现拖动选中项对listview条目执行上移、下移操作
+winform.listview.onnotify = function(id, code, ptr) {
+    if (code == 0xFFFFFF93/*_LVN_BEGINDRAG*/) {
+        var nm = winform.listview.getNotifyMessage(code, ptr);
+        var dragIndex = nm.iItem;
+        
+        // 监听鼠标移动和释放事件
+        winform.capture = true;
+        var dragging = true;        
+        winform.wndproc = function(hwnd, message, wParam, lParam) {
+            select(message) {
+                case 0x200 /*_WM_MOUSEMOVE*/ {
+                    if (dragging) {
+                        var x, y = win.getMessagePos(lParam);
+                        var row, col = winform.listview.hitTest();
+                        if (row && row != dragIndex) {
+                            // 拖动到新位置，交换数据
+                            var temp = tab[dragIndex];
+                            tab[dragIndex] = tab[row];
+                            tab[row] = temp;
+                            winform.listview.setTable(tab);
+                            winform.listview.selIndex = row;
+                            dragIndex = row;
+                        }
+                    }
+                }
+                case 0x202 /*_WM_LBUTTONUP*/ {
+                    if (dragging) {
+                        dragging = false;
+                        winform.capture = false;
+                    }
+                }
+            }
+        }
+    }
+}
 
 winform.button.oncommand = function(id,event){
 	var mergedPdf = fsys.pdfium();
@@ -75,12 +161,6 @@ winform.button.oncommand = function(id,event){
 		mergedPdf.save(path);
 	
 }
-
-winform.static2.onHyperlinkClick = function(nmSysLink,url,id){
-	winform.listview.clear(true);
-	renew();
-}
-
 
 winform.show();
 win.loopMessage();
