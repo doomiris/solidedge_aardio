@@ -56,12 +56,12 @@ winform.button.oncommand = function(id,event){
 
 	table.clear(tab);
 	
-	var mental_type,  painting_faces;
+	var mental_type_prefer,  painting_faces;
 	winform.enumControl( function(ctrl){
 		select(ctrl.getParent().text){
 			case "钣材选择" {
 				if ctrl.checked
-					mental_type = ctrl.text;
+					mental_type_prefer = ctrl.text;
 			}
 			case "喷粉面数" {
 				if ctrl.checked
@@ -73,16 +73,19 @@ winform.button.oncommand = function(id,event){
 	for (i=1; #pArr){
 		if !pArr[i] continue;
 		//var d_size = pArr[i];
-		var mental_flat_size;	
-		var hitem;
+		var mental_flat_size, mental_type;	
+		var hitem = null;
 		if string.startWith(pArr[i], "H", true) {
 			hitem = QHC.getSapItem(pArr[i]);
 			if !hitem continue;
 			//d_size = hitem.设计展平尺寸 : "";
 			mental_flat_size = hitem.生产展平尺寸;
+			hitem["SAP原材料"] =  string.indexOf(hitem["物料描述"], "不锈") ?  "不锈钢" : "热锌板";
+			if string.len( mental_type_prefer ) > 3
+				mental_type = hitem["SAP原材料"];	//仅当选择自动时才获取查询值
 		}
-		if string.len( mental_type ) > 3
-				mental_type =  hitem ? hitem.SAP原材料 : "热锌板";
+		mental_type := string.len( mental_type_prefer ) > 3 ? "热锌板" : mental_type_prefer;	
+		
 		mental_flat_size := pArr[i];
 		var rez = QHC.下料尺寸( mental_flat_size , mental_type, painting_faces );
 		var t={};
