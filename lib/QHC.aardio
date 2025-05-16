@@ -344,6 +344,13 @@ formatBOM = function(sht,savechanges = true){
 	excel.Calculation = -4105; /* xlCalculationAutomatic */   //自动重算
 	excel.ScreenUpdating = true;   //开启屏幕刷新
 	
+	/*
+# 给此excel文档添加一个自定义属性: formatedByTBM, 值是当前时间	
+	*/
+	// 添加自定义属性到Excel文档
+	var customProps = sht.Parent.CustomDocumentProperties;
+	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(time.now()));
+	
 	if savechanges	sht.Parent.Save();
 }
 formatAllBOM = function(){
@@ -482,6 +489,10 @@ formatCostBom = function(sht){
 	wk.Application.DisplayAlerts = false;
 	sht.delete();
 	var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
+
+	var customProps = sht.Parent.CustomDocumentProperties;
+	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(time.now()));
+	
 	wk.SaveAs(nwk, 51 /* xlWorkbookDefault */);
 	
 	wk.Application.DisplayAlerts = true;

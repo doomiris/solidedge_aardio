@@ -161,10 +161,10 @@ getCol = function(arr, col){
 }
 */
 getCol = function(arr, col){
- 	var colindex = #arr.fields ? indexOf(arr.fields, col) : col;
+ 	//var colindex = #arr.fields ? indexOf(arr.fields, col) : col; //5/14有fields时返回空值
  	var result = [];
- 	for (i=1; #arr; 1) {
-     	push(result, arr[i][colindex]);
+ 	for (i=1; #arr) {
+     	push(result, arr[i][col]);
  	}
  	return result;
 }

@@ -33,7 +33,7 @@ winform.onDropFiles = function(files){
 	var t = {}
 	for (i=1; #files){
 		var fileinfo = io.splitpath(files[i]);		
-		if !table.find(tarray.getCol(tab, "文件名"), fileinfo.file) and !table.find(tarray.getCol(tab, "Path"), fileinfo.dir)
+		if !table.find(tarray.getCol(tab, "文件名"), fileinfo.file) or !table.find(tarray.getCol(tab, "Path"), fileinfo.dir)
 			table.push(tab,	{
 				"文件名" =  fileinfo.file;
 				"Path" = fileinfo.dir;

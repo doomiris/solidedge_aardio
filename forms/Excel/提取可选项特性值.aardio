@@ -1,0 +1,31 @@
+import console; 
+import com.excel;
+var excel = com.excel(false);
+
+var range = excel.Application.Selection.Value2;
+var UsedRange = excel.ActiveWorkbook.ActiveSheet.UsedRange;
+
+range = table.slice(range, 1, UsedRange.Rows.Count);
+
+range = table.filter(range,function(v,index){
+	return #v[1]; 	
+})
+
+
+var uniqueSubstrings = {};
+var pattern =  "\u\d+";
+for (i = 1; #range) {	
+    var str = range[i][1];   
+	for s in string.gmatch( str, pattern )
+		if !table.indexOf(uniqueSubstrings, s)
+			table.push(uniqueSubstrings, s)
+}
+
+console.log("提取的唯一子串：")
+console.dump(uniqueSubstrings)
+
+
+
+
+
+console.pause();

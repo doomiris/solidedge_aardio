@@ -317,7 +317,7 @@ winform.edit.onChange = function(){
 	if(owner.onModified)owner.onModified(true);
 	winform.listview2.selIndex = null;
 	var txt = string.upper(owner.text);
-	winform.listview2.selIndex = table.indexOf(tarray.getCol(winform.grid2.source, 1), txt) : null;
+	winform.listview2.selIndex = table.indexOf(tarray.getCol(winform.grid2.source, "SD 凭证"), txt) : null;
 	
 	
 }

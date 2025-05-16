@@ -1,6 +1,5 @@
 import fonts.fontAwesome;
 import win.ui;
-//import win.ui.simpleWindow;
 import win.ui.atom;
 import win.ui.tabs;
 import win.ui.tooltip; 
@@ -15,16 +14,16 @@ import solidedge.application;
 import godking.listboxEx;
 import fsys.table;
 /*DSG{{*/
-mainForm = win.form(text="TBM";right=750;bottom=550;bgcolor=15793151)
+mainForm = win.form(text="TBM";right=750;bottom=550;bgcolor=0xF0FBFF)
 mainForm.add(
-closeAll={cls="plus";left=715;top=10;right=747;bottom=35;align="left";color=3947580;dr=1;dt=1;font=LOGFONT(h=-16);iconStyle={font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF05C';notify=1;z=8};
-custom={cls="custom";left=140;top=40;right=750;bottom=520;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=2};
-foldchk={cls="plus";left=8;top=8;right=32;bottom=32;align="left";color=8388608;dl=1;dt=1;font=LOGFONT(h=-27);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome')};iconText='\uF03B';notify=1;textPadding={left=15};z=3};
-listbox={cls="listbox";left=0;top=40;right=140;bottom=520;ah=1;bgcolor=11224832;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');items={};ownerDraw=1;vscroll=1;z=4};
+closeAll={cls="plus";left=715;top=10;right=747;bottom=35;align="left";color=0x3C3C3C;dr=1;dt=1;font=LOGFONT(h=-16);iconStyle={font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF05C';notify=1;z=8};
+custom={cls="custom";left=140;top=40;right=750;bottom=520;ah=1;aw=1;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;z=2};
+foldchk={cls="plus";left=8;top=8;right=32;bottom=32;align="left";color=0x800000;dl=1;dt=1;font=LOGFONT(h=-27);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome')};iconText='\uF03B';notify=1;textPadding={left=15};z=3};
+listbox={cls="listbox";left=0;top=40;right=140;bottom=520;ah=1;bgcolor=0xAB4700;color=0xFFFFFF;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');items={};ownerDraw=1;vscroll=1;z=4};
 splitter={cls="splitter";left=139;top=40;right=144;bottom=550;db=1;dt=1;z=5};
 stripTab1={cls="plus";text="tab1";left=145;top=16;right=245;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=6};
 stripTab2={cls="plus";text="tab2";left=245;top=16;right=345;bottom=40;dl=1;dt=1;iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=7};
-titleBar={cls="bkplus";left=0;top=0;right=750;bottom=40;bgcolor=11224832;dl=1;dr=1;dt=1;forecolor=16777215;linearGradient=180;z=1}
+titleBar={cls="bkplus";left=0;top=0;right=750;bottom=40;bgcolor=0xAB4700;dl=1;dr=1;dt=1;forecolor=0xFFFFFF;linearGradient=180;z=1}
 )
 /*}}*/
 

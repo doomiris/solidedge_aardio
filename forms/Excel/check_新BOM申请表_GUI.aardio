@@ -145,7 +145,8 @@ winform.button.oncommand = function(id,event){
 				[16] = "物料类型/单位与SAP内不一致"; 
 				[17] = "发泡料比例错误(黑料 = 1.15*白料)"; 
 				[18] = "原材料[厚度]与SAP内已维护的厚度不一致";
-				[19] = "原材料[用量]与SAP内已维护的展开尺寸不一致";		
+				[19] = "原材料[用量]与SAP内已维护的展开尺寸不一致";	
+				[20] = "可选项缺少语句"	;
 			}
 		/*}}*/
 			
@@ -305,6 +306,9 @@ winform.button.oncommand = function(id,event){
 						var tolerance = 0.1;
 						return etab[i].单位用量 > (1+tolerance) * rawItem.metel or etab[i].单位用量 < (1-tolerance) * rawItem.metel; 
 					}
+				}
+				[20] = function(i){
+
 				}
 			};
 			/*}}*/

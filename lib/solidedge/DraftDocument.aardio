@@ -285,7 +285,7 @@ namespace DraftDocument{
        							
         						fsys.copy(fname, config.__pdfLib, 0x614/*_FOF_NO_UI*/ + 0x10/*_FOF_NOCONFIRMATION*/);
         						var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"));
-        						db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {io.splitpath(fname).file, config.__pdfLib} } }); 
+        						db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {io.splitpath(fname).file, "{config.__pdfLib}"} } }); 
         						db.close();
         					}, fname
         				);
