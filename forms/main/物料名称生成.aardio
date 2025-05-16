@@ -69,6 +69,8 @@ winform.listbox.refreshList = function(){
 	var s = {};
 	for (i=1; #t){
 		var desp = string.join(t[i]," ");
+		desp = string.trim(desp); //去除前后空格
+		desp = string.replace(desp, "\s+", " "); //去除中间连续空格
 		var len = string.len(desp);
 		table.push(s, {
 			["物料描述"]:desp;
