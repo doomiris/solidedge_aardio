@@ -1,10 +1,10 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var update_sap_item_form = win.form(text="选择需要更新的列...";right=303;bottom=359)
-update_sap_item_form.add(
+var winform = win.form(text="选择需要更新的列...";right=303;bottom=359)
+winform.add(
 button={cls="button";text="开始更新";left=160;top=328;right=296;bottom=352;db=1;dr=1;tabstop=1;z=2};
-button2={cls="button";text='\uF0E2';left=264;top=8;right=296;bottom=40;color=255;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=3};
+button2={cls="button";text='\uF0E2';left=264;top=8;right=296;bottom=40;color=0x0000FF;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=3};
 button3={cls="button";text="H";left=8;top=328;right=32;bottom=352;db=1;dl=1;z=5};
 edit={cls="edit";text="1";left=48;top=328;right=80;bottom=352;autohscroll=false;autovscroll=false;db=1;dl=1;edge=1;hidesel=1;num=1;tabstop=1;z=6};
 edit2={cls="edit";text="2";left=96;top=328;right=160;bottom=352;autohscroll=false;autovscroll=false;db=1;dl=1;edge=1;hidesel=1;num=1;tabstop=1;z=7};
@@ -14,34 +14,39 @@ static={cls="static";left=8;top=8;right=248;bottom=40;aw=1;dl=1;dr=1;dt=1;transp
 /*}}*/
 
 import win.ui.tooltip; 
-var tooltipCtrl = win.ui.tooltip( update_sap_item_form );//在窗口上创建tooltip控件
-tooltipCtrl.addTool(update_sap_item_form.button3,"为Excel选中的列添加 H开头" )
+var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件
+tooltipCtrl.addTool(winform.button3,"为Excel选中的列添加 H开头" )
 import config;
 import QHC;
-var db = QHC.openDb(QHC.sap_db_path);
+import tarray;
 
+var db = QHC.openDb(QHC.sap_db_path);
 var tab = {};	//可用列
 table.push(tab, QHC.getColDef());
 table.push(tab, table.array(#tab[1],"")); //对应列号初始化
-
 db.close();
 
-import tarray;
-tab = tarray.replaceValue(tab, "MTyp", "物料类型");
-tab = tarray.replaceValue(tab, "BUn", "单位");
-tab = tarray.replaceValue(tab, "PGr", "采购组");
+winform.fieldMapping = { //通过winform共享给其它进程
+    "物料类型" = "MTyp";
+    "单位" = "BUn";
+    "采购组" = "PGr";
+};
+for k, v in winform.fieldMapping  /*将SAP列名称按map替换*/
+	tab = tarray.replaceValue(tab,v, k)
+
+/* 行转列显示 */
 tab = tarray.transpose(tab);
-//table.push(tab, { "长", ""},{ "宽", ""},{ "厚", ""});
+
 var fields = { [1] = "可用字段"; [2] = "绑定到列"}
 tab = tarray.mapfields(tab, fields);
 
 import win.ui.grid
-var grid = win.ui.grid(update_sap_item_form.listview);
+var grid = win.ui.grid(winform.listview);
 grid.setTable(tab);
 grid.setReadonlyColumns(1)
-update_sap_item_form.listview.checkbox = true;
-//update_sap_item_form.listview.setChecked(0);
-	
+winform.listview.checkbox = true;
+//winform.listview.setChecked(0);
+
 import com.excel;
 var excel;
 var sht;
@@ -50,51 +55,60 @@ var refresh = function(){
 	import etip;
 	grid.clear();
 
-	update_sap_item_form.titleRow = null;
+	winform.titleRow = null;
 	
 	excel := com.excel(false);
 	if !excel.ActiveWorkbook return ; 
 	sht = excel.ActiveWorkbook.ActiveSheet;
-	update_sap_item_form.static.text = sht.parent.Name ++ "![" ++ sht.name ++ "]";
+	winform.static.text = sht.parent.Name ++ "![" ++ sht.name ++ "]";
 	
 	var titleRng = sht.range("A1:Z10");
-	var f = titleRng.find("物料描述") || titleRng.find("名称");
+	var f = titleRng.find("物料描述") || titleRng.find("对象描述") ||titleRng.find("名称")|| titleRng.find("对象标识") ;
 	if !f return ; 
-	update_sap_item_form.titleRow = f.row;
-	titleRng = titleRng.value2[[update_sap_item_form.titleRow]];	//查找范围前10行
-	titleRng = tarray.replaceValue(titleRng,"专用号", "物料"); //考虑其它命名方式
-	titleRng = tarray.replaceValue(titleRng,"SAP展开尺寸", "生产展平尺寸"); //考虑其它命名方式
-	titleRng = tarray.replaceValue(titleRng,"SAP展平尺寸", "生产展平尺寸"); //考虑其它命名方式
+	winform.titleRow = f.row;
+	titleRng = titleRng.value2[[winform.titleRow]];	//查找范围前10行
+	/* 在此处添加不同表格存在的不同列名命名方式 */
+	titleRng = tarray.replaceValue(titleRng,"专用号", "物料"); 
+	titleRng = tarray.replaceValue(titleRng,"对象标识", "物料"); 
+	titleRng = tarray.replaceValue(titleRng,"对象描述", "物料描述"); 
+	titleRng = tarray.replaceValue(titleRng,"SAP展开尺寸", "生产展平尺寸"); 
+	titleRng = tarray.replaceValue(titleRng,"SAP展平尺寸", "生产展平尺寸"); 
+	titleRng = tarray.replaceValue(titleRng,"单价", "价格"); 
 	for (i=1; #tab){
 		var match = tarray.indexContains(titleRng, tab[i][fields[1]]);
-		//win.msgbox(tab[i][fields[1]])
 		if !match continue;
 		tab[i][fields[2]] = etip.toColName(match) ;
-		update_sap_item_form.titleRow := update_sap_item_form.titleRow;
-		update_sap_item_form.edit.text = update_sap_item_form.titleRow + 1;
-		update_sap_item_form.edit2.text = sht.usedrange.rows[sht.usedrange.rows.count].row;
+		winform.titleRow := winform.titleRow;
+		winform.edit.text = winform.titleRow + 1;
+		winform.edit2.text = sht.usedrange.rows[sht.usedrange.rows.count].row;
 	}
 	grid.setTable(tab);
 /*
 	for(i=1;#tab)
-		update_sap_item_form.listview.setChecked(i, tab[i][fields[2]]!=="")
+		winform.listview.setChecked(i, tab[i][fields[2]]!=="")
 */
 }
 
-update_sap_item_form.button2.oncommand = function(id,event){
+winform.button2.oncommand = function(id,event){
 	refresh();
 }
 
-var update = function(update_sap_item_form, tab){
+var update = function(winform, tab){
+/*
 	import console;
-	//console.open();
+	console.open();
+*/
 	import win;
 	import com.excel;
 	import tarray;
 	import QHC;
 	
-	var start_row = update_sap_item_form.edit.text;
-	var end_row = update_sap_item_form.edit2.text;
+	/*缓存以减少查询次数*/
+	var sapCache = {};
+	var sapCacheCol = {};
+	
+	var start_row = winform.edit.text;
+	var end_row = winform.edit2.text;
 	
 	var excel = com.excel(false);
 	var sht = excel.ActiveWorkbook.ActiveSheet;
@@ -105,77 +119,84 @@ var update = function(update_sap_item_form, tab){
 	excel.alerts = false;
 	
 	var tCount = sht.usedrange.rows[sht.usedrange.rows.count].row;	
-	var items = update_sap_item_form.listview.items;
+	var items = winform.listview.items;
 	
 	for (i=1; #tab) 
 		tab[i].绑定到列 = items[i][2] : "";
 		
 	var key = tarray.mapAsItem(tab,  tab.fields[1], tab.fields[2]); //字段和列号对应起来
-	var ucol =  update_sap_item_form.listview.checked;	//用户选中的列
+	var ucol =  winform.listview.checked;	//用户选中的列
 	var keyCol = sht.range(key.物料 ++ sht.usedRange.rows[1].row + ":" ++ key.物料 ++ tCount).value2; //获取物料专用号所在列
 
-    var fieldMapping = {
-        "物料类型" = "MTyp";
-        "单位" = "BUn";
-        "采购组" = "PGr";
-    };
     var columnUpdates = {}; // 创建一个表来存储按列分组的更新数据
     
 	for (i = start_row; end_row){
 		if !keyCol[i][1] continue;	//如果title行之前有空行,string.startWith会报错
 		if !string.startWith(keyCol[i][1],"H") and !string.startWith(keyCol[i][1],"BG") continue;
-		var hitem = QHC.getSapItem(keyCol[i][1]); //查询数据库获得最新数据
-		//console.log(i, keyCol[i][1])
-		if !hitem continue;
+		var hitem;
+		if table.indexOf(sapCacheCol, keyCol[i][1])
+			hitem = sapCache[table.indexOf(sapCacheCol, keyCol[i][1])]
+		else
+			hitem = QHC.getSapItem(keyCol[i][1]); //查询数据库获得最新数据
+		//console.log(i, table.indexOf(sapCacheCol, keyCol[i][1]), hitem.物料)
+		if !hitem hitem={物料:keyCol[i][1]};
+		table.push(sapCache, hitem);
+		table.push(sapCacheCol, hitem.物料);
+		
 		for (j=1; #ucol){
 			var hitemname = items[ucol[j]][1];
             // 使用映射表进行字段名称转换,如果映射表中不存在则使用原始名称
-            var mappedName = fieldMapping[[hitemname]] : hitemname;
+            var mappedName = winform.fieldMapping[hitemname] || hitemname;
             var col =  items[ucol[j]][2];
             // 初始化列数据数组
             if !columnUpdates[col] 
-                columnUpdates[col] = table.array(end_row - start_row + 1, "");
-			columnUpdates[col][i - start_row + 1] = {hitem[mappedName]};
+                columnUpdates[col] = table.array(end_row - start_row + 1, []);
+			columnUpdates[col][i - start_row + 1] = [hitem[mappedName] || ""]; //null值必须改为空否则无法转换为safearray
 
 		}
 	}
-
     // 按列批量写入数据到 Excel
     for (col in columnUpdates) {
         var rangeStr = col ++ start_row ++ ":" ++ col ++ end_row;
-        sht.range(rangeStr).value2 = columnUpdates[col];
-        //win.msgbox(columnUpdates[col],rangeStr)
+        try{
+        	 sht.range(rangeStr).value2 = columnUpdates[col];
+        	 //win.msgbox(columnUpdates[col])
+        }
+        catch (e){            
+			excel.alerts = true;
+			winform.button.disabledText = null;
+			win.msgbox(e);
+        }
     }
-
 	excel.alerts = true;
-	update_sap_item_form.button.disabledText = null;
+	winform.button.disabledText = null;
 }
 
-update_sap_item_form.button.oncommand = function(id,event){
+winform.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
-	thread.invoke(update, update_sap_item_form, tab);
+	thread.invoke(update, winform, tab);
 }
-update_sap_item_form.onDestroy = function(){
+winform.onDestroy = function(){
    	if excel 	excel.alerts = true;    //防止意外关闭后Excel假死
     if excel 	excel = null;
     if sht    	sht = null;
 }
 
-update_sap_item_form.button3.oncommand = function(id,event){
-	if !win.msgboxTest("为当前活动单元格所在列所有专用号添加H开头?","确认",update_sap_item_form)	return ; 
-	update_sap_item_form.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = " "};
+winform.button3.oncommand = function(id,event){
+	if !win.msgboxTest("为当前活动单元格所在列所有专用号添加H开头?","确认",winform)	return ; 
+	winform.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = " "};
 	thread.invoke( 
-		function(update_sap_item_form){
+		function(winform){
 			loadcodex("\forms\Excel\add_H_by_column.aardio");
-			update_sap_item_form.button3.disabledText = null;
-		}, update_sap_item_form
+			winform.button3.disabledText = null;
+		}, winform
 	)
 }
 
 refresh();
 
 
-update_sap_item_form.onDestroy = function(){
+winform.onDestroy = function(){
     if excel
     	excel = null;
     if sht
@@ -183,6 +204,6 @@ update_sap_item_form.onDestroy = function(){
     
 }
 
-update_sap_item_form.show();
+winform.show();
 win.loopMessage();
-return update_sap_item_form;
+return winform;
