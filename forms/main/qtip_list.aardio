@@ -85,80 +85,81 @@ var copyBomFormat = function(){
 }
 
 /*}}*/
-
 /*双击打开事件{{*/
-winform.listview.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
-    select(code) {
-    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    		var pcode = owner.getItemText(selectedRow, 1);
-    	    qtbs.selIndex = 4;
-    	    qtbs.forms[4].qtip_search(pcode);
-    	}
-    	case 0xFFFFFFFB/*_NM_RCLICK*/ {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-    		var pcode = owner.getItemText(selectedRow, 1);
-    		var desp = owner.getItemText(selectedRow, 2);
-			var x,y = win.getMessagePos();
-			//var hItem,tvht = winform.listview.hitTest(x,y,true);
-			var menu = win.ui.popmenu(winform);			
-
-			menu.add("下载BOM...", downloadbom);				
-			var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
-			if #flist {
-				var fn = flist[flist[#flist]];
-				var fitem = fsys.file(fn);
-				var t = fitem.lastModified().local();
-				fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
-				menu.add(
-					"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
-					λ() process.execute(fn)
-				);
-				
-			}
-
-
-			menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
-			menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
-			menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
-			menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
-			menu.add("查找图纸...", λ() qtbs.open(4,pcode));
-			menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));
-    		var fav = config.qtip.fav;
-			var favTab = {
-	    			[1] = "添加进收藏"; 
-	    			[2] = { 
-	    					[1] = {
-	    						text = "+ 新的收藏...";
-	    						proc = function(id){
-	    						    table.push(fav,{
-	    						    	"title":"新收藏";
-	    						    	"list":{pcode}
-	    						    });
-	    						};
-	        				};
-	        				[2] = {/* ---- */};
-	    			}
-	    	}
-
-			for (i=1; #fav)	{
-				if !fav[i] continue;
-				table.push(favTab[2], {	
-						text = fav[i]["title"];
-						proc = function(id){
-							if !table.find(fav[i]["list"],pcode)
-    								table.push(fav[i]["list"],pcode);
-   						}
-    			})
-    		}
-			menu.addTable({favTab});
-			menu.popup(x,y,true);
-    	}
-    }
+winform.listview.onDoubleClick = function(item,subItem,nmListView){
+	if !item return ; 
+    var pcode = owner.getItemText(item, 1);
+    qtbs.selIndex = 4;
+    qtbs.forms[4].qtip_search(pcode);
 }
 /*}}*/
+/*右键菜单事件{{*/
+winform.listview.onRightClick = function(item,subItem,nmListView){
+	if !item return ; 
+    var pcode = owner.getItemText(item, 1);
+    var desp = owner.getItemText(item, 2);
+	var x,y = win.getMessagePos();
+	//var hItem,tvht = winform.listview.hitTest(x,y,true);
+	var menu = win.ui.popmenu(winform);			
+
+	menu.add("下载BOM...", downloadbom);				
+	var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
+	if #flist {
+		var fn = flist[flist[#flist]];
+		var fitem = fsys.file(fn);
+		var t = fitem.lastModified().local();
+		fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
+		menu.add(
+			"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
+			λ() process.execute(fn)
+		);
+		
+	}
+	menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
+	menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
+	menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
+	menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
+	menu.add("查找图纸...", λ() qtbs.open(4,pcode));
+	menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));
+    var fav = config.qtip.fav;
+	var favTab = {
+	    	[1] = "添加进收藏"; 
+	    	[2] = { 
+	    			[1] = {
+	    				text = "+ 新的收藏...";
+	    				proc = function(id){
+	    					table.push(fav,{
+	    						"title":"新收藏";
+	    						"list":{pcode}
+	    					});
+	    				};
+	        		};
+	        		[2] = {/* ---- */};
+	    	}
+	}
+
+	for (i=1; #fav)	{
+		if !fav[i] continue;
+		table.push(favTab[2], {	
+				text = fav[i]["title"];
+				proc = function(id){
+					if !table.find(fav[i]["list"],pcode)
+    						table.push(fav[i]["list"],pcode);
+   				}
+    	})
+    }
+	menu.addTable({favTab});
+	menu.popup(x,y,true);	
+}
+/*}}*/
+
+/*
+# winform.listview 当用户选择多行时, 把总行数用publish函数发布出来
+*/
+import win.debounce;
+winform.listview.onSelChanged = win.debounce(function(selected,item,subItem,nmListView){
+    publish("status2", "选中了" + #winform.listview.selected + "条");
+})
 
 /*CTRLC复制模块{{*/
 winform.listview.translateAccelerator = domisoft.ctrlC;

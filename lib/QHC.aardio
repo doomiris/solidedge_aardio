@@ -223,6 +223,11 @@ class ColDefType{
 		import tarray;
 		var rng = sht.Range("A1:Z10").value2; //只从前10层里查找
 		var cell = tarray.findKeyWords(rng, "层级|层次|展开层");
+		cell := {
+					row = 1;
+					col = 1;
+					value = "层级";
+				} 
 		this.DefRow = cell.row;
 		var rowArr = sht.Range("A" + cell.row + ":Z" + cell.row).value2;
 		rowArr = table.pop(rowArr);
