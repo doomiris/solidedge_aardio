@@ -40,7 +40,7 @@ winform.onDropFiles = function(files){
 		var fn = string.match(files[i],".+\\(.+)$");
 		var fp = string.match(files[i],"^(.+)\\.+$");
 		//var tf = toFolder ++ string.replace(fn,"@@.psm",".dxf");
-		if !table.find(tarray.getCol(tab, 2), fn)
+		if !table.find(tarray.getCol(tab, "文件名"), fn)
 		table.push(tab, {
 			"#" = #tab + 1;
 			"文件名" =  fn;

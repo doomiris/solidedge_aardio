@@ -11,11 +11,10 @@ syslink={cls="syslink";text="<a>也可以自动查找当前图纸中的1:1展平
 /*}}*/
 
 import tarray;
-import solidedge.application;
-import solidedge.SheetMetalDocument;
+
 import win.util.tray;
 var tray = win.util.tray(mainForm) //创建托盘图标,用于通知 
-var seApp = solidedge.application();
+
 /*
 import console
 console.open()
@@ -30,8 +29,6 @@ renew();
 
 import tarray;
 winform.onDropFiles = function(files){
-	
-
 	var t = {}
 	for (i=1;#files){
 		var fn = string.match(files[i],".+\\(.+)$");
@@ -40,7 +37,7 @@ winform.onDropFiles = function(files){
 		if !string.endWith(tf,"\") tf = tf ++ "\";
 		tf = tf ++ string.replace(fn,"@@.psm",".dxf");
 		
-		if !table.find(tarray.getCol(tab, 1), fn)
+		if !table.find(tarray.getCol(tab, "文件名"), fn)
 			table.push(tab,	{
 					"文件名" =  fn;
 					"Path" = fp;
@@ -56,6 +53,9 @@ winform.onDropFiles = function(files){
 }
 
 winform.button.oncommand = function(id,event){
+	import solidedge.application;
+	import solidedge.SheetMetalDocument;
+	var seApp = solidedge.application();
 	for (i=1; winform.listview.count){
 		var fn = winform.listview.getItemText(i,2) ++ "\" ++ winform.listview.getItemText(i,1);
 		var psm = seApp.Open(fn, false);

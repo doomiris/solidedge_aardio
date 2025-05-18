@@ -40,7 +40,7 @@ bmp2png_form.onDropFiles = function(files){
 		
 		tf = tf ++ string.replace(fn,"@"+info.ext,".png");
 		
-		if !table.find(tarray.getCol(tab, 1), fn)
+		if !table.find(tarray.getCol(tab, "文件名"), fn)
 			table.push(tab,	{
 					"文件名" =  fn;
 					"Path" = fp;
