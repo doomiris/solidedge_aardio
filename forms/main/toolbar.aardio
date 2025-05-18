@@ -1,8 +1,8 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=759;bottom=469)
+var winform = win.form(text="aardio form";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=467;bkImage="\res\SE BG.jpg";db=1;dl=1;dr=1;dt=1;z=1}
+custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=140;dl=1;dr=1;dt=1;z=1}
 )
 /*}}*/
 
@@ -187,30 +187,28 @@ var opent = function(n){
 	win.showForeground(excel.Application.hwnd);
 	//mainForm.show(false);
 }
-winform.popmenu1 = win.ui.popmenu(winform);//创建弹出菜单
-
-winform.popmenu1.addTable({
-	{ "新建申请表"; {
-    		{ "专用号申请表"; λ() opent(1)};
-    		{ "工单更改申请";	λ() opent(2)};
-    		{ "BOM更改申请表";		λ() opent(3)};
-    		{ "新产品BOM申请表";	λ() opent(4)};
-    		{ "产成品编码申请表";	λ() opent(5)};
-    		{ "B2C BOM 批量更改单";		λ() opent(6)};
-		};
-	};
-	{"格式"; {
-			{"格式化BOM"; λ() QHC.formatBOM()};
-			{"格式化成本BOM"; λ() QHC.formatCostBom()}
-		};
-	}
+winform.menuTable={};
+winform.menuTable[1] = win.ui.popmenu(winform);//创建弹出菜单
+winform.menuTable[2] = win.ui.popmenu(winform);//创建弹出菜单
+winform.menuTable[1].addTable({
+    { "专用号申请表"; λ() opent(1)};
+    { "工单更改申请";	λ() opent(2)};
+    { "BOM更改申请表";		λ() opent(3)};
+    { "新产品BOM申请表";	λ() opent(4)};
+    { "产成品编码申请表";	λ() opent(5)};
+    { "B2C BOM 批量更改单";		λ() opent(6)};
+})
+winform.menuTable[2].addTable({
+	{"格式化BOM"; λ() QHC.formatBOM()};
+	{"格式化成本BOM"; λ() QHC.formatCostBom()}
 })
 
-winform.popmenu = function(){
+
+winform.popmenu = function(index){
 	win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	var pt = ::POINT();
 	::User32.GetCursorPos(pt);   		
-	winform.popmenu1.popup(pt.x,pt.y,true)
+	winform.menuTable[index].popup(pt.x,pt.y,true)
 }
 
 
@@ -218,7 +216,11 @@ winform.popmenu = function(){
 /*tbutton8{{*/
 var tbutton8 = function(wform){
 	import console;
-	wform.popmenu();
+	wform.popmenu(1);
+}
+var tbutton82 = function(wform){
+	import console;
+	wform.popmenu(2);
 }
 /*}}*/
 /*tbutton9{{*/
@@ -269,9 +271,14 @@ var tools = {
 		proc = tbutton7;
 	};
 	{
-		Name = "New Sheet";
+		Name = "新建表格(常用模版)";
 		img = 20;
 		proc = tbutton8;
+	};
+	{
+		Name = "格式化BOM";
+		img = 22;
+		proc = tbutton82;
 	};
 	{
 		Name = "replaceWithPartCopy";
