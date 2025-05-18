@@ -201,6 +201,10 @@ console.open();
     if (#userinputArr == 1)
     	winform.saveInput(userinputArr[1]);
 
+	if filter_form.chkAllowModelFuzzy.checked
+		userinputArr = QHC.findAndReplaceWithKeylistString(userinputArr);
+		
+	
  	table.clear(sapTab);
 	sapTab={};
 	

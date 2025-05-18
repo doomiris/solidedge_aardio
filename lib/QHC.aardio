@@ -546,6 +546,37 @@ pcodeOffset = function(pcode, offset = 1){
 	pcode = tonumber(pcode) + offset;
 	return "H00" ++ pcode;  
 }
+findAndReplaceWithKeylistString = function(items){
+	var clues = [
+    	["D","M"],
+    	["SR","TR"],
+    	["SP","TP"],
+    	["EU","LU"],
+    	["四层","五层","六层","七层"],
+    	["125","188","250","375"],
+    	["2D","3D","4D","5D"],
+    	["6500K","4000K","3000K","粉红色"],
+    	["170","210"],
+    	["未喷粉","已喷粉","不锈钢"],
+    	["白线","黑线"]
+	]
+	
+	import string.keywords;
+	
+	//用户输入的描述与关键词清单对比, 在清单内的就用关键词列表串替换
+	for (i=1; #items){
+		for (j=1; #clues) {
+			var kw = string.keywords(clues[j]).findOne(items[i]);
+			if kw {
+				items[i] = string.replace(items[i], clues[j][kw], "*");
+				continue;
+			}
+		}
+	}
+	//根据关键词列表串生成新的清单
+	return items;
+}
+
 /**intellisense()
 QHC.openDb(sap_db_path) = 返回DB
 QHC.getSapItem(hcode) = 返回hitem\n!QHC_hitem.

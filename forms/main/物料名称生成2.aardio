@@ -1,0 +1,260 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="物料名称生成";right=929;bottom=792)
+winform.add(
+button2={cls="button";text="合并";left=276;top=161;right=300;bottom=184;dl=1;dt=1;z=14};
+button3={cls="button";text="/\";left=89;top=208;right=140;bottom=231;dl=1;dt=1;z=5};
+button4={cls="button";text="\/";left=142;top=208;right=193;bottom=231;dl=1;dt=1;z=6};
+button5={cls="button";text="/\";left=276;top=18;right=301;bottom=41;dl=1;dt=1;z=12};
+button6={cls="button";text="\/";left=276;top=46;right=301;bottom=69;dl=1;dt=1;z=11};
+button7={cls="button";text="-";left=276;top=75;right=300;bottom=98;dl=1;dt=1;z=10};
+button8={cls="button";text="+";left=276;top=104;right=300;bottom=127;dl=1;dt=1;z=9};
+button9={cls="button";text="清空";left=276;top=133;right=300;bottom=156;dl=1;dt=1;z=8};
+edit={cls="edit";left=319;top=9;right=906;bottom=197;dr=1;dt=1;edge=1;multiline=1;z=13};
+lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;dl=1;dt=1;edge=1;items={};msel=1;z=3};
+listbox={cls="listbox";left=1;top=13;right=275;bottom=203;dl=1;dt=1;edge=1;items={};msel=1;z=1};
+listview={cls="listview";left=310;top=204;right=928;bottom=793;db=1;dl=1;dr=1;dt=1;edge=1;z=2};
+splitter={cls="splitter";left=304;top=14;right=309;bottom=794;frame=1;hide=1;z=4};
+splitter2={cls="splitter";left=4;top=200;right=302;bottom=205;frame=1;hide=1;horz=1;z=7}
+)
+/*}}*/
+
+import table.product; //迪卡尔运算迭代器
+import domisoft;
+import config;
+
+import win.ui.listEdit;
+import win.debounce;
+
+var listEdit = win.ui.listEdit(winform.listbox);
+
+winform.bindConfig( config.物料描述,{
+	listbox = "items"	
+} );
+/*
+import console;
+console.open();
+*/
+
+winform.edit.onChange = function(){ 
+	if(owner.onModified)owner.onModified(true);
+	//保存输入的描述, 按空格拆分
+
+	var listItems = {}; 
+	for line in winform.edit.lines(true){ 
+		listItems = table.unique(
+			table.append( listItems,
+				 string.split(line," ")
+			)
+		)
+	}
+	//获取已有的描述关键词清单
+	var items = winform.lb_clue.items;
+	for (i=1; #items)
+		items[i] = string.split(items[i],"/");
+	//用户输入的描述与关键词清单对比, 在清单内的就用关键词列表串替换
+	for (i=1; #listItems){
+		for (j=1; #items) {
+			if table.indexOf(items[j], listItems[i]) {
+				listItems[i] = string.join(items[j],"/");
+				continue 2;
+			}
+		}
+	}
+	//根据关键词列表串生成新的清单
+	listItems = table.unique(listItems);
+	winform.listbox.items = listItems;
+	winform.listbox.refreshList();
+}
+var product = function(arr){
+    var t = {};
+    for c in table.product(arr,true)  {
+        var mt={};
+        for k, v in c
+        	table.push(mt, v);    
+ 		table.push(t, mt);
+ 	}
+    return t;
+}
+
+winform.listbox.getlist = function(){
+	var t={};
+	var tab = owner.items;
+	if !#tab return ;
+	for(i=1; #tab ){
+		var v = tab[i];
+		//if !v return ; 
+		if v and string.find(v,"@/")
+			v = string.split(v,"/");
+		else
+			v={v};
+		table.push(t, v);
+	}
+
+	var st = product(t);
+	return st; 
+}
+
+winform.listbox.refreshList = function(){
+	if !owner.count return ; 
+	var items = owner.items;
+	items = table.unique(items);
+	owner.items = items;
+	var t = owner.getlist();
+	var s = {};
+	for (i=1; #t){
+		var desp = string.join(t[i]," ");
+		desp = string.trim(desp); //去除前后空格
+		desp = string.replace(desp, "\s+", " "); //去除中间连续空格
+		var len = string.len(desp);
+		table.push(s, {
+			["物料描述"]:desp;
+			["长度"]: len;
+		})
+	}
+	owner.parent.listview.setTable(s);	
+}
+
+var clue ={"D/M", "SR/TR", "SP/TP", "EU/LU", "C/L", "四层/五层/六层/七层", "125/188/250/375", "2D/3D/4D/5D", "6500K/4000K/3000K/粉红色", "125/188", "未喷粉/已喷粉", "未喷粉/已喷粉/不锈钢", "白线/黑线"}
+if !#winform.lb_clue.items
+	winform.lb_clue.items = clue;
+
+
+winform.show();
+
+with winform{
+	splitter.split({
+		listbox,
+		lb_clue,
+		splitter2
+	}, listview)
+	splitter2.split({
+		listbox,
+	}, lb_clue)		
+}
+
+
+
+winform.listview.selectAll = domisoft.selectAll;
+winform.listview.copySelectedItem = domisoft.copySelectedItem;
+winform.listview.doNotCopyColumns = {2};
+winform.listview.translateAccelerator = domisoft.ctrlC;
+
+
+/*
+winform.splitter.ltMin = 140;
+winform.splitter.rbMin = 200;
+*/
+
+
+winform.lb_clue.sendClicked = function(lbCtrl){
+	lbCtrl.add(owner.selText)
+	lbCtrl.refreshList();
+	lbCtrl.selIndex = lbCtrl.Count;
+}
+winform.lb_clue.sentSelect = function(lbCtrl){
+	var items = owner.items;
+	table.push(items, table.unpack(domisoft.getSelectedText(owner)));
+	lbCtrl.items = items;
+	lbCtrl.refreshList();
+	lbCtrl.selIndex = lbCtrl.Count;
+}
+winform.lb_clue.getItemFrom = function(lbCtrl){
+	var items = owner.items;
+	table.push(items, table.unpack(domisoft.getSelectedText(lbCtrl)));
+	owner.items = items;
+}
+
+winform.button3.oncommand = function() winform.lb_clue.sentSelect(winform.listbox);
+winform.button4.oncommand = function() winform.lb_clue.getItemFrom(winform.listbox);
+
+winform.button3.oncommand = function(id,event){
+	var items = winform.listbox.items;
+	table.push(items, table.unpack(domisoft.getSelectedText(winform.lb_clue)));
+	winform.listbox.items = items;
+	winform.listbox.refreshList();
+}
+
+
+
+
+winform.listbox.moveup = function(){
+	var selIndex = owner.selIndex;	
+	if selIndex <= 1 return ; 
+	var items = owner.items;
+	items[selIndex-1], items[selIndex] = items[selIndex] , items[selIndex-1];
+	owner.items = items;
+	owner.refreshList();
+	owner.selIndex = selIndex-1;
+}
+winform.listbox.movedown = function(){
+	var selIndex = owner.selIndex;
+	var items = owner.items;
+	if !selIndex or selIndex == #items  return ; 
+	items[selIndex], items[selIndex+1] = items[selIndex + 1] , items[selIndex];
+	owner.items = items;
+	owner.refreshList();
+	owner.selIndex = selIndex+1;
+}
+winform.listbox.remove = function(){
+	var selIndex = owner.selIndex;
+	owner.delete(); 
+	owner.refreshList();
+	owner.selIndex = (selIndex >= owner.count) ? owner.count : selIndex  ;
+}
+winform.listbox.addCustom = function(){
+	var selIndex = owner.selIndex;
+	var items = owner.items;
+	var t = domisoft.showInputBox("输入描述", "用/拆分","", owner.parent);
+	if t table.push(items, t);
+	owner.items = items;
+	owner.refreshList();
+	owner.selIndex = #items;
+}
+winform.listbox.combineSelected = function(){
+	var selItems = {};
+	var selected = owner.selected;
+	var items = owner.items;
+	for (i=1; #selected){
+		table.push(selItems, items[selected[i]]);
+		items[selected[i]] = null;
+	}
+	table.removeByValue(items, null);
+	table.push(items, string.join(selItems, "/"));
+	owner.items = items;
+	owner.refreshList();
+}
+
+
+
+winform.lb_clue.wndproc = function(hwnd,message,wParam,lParam){
+	select(message) {
+		case 0x205 /* _WM_RBUTTONUP */ {
+		}
+		case 0x203/*_WM_LBUTTONDBLCLK*/ {
+			owner.sendClicked(winform.listbox);
+		}
+
+	}
+}
+
+
+
+
+winform.listbox.refreshList();
+winform.button5.oncommand = function() winform.listbox.moveup();
+winform.button6.oncommand = function() winform.listbox.movedown();
+winform.button7.oncommand = function() winform.listbox.remove();
+winform.button8.oncommand = function() winform.listbox.addCustom();
+winform.button9.oncommand = function() winform.listbox.clear();
+winform.button2.oncommand = function() winform.listbox.combineSelected();
+
+listEdit.onEditChanged = win.debounce(function(text,selIndex){
+	winform.listbox.refreshList()
+	winform.listbox.selIndex = selIndex;
+	//win.msgbox(text);
+}, 200)
+
+
+win.loopMessage();
+return winform;
