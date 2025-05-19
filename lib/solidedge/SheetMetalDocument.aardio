@@ -41,9 +41,12 @@ namespace SheetMetalDocument{
     	var maxFace = objFaces.Item(m);
     	if maxFace.type !== 167551075 /*igFace */
     		console.error("maxFace error");
-    	var objEdges = maxFace.Edges;
       	var longestEdge , max_d;
-      	for (i=1; objEdges.Count){
+      	
+		for index, loop in ..com.each(maxFace.Loops) {
+			if !loop.IsOuterLoop continue;
+			var objEdges = loop.Edges;	
+      		for (i=1; objEdges.Count){
              	var edge = objEdges.Item(i);
              	if edge.IsClosed continue;
              	longestEdge := edge;
@@ -55,12 +58,13 @@ namespace SheetMetalDocument{
              		max_d = d;
              		longestEdge = edge;
              	}
+      		}
       	}
 
     	var objFP	
-    	try{
+    	//try{
     	 	objFP = objFPM.FlatPatterns.Add(longestEdge, maxFace, longestEdge.EndVertex, 2 /* igFlattenPatternModelTypeFlattenAnything */);
-	    }    
+	    //}    
 	    return objFP; 
 	}
 	recreateFlatPattern = function(smDoc){
@@ -69,40 +73,38 @@ namespace SheetMetalDocument{
 	}
 	
 	psm2dxf = function(fname){
+		import console;
+		//console.open();
 		var smDoc = owner.sePSM;
+
 		if smDoc.FlatPatternModels.Count == 0
 			owner.addFlatPattern();
+
 		if smDoc.FlatPatternModels[1].FlatPatterns[1].Reference.type !== 167551075
 			owner.recreateFlatPattern(smDoc);
+
 		var maxFace = smDoc.FlatPatternModels[1].FlatPatterns[1].Reference;
 
-    	var longestEdge , max_d;
+    	var longestEdge;
 		for index, loop in ..com.each(maxFace.Loops) {
 			if loop.IsOuterLoop {
-				var objEdges = loop.Edges;				
-      			for (i=1; objEdges.Count){
-             		var edge = objEdges.Item(i);
-             		if edge.IsClosed continue;
-             		longestEdge := edge;
-             		var d = 0;
-             		if edge.StartVertex and edge.EndVertex 
-             			d = smDoc.MeasureDistance(edge.StartVertex,  edge.EndVertex, 1 /* MeasureDistanceTypeConstants_MinimumDistance */);
-             		max_d := d
-             		if d>max_d {
-             			max_d = d;
-             			longestEdge = edge;
-             		}
-      			}
+				var objEdges = loop.Edges;	
+				longestEdge := objEdges.Item(1); 	//SaveAsFlatDXFEx可以利用现有flatpattern, 因此(面,边,点)随便给一个值即可
+				break;
 			}
 		}
+		//console.log(fname)
     	var objFP;	
-    	try{
+    	//try{
     	    smDoc.Application.DisplayAlerts = 0;
 	    	objFP = smDoc.Models.SaveAsFlatDXFEx(fname, maxFace, longestEdge, longestEdge.EndVertex, true);
+	    	//objFP = smDoc.Models.SaveAsFlatDXFEx(fname,,,,true);	    	
 	   		smDoc.Application.DisplayAlerts = 1;
+/*
 	    }catch(e){
 	    	console.error(e.description)
 	    }
+*/
 	}
 	_topointer = lambda() owner.sePSM;
 	

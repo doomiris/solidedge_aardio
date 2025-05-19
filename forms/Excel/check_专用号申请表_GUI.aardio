@@ -333,6 +333,7 @@ winform.button.oncommand = function(id,event){
     sht = null;
     excel_2 = null;
     excel_0 = null;
+    collectgarbage("collect");
 	
 }
 

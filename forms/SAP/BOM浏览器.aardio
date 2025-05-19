@@ -75,18 +75,16 @@ var filterTag = function(id){
 
 var getTags = function(tab,fields){
 	var t= {};
-	tab = tarray.transpose(tab);
-	for (i=1; #tab)
-		if table.indexOf(fields, tab[i].fields)
-			table.push(t, table.unpack(tab[i]))
-	t = table.unique(t)
-	t = table.filter(t, λ(v,index) #v)
+	for (i=1; #fields)
+		table.append(t, tarray.getCol(tab, fields[i]));
+		
+	t = table.unique(t);
+	table.removeByValue(t, "");
 
 	resetToolbar();
 	
 	for (i=1; #t)
 		tbar.add(t[i], filterTag, /*img*/ , /* id */,2/*_TBSTYLE_CHECK*/ + 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
-
 }
 winform.edit.onChange = function(){ 
 	if(owner.onModified)owner.onModified(true);
@@ -123,7 +121,7 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 	n = string.replace(n," ","_");
 	var f = io.joinpath(config.__sapDownload, n);	
 	if !io.exist(f)
-		win.msgboxErr(f)
+		win.msgboxErr(f,"请先下载")
 	else {
 		var excel = com.GetOrCreateObject("Excel.Application");
 		excel.WindowState = -4137/*_xlMaximized*/
@@ -180,15 +178,17 @@ grid.copyPartNo = function(fields){
 	owner.doNotCopyColumns = {};
 }
 var menu = win.ui.popmenu(winform);
+menu.add("打开BOM", λ()	grid.onDoubleClick(winform.listview.selIndex));
+menu.add("下载BOM...", downloadbom);
 menu.add("复制[物料]", λ() grid.copyPartNo({"物料"}));
 menu.add("复制[物料][物料描述]", λ() grid.copyPartNo({"物料","物料描述"}));
-menu.add("下载...", downloadbom);
 menu.add("复制所选BOM文件...", λ() grid.copyfiles(grid.getCopyFilesList()));
 
 
 grid.onRightClick = function(item,subItem,nmListView){
+	if !item return ; 
 	var x,y = win.getMessagePos();
-	menu.popup(x,y,true);
+	menu.popup(x,y,true,item);
 }
 
 getBOMList();

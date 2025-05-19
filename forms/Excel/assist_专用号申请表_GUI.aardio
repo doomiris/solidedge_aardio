@@ -164,7 +164,7 @@ winform.button.oncommand = function(id,event){
 			ePush({"R01","ROH","非配置","01", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
 			
 		elseif string.keywords('木包装').findOne(str)
-			ePush({"R05","ROH","非配置","16","木包装","否"});
+			ePush({"R15","ROH","非配置","16","木包装","否"});
 			
 		elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
 			ePush({"SB","HALB","非配置","01","钣金","否"});
@@ -187,12 +187,13 @@ winform.button.oncommand = function(id,event){
 	import win.clip
 	win.clip.write(string.left(filename,#filename-1))
 	
-}
-winform.onDestroy = function(){
-	try{
-   		if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
-   		if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
-	}
+   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
+   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
+    sht = null;
+    excel_2 = null;
+    excel_0 = null;
+    collectgarbage("collect");
+	
 }
 
 /*点击定位{{*/
@@ -200,8 +201,13 @@ winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	if !selected return ; 
 	if !item return ;
 	var row = owner.getItemText(item,1);
-	if row
-		excel_2.ActiveWindow.ScrollRow = row;
+	if !row return ; 
+	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText);
+	if !sht return ; 
+	excel_2 = sht.Parent.Application;
+	excel_2.ActiveWindow.ScrollRow = row;
+	sht = null;
+	excel_2 = null;
 }
 /*}}*/
 

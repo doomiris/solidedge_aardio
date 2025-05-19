@@ -147,6 +147,7 @@ copySelectedItem = function(ctrl){
  		var cliphtml = win.clip.html();
         html = cliphtml.stringify(html);
 		cliphtml.write(html,true,false);
+		return hTab; 
 }
 copyTable = function(tab, selectedIndex){
 		if !#tab return ; 
@@ -175,6 +176,7 @@ copyTable = function(tab, selectedIndex){
         var html = table.toHTML(hTab)
         html = cliphtml.stringify(html);
 		cliphtml.write(html,true,false);
+		return hTab; 
 }
 selectAll = function(ctrl){
 	if !ctrl ctrl = owner
