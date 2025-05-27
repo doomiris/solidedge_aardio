@@ -21,6 +21,8 @@ for (i = 1; #range) {
 			table.push(uniqueSubstrings, s)
 }
 
+table.sort(uniqueSubstrings);
+
 console.log("提取的唯一子串：")
 console.dump(uniqueSubstrings)
 

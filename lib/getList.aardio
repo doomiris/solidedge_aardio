@@ -153,7 +153,7 @@ namespace getList{
 		import sqlite;
 		var db = sqlite(..io.joinpath(config.dbServer.path, "drawing_lists.db"));
 		_mapName = "Map";		
-		var dlist = db.getTable("SELECT * FROM [Map]");		
+		var dlist = db.getTable("SELECT * FROM [Map]");
 		console.log("更新前数据行数:", #dlist);
 		console.log("----------");
 		console.log("开始分析当前sheet数据...");

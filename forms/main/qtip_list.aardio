@@ -149,6 +149,17 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
     	})
     }
 	menu.addTable({favTab});
+	menu.add("添加图号...",function(){
+		import domisoft;
+		var drawing_No = domisoft.showInputBox("指定图号", "请给选中的零件输入图号","", winform);
+		if !drawing_No return ; 
+		var prtLists = domisoft.getSelectedText(winform.listview);
+		if !#prtLists return ; 
+		thread.invoke(function(drawing_No, prtLists){
+			import getList;
+    		getList.appendDrawingMapFromTable(drawing_No, prtLists)			
+		}, drawing_No, prtLists)	
+	})
 	menu.popup(x,y,true);	
 }
 /*}}*/

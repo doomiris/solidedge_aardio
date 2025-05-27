@@ -354,9 +354,9 @@ formatBOM = function(sht,savechanges = true){
 	*/
 	// 添加自定义属性到Excel文档
 	var customProps = sht.Parent.CustomDocumentProperties;
-	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(time.now()));
+	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(..time.now()));
 	
-	if savechanges	sht.Parent.Save();
+	if savechanges	try{sht.Parent.Save()};
 }
 formatAllBOM = function(){
 	import com.excel;
@@ -496,7 +496,7 @@ formatCostBom = function(sht){
 	var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
 
 	var customProps = sht.Parent.CustomDocumentProperties;
-	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(time.now()));
+	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(..time.now()));
 	
 	wk.SaveAs(nwk, 51 /* xlWorkbookDefault */);
 	

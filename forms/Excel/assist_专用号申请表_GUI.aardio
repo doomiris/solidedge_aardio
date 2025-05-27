@@ -145,6 +145,9 @@ winform.button.oncommand = function(id,event){
 		elseif string.keywords('已喷').findOne(str)	
 			ePush({"SC","HALB","非配置","01","喷粉件","否"});
 			
+		elseif string.keywords('玻璃门').findOne(str)	
+			ePush({"R08","ROH","非配置","08","玻璃门","否"});		
+				
 		elseif string.keywords(_plastics).findOne(str)
 			ePush({"R02","ROH","非配置","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)],"否"});
 	

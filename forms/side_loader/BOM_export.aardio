@@ -20,24 +20,38 @@ var progress = console.progress();
 
 var etab = osht.UsedRange.value2;
 var ts_count = #etab;
+ if etab[3][1 /* A */] == ".1" etab[3][1 /* A */] = "'.1"; //阻止识别为0.1
 //console.dump(etab);
 //console.pause(true);
 excel.Application.CutCopyMode = false;
 
 _start_col = 9 /* I */;
-_col_count = 16;
+_col_count = 2;
+_save_as_single_bom_file = false;
 
-var tbk = excel.WorkBooks.Add(
-    io.joinpath(config.dbServer.path, "\..\form\", "新产品BOM申请单模板.xlsx")
-);
-
-var tsht = tbk.Sheets(1);
-
-var tsht_tab = {};
-
+var tbk, tsht, tsht_tab;
+if _save_as_single_bom_file {
+	 tbk = excel.WorkBooks.Add(
+    	io.joinpath(config.__templateLib,  "新产品BOM申请单模板.xlsx")
+	);
+	
+	 tsht = tbk.Sheets(1);
+	
+	 tsht_tab = {};
+}
 excel.alerts = false;
 for(j = _start_col; _start_col + _col_count - 1 ){
     if !#etab[2][j] continue;
+
+	if !_save_as_single_bom_file {
+		 tbk = excel.WorkBooks.Add(
+    		io.joinpath(config.__templateLib,  "新产品BOM申请单模板.xlsx")
+		);
+		
+		 tsht = tbk.Sheets(1);
+		
+		 tsht_tab = {};
+	}
 
     for(i=1; ts_count){
         progress.setProgress( (i+(j-_start_col)*ts_count)*100/(ts_count*_col_count), "wait... ["++(j-_start_col+1) ++ "/" + _col_count + "]");
@@ -45,6 +59,8 @@ for(j = _start_col; _start_col + _col_count - 1 ){
         if i == 1 continue; //跳过标题行
 
         if !#etab[i][1 /* A */] continue; //跳过层级为空的行
+       
+        
         if #etab[i][j] and string.len(string.trim(etab[i][j])) == 1
         	if string.cmpMatch(etab[i][j], "X") continue;	// 跳过X标记, 也会跳过含X的专用号
 
@@ -86,8 +102,13 @@ for(j = _start_col; _start_col + _col_count - 1 ){
        	table.push(tar, "","L")	//列名:BOM项目,项目类别
        	
     	var hcode = etab[i][j]; 
-    	if !hcode hcode = etab[i][2 /* B */]; 
+    	if !hcode hcode = etab[i][2 /* B */];   	
     	if !hcode continue;	//如果还是没有物料则跳过， 目标文件内不显示描述等信息， 此种情况不可下发导入．
+    	
+    	//空格
+    	hcode = string.replace(hcode,'\s',"");
+    	//Non-breaking space
+    	hcode = string.replace(hcode,'\u00A0',"");
     	
       	table.push(tar, hcode);	//列名:物料号
       	
@@ -106,26 +127,45 @@ for(j = _start_col; _start_col + _col_count - 1 ){
  //     	console.dump(tar);
     }
     
-
+	if !_save_as_single_bom_file {
+		var tar_end_row = #tsht_tab + 4 ;
+		tsht.Range("6:"++ tar_end_row).EntireRow.insert();
+		tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
+		tsht.Activate();
+		
+		
+		excel.alerts = false;	
+		tbk.SaveAs(
+    		io.joinpath(
+    			config.setbm.workingDir,
+    			"init_" ++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
+    		)
+		);
+		QHC.formatBOM(tsht);
+		tbk.close();
+	}
 }
-var tar_end_row = #tsht_tab + 4 ;
-tsht.Range("6:"++ tar_end_row).EntireRow.insert();
-tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
-tsht.Activate();
 
-
-excel.alerts = false;	
-tbk.SaveAs(
-    io.joinpath(
-    	config.setbm.workingDir,
-    	"init_" ++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
-    )
-);
-
+if _save_as_single_bom_file {
+	var tar_end_row = #tsht_tab + 4 ;
+	tsht.Range("6:"++ tar_end_row).EntireRow.insert();
+	tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
+	tsht.Activate();
+	
+	
+	excel.alerts = false;	
+	tbk.SaveAs(
+    	io.joinpath(
+    		config.setbm.workingDir,
+    		"init_" ++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
+    	)
+	);
+	QHC.formatBOM(tsht);
+	tbk.close();
+}
 
 // console.log((j-9) ++ "/8", tbk.FullName);
-QHC.formatBOM(tsht);
-tbk.close();
+
 excel.alerts = true;
 
 

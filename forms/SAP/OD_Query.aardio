@@ -17,6 +17,7 @@ listview_Classification={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;
 splitter={cls="splitter";left=216;top=87;right=223;bottom=637;ah=1;db=1;dt=1;z=4};
 splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;z=5};
 splitter3={cls="splitter";left=8;top=218;right=216;bottom=225;aw=1;horz=1;z=13};
+splitter4={cls="splitter";left=539;top=431;right=988;bottom=437;aw=1;horz=1;z=15};
 static={cls="static";text="查询分类/成品编码/喷粉类";left=10;top=10;right=210;bottom=24;dl=1;dt=1;transparent=1;z=10};
 static2={cls="static";text="查询特性";left=236;top=8;right=316;bottom=24;dl=1;dt=1;transparent=1;z=11}
 )
@@ -141,10 +142,12 @@ var abb = null; //延迟线程ID
 var delay_query = 600 //延迟时间 mm
 
 var editChange = function(text){
+	if !text return ; 
 	//winform.listview_Classification.clear(true);
 	winform.listview_Characteristics.clear(true);
 	winform.listview_Characteristic_value.clear(true);
 	//winform.listview4.clear(true);
+
 	var t;
 	var bt /*分类*/, pt/*喷粉分类*/;
 	if #text==11 and string.startWith(text, "BG",true) {
@@ -243,14 +246,16 @@ winform.listview_Characteristics.onSelChanged = function(selected,item,subItem,n
 	var c = owner.getItemText(item,1);
 	if c == lastOpt2 return ; 
 	if !c return; 
-	var t = searchOption(c)
-	if !#t return;
-	var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
-	winform.listview_Characteristic_value.clear(true);
-	if cType	winform.listview_Characteristic_value.setTable(cType);
-	lastOpt2 = c;
-	winform.listview_Characteristic_statement.refresh();
-	return true; 
+	win.setTimeout( function(){
+		var t = searchOption(c);
+		if !#t return;	
+		var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
+		winform.listview_Characteristic_value.clear(true);
+		if cType	winform.listview_Characteristic_value.setTable(cType);
+		lastOpt2 = c;
+		winform.listview_Characteristic_statement.refresh();
+		return true; 
+	})
 }
 winform.listview_Classification.onSelChanged = function(selected,item,subItem,nmListView){
 	var c = owner.getItemText(item,1);
@@ -330,6 +335,7 @@ winform.button2.oncommand = function(id,event){
 
 
 winform.splitter3.split(winform.listview_Classification, winform.listview4);
+winform.splitter4.split(winform.listview_Characteristic_value, winform.listview_Characteristic_statement);
 winform.splitter.split({
 			winform.listview_Classification,
 			winform.listview4,
@@ -338,9 +344,9 @@ winform.splitter.split({
 
 winform.splitter2.split(winform.listview_Characteristics, {
 	winform.listview_Characteristic_value,
+	winform.splitter4,
 	winform.listview_Characteristic_statement
 });
-
 
 
 

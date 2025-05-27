@@ -4,7 +4,7 @@ import win.ui.toolbar;
 /*DSG{{*/
 var winform = win.form(text="BOM浏览器";right=1012;bottom=469;clipch=1)
 winform.add(
-button={cls="button";text="下载订单清单...";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
+button={cls="button";text="搜索";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
 custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;cp=1;dl=1;dr=1;dt=1;z=8};
 edit={cls="edit";left=801;top=5;right=1007;bottom=31;dr=1;dt=1;edge=1;z=4};
 edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
@@ -199,7 +199,7 @@ winform.splitter.split(winform.listview,winform.listview2);
 winform.listview.doNotCopyColumns = {-1};
 
 winform.button.oncommand = function(id,event){
-	tbar.close();
+	
 }
 
 winform.listview.translateAccelerator = domisoft.ctrlC;

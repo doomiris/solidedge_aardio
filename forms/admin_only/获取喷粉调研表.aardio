@@ -6,8 +6,8 @@ import etip;
 var sht = excel.ActiveWorkbook.ActiveSheet;
 var usedrange = sht.usedrange
 
-var br = usedrange.columns.item(2 /* B */).value2
-var dr = usedrange.columns.item(4 /* D */).value2
+var br = usedrange.columns.item(1 /* A */).value2
+var dr = usedrange.columns.item(3 /* C */).value2
 
 table.shift(br)
 table.shift(dr)
@@ -22,11 +22,12 @@ for (i=1; #br)
 //console.dump(tab)
 import config;
 import sqlite;
-var db = sqlite(config.dbServer.path + "qhc_OD_lib.db");
+var db = sqlite(io.joinpath(config.dbServer.path , "qhc_OD_lib.db"));
 if db.existsTable(tab.title) db.exec("DROP table " ++ tab.title)
 
 db.exec( "CREATE TABLE [" ++ tab.title ++ "](" ++ string.join(tab.fields,", ") ++");");
 
+console.log(#tab)
 
 db.beginTrans();
 

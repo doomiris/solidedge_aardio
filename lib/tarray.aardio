@@ -52,7 +52,6 @@ detachBy = function(arr, fields){
 		push(result, arr[v]:"");
 	return result; 
 }
-/*
 transpose0 = function(arr){	
 	if #arr.fields arr = serialize(arr);
 	return map(arr[1], function(col, i){	//TODO: 单行转列有问题啊
@@ -61,11 +60,12 @@ transpose0 = function(arr){
 		})
 	}) 
 }
-*/
+/*
 transpose0 = function(arr){    
  if #arr.fields arr = serialize(arr);
- return table.zip(arr);
+ return table.zip(arr);	//有溢出问题
 }
+*/
 transposeSingle = function(arr){	
 	return map(arr, function(col, i){	// 单行转列
 		return {col}; 
@@ -76,7 +76,6 @@ transpose = function(arr){
 	if #t == 1 return t[1];
 	else return t; 
 }
-/*
 mapfields = function(arr, fields){
 	var t={}
 	if !fields if #arr.fields fields = arr.fields;
@@ -90,7 +89,7 @@ mapfields = function(arr, fields){
 	t.fields = fields;
 	return t; 
 }
-*/
+/*
 mapfields = function(arr, fields){
 	arr = fillEmptyRow(arr);
 	var t = {};
@@ -102,6 +101,7 @@ mapfields = function(arr, fields){
 	t.fields = fields;
 	return t;
 }
+*/
 popCol = function(arr,...){
 	var fields = arr.fields
 	pop(fields,...)

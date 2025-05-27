@@ -21,7 +21,7 @@ import domisoft;
 	import console
 	console.open()
 */
-
+var mylist;
 var excel_0 = com.excel(false);
 winform.frmReLoad = function(){
 	winform.combobox2.clear();
@@ -52,6 +52,10 @@ var excel_2;
 sht = domisoft.getRunningWorkSheet(winform.combobox2.selText);
 excel_2 = sht.Parent.Application;
 
+
+var getErr = {};
+getErr.fields = {"行"; "相关物料号";"错误描述"}
+
 winform.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="wait..."}
 	
@@ -66,7 +70,7 @@ winform.button.oncommand = function(id,event){
 			import fsys.table;
 			import QHC;
 			import domisoft;
-			var getErr = {};
+			
 			var etab = {};
 			var excel_2;
 			
@@ -147,6 +151,7 @@ winform.button.oncommand = function(id,event){
 				[18] = "原材料[厚度]与SAP内已维护的厚度不一致";
 				[19] = "原材料[用量]与SAP内已维护的展开尺寸不一致";	
 				[20] = "可选项缺少语句"	;
+				[21] = "专用号内有特殊符空格符 Non-breaking space"	;
 			}
 		/*}}*/
 			
@@ -310,6 +315,9 @@ winform.button.oncommand = function(id,event){
 				[20] = function(i){
 
 				}
+				[21] = function(i){
+					return string.find(etab[i].物料号,'\u00A0')
+				}
 			};
 			/*}}*/
 			
@@ -346,6 +354,7 @@ winform.button.oncommand = function(id,event){
    		collectgarbage("collect");
 		}, winform
 	) 
+	mylist = null;
 }
 
 
@@ -361,30 +370,27 @@ winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	sht = null;
 	excel_2 = null;
 }
-var mylist;
-winform.listview.onnotify = function(id,code,ptr){
-	select(code) {
-    	case 0xFFFFFFFB/*_NM_RCLICK*/ {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return ; 
-			var x,y = win.getMessagePos();
-			mylist = owner.items;
-			var menu = win.ui.popmenu(winform);	
-			menu.add("隐藏可忽略项", function(){
-				var t = table.filter(mylist,
-					function(v, index){
-						if v["错误描述"]
-							return !string.indexOf(v["错误描述"], "可忽略"); 
-					}
-				);
-				//t.fields = getErr.fields;
-				winform.listview.items = t;
-			});
-			menu.add("显示可忽略项", λ() winform.listview.items = mylist);
-			menu.popup(x,y,true);
-    	}
-    }
+
+winform.listview.onRightClick = function(item,subItem,nmListView){
+	var x,y = win.getMessagePos();
+	mylist := winform.listview.getTable(getErr.fields);
+
+	var menu = win.ui.popmenu(winform);	
+	menu.add("隐藏可忽略项", function(){
+		var t = table.filter(mylist,
+			function(v, index){
+				if v["错误描述"]
+					return !string.indexOf(v["错误描述"], "可忽略"); 
+			}
+		);
+		t.fields = getErr.fields;
+		
+		winform.listview.setTable( t);
+	});
+	menu.add("显示可忽略项", λ() winform.listview.setTable(mylist));
+	menu.popup(x,y,true);
 }
+
 /* CTRLC复制模块 */
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.combobox2.listBox.ellipsis = "path";

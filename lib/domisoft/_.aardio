@@ -308,6 +308,28 @@ envFix = function(str){
 	outStr = string.replace(outStr,"@OneDrive - Carrier Corporation","Carrier Corporation");	/*bugfix*/
 	return outStr;
 }
+refreshSAP = function(winform){
+	..thread.invoke(
+		function(winform){
+			winform.setInterval( 
+				function(){
+					try{
+    					import SAP.vm;
+    					var session = SAP.vm();
+    					if !session	return ; 
+    					if !session.busy{
+							if session.isHomepage {
+								session.refresh();
+								//wform.edit.log(",");
+							}
+						}
+						session = null;
+						collectgarbage("collect");
+					}
+				}, 1000 * 5 * 60 /*注意毫秒转分钟*/)
+		}, winform
+	)	
+}
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框

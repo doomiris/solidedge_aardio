@@ -243,7 +243,7 @@ winform.button.oncommand = function(id,event){
 		[38] = function(i){return (string.trim(etab[i].物料描述) !== etab[i].物料描述)}
 		[39] = function(i){
 			if etab[i].SAP物料组 == "SC" 
-				if etab[i-1]
+				if etab[i-1] /* 如果描述有差异时就判断不准确了*/
 					return (string.replace(string.trim(etab[i].物料描述),"已喷","未喷") !== string.trim(etab[i-1].物料描述))
 		}
 		[40] = function(i){

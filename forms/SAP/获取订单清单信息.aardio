@@ -103,7 +103,7 @@ winform.grid2.onClick = function(item,subItem,nmListView){
 	if !item and ! winform.listview2.selIndex return ; 
 	var c =  winform.grid2.source[item || winform.listview2.selIndex][["SD 凭证"]];
 	if !c return; 
-	if item {
+	if subItem {
 		var v =  winform.grid2.source[item][["SD 凭证"]];
 		if winform.edit.text !== v	//如果不判断直接修改会触发onchange事件并overflow;
 			winform.edit.text =  v;	
@@ -164,8 +164,8 @@ winform.grid.onRightClick = function(item,subItem,nmListView){
 		var formatTab = {}
 		for (i=1; #tab2)
 			table.push(formatTab, {
-				tab1[1][1/*"凭证日期"*/],
-				tab1[1][2/*"SD 凭证"*/],
+				tab1[1][2/*"凭证日期"*/],
+				tab1[1][1/*"SD 凭证"*/],
 				tab2[i][2/*"项目(SD)"*/],
 				tab1[1][3/*"售达方"*/],
 				tab1[1][4/*"名称 1"*/],

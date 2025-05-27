@@ -121,14 +121,15 @@ winform.button.oncommand = function(id,event){
 			}
 		}
 	}
-	for(j=1; #top_rule_err){
-		if top_rule_err[j]()
+
+	for(j=1; #rules.top_rule_err){
+		if rules.top_rule_err[j](od_sht, workbook_name)
 			table.insert(getErr, {
-			"行":1;
-			"相关物料号": " "; /*etab[i].原父项;*/
-			"错误描述": rules.top_rule_desp[j];
-			"自动纠正": rules.top_rule_solver[j](od_sht, workbook_name) and allowfix ? "此条已被自动修正" :""
-		})
+				"行":1;
+				"相关物料号": " "; /*etab[i].原父项;*/
+				"错误描述": rules.top_rule_desp[j];
+				"自动纠正": rules.top_rule_solver[j](od_sht, workbook_name) and allowfix ? "此条已被自动修正" :""
+			})
 	}
 
 	if winform.checkbox.checked {
