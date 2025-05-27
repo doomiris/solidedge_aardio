@@ -576,6 +576,17 @@ findAndReplaceWithKeylistString = function(items){
 	//根据关键词列表串生成新的清单
 	return items;
 }
+getCharList = function(arr){
+	var uniqueSubstrings = {};
+	var pattern =  "\u\d+";
+	for (i = 1; #arr) {	
+    	var str = arr[i];   
+		for s in string.gmatch( str, pattern )
+			if !table.indexOf(uniqueSubstrings, s)
+				table.push(uniqueSubstrings, s)
+	}
+	return uniqueSubstrings; 
+}
 
 /**intellisense()
 QHC.openDb(sap_db_path) = 返回DB
