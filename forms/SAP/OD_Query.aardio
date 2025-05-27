@@ -1,5 +1,6 @@
 import fonts.fontAwesome;
 import win.ui;
+import win.ui.menu;
 import tarray;
 import domisoft;
 /*DSG{{*/
@@ -318,6 +319,26 @@ winform.listview4.onSelChanged = function(selected,item,subItem,nmListView){
 	winform.edit.text = c;
 	lastOpt4 = c;
 	return true; 	
+}
+
+winform.listview_Characteristic_statement.onRightClick = function(item,subItem,nmListView){
+	var selected = domisoft.getSelectedText(owner);
+	var items = QHC.getCharList(selected);
+	var pmenu = win.ui.popmenu(winform);
+	var cmenu = win.ui.popmenu(winform)
+	for(i=1; #items)
+		cmenu.add( items[i], function(char){
+			/*removeSelected*/
+				
+			/*getNewItem*/
+			/*addNewItem(newitem)*/		
+			winform.listview_Characteristic_statement.replaceItems()	
+		})
+	pmenu.add("用in语句合并...", cmenu)
+
+	var x, y = win.getMessagePos();
+	pmenu.popup(x, y,true);
+	
 }
 winform.button.oncommand = function(id,event){
 			loadcodex("\forms\admin_only\BOM_OD_LIB.aardio");
