@@ -323,16 +323,52 @@ winform.listview4.onSelChanged = function(selected,item,subItem,nmListView){
 
 winform.listview_Characteristic_statement.onRightClick = function(item,subItem,nmListView){
 	var selected = domisoft.getSelectedText(owner);
-	var items = QHC.getCharList(selected);
+	var charListitems = QHC.getCharList(selected);
 	var pmenu = win.ui.popmenu(winform);
 	var cmenu = win.ui.popmenu(winform)
-	for(i=1; #items)
-		cmenu.add( items[i], function(char){
+	for(i=1; #charListitems)
+		cmenu.add( charListitems[i], function(id){
+			 	var char = cmenu.getString(id,0);
+
 			/*removeSelected*/
+				var listview_items = winform.listview_Characteristic_statement.items;
+				var selected = domisoft.getSelectedText(winform.listview_Characteristic_statement);
+				var selectedIndex = winform.listview_Characteristic_statement.selected;
+				for (i=1; #selectedIndex)
+					listview_items[selectedIndex[i]] = null;
+				table.removeByValue(listview_items, null);	
 				
 			/*getNewItem*/
-			/*addNewItem(newitem)*/		
-			winform.listview_Characteristic_statement.replaceItems()	
+				var keepChar=[];
+				var charValue=[];
+				var testselected = string.split(selected[1],"< AND >");
+
+				for (i=1; #testselected)
+					if !string.indexOf(testselected[i], char)
+						table.push(keepChar, testselected[i])
+
+				for (i=1; #selected) {
+					var testCharValue = string.split(selected[i], "< AND >")
+					for (j=1; #testCharValue){
+						if string.indexOf(testCharValue[j], char)
+							table.push(charValue, table.pop(string.split(testCharValue[j],"=")))
+					}
+				}
+					
+				if #keepChar = 1 keepChar = keepChar[1];
+				else keepChar = string.join(keepChar, " AND ");
+				
+				if #charValue = 1 charValue = charValue[1]
+				else charValue = string.join(charValue, ", ");
+				
+				charValue = char + " IN(" + charValue + ")";
+				
+			/*addNewItem(newitem)*/	
+				table.push(listview_items, {[1] = keepChar + " AND " + charValue});
+				var newItems = []
+				for k, v in  listview_items
+					table.push(newItems, v) //处理稀疏数组
+				winform.listview_Characteristic_statement.replaceItems(newItems);
 		})
 	pmenu.add("用in语句合并...", cmenu)
 
