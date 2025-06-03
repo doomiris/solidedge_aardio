@@ -1,0 +1,35 @@
+import console; 
+
+
+var root_path = "HKEY_CURRENT_USER\SOFTWARE\Microsoft\OneDrive\Accounts\"
+
+import win.reg
+var root = win.reg(root_path, true);
+
+var rootKeys = root.keys();
+
+var businessKeys = []
+
+for(i=1; #rootKeys)
+	if string.startsWith(rootKeys[i], "business", true)
+		table.push(businessKeys, rootKeys[i])
+
+//console.dumpTable(businessKeys)
+
+var getValueInKey = function(keyName, valueName){
+	import win.reg
+	var wkey = win.reg(keyName, true);
+	return wkey.queryValue(valueName); 
+}
+var getTenantsList = function(keyName, valueName){
+	import win.reg
+	var wkey = win.reg(keyName, true);
+	return wkey.queryValue(valueName); 
+}
+
+for (i=1; #businessKeys)
+	console.log(getValueInKey(root_path ++businessKeys[i], "DisplayName" ))
+	
+//HKEY_CURRENT_USER\SOFTWARE\Microsoft\OneDrive\Accounts\Business1\Tenants
+
+console.pause();
