@@ -17,7 +17,8 @@ log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
 /*}}*/
 
 /* 无法把对象传进线程 */
-winform.stepDBpath = io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db";
+winform.stepDBpath = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\", "step_qhcsap.db");
+
 global.onError = function( err,over ){ 
 	winform.log.print(err);
 }
@@ -85,7 +86,7 @@ var dealWithXlsx = function(winform){
 	import domisoft;
 	winform.log.print("获取worksheet...");
 	var sht = domisoft.getRunningWorkSheet(_allcost_file);
-	if !sht return error("sht null"); 
+	if !sht winform.log.print("获取sht失败 ...");
 	winform.log.print("获取usedrange...");
 	var rng = sht.usedrange.value2;
 	winform.log.print("打开step_db...");
