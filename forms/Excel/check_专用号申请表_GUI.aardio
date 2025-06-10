@@ -21,7 +21,6 @@ import domisoft;
 	import console
 	console.open()
 */
-
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
@@ -383,6 +382,9 @@ winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.combobox2.listBox.ellipsis = "path";
 
 winform.show();
-
+if !winform.parent
+	win.setForeground(winform.hwnd);
+if !winform.parent
+	winform.frmReLoad();
 win.loopMessage();
 return winform;

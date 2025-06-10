@@ -51,7 +51,7 @@ import com.excel;
 var excel;
 var sht;
 
-var refresh = function(){
+winform.frmReLoad = function(){
 	import etip;
 	grid.clear();
 
@@ -89,9 +89,7 @@ var refresh = function(){
 */
 }
 
-winform.button2.oncommand = function(id,event){
-	refresh();
-}
+winform.button2.oncommand = winform.frmReLoad;
 
 var update = function(winform, tab){
 /*
@@ -193,8 +191,6 @@ winform.button3.oncommand = function(id,event){
 	)
 }
 
-refresh();
-
 
 winform.onDestroy = function(){
     if excel
@@ -203,7 +199,10 @@ winform.onDestroy = function(){
     	sht = null;
     
 }
-
+if !winform.parent
+	win.setForeground(winform.hwnd);
+if !winform.parent
+	winform.frmReLoad();
 winform.show();
 win.loopMessage();
 return winform;

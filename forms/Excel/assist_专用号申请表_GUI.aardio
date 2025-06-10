@@ -21,6 +21,7 @@ var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
 var etab = {};
+
 winform.frmReLoad = function(){
 	winform.combobox2.clear();
 	com.enumRunning( 
@@ -243,6 +244,9 @@ winform.listview.onnotify = function(id,code,ptr){
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.combobox2.listBox.ellipsis = "path";
 winform.show();
-
+if !winform.parent
+	win.setForeground(winform.hwnd);
+if !winform.parent
+	winform.frmReLoad();
 win.loopMessage();
 return winform;

@@ -23,7 +23,6 @@ winform.bindConfig( config.checkGUI, {	//绑定控件值
     checkbox = "checked";
 } );
 
-
 	import console
 	//console.open()
 
@@ -207,6 +206,9 @@ winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.show();
 
 winform.combobox2.listBox.ellipsis = "end";
-
+if !winform.parent
+	win.setForeground(winform.hwnd);
+if !winform.parent
+	winform.frmReLoad();
 win.loopMessage();
 return winform;

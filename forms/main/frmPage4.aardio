@@ -5,13 +5,13 @@ import win.ui.menu;
 import solidedge.application;
 import solidedge.DraftDocument;
 /*DSG{{*/
-var spec_winform = win.form(text="aardio form";right=783;bottom=471;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-spec_winform.add(
+var winform = win.form(text="aardio form";right=783;bottom=471;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+winform.add(
 button={cls="button";text='\uF08B  插入图纸';left=688;top=424;right=776;bottom=464;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=5};
 button2={cls="button";text="关闭";left=592;top=424;right=680;bottom=464;db=1;dr=1;hide=1;z=6};
 checklist={cls="checklist";left=152;top=40;right=776;bottom=416;aw=1;border=1;db=1;dl=1;dr=1;dt=1;items={};z=2};
-static={cls="static";text="技术要求:";left=184;top=10;right=344;bottom=32;color=8388608;dl=1;dt=1;font=LOGFONT(h=-16);transparent=1;z=3};
-static2={cls="static";text='\uF0CB';left=152;top=8;right=192;bottom=40;color=8388608;dl=1;dt=1;font=LOGFONT(h=-24;name='FontAwesome');transparent=1;z=4};
+static={cls="static";text="技术要求:";left=184;top=10;right=344;bottom=32;color=0x800000;dl=1;dt=1;font=LOGFONT(h=-16);transparent=1;z=3};
+static2={cls="static";text='\uF0CB';left=152;top=8;right=192;bottom=40;color=0x800000;dl=1;dt=1;font=LOGFONT(h=-24;name='FontAwesome');transparent=1;z=4};
 treeview={cls="treeview";left=8;top=40;right=144;bottom=416;asel=false;border=1;db=1;dl=1;dt=1;vscroll=1;z=1}
 )
 /*}}*/
@@ -57,15 +57,18 @@ var loadPromptList = function(){
 
 	var tab = dbRs.getTable("select * from SE_SPEC_TEMPLATE order by [ID]");
 	dbRs.close();
-	var hitem = spec_winform.treeview.insertItem( text="模板清单" );
-	//spec_winform.treeview.insertTable(tab);
+	var hitem = winform.treeview.insertItem( text="模板清单" );
+	//winform.treeview.insertTable(tab);
 	//var hSubItem;
 	for (i=1; #tab; 1) {
-		spec_winform.treeview.insertItem( { text=tab[i].tName },hitem/*父节点*/); 
+		winform.treeview.insertItem( { text=tab[i].tName },hitem/*父节点*/); 
 	}
-	spec_winform.treeview.expandAll();
+	winform.treeview.expandAll();
 }
 /*}}*/
+winform.frmReLoad = function(){
+	
+}
 
 var replacePara = function (str){
 	if !string.find(str, "{thk}") and !string.find(str, "{radii}") return str;
@@ -75,12 +78,12 @@ var replacePara = function (str){
 }
 
 /*控件事件{{*/
-spec_winform.treeview.onnotify = function(id,code,ptr){
+winform.treeview.onnotify = function(id,code,ptr){
     select(code) {
     	case 0xFFFFFE3D/*_TVN_SELCHANGEDW*/ {
-			spec_winform.checklist.clear();
-			var hItem = spec_winform.treeview.getSelection();
-			if(hItem and spec_winform.treeview.getParentItem(hItem)){
+			winform.checklist.clear();
+			var hItem = winform.treeview.getSelection();
+			if(hItem and winform.treeview.getParentItem(hItem)){
 				import config;
 				var dbpath =io.joinpath(config.dbServer.path,"tbm.db");
 				
@@ -88,25 +91,25 @@ spec_winform.treeview.onnotify = function(id,code,ptr){
 				var dbRs = sqlite(dbpath);	//打开数据库连接
 
 				var tab;
-				tab = dbRs.stepQuery("select tCombine,tSelect from SE_SPEC_TEMPLATE", { tName = spec_winform.treeview.getItemText(hItem) } );
+				tab = dbRs.stepQuery("select tCombine,tSelect from SE_SPEC_TEMPLATE", { tName = winform.treeview.getItemText(hItem) } );
 				var v = string.split(tab.tCombine,",")
 				var vs = string.split(tab.tSelect,",")
 				
 				for (i=1; #v){
 					tab = dbRs.stepQuery("select sTxt from SE_SPEC_ITEM", { ID = v[i] } );
-					spec_winform.checklist.addItem(replacePara(tab.sTxt));
-					spec_winform.checklist.setChecked(i, (vs[i]==1) );
+					winform.checklist.addItem(replacePara(tab.sTxt));
+					winform.checklist.setChecked(i, (vs[i]==1) );
 				}
 				dbRs.close();
 			}
     	}
     	case 0xFFFFFFFB/*_NM_RCLICK*/  {
 			var x,y = win.getMessagePos();
-			var hItem,tvht = spec_winform.treeview.hitTest(x,y,true);
-			var menu = win.ui.popmenu(spec_winform)
+			var hItem,tvht = winform.treeview.hitTest(x,y,true);
+			var menu = win.ui.popmenu(winform)
 			menu.add("删除",
 				function(){
-					spec_winform.treeview.delItem(hItem)
+					winform.treeview.delItem(hItem)
 				}
 			)
 			menu.popup(x,y,true);
@@ -115,12 +118,12 @@ spec_winform.treeview.onnotify = function(id,code,ptr){
     }
 }
 
-spec_winform.button2.oncommand = function(id,event){
+winform.button2.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
 	
 }
 
-spec_winform.button.oncommand = function(id,event){
+winform.button.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
 	win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd)
@@ -138,9 +141,9 @@ spec_winform.button.oncommand = function(id,event){
     	txt.Text = txt.Text ++ " " ++ '\r';
 
     	var n = 1;	//编号
-    	for (i = 1 ; spec_winform.checklist.count){
-        	if (spec_winform.checklist.getChecked(i)) {
-            	txt.Text = txt.Text ++ n ++ ". " ++ spec_winform.checklist.getItemText(i) ++ '\r';
+    	for (i = 1 ; winform.checklist.count){
+        	if (winform.checklist.getChecked(i)) {
+            	txt.Text = txt.Text ++ n ++ ". " ++ winform.checklist.getItemText(i) ++ '\r';
             	n += 1;
         	}
     	}
@@ -151,10 +154,13 @@ spec_winform.button.oncommand = function(id,event){
 	key.combine("CTRL","V");
 }
 /*}}*/
-spec_winform.show();
+winform.show();
 initDeclare();
 loadPromptList();	//读取提示列表
-
+if !winform.parent
+	win.setForeground(winform.hwnd);
+if !winform.parent
+	winform.frmReLoad();
 
 win.loopMessage();
-return spec_winform;
+return winform;
