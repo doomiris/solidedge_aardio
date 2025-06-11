@@ -100,13 +100,16 @@ var getDetailFromDb = function(orderId){
 }
 
 winform.grid2.onClick = function(item,subItem,nmListView){
-	if !item and ! winform.listview2.selIndex return ; 
+	if !item and !winform.listview2.selIndex return ; 
 	var c =  winform.grid2.source[item || winform.listview2.selIndex][["SD 凭证"]];
 	if !c return; 
 	if subItem {
 		var v =  winform.grid2.source[item][["SD 凭证"]];
+		var onchange = winform.edit.onChange;
+		winform.edit.onChange = null;
 		if winform.edit.text !== v	//如果不判断直接修改会触发onchange事件并overflow;
-			winform.edit.text =  v;	
+			winform.edit.text =  v;
+		winform.edit.onChange = onchange;	
 	}
 	winform.grid.source = getDetailFromDb(c);
 	if !winform.grid.source return ;
@@ -325,9 +328,9 @@ winform.button3.oncommand = function(id,event){
 	if !#selected return ; 
 	for (i=1; #selected)
 		table.push(flist, winform.grid2.source[selected[i]]["SD 凭证"]);
-	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + flist,"需要确认",winform.hwnd) return; 
-	sdb.exec("DELETE * FROM `list`",{"SD 凭证":flist});
-	sdb.exec("DELETE * FROM `content`",{"SD 凭证":flist});
+	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + table.tostring(flist),"需要确认",winform.hwnd) return; 
+	sdb.exec("DELETE FROM `list` WHERE ??", {{"SD 凭证" : flist}});
+	sdb.exec("DELETE FROM `content` WHERE ??", {{"SD 凭证" : flist}});
 	winform.publish("getFolderList",true);
 }
 
