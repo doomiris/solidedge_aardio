@@ -27,9 +27,17 @@ var getTenantsList = function(keyName, valueName){
 	return wkey.queryValue(valueName); 
 }
 
-for (i=1; #businessKeys)
+/*
+for (i=1; #businessKeys){
 	console.log(getValueInKey(root_path ++businessKeys[i], "DisplayName" ))
+	console.dumpTable(win.reg(root_path ++businessKeys[i]++"\Tenants" ).keys())
+}
+*/
 	
 //HKEY_CURRENT_USER\SOFTWARE\Microsoft\OneDrive\Accounts\Business1\Tenants
+var p = win.reg(root_path ++"Business2\Tenants\CCR")
 
+for(name,value,t in p.eachValue()) {
+	console.log(name, value, t)
+}
 console.pause();
