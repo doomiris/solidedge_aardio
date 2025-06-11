@@ -410,21 +410,32 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 			}
 		}
 		if !current_App return ; 
-		var docPath;
+
 		select(current_App.Name){
 			case "Microsoft Excel" {
-				if current_App.Workbooks.Count
-					docPath = current_App.ActiveWorkbook.FullName;
-					thread.invoke( λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"))
+				if !current_App.Workbooks.Count return ;
+				import string.keywords;
+				var kw = string.keywords(["专用号申请","BOM更改","BG"]);
+				var wb = current_App.ActiveWorkbook;				
+				switch( kw.findOne(wb.Name), {  
+					[1]: function(){
+						thread.invoke( λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"))
+					};
+					[2]: function(){
+						thread.invoke( λ () loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio"))
+					}; 
+					[3]: function(){
+						thread.invoke( λ () loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio"))						
+					};  
+				})
+
 			}
 			case "Solid Edge 2020" {
 				if current_App.Documents.Count
 					if current_App.ActiveDocumentType == 2 /*Draft Document Type*/
-						//docPath = current_App.ActiveDocument.FullName;
 						thread.invoke( λ () loadcodex("\forms\main\frmPage1.aardio"))
 			}
 		}
-	//mainForm.tray.pop(docPath, current_App.name,  1/*_NIIF_INFO*/);
 
 	},
 	4 /*_MOD_SHIFT*/,
