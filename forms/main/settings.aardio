@@ -18,6 +18,7 @@ edit_SAP_system={cls="edit";text="P11";left=56;top=218;right=203;bottom=241;edge
 edit_SAP_system2={cls="edit";text="P11";left=277;top=217;right=424;bottom=240;edge=1;tabstop=1;z=13};
 edit_SAP_user={cls="edit";text="username";left=55;top=146;right=202;bottom=169;edge=1;group=1;tabstop=1;z=5};
 edit_SAP_user2={cls="edit";text="username";left=276;top=145;right=423;bottom=168;edge=1;group=1;tabstop=1;z=11};
+keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=212;top=86;right=453;bottom=103;z=18};
 simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=48;top=88;right=184;bottom=120;dl=1;dt=1;tabstop=1;z=4};
 startupMinimized={cls="checkbox";text="startup &minimized";left=48;top=56;right=184;bottom=88;dl=1;dt=1;tabstop=1;z=3}
 )
