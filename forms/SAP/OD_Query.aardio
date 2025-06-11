@@ -3,6 +3,7 @@ import win.ui;
 import win.ui.menu;
 import tarray;
 import domisoft;
+import QHC;
 /*DSG{{*/
 var winform = win.form(text="分类和特性查询";right=999;bottom=751;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
@@ -364,7 +365,7 @@ winform.listview_Characteristic_statement.onRightClick = function(item,subItem,n
 				charValue = char + " IN(" + charValue + ")";
 				
 			/*addNewItem(newitem)*/	
-				table.push(listview_items, {[1] = keepChar + " AND " + charValue});
+				table.push(listview_items, {[1] = string.trim(keepChar + " AND " + charValue, ' AND ')});
 				var newItems = []
 				for k, v in  listview_items
 					table.push(newItems, v) //处理稀疏数组
