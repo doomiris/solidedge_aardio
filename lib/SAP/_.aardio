@@ -502,6 +502,17 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDPOS-LOW").text = orderItem
 			session.findById("wnd[0]/usr/ssub%_SUBSCREEN_TOPBLOCK:PPIO_ENTRY:1100/cmbPPIO_ENTRY_SC1100-PPIO_LISTTYP").key = "PPIOM000"
 			session.findById("wnd[0]/tbar[1]/btn[8]").press
+			
+			'如果没排产
+
+			on error resume next
+				if session.findById("wnd[1]/usr/txtMESSTXT1").text == "没有任何用于选择的数据" then
+					session.findById("wnd[1]/tbar[0]/btn[0]").press
+				end if
+			on error goto 0
+			
+			
+			
 			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").contextMenu
 			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").selectContextMenuItem "&XXL"
 			session.findById("wnd[1]/usr/chkCB_ALWAYS").selected = true
