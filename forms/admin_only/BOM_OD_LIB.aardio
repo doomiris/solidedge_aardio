@@ -9,8 +9,8 @@ var excel = com.excel(true);
 
 var sname = {"分类", "特性参数规划表", "分类", "特性参数规划表"}
 
-var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
-
+//var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
+var OneDriveCommercial = "D:\users\CCL100100\Carrier Corporation\"
 var wbname = {
 	{io.joinpath(OneDriveCommercial, "SAP数据整理 - QHC开发部(只读,仅用于参考)", "0.参数及分类汇总表2023.08.31.xlsx"), false, true, null,"0000"},
 	{io.joinpath(OneDriveCommercial, "SAP数据整理 - 开利研发部", "0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx"), false,true,null,null},
