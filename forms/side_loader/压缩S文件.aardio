@@ -1,0 +1,106 @@
+import console; 
+console.open()
+
+/*
+# 用fsys.enum()可以遍历文件夹内所有文件和子文件夹, fsys.getTime(fullname).write 可以获取文件最后修改时间, 请生成代码实现以下功能:
+1. 遍历 source_path, target_path 内所有文件
+2. 如果source_path 内的文件最后修改时间更新, 请添加到待同步表内;
+3. 如果source_path 内的文件在 target_path 内不存在, 请添加到待同步表内;
+4. 如果source_path 内文件夹在target_path 内不存在, 也添加到待同步表内
+5. 最后输出待同步表
+*/
+
+
+
+
+import fsys;
+import fsys.path;
+import io;
+
+
+// 1. 定义源目录和目标目录 (请根据实际情况修改)
+var source_path = "C:\Users\doomi\Carrier Corporation\CCR Detail Design - S - S\"
+var target_path = "C:\Users\doomi\CCR\CCR Detail Design - S - S\"
+
+// 检查路径是否存在，如果不存在则创建，避免报错
+if( !fsys.isDir(source_path) ) {
+    console.log("错误：源目录不存在", source_path);
+    return;
+}
+if( !fsys.isDir(target_path) ) {
+    //io.createDir(target_path);
+    console.log("提示：目标目录不存在，已自动创建", target_path);
+}
+
+// 2. 创建待同步列表
+var sync_list = [];
+console.showLoading("...")
+// 3. 遍历源目录
+import string.keywords
+//var skipExts = string.keywords([".bip",".step",".stp",".igs",".iges",".x_t",".log",".zip",".7z",".pdf",".dwg"])
+var skipExts = string.keywords([".bip",".step",".stp",".igs",".iges",".x_t",".log",".zip",".7z"])
+//var onlyExts = string.keywords([".pdf",".dwg"])
+//var onlyExts = string.keywords([".bip"])
+fsys.enum(source_path, "*.*", function(dir, filename, fullpath, findData) {
+    // 获取相对于源目录的路径
+    var relative_path = fsys.path.relative(fullpath, source_path);
+    if(!relative_path) return; // 忽略根目录自身
+    
+    // 构建在目标目录中的完整路径
+    var target_fullpath = io.joinpath(target_path, relative_path);
+
+    if (filename) { // 如果是文件
+    	var ext = string.lower(io.splitpath(filename).ext)
+    	if !skipExts.findOne(ext){
+    	//if onlyExts.findOne(ext){
+        	if (!fsys.isFile(target_fullpath)) {
+            	// 需求 3: 如果源文件在目标目录不存在, 添加到待同步表
+            	table.push(sync_list, relative_path);
+        	} else {
+            	// 需求 2: 如果源文件最后修改时间更新, 添加到待同步表
+            	var source_time = fsys.getTime(fullpath).write;
+            	var target_time = fsys.getTime(target_fullpath).write;
+            	if (source_time > target_time) {
+                		table.push(sync_list, relative_path);
+            	}
+        	}
+        }
+    } else { // 如果是目录
+        // 需求 4: 如果源文件夹在目标目录不存在, 添加到待同步表
+/*
+        if (!fsys.isDir(target_fullpath)) {
+            table.push(sync_list, relative_path);
+        }
+*/
+    }
+}, true); // true 表示递归处理子目录
+
+// 5. 最后输出待同步表
+
+console.log()
+
+console.clearScreen()
+console.pause(false,"共有"++#sync_list+"个文件是否继续?")
+thread.invoke( 
+	function(sync_list, source_path){
+		import console;
+		var count = #sync_list
+
+		import zlib.zip;
+		var zip = zlib.zip("D:\QLDownload\s.zip",source_path,true)
+		for(i=1; count){
+			var fullname = io.joinpath(source_path,sync_list[i])
+			//console.log()
+			zip.compress( fullname,
+				function(len,path){
+					console.log(count-i,"正在添加:", sync_list[i] )
+				}
+			)
+		}
+		zip.close();
+		console.log("完成")
+		console.pause(true)
+
+	},sync_list,source_path
+)
+
