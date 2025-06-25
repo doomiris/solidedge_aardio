@@ -1,26 +1,29 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform_setting = win.form(text="aardio form";right=759;bottom=469)
+var winform_setting = win.form(text="aardio form";right=482;bottom=469)
 winform_setting.add(
-button={cls="button";text="Save";left=362;top=361;right=406;bottom=395;z=1};
-checkbox_hidepass={cls="checkbox";text='\uF2A8';left=212;top=181;right=251;bottom=202;font=LOGFONT(name='FontAwesome');hide=1;z=10};
-checkbox_hidepass2={cls="checkbox";text='\uF2A8';left=433;top=180;right=472;bottom=201;font=LOGFONT(name='FontAwesome');hide=1;z=16};
+button={cls="button";text="Save";left=420;top=424;right=464;bottom=458;db=1;dr=1;z=1};
+checkbox_hidepass={cls="checkbox";text='\uF2A8';left=212;top=181;right=251;bottom=202;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=10};
+checkbox_hidepass2={cls="checkbox";text='\uF2A8';left=433;top=180;right=472;bottom=201;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=16};
 closeToTray={cls="checkbox";text="close to &tray";left=48;top=24;right=184;bottom=56;dl=1;dt=1;group=1;tabstop=1;z=2};
-createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=213;top=58;right=454;bottom=75;z=17};
-edit_SAP_client={cls="edit";text="220";left=55;top=256;right=202;bottom=279;edge=1;tabstop=1;z=8};
-edit_SAP_client2={cls="edit";text="220";left=276;top=255;right=423;bottom=278;edge=1;tabstop=1;z=14};
-edit_SAP_language={cls="edit";text="ZH";left=54;top=286;right=201;bottom=309;edge=1;tabstop=1;z=9};
-edit_SAP_language2={cls="edit";text="ZH";left=275;top=285;right=422;bottom=308;edge=1;tabstop=1;z=15};
-edit_SAP_pw={cls="edit";text="password";left=56;top=180;right=203;bottom=203;edge=1;tabstop=1;z=6};
-edit_SAP_pw2={cls="edit";text="password";left=277;top=179;right=424;bottom=202;edge=1;tabstop=1;z=12};
-edit_SAP_system={cls="edit";text="P11";left=56;top=218;right=203;bottom=241;edge=1;tabstop=1;z=7};
-edit_SAP_system2={cls="edit";text="P11";left=277;top=217;right=424;bottom=240;edge=1;tabstop=1;z=13};
-edit_SAP_user={cls="edit";text="username";left=55;top=146;right=202;bottom=169;edge=1;group=1;tabstop=1;z=5};
-edit_SAP_user2={cls="edit";text="username";left=276;top=145;right=423;bottom=168;edge=1;group=1;tabstop=1;z=11};
-keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=212;top=86;right=453;bottom=103;z=18};
+createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=213;top=58;right=454;bottom=75;dl=1;dt=1;z=17};
+edit_SAP_client={cls="edit";text="220";left=55;top=256;right=202;bottom=279;dl=1;dt=1;edge=1;tabstop=1;z=8};
+edit_SAP_client2={cls="edit";text="220";left=276;top=255;right=423;bottom=278;dl=1;dt=1;edge=1;tabstop=1;z=14};
+edit_SAP_language={cls="edit";text="ZH";left=54;top=286;right=201;bottom=309;dl=1;dt=1;edge=1;tabstop=1;z=9};
+edit_SAP_language2={cls="edit";text="ZH";left=275;top=285;right=422;bottom=308;dl=1;dt=1;edge=1;tabstop=1;z=15};
+edit_SAP_pw={cls="edit";text="password";left=56;top=180;right=203;bottom=203;dl=1;dt=1;edge=1;tabstop=1;z=6};
+edit_SAP_pw2={cls="edit";text="password";left=277;top=179;right=424;bottom=202;dl=1;dt=1;edge=1;tabstop=1;z=12};
+edit_SAP_system={cls="edit";text="P11";left=56;top=218;right=203;bottom=241;dl=1;dt=1;edge=1;tabstop=1;z=7};
+edit_SAP_system2={cls="edit";text="P11";left=277;top=217;right=424;bottom=240;dl=1;dt=1;edge=1;tabstop=1;z=13};
+edit_SAP_user={cls="edit";text="username";left=55;top=146;right=202;bottom=169;dl=1;dt=1;edge=1;group=1;tabstop=1;z=5};
+edit_SAP_user2={cls="edit";text="username";left=276;top=145;right=423;bottom=168;dl=1;dt=1;edge=1;group=1;tabstop=1;z=11};
+hotkey={cls="hotkey";left=251;top=18;right=381;bottom=38;dr=1;dt=1;edge=1;z=19};
+keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=212;top=86;right=453;bottom=103;dl=1;dt=1;z=18};
 simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=48;top=88;right=184;bottom=120;dl=1;dt=1;tabstop=1;z=4};
-startupMinimized={cls="checkbox";text="startup &minimized";left=48;top=56;right=184;bottom=88;dl=1;dt=1;tabstop=1;z=3}
+startupMinimized={cls="checkbox";text="startup &minimized";left=48;top=56;right=184;bottom=88;dl=1;dt=1;tabstop=1;z=3};
+static={cls="static";text="唤醒键";left=198;top=20;right=244;bottom=34;dr=1;dt=1;transparent=1;z=20};
+static2={cls="static";text="需重启TBM";left=392;top=20;right=468;bottom=34;dr=1;dt=1;transparent=1;z=21}
 )
 /*}}*/
 
@@ -41,8 +44,11 @@ winform_setting.bindConfig( config.settings,{
 } );
 
 winform_setting.button.oncommand = function(id,event){
+	config.setbm.weakUpKey = winform_setting.hotkey.value;
+	config.setbm.save();
 	config.settings.save();
-	mainForm.custom.loadForm("\forms\main\frmPage3.aardio");
+	if mainForm
+		mainForm.custom.loadForm("\forms\main\frmPage3.aardio");
 }
 
 /*
@@ -50,6 +56,8 @@ winform_setting.checkbox_hidepass.oncommand = function(id,event){
 	winform_setting.edit_SAP_pw.password = owner.checked;
 }
 */
+
+winform_setting.hotkey.value = config.setbm.weakUpKey;
 
 winform_setting.show();
 win.loopMessage();

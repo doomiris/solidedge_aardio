@@ -121,8 +121,9 @@ downloadBOM = function(winform, etab){
 		loop
 	*/
 	vm.script = /*
-		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001"
-		session.findById("wnd[0]").sendVKey 0
+		session.StartTransaction("ZMDM_001")
+		'session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001"
+		'session.findById("wnd[0]").sendVKey 0
 	*/
 	
 	/* 通过 vm.script 访问变量前需要先声明 */
@@ -238,8 +239,9 @@ downloadB2CBOM = function(winform, orderId, itemList){
 	 */ 
 	 
 	vm.script = /*
-	 	session.findById("wnd[0]/tbar[0]/okcd").text = "CSK2"
-		session.findById("wnd[0]").sendVKey 0
+		session.StartTransaction("CSK2")
+	 	'session.findById("wnd[0]/tbar[0]/okcd").text = "CSK2"
+		'session.findById("wnd[0]").sendVKey 0
 	 */ 
 	
     vm.script.order = orderId;
@@ -327,23 +329,37 @@ downloadOrderList = function(winform, orderId){
 /*
 	import console; 
 	console.open();
-
 */
-	
+
+
+	vm.script = /*
+			dim sapguiExist
+			sapguiExist = true
+	*/
 	vm.script = /*
 			If Not IsObject(application) Then
-   			Set SapGuiAuto  = GetObject("SAPGUI")
-   			Set application = SapGuiAuto.GetScriptingEngine
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				Set application = SapGuiAuto.GetScriptingEngine
 			End If
+   			If Not IsObject(application) Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiNotExist"; 
+	vm.script = /*   			
+
 			If Not IsObject(connection) Then
-   			Set connection = application.Children(0)
+   				Set connection = application.Children(0)
 			End If
+			if connection.Children.Count > 1 then
+				'msgbox ""
+			end if
 			If Not IsObject(session) Then
-   			Set session    = connection.Children(0)
+   				Set session    = connection.Children(0)
 			End If
 			If IsObject(WScript) Then
-   			WScript.ConnectObject session,     "on"
-   			WScript.ConnectObject application, "on"
+   				WScript.ConnectObject session,     "on"
+   				WScript.ConnectObject application, "on"
 			End If
 	*/
 	vm.script = /*
@@ -365,8 +381,9 @@ downloadOrderList = function(winform, orderId){
 	vm.script.order = orderId;
 	vm.script.lib_path = config.__sapDownload;
 	vm.script = /*
-		session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
-		session.findById("wnd[0]").sendVKey 0
+		session.StartTransaction("VA03")
+		'session.findById("wnd[0]/tbar[0]/okcd").text = "VA03"
+		'session.findById("wnd[0]").sendVKey 0
 		session.findById("wnd[0]/usr/ctxtVBAK-VBELN").text = order
 		session.findById("wnd[0]").sendVKey 0
 		if session.findById("wnd[0]/sbar").text = "SD凭证" & order &" 没有在数据库中或已归档" then
@@ -439,7 +456,7 @@ downloadOrderList = function(winform, orderId){
 			on error goto 0
 		loop
 	*/ 
-
+	return vm.script.filename; 
 }
 downloadManufactureBOM = function(winform, orderId, itemList){
 	import config;
@@ -479,8 +496,9 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 	*/
 	vm.script = /*
 				if session.findById("wnd[0]/titl").text <> "生产订单信息系统" then
-	 			session.findById("wnd[0]/tbar[0]/okcd").text = "COOIS"
-				session.findById("wnd[0]").sendVKey 0
+				session.StartTransaction("COOIS")
+	 			'session.findById("wnd[0]/tbar[0]/okcd").text = "COOIS"
+				'session.findById("wnd[0]").sendVKey 0
 			end if
 	*/
 	/* 通过 vm.script 访问变量前需要先声明 */
@@ -498,15 +516,16 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 		vm.script.orderItem = itemList[i];
 		vm.script.filename = string.join({"COOIS",orderId,itemList[i]},"_") + ".xlsx"
 		vm.script = /*
+			session.findById("wnd[0]/usr/ssub%_SUBSCREEN_TOPBLOCK:PPIO_ENTRY:1100/cmbPPIO_ENTRY_SC1100-PPIO_LISTTYP").key = "PPIOM000"
 			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDAUF-LOW").text = orderId
 			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDPOS-LOW").text = orderItem
-			session.findById("wnd[0]/usr/ssub%_SUBSCREEN_TOPBLOCK:PPIO_ENTRY:1100/cmbPPIO_ENTRY_SC1100-PPIO_LISTTYP").key = "PPIOM000"
+			
 			session.findById("wnd[0]/tbar[1]/btn[8]").press
 			
 			'如果没排产
 
 			on error resume next
-				if session.findById("wnd[1]/usr/txtMESSTXT1").text == "没有任何用于选择的数据" then
+				if NOT session.findById("wnd[1]/usr/txtMESSTXT1") is Nothing then
 					session.findById("wnd[1]/tbar[0]/btn[0]").press
 				end if
 			on error goto 0
@@ -559,7 +578,56 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 	 	session.findById("wnd[0]/tbar[0]/btn[12]").press
 	*/	
 }
+MM03 = function( hcode){
+	import config;
+	import io;
+	import win;
+	import web.script;
+	var vm = web.script("VBScript") ;
+	
+	/*
+	import console; 
+	console.open();
+	*/
+	
+	vm.script = /*
+			If Not IsObject(application) Then
+   			Set SapGuiAuto  = GetObject("SAPGUI")
+   			Set application = SapGuiAuto.GetScriptingEngine
+			End If
+			If Not IsObject(connection) Then
+   			Set connection = application.Children(0)
+			End If
+			If Not IsObject(session) Then
+   			Set session    = connection.Children(0)
+			End If
+			If IsObject(WScript) Then
+   			WScript.ConnectObject session,     "on"
+   			WScript.ConnectObject application, "on"
+			End If
+	*/
 
+	vm.script = /*
+		dim err
+		dim hcode	
+	*/
+	vm.script.hcode = hcode;
+	vm.script = /*
+		session.StartTransaction("MM03")
+		session.findById("wnd[0]/usr/ctxtRMMG1-MATNR").text = hcode
+		session.findById("wnd[0]/tbar[0]/btn[0]").press
+		set sbar = session.findById("wnd[0]/sbar")
+		
+		if sbar.MessageType <> "S" then
+			err = sbar.Text
+		end if
+		'查询成本2
+		session.findById("wnd[0]/usr/tabsTABSPR1/tabpSP27").select
+		session.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = "0841"
+		session.findById("wnd[1]/tbar[0]/btn[0]").press
+	*/
+	return vm.script.err; 
+}
 /**intellisense(SAP)
 downloadBOM(arr) = 下载BOM
 sapQuickOpen() = 一键打开SAP

@@ -1,13 +1,13 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var va02_form = win.form(text="下载成本BOM";right=890;bottom=519)
-va02_form.add(
+var winform = win.form(text="下载成本BOM";right=890;bottom=519)
+winform.add(
 button={cls="button";text="开始下载成本BOM";left=88;top=70;right=212;bottom=110;dl=1;dt=1;z=1};
-button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;color=14120960;dl=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
+button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;color=0xD77800;dl=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
 button3={cls="button";text="打开下载目录";left=259;top=139;right=365;bottom=165;dl=1;dt=1;z=7};
 button4={cls="button";text="连续确认";left=812;top=138;right=874;bottom=152;dr=1;dt=1;z=14};
-button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;color=14120960;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=10};
+button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=10};
 button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;dl=1;dt=1;z=11};
 button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;dl=1;dt=1;z=12};
 button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;dr=1;dt=1;z=15};
@@ -137,7 +137,7 @@ var filterRed = function(wform){
 }
 
 
-var dcb = function(va02_form, absline, HT){
+var dcb = function(winform, absline, HT){
 /*
 import console
 console.open()
@@ -151,9 +151,9 @@ console.open()
     var h = string.indexOf(HT, "-") ? string.split(HT, "-")[[1]] - 1 : tonumber(HT) - 1;
     var t = string.indexOf(HT, "-") ? string.split(HT, "-")[[2]] - 1 : tonumber(HT) - 1;
     
-	va02_form.progress.pos = 0;
-	va02_form.progress.min = h;
-	va02_form.progress.max = t;
+	winform.progress.pos = 0;
+	winform.progress.min = h;
+	winform.progress.max = t;
 	vm.script = /*
 			If Not IsObject(application) Then
    			Set SapGuiAuto  = GetObject("SAPGUI")
@@ -234,57 +234,57 @@ console.open()
     		session.findById("wnd[0]/tbar[0]/btn[12]").press
     		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = false
 	*/
-			va02_form.progress.pos = i
+			winform.progress.pos = i
 	}
-	va02_form.button.disabledText = null;
+	winform.button.disabledText = null;
 
 }
 
-va02_form.button.oncommand = function(id,event){
-	var absline = va02_form.edit.text;
+winform.button.oncommand = function(id,event){
+	var absline = winform.edit.text;
 	if !#absline return ; 
-	var HT = va02_form.edit2.text;
+	var HT = winform.edit2.text;
 	if !#HT return ;
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "downloading..."};
-	thread.invoke(dcb, va02_form, absline, HT);
+	thread.invoke(dcb, winform, absline, HT);
 }
 
-va02_form.button3.oncommand = function(id,event){
+winform.button3.oncommand = function(id,event){
 	import process;
 	process.explore(config.__sapDownload);	
 }
 
-va02_form.button2.oncommand = function(id,event){
+winform.button2.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="creating..."};
-	thread.invoke(createOrder, va02_form);
+	thread.invoke(createOrder, winform);
 }
 
 
 
-va02_form.button5.oncommand = function(id,event){
+winform.button5.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="working..."};
-	thread.invokeAndWait(filterRed, va02_form);
+	thread.invokeAndWait(filterRed, winform);
 	import win.clip
 	var sss = win.clip.read();
 	sss ?= string.trimright(sss, '\n');
-	va02_form.edit3.print(sss);
-	va02_form.edit3.print('\n');
+	winform.edit3.print(sss);
+	winform.edit3.print('\n');
 	
 }
 
-va02_form.button6.oncommand = function(id,event){
+winform.button6.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="working..."};
 	thread.invoke( 
 		function(wform){
 			import QHC;
 			QHC.formatAllCostBom();
 			wform.button6.disabledText = null;
-		}, va02_form
+		}, winform
 	)
 
 }
 
-va02_form.button7.oncommand = function(id,event){
+winform.button7.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"}
 	thread.invoke( 
 		function(wform){
@@ -292,11 +292,11 @@ va02_form.button7.oncommand = function(id,event){
 			var t = QHC.getPriceList();
 			wform.listview.setTable(t);
 			wform.button7.disabledText = null;
-		}, va02_form
+		}, winform
 	)
 }
 
-va02_form.button4.oncommand = function(id,event){
+winform.button4.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"}
 	thread.invoke( 
 		function(wform){
@@ -331,10 +331,10 @@ va02_form.button4.oncommand = function(id,event){
 列, 行, 从0开始
 wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1,0]
 */		
-		}, va02_form
+		}, winform
 	)
 }
-va02_form.button8.oncommand = function(id,event){
+winform.button8.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"}
 	thread.invoke( 
 		function(wform){
@@ -360,13 +360,13 @@ va02_form.button8.oncommand = function(id,event){
 				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press
     		*/
 			wform.button8.disabledText = null;
-		}, va02_form
+		}, winform
 	)
 }
 
 import domisoft;
-va02_form.listview.translateAccelerator = domisoft.ctrlC;
+winform.listview.translateAccelerator = domisoft.ctrlC;
 
-va02_form.show();
+winform.show();
 win.loopMessage();
-return va02_form;
+return winform;

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.600" ProductVersion="1.5.0.600" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.619" ProductVersion="1.5.0.619" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -72,7 +72,6 @@
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
 			<file name="clear_sys_temp_folder.aardio" path="forms\side_loader\clear_sys_temp_folder.aardio" comment="forms\side_loader\clear_sys_temp_folder.aardio"/>
 			<file name="registry.aardio" path="forms\side_loader\registry.aardio" comment="forms\side_loader\registry.aardio"/>
-			<file name="toolbar.aardio" path="forms\side_loader\toolbar.aardio" comment="forms\side_loader\toolbar.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
@@ -97,6 +96,7 @@
 			<file name="Excel_update_info.aardio" path="forms\TEST\Excel_update_info.aardio" comment="forms\TEST\Excel_update_info.aardio"/>
 			<file name="frmPage_XXX.aardio" path="forms\TEST\frmPage_XXX.aardio" comment="forms\TEST\frmPage_XXX.aardio"/>
 			<file name="odview.aardio" path="forms\TEST\odview.aardio" comment="forms\TEST\odview.aardio"/>
+			<file name="onedrive_list.aardio" path="forms\TEST\onedrive_list.aardio" comment="forms\TEST\onedrive_list.aardio"/>
 			<file name="RENAME.aardio" path="forms\TEST\RENAME.aardio" comment="forms\TEST\RENAME.aardio"/>
 			<file name="shortcut.aardio" path="forms\TEST\shortcut.aardio" comment="forms\TEST\shortcut.aardio"/>
 			<file name="VBASettingIO.aardio" path="forms\TEST\VBASettingIO.aardio" comment="forms\TEST\VBASettingIO.aardio"/>

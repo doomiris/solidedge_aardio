@@ -6,7 +6,7 @@ winform_tc_plug.add(
 button2={cls="button";text='\uF0EE 更新';left=656;top=232;right=744;bottom=264;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=2};
 checkIcon={cls="checkbox";text="安装图标";left=272;top=241;right=401;bottom=258;z=4};
 listview={cls="listview";left=0;top=32;right=760;bottom=224;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-static={cls="static";text="更新前需要关闭退出Teamcenter";left=24;top=240;right=304;bottom=264;color=255;transparent=1;z=3}
+static={cls="static";text="更新前需要关闭退出Teamcenter";left=24;top=240;right=304;bottom=264;color=0x0000FF;transparent=1;z=3}
 )
 /*}}*/
 
@@ -28,7 +28,7 @@ _plugins_parent := "com.teamcenter.rac.";
 _tc_install_path := string.trimright(fsys.lnk.searchLnk(,"Teamcenter 13", 0 /*_CSIDL_DESKTOP*/), "\portal\portal.bat");
 _tc_install_path := "C:\Program Files\Siemens\Teamcenter13";
 _plugins_folder := io.joinpath(_tc_install_path, "\portal\plugins");
-_plugins_server := "\\CCNSIA1A.carcgl.com\SEPARTS\Admin\Software\TeamCenter_install\00-PLM二次开发安装包";
+_plugins_server := "\\CCNSIA1A\SEPARTS\Admin\Software\TeamCenter_install\00-PLM二次开发安装包";
 _plugins_registry_cmd := io.joinpath(_tc_install_path, "\portal\registry\genregxml.bat");
 
 if !io.exist(_plugins_server) win.msgbox("目前不存在 " + '\r' + _plugins_server);

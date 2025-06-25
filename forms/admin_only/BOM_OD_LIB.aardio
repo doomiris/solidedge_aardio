@@ -10,10 +10,11 @@ var excel = com.excel(true);
 var sname = {"分类", "特性参数规划表", "分类", "特性参数规划表"}
 
 //var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
-var OneDriveCommercial = "D:\users\CCL100100\Carrier Corporation\"
+import domisoft;
+var OneDriveCommercial = domisoft.envFix("%CCR%")
 var wbname = {
-	{io.joinpath(OneDriveCommercial, "SAP数据整理 - QHC开发部(只读,仅用于参考)", "0.参数及分类汇总表2023.08.31.xlsx"), false, true, null,"0000"},
-	{io.joinpath(OneDriveCommercial, "SAP数据整理 - 开利研发部", "0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx"), false,true,null,null},
+	{io.joinpath(OneDriveCommercial,"CCR Cabinets - SAP数据整理(研发)", "0.参数及分类汇总表2023.08.31.xlsx"), false, true, null,"0000"},
+	{io.joinpath(OneDriveCommercial,"CCR Cabinets - SAP数据整理(研发)", "0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx"), false,true,null,null},
 }
 if !io.exist(wbname[1][1]) console.log("找不到开发表", wbname[1][1]);
 if !io.exist(wbname[2][1]) console.log("找不到研发表", wbname[2][1]);

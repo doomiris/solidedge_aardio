@@ -149,8 +149,8 @@ winform.button.oncommand = function(id,event){
             // 将图片转换为 PDF 页
             var img = gdip.image(filepath);
             if(img){
-                var pdfPage = mergedPdf.newPage(img.getWidth(), img.getHeight());
-                var canvas = pdfPage.render(img,0,0,img.getWidth(),img.getHeight());
+                mergedPdf.createPage(i,img.width, img.height);
+                mergedPdf.render(img,0,0,img.width,img.height);
                 img.close(); // 释放图片资源
             }
         }

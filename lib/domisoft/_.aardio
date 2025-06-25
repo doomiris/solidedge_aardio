@@ -88,10 +88,12 @@ stopExcelCutCopyMode = function(){
 						}
 		}
 	)
+	return 1; 
 }
 taobaoURLsimple = function(url){
 	import inet.url;
 	import inet.urlpart;
+	url = inet.url.decode(url);
 	var turl = inet.url.split(url ); 
 	var para = inet.urlpart.getQuery(url);
 	var s = inet.url.splitParameters(para);	
@@ -121,8 +123,8 @@ copySelectedItem = function(ctrl){
         import win.clip;
         import win.clip.html;
         
-		stopExcelCutCopyMode();
-		
+        ..thread.invoke(stopExcelCutCopyMode);
+        
 		var items = ctrl.items;
 		var selected = ctrl.selected; 
 		
@@ -230,6 +232,7 @@ readClipHcode = function(){
 			s = replace(s,"€","6");
 			s = replace(s,"t","6");
 			s = replace(s,"S","5");
+			s = replace(s,"/","7");
 			
 			if string.startWith(s, "8008")
 				s = replace(s, "8008", "H008", 1);
@@ -290,10 +293,36 @@ sendFileTo = function(fullname, dest){
 }
 listColSort = function(column, desc){
 	var name = owner.source.fields[column];
+	for (i=1; #owner.source)
+		if !owner.source[i][name]
+			owner.source[i][name]=""
 	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
 	owner.setTable( owner.source );
 	return true; //返回 true 允许当前列排序	
 };
+getUserFolder = function(corp){
+
+	corp := "CCR"
+
+	var root_path = "HKEY_CURRENT_USER\SOFTWARE\Microsoft\OneDrive\Accounts\"	
+	import win.reg
+	var root = win.reg(root_path, true);
+	var rootKeys = root.keys();
+	var businessKeys = []
+	for(i=1; #rootKeys)
+		if string.startsWith(rootKeys[i], "business", true)
+			table.push(businessKeys, rootKeys[i])
+	var getValueInKey = function(keyName, valueName){
+		import win.reg
+		var wkey = win.reg(keyName, true);
+		return wkey.queryValue(valueName); 
+	}
+	for (i=1; #businessKeys)
+		if getValueInKey(root_path ++businessKeys[i], "DisplayName" ) == corp
+			return  string.replace(getValueInKey(root_path ++businessKeys[i], "UserFolder" ),"@OneDrive - ","")
+
+}
+/**
 envFix = function(str){
 	if !str return str; 
 	var outStr = str;
@@ -305,10 +334,27 @@ envFix = function(str){
 		if envVar 
 			outStr = string.replace(outStr, "@"+v[1], envVar);
 	}
-	outStr = string.replace(outStr,"@OneDrive - Carrier Corporation","Carrier Corporation");	/*bugfix*/
+	outStr = string.replace(outStr,"@OneDrive - ","");	/*bugfix*/
+	return outStr;
+}
+**/
+envFix = function(str){
+	if !str return str; 
+	var outStr = str;
+	var matches = string.matches(str, "%%%");
+	if !matches or !#matches return str; 
+	for k, v in matches {
+		if #v
+			var envVar = getUserFolder(string.trim(v[1],"%"));
+		if envVar 
+			outStr = string.replace(outStr, "@"+v[1], envVar);
+	}
+	//outStr = string.replace(outStr,"@OneDrive - ","");	/*bugfix*/
 	return outStr;
 }
 refreshSAP = function(winform){
+	import config;
+	if !config.settings.keepRefreshSAPGUI return ; 
 	..thread.invoke(
 		function(winform){
 			winform.setInterval( 

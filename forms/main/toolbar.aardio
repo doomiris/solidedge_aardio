@@ -178,6 +178,7 @@ var opent = function(n){
 	var excel = com.GetOrCreateObject("Excel.Application");
 	if !excel win.msgbox("请先打开Excel程序");
 	if !excel return ; 
+	if !excel.WorkBooks return ; 
 	if !config.settings.createNewFormsFromSharepoint
 		var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
 	else

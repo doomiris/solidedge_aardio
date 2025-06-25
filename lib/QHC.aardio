@@ -352,9 +352,16 @@ formatBOM = function(sht,savechanges = true){
 	/*
 # 给此excel文档添加一个自定义属性: formatedByTBM, 值是当前时间	
 	*/
+/*
 	// 添加自定义属性到Excel文档
 	var customProps = sht.Parent.CustomDocumentProperties;
-	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(..time.now()));
+	var timeNowStr = tostring(..time.now());
+
+	if customProps[["formatedByTBM"]]
+		customProps.item("formatedByTBM").value = timeNowStr;
+	else	
+		customProps.Add("formatedByTBM", timeNowStr);
+*/
 	
 	if savechanges	try{sht.Parent.Save()};
 }
@@ -427,6 +434,7 @@ getLvlStr = function(lvlNum){
 
 formatCostBom = function(sht){
 	import  console;
+	//console.open()
 	import tarray;
 	var  singleJob  = false;
 	import com.excel;
@@ -495,10 +503,18 @@ formatCostBom = function(sht){
 	sht.delete();
 	var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
 
-	var customProps = sht.Parent.CustomDocumentProperties;
-	customProps.Add("formatedByTBM", false, 4 /* msoPropertyTypeString */, tostring(..time.now()));
+
 	
 	wk.SaveAs(nwk, 51 /* xlWorkbookDefault */);
+	
+/*
+	var customProps = wk.CustomDocumentProperties;
+	var timeNowStr = tostring(..time.now());
+	if customProps[["formatedByTBM"]]
+		customProps.item("formatedByTBM").value = timeNowStr;
+	else
+	 customProps.Add("formatedByTBM",  timeNowStr);
+*/
 	
 	wk.Application.DisplayAlerts = true;
 	if !singleJob wk.Close(false);

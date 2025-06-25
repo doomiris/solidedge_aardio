@@ -47,11 +47,14 @@ if(!atom and !_STUDIO_INVOKED){
 /*}}*/
 			
 //win.ui.simpleWindow( mainForm );
-mainForm.bindConfig( config.mainForm,{
-	splitter = "left";
-	listbox = "width";
-} );
-
+import gdi;
+var dpix, dpiy = gdi.getDpiScale();
+if dpix == 1 {
+	mainForm.bindConfig( config.mainForm,{
+		splitter = "left";
+		listbox = "width";
+	} );
+}
 mainForm.foldchk.skin(
     color = { 
         hover = 0xFFFF0000; 
@@ -162,7 +165,7 @@ mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
 /*}}*/
 
 mainForm.splitter.split(mainForm.listbox, mainForm.custom);
-{
+if dpix == 1 {
 	var tWidth = mainForm.stripTab1.width;
 	mainForm.stripTab1.left = mainForm.listbox.width;
 	mainForm.stripTab1.width = tWidth;	
@@ -386,37 +389,27 @@ mainForm.unreghotkey(hkId);
 //重新注册系统热键;
 hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
-		/* 
-		# 检查最上层应用程序, 如果是有焦点状态, 获取当前打开的文件名称
-		*/
-		var hwnd = win.getForeground();
+		var hwnd = win.getForeground(); //检查最上层应用程序
 		if(!hwnd) return;
-		
-		var tid, pid = win.getThreadProcessId(hwnd);
+		var tid, pid = win.getThreadProcessId(hwnd); //获取进程ID
 		if(!pid) return;
-
-/*
-		var exeName = string.lower(
-				io.splitpath(
-					process(pid).getPath()
-				).file
-			);
-*/
 		var current_App;
 		for object,interface,name,index in com.eachRunning() {
-			if object.hwnd == hwnd {
-				current_App = object;
-				break;	
-			}
+			if object
+				if object.application
+					if object.application.hwnd == hwnd {
+						current_App = object.application;	//遍历com对象,找到pid一样的COM对象
+						break;	
+					}
 		}
 		if !current_App return ; 
-
 		select(current_App.Name){
 			case "Microsoft Excel" {
 				if !current_App.Workbooks.Count return ;
 				import string.keywords;
-				var kw = string.keywords(["专用号申请","BOM更改","BG"]);
-				var wb = current_App.ActiveWorkbook;				
+				var kw = string.keywords(["专用号申请","BOM更改","BG","Item_Master"]);
+				var wb = current_App.ActiveWorkbook;
+				if !wb return ; 
 				switch( kw.findOne(wb.Name), {  
 					[1]: function(){
 						thread.invoke( λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"))
@@ -427,19 +420,19 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 					[3]: function(){
 						thread.invoke( λ () loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio"))						
 					};  
+					[4]:function(){
+						thread.invoke( λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio"))
+					};  
 				})
 
 			}
 			case "Solid Edge 2020" {
-				if current_App.Documents.Count
-					if current_App.ActiveDocumentType == 2 /*Draft Document Type*/
-						thread.invoke( λ () loadcodex("\forms\main\frmPage1.aardio"))
+				if !current_App.Documents.Count return ; 
+				if current_App.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+				thread.invoke( λ () loadcodex("\forms\main\frmPage1.aardio"))
 			}
 		}
-
-	},
-	4 /*_MOD_SHIFT*/,
-	0x70 /*_VK_F1*/
+	}, table.unpack(config.setbm.weakUpKey)
 );
 
 

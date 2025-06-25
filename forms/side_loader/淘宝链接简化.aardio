@@ -2,8 +2,8 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="淘宝链接简化";right=759;bottom=469)
 winform.add(
-edit={cls="edit";left=38;top=36;right=694;bottom=290;edge=1;multiline=1;vscroll=1;z=1};
-edit2={cls="edit";left=41;top=319;right=688;bottom=431;edge=1;multiline=1;readonly=1;vscroll=1;z=2}
+edit={cls="edit";left=38;top=36;right=694;bottom=290;autohscroll=false;edge=1;multiline=1;vscroll=1;z=1};
+edit2={cls="edit";left=41;top=319;right=688;bottom=431;autohscroll=false;edge=1;multiline=1;readonly=1;vscroll=1;z=2}
 )
 /*}}*/
 
