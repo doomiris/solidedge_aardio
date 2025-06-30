@@ -378,11 +378,14 @@ loadPromptList();	//读取提示清单
 
 winform.button7.oncommand = function(id,event){
 	if !seDFT return ; 
+	if !seDFT.ModelLinks.Count return; 
+
 	var menu = win.ui.popmenu(winform);//创建弹出菜单
 	for index, item in com.each(seDFT.ModelLinks){
+		var info = io.splitpath(item.FileName);
 		menu.add(
-			text = "["+ index +"] " + item.ModelDocument.Name;
-			proc = function(id){
+			"["++ index ++"] " ++ info.file ,
+			function(id){
 				winform.cb_weight.text = string.replace("%{Mass|R_}","_",index)
 			}
 		);
