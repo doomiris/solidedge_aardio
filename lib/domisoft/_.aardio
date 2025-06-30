@@ -317,10 +317,14 @@ getUserFolder = function(corp){
 		var wkey = win.reg(keyName, true);
 		return wkey.queryValue(valueName); 
 	}
-	for (i=1; #businessKeys)
-		if getValueInKey(root_path ++businessKeys[i], "DisplayName" ) == corp
-			return  string.replace(getValueInKey(root_path ++businessKeys[i], "UserFolder" ),"@OneDrive - ","")
-
+	for (i=1; #businessKeys){
+		if getValueInKey(root_path ++businessKeys[i], "DisplayName" ) == corp {
+			var UserFolder = getValueInKey(root_path ++ businessKeys[i], "UserFolder" );
+			if UserFolder
+				return	string.replace(UserFolder,"@OneDrive - ","");
+		}
+	}
+	return string.replace(string.getenv("OneDriveCommercial") ,"@OneDrive - ","");
 }
 /**
 envFix = function(str){
