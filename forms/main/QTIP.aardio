@@ -3,15 +3,15 @@ import win.ui;
 /*DSG{{*/
 winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=12632256;dl=1;dt=1;z=10};
-bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=12632256;border={bottom=5;color=-16777088};dl=1;dt=1;notify=1;z=6};
-bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=12632256;dl=1;dt=1;notify=1;z=8};
-bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=12632256;dl=1;dt=1;z=7};
-bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=12632256;dl=1;dt=1;z=9};
+bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=0xC0C0C0;dl=1;dt=1;z=10};
+bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=0xC0C0C0;border={bottom=5;color=0xFF000080};dl=1;dt=1;notify=1;z=6};
+bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=0xC0C0C0;dl=1;dt=1;notify=1;z=8};
+bkplus4={cls="plus";text="图纸";left=144;top=8;right=184;bottom=40;bgcolor=0xC0C0C0;dl=1;dt=1;z=7};
+bkplus5={cls="plus";text="版次";left=184;top=8;right=224;bottom=40;bgcolor=0xC0C0C0;dl=1;dt=1;z=9};
 button={cls="button";text='\uF002  查询SAP';left=520;top=8;right=619;bottom=38;default=1;dr=1;dt=1;font=LOGFONT(name='FontAwesome');tabstop=1;z=2};
-button2={cls="button";text='\uF053';left=0;top=8;right=24;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
-buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=8421504;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=3};
-custom={cls="custom";left=0;top=56;right=640;bottom=504;ah=1;aw=1;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
+button2={cls="button";text='\uF053';left=0;top=8;right=24;bottom=40;color=0x808080;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=12};
+buttonD={cls="button";text='\uF142';left=235;top=10;right=249;bottom=40;color=0x808080;dl=1;dt=1;flat=1;font=LOGFONT(h=-13;name='FontAwesome');z=3};
+custom={cls="custom";left=0;top=56;right=640;bottom=504;ah=1;aw=1;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
 edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=4};
 editUser3={cls="edit";left=256;top=8;right=520;bottom=47;autohscroll=false;aw=1;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=5};
 splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z=11}
@@ -116,7 +116,7 @@ var createHistoryMenu = function(){
 			}
 
 		table.push(fav, {["title"] = favName; ["list"] = getSelectedList()});
-		config.qitp.save();		
+		config.qtip.save();		
 	}
 	winform.historyMenu.add("识别剪贴板图像", function(){
 		var t = domisoft.readClipHcode();
@@ -128,8 +128,8 @@ var createHistoryMenu = function(){
     	[1] = "★ 收藏夹"; 
     	[2] = { 
     			[1] = {
-    				text = "+ 添加到收藏夹...";
-    				proc = addFav;
+    				"+ 添加到收藏夹...";
+    				addFav;
         		};
         		[2] = {/* ---- */};
     	}
@@ -139,8 +139,8 @@ var createHistoryMenu = function(){
 	for (i=1; #fav)	{
 		if !fav[i] continue;
 		table.push(favTab[2], {	
-				text = fav[i]["title"];
-				proc = function(id){
+				fav[i]["title"];
+				function(id){
 					var shift = ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
 					var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
 					
