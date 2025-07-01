@@ -129,8 +129,8 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	    	[1] = "添加进收藏"; 
 	    	[2] = { 
 	    			[1] = {
-	    				text = "+ 新的收藏...";
-	    				proc = function(id){
+	    				/*text = */"+ 新的收藏...",
+	    				/*proc = */function(id){
 	    					table.push(fav,{
 	    						"title":"新收藏";
 	    						"list":{pcode}
@@ -144,8 +144,8 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	for (i=1; #fav)	{
 		if !fav[i] continue;
 		table.push(favTab[2], {	
-				text = fav[i]["title"];
-				proc = function(id){
+				/*text =*/ fav[i]["title"],
+				/*proc =*/ function(id){
 					if !table.find(fav[i]["list"],pcode)
     						table.push(fav[i]["list"],pcode);
    				}
