@@ -241,11 +241,15 @@ var saveLists = function(winform){
 	var dbpath = io.joinpath(config.dbServer.path, "tbm.db");
 	var dbRs = sqlite(dbpath);	//打开数据库连接
 
-	//replace语句根据主键查询,不存在相同数据则插入新的,否则更新已存在的数据
-	var cmd = dbRs.prepare("INSERT INTO SE_TBM_Lists VALUES (@ID,@ListName,@Title);" );
+    // 使用 REPLACE 语句,需要表 SE_TBM_Lists 中对 (ListName, Title) 字段有 UNIQUE 约束。
+    // 当 UNIQUE 约束冲突时,REPLACE 会先删除旧记录再插入新记录,从而避免重复。
+    
+	var cmd = dbRs.prepare("REPLACE INTO SE_TBM_Lists (ListName, Title) VALUES (@ListName,@Title);" );
 	
 	for name, ctrl in winform.eachControl("combobox"){
 		var keyword = string.trimleft(name,"cb_");
+		
+		// 检查控件是否有文本,并且该文本不在下拉列表里
 		if #ctrl.text and !ctrl.find(ctrl.text) {
 			cmd.step(  
 				Title = ctrl.text;
