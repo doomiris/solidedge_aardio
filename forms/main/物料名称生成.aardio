@@ -2,8 +2,9 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="物料名称生成";right=929;bottom=792)
 winform.add(
-button3={cls="button";text="/\";left=89;top=208;right=140;bottom=231;dl=1;dt=1;z=5};
-button4={cls="button";text="\/";left=142;top=208;right=193;bottom=231;dl=1;dt=1;z=6};
+button10={cls="button";text="导入";left=6;top=209;right=57;bottom=232;dl=1;dt=1;z=13};
+button3={cls="button";text="/\";left=159;top=209;right=210;bottom=232;dl=1;dt=1;z=5};
+button4={cls="button";text="\/";left=218;top=209;right=269;bottom=232;dl=1;dt=1;z=6};
 button5={cls="button";text="/\";left=276;top=18;right=301;bottom=41;dl=1;dt=1;z=12};
 button6={cls="button";text="\/";left=276;top=46;right=301;bottom=69;dl=1;dt=1;z=11};
 button7={cls="button";text="-";left=276;top=75;right=300;bottom=98;dl=1;dt=1;z=10};
@@ -20,9 +21,10 @@ splitter2={cls="splitter";left=4;top=200;right=302;bottom=205;frame=1;hide=1;hor
 import table.product; //迪卡尔运算迭代器
 import domisoft;
 import config;
-
+import tarray;
 import win.ui.listEdit;
 import win.debounce;
+
 
 var listEdit = win.ui.listEdit(winform.listbox);
 
@@ -176,6 +178,24 @@ winform.listbox.addCustom = function(){
 	owner.refreshList();
 	owner.selIndex = #items;
 }
+winform.listbox.importFromDesp = function(id,event){
+	var items = owner.items;
+	var t = domisoft.showInputBox("输入描述", "自动按空格拆分并与下方列表匹配","", owner.parent);
+	if !t return ;
+	var s = string.split(t, " ");
+	var clues = winform.lb_clue.items;
+	for (i=1; #s) {
+		var match = tarray.findString(clues,s[i]);
+		if match
+			s[i] = match.value
+	}
+
+	table.append(items, s)
+
+	owner.items = items;
+	owner.refreshList();
+	owner.selIndex = #items;
+}
 
 winform.lb_clue.wndproc = function(hwnd,message,wParam,lParam){
 	select(message) {
@@ -191,18 +211,21 @@ winform.lb_clue.wndproc = function(hwnd,message,wParam,lParam){
 
 
 
+
 winform.listbox.refreshList();
 winform.button5.oncommand = function() winform.listbox.moveup();
 winform.button6.oncommand = function() winform.listbox.movedown();
 winform.button7.oncommand = function() winform.listbox.remove();
 winform.button8.oncommand = function() winform.listbox.addCustom();
 winform.button9.oncommand = function() winform.listbox.clear();
+winform.button10.oncommand = function() winform.listbox.importFromDesp();
 
 listEdit.onEditChanged = win.debounce(function(text,selIndex){
 	winform.listbox.refreshList()
 	winform.listbox.selIndex = selIndex;
 	//win.msgbox(text);
 }, 200)
+
 
 
 win.loopMessage();
