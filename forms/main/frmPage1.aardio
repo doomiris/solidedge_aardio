@@ -236,64 +236,62 @@ winform.button3.oncommand = function(id,event){
 		win.setActive(seApp.hWnd);
 }
 var saveLists = function(winform){
-	import config;
-	import sqlite;
-	var dbpath = io.joinpath(config.dbServer.path, "tbm.db");
-	var dbRs = sqlite(dbpath);	//打开数据库连接
+    import config;
+    import sqlite;
 
-    // 使用 REPLACE 语句,需要表 SE_TBM_Lists 中对 (ListName, Title) 字段有 UNIQUE 约束。
-    // 当 UNIQUE 约束冲突时,REPLACE 会先删除旧记录再插入新记录,从而避免重复。
-    
-	var cmd = dbRs.prepare("REPLACE INTO SE_TBM_Lists (ListName, Title) VALUES (@ListName,@Title);" );
-	
-	for name, ctrl in winform.eachControl("combobox"){
-		var keyword = string.trimleft(name,"cb_");
-		
-		// 检查控件是否有文本,并且该文本不在下拉列表里
-		if #ctrl.text and !ctrl.find(ctrl.text) {
-			cmd.step(  
-				Title = ctrl.text;
-				ListName = keyword;
-			);
-			ctrl.add(ctrl.text);
-		}
-	}
-	dbRs.close();
-}
-/*
-var removeFromLists = function(winform, ctrl){
-	import config;
-	import sqlite;
-	var dbpath = config.dbServer.path + "tbm.db"
-	var dbRs = sqlite(dbpath);	//打开数据库连接
+    // 1. 收集所有在UI中新输入的条目
+    var newUiItems = [];
+    for name, ctrl in winform.eachControl("combobox"){
+        var keyword = string.trimleft(name,"cb_");
 
-	//replace语句根据主键查询,不存在相同数据则插入新的,否则更新已存在的数据
-	var ListName = string.trimleft(ctrl.id,"cb_");
-	var Title = ctrl.text;
-	
-	db.exec("DELETE FROM SE_TBM_Lists", {ListName = ListName; Title = Title} )
-	table.removeByValue(ctrl.items, Title);
-
-	dbRs.close();	
-}
-for(name,ctrl in winform.eachControl("combobox") ){
-    ctrl.oncommand = function(id,event){
-        if(event == ){
-			var pop = win.ui.popmenu(winform);//创建弹出菜单
-			pop.add("删除此条记录",
-				function(id){
-					
-				}
-			)
-			win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
-			var pt = ::POINT();
-			::User32.GetCursorPos(pt);   		
-			pop.popup(pt.x,pt.y,true );
+        // 检查控件是否有新输入的文本
+        if #ctrl.text and !ctrl.find(ctrl.text) {
+            table.push(newUiItems, {
+                ListName = keyword;
+                Title = ctrl.text;
+            });
+            // 立即更新UI下拉列表,提供即时反馈
+            ctrl.add(ctrl.text);
         }
     }
 
+    // 如果UI上没有任何新输入,直接返回,不接触数据库
+    if(!#newUiItems){
+        return;
+    }
+
+    // 2. 使用 INSERT OR IGNORE 在一个事务中尝试插入所有新条目
+    var dbpath = io.joinpath(config.dbServer.path, "tbm.db");
+    var dbRs = sqlite(dbpath);
+
+    try {
+        // 开启事务,将所有操作打包
+        dbRs.exec("BEGIN TRANSACTION;");
+
+        // 使用 INSERT OR IGNORE, 如果数据已存在(违反UNIQUE约束),则静默忽略本次插入
+        // 这就完美实现了“如果不存在则插入”的逻辑,且性能最高
+        var cmd = dbRs.prepare("INSERT OR IGNORE INTO SE_TBM_Lists (ListName, Title) VALUES (@ListName,@Title);" );
+
+        // 遍历从UI收集到的新条目
+        for(i=1; #newUiItems; 1){
+            var item = newUiItems[i];
+            cmd.step(  
+                ListName = item.ListName;
+                Title = item.Title;
+            );
+        }
+
+        // 提交事务,所有真正的写操作在这里一次性完成
+        dbRs.exec("COMMIT;");
+    }
+    catch(e){
+        // 如果出错,回滚所有操作
+        dbRs.exec("ROLLBACK;");
+        ..console.error("保存列表到数据库时出错:", e);
+    }
+
+    dbRs.close();
 }
-*/
 
 winform.button2.oncommand = function(id,event){
     if mainForm mainForm.show(false); //隐藏窗口
@@ -321,6 +319,8 @@ winform.button2.oncommand = function(id,event){
     if !#config.tbm.Designer {
 		winform.button5.oncommand();    /* 智能保存常用姓名 */
     };
+    if !winform.parent
+    	winform.hide = true;
     
 
 }
