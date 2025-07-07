@@ -163,6 +163,53 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
     		getList.appendDrawingMapFromTable(drawing_No, prtLists)			
 		}, drawing_No, prtLists)	
 	})
+	menu.add("添加到BOM浏览器...",function(){
+		import domisoft;
+/*
+		import console
+		console.open();
+*/
+		var bomName = domisoft.showInputBox("指定大分类名称", "请给选中的成品输入分类名称,尽量简短,例如Mendos","", winform);
+		if !bomName return ; 
+		var prtLists = domisoft.getSelectedText(winform.listview);
+		if !#prtLists return ; 
+		thread.invoke(function(bomName, prtLists){
+			import access;
+			import console;			
+			import config;
+			import QHC;
+			var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
+			var acc, err = access(path);			
+			acc.beginTrans();
+			for(i=1;#prtLists;1){
+				var qitem = QHC.getSapItem(prtLists[i]);
+				acc.exec(
+					"INSERT INTO `Sheet1$`
+						(
+							大类, 中类, 小类, 物料, 物料描述, 属性, 可选项分类, 喷粉分类, 温度等级, 缓存日期
+						) 
+					VALUES
+						(
+							@bomName,@sort1,@sort2,@pcode,@pdesp,@roh,@kmat,@paint,@m2,@cacheDate
+						)"
+					,{				
+						bomName = bomName;
+						sort1 = "";
+						sort2 = "";
+						pcode = prtLists[i];
+						pdesp = qitem.物料描述;
+						roh = qitem.物料组;
+						kmat = "";
+						paint = "";
+						m2 = "";
+						cacheDate = "";				
+					} 
+				)
+			}
+			acc.commitTrans();
+			acc.close();
+		}, bomName, prtLists)	
+	})
 	menu.popup(x,y,true);	
 }
 /*}}*/
