@@ -166,7 +166,7 @@ winform.button.oncommand = function(id,event){
             if(img){
                 mergedPdf.createPage(i,img.width, img.height);
                 mergedPdf.insertImage(i,img);
-                img.close(); // 释放图片资源
+                img.dispose(); // 释放图片资源
             }
         }
 
