@@ -194,8 +194,13 @@ winform.button.oncommand = function(id,event){
    	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
    	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
     sht = null;
+/*
     excel_2 = null;
     excel_0 = null;
+*/
+	com.Release(sht)
+    com.Release(excel_2)
+    com.Release(excel_0)
     collectgarbage("collect");
 	
 }

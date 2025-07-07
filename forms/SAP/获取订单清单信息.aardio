@@ -217,15 +217,20 @@ winform.editDesp.onChange = function(){
 
 winform.button.oncommand = function(id,event){
 	var order_number = string.trim(winform.edit.text);
-	var note = winform.listview2.selIndex ? winform.listview2.getItemText(winform.listview2.selIndex,5) : null;
+	var note = #winform.listview2.selected ? winform.listview2.getItemText(winform.listview2.selIndex,5) : null;
 	if !order_number return ; 
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"};
 	var rez = thread.invokeAndWait(SAP.downloadOrderList, winform, order_number)
 	if rez 
 		owner.disabledText = null;
 	if note
-		sdb.exec("UPDATE `list` SET ? WHERE ??",{{"备注":note},{"SD 凭证":order_number}});
-	winform.getFolderList();
+		win.setTimeout(
+			function(){
+				sdb.exec("UPDATE `list` SET ? WHERE ??",{{"备注":note},{"SD 凭证":order_number}});
+			},1000
+		)
+	win.setTimeout(winform.getFolderList, 1500)
+	
 }
 
 subscribe("down_b2c_bom",function(filename){
