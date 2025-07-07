@@ -9,6 +9,7 @@ static2={cls="static";text="放进来后在文件名上点击右键调整顺序,
 )
 /*}}*/
 
+import win.debounce;
 import tarray;
 global.import("fsys.pdfium");
 
@@ -24,23 +25,31 @@ var tab;
 
 var renew = function(){
 	tab = {};	
-	tab.fields = {[1] = "文件名"; [2]="Path"; [3] = "type"}
+	tab.fields = {[1] = "文件名"; [2]="Path"; [3] = "type";[4]="Pages"}
 }
 renew();
-
+import win.ui.grid;
+var grid = win.ui.grid(winform.listview);
+grid.setTable(tab);
+grid.setReadonlyColumns([1,2,3])
 
 winform.onDropFiles = function(files){
 	var t = {}
 	for (i=1; #files){
-		var fileinfo = io.splitpath(files[i]);		
-		if !table.find(tarray.getCol(tab, "文件名"), fileinfo.file) or !table.find(tarray.getCol(tab, "Path"), fileinfo.dir)
+		var fileinfo = io.splitpath(files[i]);
+		if !table.indexOf([".jpg",".jpeg",".png",".gif",".bmp",".tif",".pdf"], fileinfo.ext) continue;
+		if !table.find(tarray.getCol(tab, "文件名"), fileinfo.file) or !table.find(tarray.getCol(tab, "Path"), fileinfo.dir){
+			var filetype = table.indexOf([".jpg",".jpeg",".png",".gif",".bmp"], fileinfo.ext) ? "image" : "pdf";
+			var pageCount = (filetype == "pdf") ? fsys.pdfium(files[i]).pageCount : null;
 			table.push(tab,	{
 				"文件名" =  fileinfo.file;
 				"Path" = fileinfo.dir;
-				"type" = table.indexOf([".jpg",".jpeg",".png",".gif",".bmp"], fileinfo.ext) ? "image" : "pdf"
+				"type" = filetype;
+				"Pages" = pageCount ? "1-" ++ pageCount  : ""
 			})
+		}
 	}
-	winform.listview.setTable(tab);
+	grid.setTable(tab);
 	winform.listview.adjust = function(cx,cy){
 	    winform.listview.fillParent(1);
 	    winform.listview.fillParent(2);
@@ -59,7 +68,7 @@ winform.popmenu.add('上移', function(id){
         var temp = tab[selIndex];
         tab[selIndex] = tab[selIndex - 1];
         tab[selIndex - 1] = temp;
-        winform.listview.setTable(tab);
+        grid.setTable(tab);
         winform.listview.selIndex = selIndex - 1;
     }
 });
@@ -70,7 +79,7 @@ winform.popmenu.add('下移', function(id){
         var temp = tab[selIndex];
         tab[selIndex] = tab[selIndex + 1];
         tab[selIndex + 1] = temp;
-        winform.listview.setTable(tab);
+        grid.setTable(tab);
         winform.listview.selIndex = selIndex + 1;
     }
 });
@@ -79,7 +88,7 @@ winform.popmenu.add('删除', function(id){
     var selIndex = winform.listview.selIndex;
     if(selIndex > 0){
         table.remove(tab, selIndex);
-        winform.listview.setTable(tab);
+        grid.setTable(tab);
     }
 });
 
@@ -119,7 +128,7 @@ winform.listview.onnotify = function(id, code, ptr) {
                             var temp = tab[dragIndex];
                             tab[dragIndex] = tab[row];
                             tab[row] = temp;
-                            winform.listview.setTable(tab);
+                            grid.setTable(tab);
                             winform.listview.selIndex = row;
                             dragIndex = row;
                         }
@@ -136,21 +145,27 @@ winform.listview.onnotify = function(id, code, ptr) {
     }
 }
 
+grid.onEditEnd = win.debounce( function(iItem,iSubItem){
+	tab = grid.getTable(tab.fields)
+})
 winform.button.oncommand = function(id,event){
 	var mergedPdf = fsys.pdfium();
 	for (i=1; winform.listview.count){
 		var item = tab[i];
-		var filename = winform.listview.getItemText(i,1);
-		var filepath = io.joinpath(winform.listview.getItemText(i,2) , winform.listview.getItemText(i,1));
+		var filename = tab[i].文件名;
+		var filepath = io.joinpath(tab[i].Path, tab[i].文件名);
+		var pagesStr = tab[i].Pages;
+		
 		if(item.type == "pdf"){
-            mergedPdf.importPages(filepath,,);//导入所有页面
+            mergedPdf.importPages(filepath,,pagesStr);//导入所有页面
+            //mergedPdf.importPages(filepath,1,"1")
         }
         elseif(item.type == "image"){
             // 将图片转换为 PDF 页
             var img = gdip.image(filepath);
             if(img){
                 mergedPdf.createPage(i,img.width, img.height);
-                mergedPdf.render(img,0,0,img.width,img.height);
+                mergedPdf.insertImage(i,img);
                 img.close(); // 释放图片资源
             }
         }
