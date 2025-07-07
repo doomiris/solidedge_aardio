@@ -46,8 +46,8 @@ if !config.tbm.Approver
 	config.tbm.Approver = ""//VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
 if !config.setbm.workingDir
 	config.setbm.workingDir = "d:\workspaces\"//VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces\");
-if !config.setbm.weakUpKey
-	config.setbm.weakUpKey = [4 /*_MOD_SHIFT*/, 0x70 /*_VK_F1*/];
+if !config.setbm.wakeUpKey
+	config.setbm.wakeUpKey = [4 /*_MOD_SHIFT*/, 0x70 /*_VK_F1*/];
 if !config.revmgr.desp
 	config.revmgr.desp = {};
 if !config.qtip.fav

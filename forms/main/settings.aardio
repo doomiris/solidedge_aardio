@@ -44,7 +44,7 @@ winform_setting.bindConfig( config.settings,{
 } );
 
 winform_setting.button.oncommand = function(id,event){
-	config.setbm.weakUpKey = winform_setting.hotkey.value;
+	config.setbm.wakeUpKey = winform_setting.hotkey.value;
 	config.setbm.save();
 	config.settings.save();
 	if mainForm
@@ -57,7 +57,7 @@ winform_setting.checkbox_hidepass.oncommand = function(id,event){
 }
 */
 
-winform_setting.hotkey.value = config.setbm.weakUpKey;
+winform_setting.hotkey.value = config.setbm.wakeUpKey;
 
 winform_setting.show();
 win.loopMessage();

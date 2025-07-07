@@ -37,10 +37,10 @@ mainForm.closeAll.skin({
 })
 
 /*只允许一个实例{{*/
-var atom,hwnd = mainForm.atom("domisoft.aardio.tbm");
+var atom, tbm_hwnd = mainForm.atom("domisoft.aardio.tbm");
 if(!atom and !_STUDIO_INVOKED){ 
-	win.showForeground(hwnd);
-	win.setActive(hwnd);
+	win.showForeground(tbm_hwnd);
+	win.setActive(tbm_hwnd);
 	win.quitMessage();	
 	return;
 }
@@ -73,9 +73,12 @@ mainForm.onMinimize = function(lParam){
 }
 	
 mainForm.onClose = function(hwnd,message,wParam,lParam){
+	
 	mainForm.onMinimize();
+/*
 	if _STUDIO_INVOKED
 		win.quitMessage();
+*/
 	var hasNewVer = thread.invokeAndWait(
 		function(current_version){
 			import win;
@@ -96,21 +99,27 @@ mainForm.onDestroy = function(){
 		mainForm.tray.delete()
 	}
 }
-
 import com.interface.ITaskbarList3;
 mainForm.wndproc =  function(hwnd,message,wParam,lParam){
  		select(message) {
  			case 0xACCF/*_WM_TRAYMESSAGE*/ {
 				select(lParam) {
 					case 0x205/*_WM_RBUTTONUP*/ {
-						win.setForeground(mainForm.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
+						win.setForeground(hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	    				var pt = ::POINT();
 						::User32.GetCursorPos(pt);   		
 	    				mainForm.popmenu2.popup(pt.x,pt.y, true);
 					}
-					case 0x202/*_WM_LBUTTONUP*/ {
-						win.setForeground(mainForm.hwnd); //弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失							
-						mainForm.show(!win.isVisible(mainForm.hwnd));
+					case 0x202/*_WM_LBUTTONUP*/ {						
+						var fore_hwnd = win.getForeground(); //检查最上层应用程序
+						var isForegroundTBM = (fore_hwnd == hwnd);
+						if isForegroundTBM {
+							mainForm.onMinimize();
+						}else{
+							win.setForeground(hwnd);
+							if !win.isVisible(hwnd)								
+								mainForm.show(true);							
+						}
 					}
 				}
 			}
@@ -119,8 +128,6 @@ mainForm.wndproc =  function(hwnd,message,wParam,lParam){
             } 
 	}
 }
-
-	
 /*}}*/
 /*托盘右键菜单{{*/
 
@@ -389,15 +396,15 @@ mainForm.unreghotkey(hkId);
 //重新注册系统热键;
 hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
-		var hwnd = win.getForeground(); //检查最上层应用程序
-		if(!hwnd) return;
-		var tid, pid = win.getThreadProcessId(hwnd); //获取进程ID
+		var fore_hwnd = win.getForeground(); //检查最上层应用程序
+		if(!fore_hwnd) return;
+		var tid, pid = win.getThreadProcessId(fore_hwnd); //获取进程ID
 		if(!pid) return;
 		var current_App;
 		for object,interface,name,index in com.eachRunning() {
 			if object
 				if object.application
-					if object.application.hwnd == hwnd {
+					if object.application.hwnd == fore_hwnd {
 						current_App = object.application;	//遍历com对象,找到pid一样的COM对象
 						break;	
 					}
@@ -424,7 +431,7 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 						thread.invoke( λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio"))
 					};  
 				})
-
+				com.Release(wb);
 			}
 			case "Solid Edge 2020" {
 				if !current_App.Documents.Count return ; 
@@ -432,7 +439,10 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 				thread.invoke( λ () loadcodex("\forms\main\frmPage1.aardio"))
 			}
 		}
-	}, table.unpack(config.setbm.weakUpKey)
+		com.Release(current_App);
+		collectgarbage("collect");
+		
+	}, table.unpack(config.setbm.wakeUpKey)
 );
 
 
