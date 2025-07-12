@@ -58,6 +58,7 @@ winform.frmReLoad = function(){
 	winform.titleRow = null;
 	
 	excel := com.excel(false);
+	if !excel return ; 
 	if !excel.ActiveWorkbook return ; 
 	sht = excel.ActiveWorkbook.ActiveSheet;
 	winform.static.text = sht.parent.Name ++ "![" ++ sht.name ++ "]";
@@ -109,6 +110,7 @@ var update = function(winform, tab){
 	var end_row = winform.edit2.text;
 	
 	var excel = com.excel(false);
+	if !excel  return "noexcel"; 
 	var sht = excel.ActiveWorkbook.ActiveSheet;
 	sht.AutoFilterMode = false;
 	for (i=1; sht.ListObjects.Count)
@@ -167,12 +169,14 @@ var update = function(winform, tab){
         }
     }
 	excel.alerts = true;
-	winform.button.disabledText = null;
+	return "done"; 
 }
 
 winform.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
-	thread.invoke(update, winform, tab);
+	var rez = thread.invokeAndWait(update, winform, tab);	
+	if rez
+		winform.button.disabledText = null;
 }
 winform.onDestroy = function(){
    	if excel 	excel.alerts = true;    //防止意外关闭后Excel假死
