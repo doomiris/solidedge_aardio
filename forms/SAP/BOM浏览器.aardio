@@ -1,4 +1,5 @@
 import win.ui;
+import win.ui.menu;
 import win.ui.grid;
 import win.ui.toolbar;
 /*DSG{{*/
@@ -26,17 +27,23 @@ import com.excel;
 import godking.tableToDB;
 //import tarray;
 
-import win.ui.menu;
+
 winform.listview.enableDoubleBuffering();
 winform.listview2.enableDoubleBuffering();
-var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
-var acc, err = access(path);
 
-var db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
-acc.close();
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
+var acc, db;
+var refreshDB = function(){
+	acc = access(path);
+	db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
+	acc.close();	
+}
+
+
 
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.listview2);
+
 grid.source = {};
 grid2.source = {};
 grid.reset = λ() owner.setTable(owner.source);
@@ -59,7 +66,8 @@ var resetToolbar = function(){
 }
 
 
-var getBOMList = function(){
+winform.frmReLoad = function(){
+	refreshDB();
 	var t = db.getTable("SELECT DISTINCT 大类 FROM [Sheet1$]");
 	grid2.source = t;
 	grid2.setTable(grid2.source);
@@ -177,9 +185,27 @@ grid.copyPartNo = function(fields){
 	domisoft.copySelectedItem(owner);
 	owner.doNotCopyColumns = {};
 }
+grid.deleteItems = function(){
+	var selected = owner.selected;
+	var flist = {};
+	if !#selected return ; 
+	for (i=1; #selected)
+		table.push(flist, owner.source[selected[i]]["物料"]);
+	var dtype = winform.listview2.items[winform.listview2.selIndex]["大类"]
+	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + table.tostring(flist),"需要确认",winform.hwnd) return; 
+	acc = access(path);
+	acc.exec("DELETE FROM `Sheet1$` WHERE ??", {{"大类" : dtype, "物料":flist}});
+	acc.close();	
+
+	winform.frmReLoad();
+
+}
 var menu = win.ui.popmenu(winform);
 menu.add("打开BOM", λ()	grid.onDoubleClick(winform.listview.selIndex));
 menu.add("下载BOM...", downloadbom);
+menu.add()
+menu.add("删除选定行", λ() grid.deleteItems());
+menu.add()
 menu.add("复制[物料]", λ() grid.copyPartNo({"物料"}));
 menu.add("复制[物料][物料描述]", λ() grid.copyPartNo({"物料","物料描述"}));
 menu.add("复制所选BOM文件...", λ() grid.copyfiles(grid.getCopyFilesList()));
@@ -191,16 +217,12 @@ grid.onRightClick = function(item,subItem,nmListView){
 	menu.popup(x,y,true,item);
 }
 
-getBOMList();
+winform.frmReLoad();
 
 winform.show();
 
 winform.splitter.split(winform.listview,winform.listview2);
 winform.listview.doNotCopyColumns = {-1};
-
-winform.button.oncommand = function(id,event){
-	
-}
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.listview2.translateAccelerator = domisoft.ctrlC;
