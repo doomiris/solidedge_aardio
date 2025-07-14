@@ -34,7 +34,7 @@ grid.setTable(tab);
 grid.setReadonlyColumns([1,2,3])
 
 var pdfExt = [".pdf"];
-var imgExt = [".jpg",".jpeg",".png",".gif",".bmp",".tif"];
+var imgExt = [".jpg",".jpeg",".png",".gif",".bmp",".tif",".jfif"];
 
 winform.onDropFiles = function(files){
 	var t = {}
