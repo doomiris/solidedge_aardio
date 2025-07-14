@@ -364,7 +364,10 @@ winform.button8.oncommand = function(id,event){
 	)
 }
 
+
+
 import domisoft;
+winform.listview.copyWithHeaders = true;
 winform.listview.translateAccelerator = domisoft.ctrlC;
 
 winform.show();

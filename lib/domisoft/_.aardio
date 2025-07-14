@@ -125,10 +125,14 @@ copySelectedItem = function(ctrl){
         
         ..thread.invoke(stopExcelCutCopyMode);
         
-		var items = ctrl.items;
-		var selected = ctrl.selected; 
-		
+		var selected = ctrl.selected;
+		var sourceTab = ctrl.getTable(true);
+		var fields = table.shift(sourceTab)
+		var items = sourceTab;
+			
 		var selTab = {}
+		if ctrl.copyWithHeaders
+			table.push(selTab,fields); 
 		for (i=1; #selected)
 				table.push(selTab, items[selected[i]]);
 		for (i=1; #selTab)
@@ -356,6 +360,21 @@ envFix = function(str){
 	//outStr = string.replace(outStr,"@OneDrive - ","");	/*bugfix*/
 	return outStr;
 }
+isWorkingHour = function(startHour = 8, endHour = 18){
+	var currentHour = time.now().hour;	
+/*
+# 判断currentHour 是否在 startHour 和 endHour 区间内, 返回 true 或 false
+*/
+	if (startHour <= endHour) {
+		// Same-day range (e.g., 8 to 18)
+		return currentHour >= startHour and currentHour < endHour;
+	} 
+	else {
+		// Cross-day range (e.g., 22 to 6)
+		return currentHour >= startHour or currentHour < endHour;
+	}
+}
+
 refreshSAP = function(winform){
 	import config;
 	if !config.settings.keepRefreshSAPGUI return ; 
@@ -364,6 +383,7 @@ refreshSAP = function(winform){
 			winform.setInterval( 
 				function(){
 					try{
+						if !isWorkingHour() return ; 
     					import SAP.vm;
     					var session = SAP.vm();
     					if !session	return ; 
