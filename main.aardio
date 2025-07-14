@@ -166,9 +166,21 @@ mainForm.popmenu2.add('SAP一键登入2', function(){
 	mainForm.tray.pop("Starting SAP GUI ...","TBM");
 });
 mainForm.popmenu2.add();//分隔线
-
-
-mainForm.popmenu2.add('&Exit', λ() win.quitMessage());
+mainForm.popmenu2.add('ipconfig /flushdns',
+	λ()
+		thread.invoke(
+			function(){
+				import process.popen;
+				import win;
+				var prcs = process.popen.cmd(`
+						ipconfig /flushdns
+					`)
+				win.msgboxTimeout(prcs.readAll(),,3000)
+			}
+		)
+)
+mainForm.popmenu2.add();//分隔线
+mainForm.popmenu2.add('&Exit TBM', λ() win.quitMessage());
 /*}}*/
 
 mainForm.splitter.split(mainForm.listbox, mainForm.custom);
@@ -400,7 +412,8 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 		if(!fore_hwnd) return;
 		var tid, pid = win.getThreadProcessId(fore_hwnd); //获取进程ID
 		if(!pid) return;
-		var current_App;
+		var current_App = null;
+/*
 		for object,interface,name,index in com.eachRunning() {
 			if object
 				if object.application
@@ -409,6 +422,19 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 						break;	
 					}
 		}
+*/
+		com.enumRunning( 
+			function(displayName,object){  
+				if object
+					if object.Application
+						if object.Application.Hwnd
+							if object.Application.Hwnd == fore_hwnd {
+								current_App = object.Application;	//遍历com对象,找到pid一样的COM对象
+								return true;	//退出枚举
+							}
+			}
+		)
+
 		if !current_App return ; 
 		select(current_App.Name){
 			case "Microsoft Excel" {
