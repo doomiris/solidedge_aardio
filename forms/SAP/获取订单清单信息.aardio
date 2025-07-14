@@ -132,7 +132,34 @@ winform.grid.onDoubleClick = function(item,subItem,nmListView){
 	else 
 		process.execute(c)
 }
-
+winform.grid.copyPartNo = function(fields){
+	var f = owner.source.fields;
+	owner.doNotCopyColumns = {};
+	for k, v in f
+		if !table.find(fields, v)
+			table.push(owner.doNotCopyColumns, k);
+	domisoft.copySelectedItem(owner);
+	owner.doNotCopyColumns = {};
+}
+/*
+winform.grid.copyfiles = function(tab){
+	import win.clip.file;
+	win.clip.file.write(tab,"copy");
+}
+winform.grid.getCopyFilesList = function(){
+	var tab = table.array();
+	var data = owner.getTable(owner.source.fields);
+	var selIndx = owner.selected;
+	for (i=1; #selIndx ){
+		var n = string.join({data[selIndx[i]]["物料"], data[selIndx[i]]["描述"]},"_") ++ ".xlsx";
+		n = string.replace(n," ","_");
+		var f = io.joinpath(config.__sapDownload, n);	
+		if io.exist(f)
+			table.push(tab, f);
+	}
+	return tab;   
+}
+*/
 winform.grid.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
 	var selectedIndex = owner.selected;
@@ -150,13 +177,16 @@ winform.grid.onRightClick = function(item,subItem,nmListView){
 	c = io.joinpath(config.__sapDownload, c + ".xlsx") ;
 	var m = string.join({"COOIS", t["SD 凭证"], t["项目(SD)"]}, "_");
 	m = io.joinpath(config.__sapDownload, m + ".xlsx") ;
-	
+	menu.add("复制[物料]", λ() winform.grid.copyPartNo({"物料"}));
+	menu.add("复制[物料][物料描述]", λ() winform.grid.copyPartNo({"物料","描述"}));
+menu.add()
 	if io.exist(c)
 		menu.add("打开订单BOM...", λ() process.execute(c));
 	menu.add("下载订单BOM...", λ() SAP.downloadB2CBOM(winform, t["SD 凭证"], itemList));
 	if io.exist(m)
 		menu.add("打开COOIS生产订单BOM...", λ() process.execute(m));
 	menu.add("下载COOIS生产订单BOM...", λ() SAP.downloadManufactureBOM(winform, t["SD 凭证"], itemList));
+menu.add()
 	menu.add("添加备注...", λ() winform.grid.beginEdit(item,6 /*备注列*/));
 	menu.add("按itemmaster汇总格式复制...", function(){		
 		var tab2 = domisoft.copySelectedItem(winform.listview);
