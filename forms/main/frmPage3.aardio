@@ -36,7 +36,7 @@ var loadUpdateLog = function(){
 	import domisoft;
 	var text = thread.invokeAndWait(domisoft.getContentFromHTTP, url);
 */
-	var text = string.load("update_history.md")
+	var text = string.load("~\update_history.md")
 	if text 
 		wb.writeDelta(text);
 }
