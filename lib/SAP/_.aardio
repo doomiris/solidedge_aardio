@@ -391,7 +391,7 @@ downloadOrderList = function(winform, orderId){
 			stopScript = true
 		end if
 	*/
-	if vm.script.stopScript	return ; 
+	if vm.script.stopScript	return "没有在数据库中或已归档";
 	vm.script = /*
 		'获取订单日期
 		startdate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
