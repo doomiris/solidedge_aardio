@@ -7,6 +7,7 @@ import fsys.version;
 import domisoft;
 
 config = fsys.config(io.appData("/domisoft/SETBM/"));
+
 var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED ?  "\" : io._exedir, "TBM.ini"));
 
 var lib = ini.getSection("lib");
@@ -14,7 +15,6 @@ var lib = ini.getSection("lib");
 var table = ..table;
 var string = ..string;
 var math = ..math;
-var config = ..config;
 var io = ..io;
 var domisoft = ..domisoft;
 var fsys = ..fsys;
@@ -29,23 +29,14 @@ namespace config {
 	__pdfLib = domisoft.envFix(lib.pdfLib);
 	__qhcLib = domisoft.envFix(lib.qhcLib);
 	__templateLib = domisoft.envFix(lib.templateLib);
-	__cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
-	__formTemplateSharepointServer = `https://carcgl.sharepoint.com/sites/CCRSAPUsers/Shared Documents/General/各种申请表最新版(只读)/`;
 }
 
 	
 if !config.dbServer.path
 	config.dbServer.path = domisoft.envFix(lib.dbServer);
 
-//import VBASettingIO;
-if !config.tbm.Designer
-	config.tbm.Designer = ""// VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Designer", "");
-if !config.tbm.Reviewer
-	config.tbm.Reviewer = ""//VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Reviewer", "");
-if !config.tbm.Approver
-	config.tbm.Approver = ""//VBASettingIO.GetSetting("Domisoft", "TBM_SE", "Default_Approver", "");
 if !config.setbm.workingDir
-	config.setbm.workingDir = "d:\workspaces\"//VBASettingIO.GetSetting("Domisoft", "Config", "SE_Output", "d:\workspaces\");
+	config.setbm.workingDir = fsys.createDir("c:\workspaces\")
 if !config.setbm.wakeUpKey
 	config.setbm.wakeUpKey = [4 /*_MOD_SHIFT*/, 0x70 /*_VK_F1*/];
 if !config.revmgr.desp
@@ -63,6 +54,9 @@ if !config.printingCenter.AllowSentToPdfLib
 
 if !config.webview.lang
 	config.webview.lang = "zh-cn";
+if !config.userDbPath
+	config.userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
+
 /**intellisense(config)
 __appName = 应用程序名
 __appVersion = 应用程序内部版本号

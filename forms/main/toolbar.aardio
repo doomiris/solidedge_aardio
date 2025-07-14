@@ -2,7 +2,9 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=140;dl=1;dr=1;dt=1;z=1}
+custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=73;dl=1;dr=1;dt=1;z=1};
+custom2={cls="custom";text="自定义控件";left=0;top=94;right=455;bottom=470;clip=1;db=1;dl=1;dt=1;z=2};
+static={cls="static";text="点击新建常用表格...";left=2;top=77;right=441;bottom=98;dl=1;dt=1;transparent=1;z=3}
 )
 /*}}*/
 
@@ -165,24 +167,19 @@ var tbutton7 = function(id,event){
 import win.ui;
 import win.ui.menu;
 import QHC;
-var tlist = {
-	[1] = "新增--专用号申请-型号-姓名-日期.xlsx";
-	[2] = "工单更改申请.xlsx";		
-	[3] = "BOM更改申请单模板-姓名-日期-是否涉及选项-是否涉及工单.xlsx";		
-	[4] = "新产品BOM申请单模板-姓名-日期.xlsx";		
-	[5] = "新增--产成品申请-型号-姓名-申请日期.xlsx";		
-	[6] = "B2C_BOM_批量更改单.xlsx";
-}
+import fsys;
+
+var tlist = fsys.list(config.__templateLib,,"*.xlsx");
+
 var opent = function(n){
 	import com.excel;
 	var excel = com.GetOrCreateObject("Excel.Application");
 	if !excel win.msgbox("请先打开Excel程序");
 	if !excel return ; 
 	if !excel.WorkBooks return ; 
-	if !config.settings.createNewFormsFromSharepoint
-		var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
-	else
-		var wb = excel.WorkBooks.Add(config.formTemplateSharepointServer ++ tlist[n]);
+
+	var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
+
 	
 	excel.Visible = true;
 	win.showForeground(excel.Application.hwnd);
@@ -191,14 +188,9 @@ var opent = function(n){
 winform.menuTable={};
 winform.menuTable[1] = win.ui.popmenu(winform);//创建弹出菜单
 winform.menuTable[2] = win.ui.popmenu(winform);//创建弹出菜单
-winform.menuTable[1].addTable({
-    { "专用号申请表"; λ() opent(1)};
-    { "工单更改申请";	λ() opent(2)};
-    { "BOM更改申请表";		λ() opent(3)};
-    { "新产品BOM申请表";	λ() opent(4)};
-    { "产成品编码申请表";	λ() opent(5)};
-    { "B2C BOM 批量更改单";		λ() opent(6)};
-})
+for(n=1;#tlist)
+	winform.menuTable[1].add( tlist[n] , λ() opent(n) )
+
 winform.menuTable[2].addTable({
 	{"格式化BOM"; λ() QHC.formatBOM()};
 	{"格式化成本BOM"; λ() QHC.formatCostBom()}
@@ -302,6 +294,22 @@ for (i=1; #tools)
 		i /* id */,
 		4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/
 	)
+
+var tform = win.ui.toolbar(winform.custom2)
+tform.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
+tform.showLabel = true; //在按钮上显示文字
+//tform.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
+tform.imageList = imgList;
+for (i=1; #tlist){
+	tform.add(
+		tlist[i],
+		λ() opent(i),
+		 436/* img */,
+		i /* id */,
+		4/*_TBSTYLE_GROUP*/
+	)
+
+}
 
 winform.show();
 win.loopMessage();
