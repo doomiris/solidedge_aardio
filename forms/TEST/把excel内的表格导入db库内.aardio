@@ -1,0 +1,64 @@
+import console; 
+import config;
+import process;
+import access;
+import godking.tableToDB;
+
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
+var acc, gdb;
+
+acc = access(path);
+gdb = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
+acc.close();
+
+
+var db = sqlite(io.joinpath(config.dbServer.path,"BOM_LIB.db"))
+
+if db.existsTable("lib") db.exec("DROP table lib");
+
+db.exec(
+	`CREATE TABLE lib( 
+		ID INTEGER,  
+		大类 TEXT, 中类 TEXT, 小类 TEXT, 物料 TEXT, 物料描述 TEXT, 属性 TEXT, 可选项分类 TEXT, 喷粉分类 TEXT, 温度等级 TEXT,
+		PRIMARY KEY(ID AUTOINCREMENT),
+		UNIQUE(大类,物料)
+	);`
+)
+/*
+# 把gdB表格内的所有数据添加到lib表内
+*/
+
+
+// 获取gdb表中的所有数据
+var data = gdb.getTable("SELECT * FROM [Sheet1$]");
+gdb.close();
+// 将数据插入到SQLite数据库
+db.beginTrans();
+
+    // 使用 INSERT OR IGNORE, 如果数据已存在(违反UNIQUE约束),则静默忽略本次插入
+    // 这就完美实现了“如果不存在则插入”的逻辑,且性能最高
+var cmd = db.prepare(`INSERT OR IGNORE INTO lib(大类,中类,小类,物料,物料描述,属性,可选项分类,喷粉分类,温度等级) 
+        VALUES(@大类,@中类,@小类,@物料,@物料描述,@属性,@可选项分类,@喷粉分类,@温度等级)` );
+
+for(i=1; #data; 1){
+    var row = data[i];
+    //console.dumpTable(row)
+    cmd.step(  
+        "大类" = row.大类,
+        "中类" = row.中类,
+        "小类" = row.小类,
+        "物料" = row.物料,
+        "物料描述" = row.物料描述,
+        "属性" = row.属性, 
+        "可选项分类" = row.可选项分类,
+        "喷粉分类" = row.喷粉分类,
+        "温度等级" = row.温度等级
+    );
+}
+
+
+db.commitTrans();
+db.close();
+
+console.log("数据导入完成");
+console.pause();

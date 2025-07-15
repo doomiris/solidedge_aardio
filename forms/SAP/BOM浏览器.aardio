@@ -22,23 +22,29 @@ import domisoft;
 import tarray;
 import config;
 import process;
-import access;
+//import access;
+import sqlite;
 import com.excel;
-import godking.tableToDB;
+//import godking.tableToDB;
 //import tarray;
 
 
 winform.listview.enableDoubleBuffering();
 winform.listview2.enableDoubleBuffering();
 
-var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
 var acc, db;
+/*
 var refreshDB = function(){
 	acc = access(path);
 	db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
-	acc.close();	
+	acc.close();
 }
+*/
 
+var refreshDB = function(){
+	db = sqlite(path);
+}
 
 
 var grid = win.ui.grid(winform.listview);
@@ -68,7 +74,7 @@ var resetToolbar = function(){
 
 winform.frmReLoad = function(){
 	refreshDB();
-	var t = db.getTable("SELECT DISTINCT 大类 FROM [Sheet1$]");
+	var t = db.getTable("SELECT DISTINCT 大类 FROM [lib]");
 	grid2.source = t;
 	grid2.setTable(grid2.source);
 }
@@ -104,20 +110,21 @@ winform.edit.onChange = function(){
 }
 grid2.onClick = function(item,subItem,nmListView){
 	if !item return ; 
-	var t = db.getTable(`SELECT * FROM [Sheet1$] WHERE [大类]="` + owner.source[item]["大类"]+`";`)
+	var t = db.getTable(`SELECT 中类,小类,物料,物料描述,属性,可选项分类,喷粉分类,温度等级 FROM [lib] WHERE [大类]="` + owner.source[item]["大类"]+`";`)
+	table.push(t.fields, "缓存日期");
 	for (i=1;#t){
 		var f = string.join({t[i]["物料"], t[i]["物料描述"]},"_") ++ ".xlsx";
 		f = string.replace(f," ","_"); //在拼接前处理, 否则路径含空格
 		f = io.joinpath(config.__sapDownload, f);		
 		if io.exist(f)
-			t[i]["缓存日期"] = domisoft.getFileDate(f);			
+			t[i]["缓存日期"] = domisoft.getFileDate(f);
 	}
 	grid.source = t;
 	winform.edit.text = "";
 
 	grid.setTable(grid.source)
 	
-	grid2.ColumnWidth := domisoft.setColumnWidth(grid, {50,50,50,120,250,50,50,50,50})
+	grid2.ColumnWidth := domisoft.setColumnWidth(grid, {50,50,120,250,50,50,50,50})
 	getTags(grid.source,{"中类","小类","属性","可选项分类","喷粉分类","温度等级"})
 }
 
@@ -194,7 +201,7 @@ grid.deleteItems = function(){
 	var dtype = winform.listview2.items[winform.listview2.selIndex]["大类"]
 	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + table.tostring(flist),"需要确认",winform.hwnd) return; 
 	acc = access(path);
-	acc.exec("DELETE FROM `Sheet1$` WHERE ??", {{"大类" : dtype, "物料":flist}});
+	acc.exec("DELETE FROM `lib` WHERE ??", {{"大类" : dtype, "物料":flist}});
 	acc.close();	
 
 	winform.frmReLoad();
