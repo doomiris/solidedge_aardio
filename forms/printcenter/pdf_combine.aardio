@@ -40,7 +40,7 @@ winform.onDropFiles = function(files){
 	var t = {}
 	for (i=1; #files){
 		var fileinfo = io.splitpath(files[i]);
-		if !table.indexOf(table.concat(pdfExt,imgExt), fileinfo.ext) continue;
+		if !table.indexOf(table.concat(pdfExt,imgExt), string.lower(fileinfo.ext)) continue;
 		if !table.find(tarray.getCol(tab, "文件名"), fileinfo.file) or !table.find(tarray.getCol(tab, "Path"), fileinfo.dir){
 			var filetype = table.indexOf(imgExt, fileinfo.ext) ? "image" : "pdf";
 			var pageCount = (filetype == "pdf") ? fsys.pdfium(files[i]).pageCount : null;
