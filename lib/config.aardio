@@ -28,6 +28,7 @@ namespace config {
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
 	__pdfLib = domisoft.envFix(lib.pdfLib);
 	__qhcLib = domisoft.envFix(lib.qhcLib);
+	__cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
 	__templateLib = domisoft.envFix(lib.templateLib);
 }
 

@@ -408,42 +408,15 @@ mainForm.unreghotkey(hkId);
 //重新注册系统热键;
 hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
-		var fore_hwnd = win.getForeground(); //检查最上层应用程序
-		if(!fore_hwnd) return;
-		var tid, pid = win.getThreadProcessId(fore_hwnd); //获取进程ID
-		if(!pid) return;
-		var current_App = null;
-/*
-		for object,interface,name,index in com.eachRunning() {
-			if object
-				if object.application
-					if object.application.hwnd == fore_hwnd {
-						current_App = object.application;	//遍历com对象,找到pid一样的COM对象
-						break;	
-					}
-		}
-*/
-		com.enumRunning( 
-			function(displayName,object){  
-				if object
-					if object.Application
-						if object.Application.Hwnd
-							if object.Application.Hwnd == fore_hwnd {
-								current_App = object.Application;	//遍历com对象,找到pid一样的COM对象
-								return true;	//退出枚举
-							}
-			}
-		)
-
-		if !current_App return ; 
-		select(current_App.Name){
-			case "Microsoft Excel" {
-				if !current_App.Workbooks.Count return ;
-				import string.keywords;
+		import domisoft
+		import string.keywords;		
+		var title, exePath = domisoft.getActiveAppName();
+		var exe_name = exePath ? string.lower(io.splitpath(exePath).file) : null;
+		select(exe_name){
+			case "excel.exe" {
+				if !title return ;				
 				var kw = string.keywords(["专用号申请","BOM更改","BG","Item_Master"]);
-				var wb = current_App.ActiveWorkbook;
-				if !wb return ; 
-				switch( kw.findOne(wb.Name), {  
+				switch( kw.findOne(title), {  
 					[1]: function(){
 						thread.invoke( λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"))
 					};
@@ -457,17 +430,14 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 						thread.invoke( λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio"))
 					};  
 				})
-				com.Release(wb);
 			}
-			case "Solid Edge 2020" {
-				if !current_App.Documents.Count return ; 
-				if current_App.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+			case "edge.exe" {
+				if !title return ;
+				var kw = string.keywords(["- draft -",".dft","- 工程图 -"]);
+				if !kw.findOne(string.lower(title)) return ; 
 				thread.invoke( λ () loadcodex("\forms\main\frmPage1.aardio"))
 			}
 		}
-		com.Release(current_App);
-		collectgarbage("collect");
-		
 	}, table.unpack(config.setbm.wakeUpKey)
 );
 

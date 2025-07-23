@@ -58,9 +58,12 @@ getErr.fields = {"行"; "相关物料号";"错误描述"}
 winform.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="wait..."}
 	
-	thread.invoke( 
+	var succ = thread.invokeAndWait(
 		function(winform){
-			
+/*
+			import console;
+			console.open();
+*/
 			if !#winform.combobox2.selText return ; 	
 			import tarray;
 			import com.excel;
@@ -76,8 +79,8 @@ winform.button.oncommand = function(id,event){
 			sht = domisoft.getRunningWorkSheet(winform.combobox2.selText);
 			excel_2 = sht.Parent.Application;
 			
-			if !sht.Columns("B:B").find("BOM项目") return error("不是新BOM申请表"); 
-			if !sht.Rows("4:4").find("相关性语句") return error("不是最新版申请表"); 
+			if !sht.Columns("B:B").find("BOM项目") return "不是新BOM申请表"; 
+			if !sht.Rows("4:4").find("相关性语句") return "不是最新版申请表"; 
 			var lvlErrFind = sht.columns("A").find("…");	
 			if lvlErrFind and lvlErrFind.rows.count 
 				sht.columns("A").Replace ("…", "..."); //处理层级含非法字符错误
@@ -351,8 +354,12 @@ winform.button.oncommand = function(id,event){
     	excel_2 = null;
     	excel_0 = null;
    		collectgarbage("collect");
+   		return "完成"; 
 		}, winform
 	) 
+
+	winform.button.disabledText = null;
+	win.msgboxTimeout(succ);
 	mylist = null;
 }
 

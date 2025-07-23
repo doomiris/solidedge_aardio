@@ -16,7 +16,7 @@ button3={cls="button";text='\uF00D  Cancel';left=280;top=306;right=381;bottom=34
 button4={cls="button";text='\uF017 ';left=305;top=184;right=329;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');hide=1;z=27};
 button5={cls="button";text='\uF0C7 ';left=178;top=184;right=202;bottom=208;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=28};
 button6={cls="button";text='\uF06E';left=104;top=144;right=128;bottom=167;bgcolor=0xFFFFFF;dl=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');z=32};
-button7={cls="button";text='\uF142';left=487;top=103;right=501;bottom=127;color=0x808080;dr=1;dt=1;flat=1;font=LOGFONT(h=-11;name='FontAwesome');z=35};
+button7={cls="button";text='\uF142';left=487;top=103;right=501;bottom=127;color=0x808080;dr=1;dt=1;flat=1;font=LOGFONT(h=-11;name='FontAwesome');z=34};
 cb_approve_date={cls="edit";left=215;top=248;right=300;bottom=272;dl=1;dt=1;z=15};
 cb_approver={cls="combobox";left=48;top=245;right=178;bottom=270;dl=1;dt=1;items={};mode="dropdown";z=13};
 cb_design_date={cls="edit";left=215;top=184;right=300;bottom=208;dl=1;dt=1;z=10};
@@ -24,7 +24,7 @@ cb_designer={cls="combobox";left=48;top=185;right=178;bottom=210;dl=1;dt=1;items
 cb_material={cls="combobox";left=47;top=103;right=235;bottom=129;dl=1;dt=1;edge=1;items={};mode="dropdown";z=3};
 cb_model_no={cls="combobox";left=300;top=58;right=488;bottom=84;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 cb_name_cn={cls="combobox";left=47;top=58;right=235;bottom=84;dl=1;dt=1;edge=1;items={};mode="dropdown";z=1};
-cb_paint_std={cls="combobox";left=210;top=147;right=332;bottom=173;dl=1;dt=1;edge=1;items={"Q/LD J52005","GB/T 21363-2018"};mode="dropdown";z=36};
+cb_paint_std={cls="combobox";left=210;top=147;right=332;bottom=173;dl=1;dt=1;edge=1;items={"Q/LD J52005","GB/T 21363-2018"};mode="dropdown";z=35};
 cb_review_date={cls="edit";left=215;top=216;right=300;bottom=240;dl=1;dt=1;z=14};
 cb_reviewer={cls="combobox";left=48;top=215;right=178;bottom=240;dl=1;dt=1;items={};mode="dropdown";z=12};
 cb_tol={cls="combobox";left=358;top=148;right=488;bottom=174;dr=1;dt=1;edge=1;items={"GB/T 1804-m","GB/T 1804-c","GB/T 1804-v"};mode="dropdown";z=18};
@@ -36,7 +36,6 @@ rd_M={cls="radiobutton";text="自制件(&E)";left=24;top=328;right=96;bottom=344
 rd_P={cls="radiobutton";text="外购件(&F)";left=96;top=328;right=160;bottom=344;bgcolor=0xFFFFFF;db=1;dl=1;z=31};
 seDocPath={cls="static";text="点击此处刷新";left=48;top=24;right=480;bottom=41;align="right";aw=1;dl=1;dr=1;dt=1;notify=1;transparent=1;z=6};
 static={cls="static";text="设计";left=15;top=190;right=45;bottom=209;dl=1;dt=1;transparent=1;z=19};
-static10={cls="static";text="唤起快捷键 Alt+T";left=168;top=320;right=272;bottom=336;align="right";color=0x008000;db=1;dr=1;transparent=1;z=34};
 static2={cls="static";text="审核";left=15;top=220;right=45;bottom=243;dl=1;dt=1;transparent=1;z=20};
 static3={cls="static";text="批准";left=15;top=250;right=45;bottom=275;dl=1;dt=1;transparent=1;z=21};
 static4={cls="static";text="名称";left=15;top=63;right=45;bottom=82;dl=1;dt=1;transparent=1;z=22};
@@ -360,9 +359,12 @@ winform.cb_approver.onEditChange= function(){
 
 
 winform.frmReLoad = function(){
-    var initSucc = initDeclare();
-    winform.seDocPath.text = initSucc ? seDFT.FullName : "无法获取DFT信息, 点击此处刷新重试";
+    var initSucc = initDeclare();   
+    winform.seDocPath.text = "无法获取DFT信息, 点击此处刷新重试";
 	if !initSucc return ; 
+	var filename = io.splitpath(seDFT.FullName).file;
+	winform.seDocPath.text = filename;
+	
 	loadFromTab(seLbs);	//读取当前内容
 	loadDefaults();	//读取默认值(新图纸)
 	iniFrmCTRL();

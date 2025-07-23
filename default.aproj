@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="Carrier" FileDescription="TBM" LegalCopyright="Copyright (C) Carrier 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.634" ProductVersion="1.5.0.634" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.649" ProductVersion="1.5.0.649" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -77,6 +77,7 @@
 			<file name="压缩S文件.aardio" path="forms\side_loader\压缩S文件.aardio" comment="forms\side_loader\压缩S文件.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
+			<file name="查看系统图标.aardio" path="forms\side_loader\查看系统图标.aardio" comment="forms\side_loader\查看系统图标.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
 		</folder>

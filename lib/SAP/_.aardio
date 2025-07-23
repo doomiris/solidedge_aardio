@@ -507,6 +507,8 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 	    	dim orderItem
 	    	dim lib_path
 	    	dim filename
+	    	dim notFound
+
 
 	*/
 
@@ -516,6 +518,7 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 		vm.script.orderItem = itemList[i];
 		vm.script.filename = string.join({"COOIS",orderId,itemList[i]},"_") + ".xlsx"
 		vm.script = /*
+			notFound = False
 			session.findById("wnd[0]/usr/ssub%_SUBSCREEN_TOPBLOCK:PPIO_ENTRY:1100/cmbPPIO_ENTRY_SC1100-PPIO_LISTTYP").key = "PPIOM000"
 			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDAUF-LOW").text = orderId
 			session.findById("wnd[0]/usr/tabsTABSTRIP_SELBLOCK/tabpSEL_00/ssub%_SUBSCREEN_SELBLOCK:PPIO_ENTRY:1200/ctxtS_KDPOS-LOW").text = orderItem
@@ -527,11 +530,15 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 			on error resume next
 				if NOT session.findById("wnd[1]/usr/txtMESSTXT1") is Nothing then
 					session.findById("wnd[1]/tbar[0]/btn[0]").press
+					notFound = True
 				end if
 			on error goto 0
-			
-			
-			
+		*/
+		if vm.script.notFound {
+			win.msgboxTimeout("还没排产 " ++ orderId ++ " : " ++ itemList[i])
+			continue;
+		} 
+		vm.script = /*				
 			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").contextMenu
 			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").selectContextMenuItem "&XXL"
 			session.findById("wnd[1]/usr/chkCB_ALWAYS").selected = true

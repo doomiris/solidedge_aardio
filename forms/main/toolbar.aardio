@@ -304,7 +304,7 @@ for (i=1; #tlist){
 	tform.add(
 		tlist[i],
 		λ() opent(i),
-		 436/* img */,
+		 81 /* img */,
 		i /* id */,
 		4/*_TBSTYLE_GROUP*/
 	)

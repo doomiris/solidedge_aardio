@@ -54,6 +54,7 @@ excel.Quit();
 import config;
 import sqlite;
 var db = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));
+db.exec("PRAGMA temp_store_directory = 'c:\temp\';")
 
 var fieldsName = {};
 var foam = {};

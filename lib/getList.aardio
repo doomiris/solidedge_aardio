@@ -15,7 +15,7 @@ namespace getList{
 				}
 			},
 			function(dirpath, dirname){ //忽略目录
-				if string.keywords("delete|obsolete|temp|ref").findOne(dirname) return false; 
+				if string.keywords("delete|obsolete|temp|ref|archieve").findOne(dirname) return false; 
 				else return true;
 			} 
 		);
@@ -34,19 +34,21 @@ namespace getList{
 			{"\\CCNSIA1A\SEParts\Cabinet",	"H*.dft"};
 		};
 */
-		_searchLoc := {
-			{config.__pdfLib,	"*.*"};
-			{config.__qhcLib,	"*.*"};
-			{config.__cabinetModelServer,	"H*.dft"};
-		};
+		_searchLoc := [
+			[config.__pdfLib,	"*.*"],
+			[config.__qhcLib,	"*.*"],
+			[config.__cabinetModelServer,	"H*.dft"]
+		]
 		import config;
 		import sqlite;
 		
 		var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"));
+		db.exec("PRAGMA temp_store_directory = 'c:\temp\';")
+		
 		_libName := "Lib";
 		var flist={};
 		for (i=1; #_searchLoc)
-			table.push(flist, deepSearchFile(_searchLoc[i][1],_searchLoc[i][2]));
+			table.push(flist, deepSearchFile(_searchLoc[i][1], _searchLoc[i][2]));
 
 		if (db.existsTable(_libName)) db.exec("DROP TABLE [" ++ _libName ++ "];");
 		db.exec("CREATE TABLE '" ++ _libName ++ "'('文件名' TEXT, '路径' TEXT);");
@@ -61,11 +63,14 @@ namespace getList{
 				filename = string.replace(filename, "'", "''"); /* 文件名里含有单引号 插入时报错, 提前replace成 '' */
 				fullpath = string.replace(fullpath, "'", "''");
 				
-				fullpath = string.trimright(fullpath, filename); /* 仅保留文件夹 */
 				
-				fullpath = string.replace(fullpath, "@" + _searchLoc[1][1],"{config.__pdfLib}")
-				fullpath = string.replace(fullpath, "@" + _searchLoc[2][1],"{config.__qhcLib}")
-				fullpath = string.replace(fullpath, "@" + _searchLoc[3][1],"{config.__cabinetModelServer}")
+				//fullpath = string.trimright(fullpath, filename); /* 仅保留文件夹 */
+				fullpath = io.splitpath(fullpath).dir;
+				
+				//替换成代号, 用户端解析, 否则其他人打开我的链接地址;
+				fullpath = string.replace(fullpath, "@" + _searchLoc[1][1],"{config.__pdfLib}");
+				fullpath = string.replace(fullpath, "@" + _searchLoc[2][1],"{config.__qhcLib}");
+				fullpath = string.replace(fullpath, "@" + _searchLoc[3][1],"{config.__cabinetModelServer}");
 				
 				fullpath = string.trim(fullpath,"\");
 				
@@ -187,6 +192,8 @@ namespace getList{
 		import config;
 		import sqlite;
 		var db = sqlite(..io.joinpath(config.dbServer.path, "drawing_lists.db"));
+		db.exec("PRAGMA temp_store_directory = 'c:\temp\';")
+		
 		//_libName = "Map";		
 		var dlist = db.getTable("SELECT * FROM [Map]");		
 		console.log("更新前数据行数:", #dlist);

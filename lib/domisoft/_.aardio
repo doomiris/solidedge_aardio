@@ -82,7 +82,7 @@ stopExcelCutCopyMode = function(){
 	com.enumRunning( 
 		function(displayName,object){
 				if com.GetTypeInfo(object) 
-					if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook")
+					if ..string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook")
 						try{
 							object.Application.CutCopyMode = false
 						}
@@ -117,6 +117,7 @@ copySelectedItem = function(ctrl){
 		if !ctrl	ctrl = owner;
 		var doNotCopyColumns = ctrl.doNotCopyColumns;
 		doNotCopyColumns := {/* 防null报错 */};
+		
 		table.sort(doNotCopyColumns);
 		table.reverse(doNotCopyColumns);
 
@@ -140,13 +141,13 @@ copySelectedItem = function(ctrl){
 					table.remove(selTab[i],	doNotCopyColumns[j]);
 
 		/* clip添加纯文本格式 */
-        var txtTab = table.array();
+        var txtTab = [];
         for (i=1; #selTab)
             table.push(txtTab, string.join(selTab[i], '\t'));
-		win.clip.write(string.join(txtTab, '\n'));
+		win.clip.write(string.join(txtTab, '\r\n'));
 
 		/* clip添加HTML格式 */
-		var hTab = table.array();
+		var hTab = [];
         for (i=1; #selTab)
             table.push(hTab, selTab[i]);
         var html = table.toHTML(hTab);  
@@ -161,7 +162,7 @@ copyTable = function(tab, selectedIndex){
 			case "number" {selectedIndex = {selectedIndex}}
 			case "table" {/*不处理*/}
 			case "null" {
-				selectedIndex = table.array();
+				selectedIndex = [];
 				for (i=1;#tab) selectedIndex[i] = i;
 			}
 			else return ; 			
@@ -171,12 +172,12 @@ copyTable = function(tab, selectedIndex){
         var cliphtml = win.clip.html();
 
 		/* clip添加纯文本格式 */
-        var txtTab = table.array();
+        var txtTab = [];
         for (i=1; #selectedIndex)
             table.push(txtTab,string.join(tab[selectedIndex[i]],'\t'));
 		win.clip.write(string.join(txtTab,'\n'));		
 		/* clip添加HTML格式 */
-		var hTab = table.array();
+		var hTab = [];
         for (i=1; #selectedIndex)
             table.push(hTab, tab[selectedIndex[i]]);            
         var html = table.toHTML(hTab)
@@ -186,7 +187,7 @@ copyTable = function(tab, selectedIndex){
 }
 selectAll = function(ctrl){
 	if !ctrl ctrl = owner
-	var t = table.array();
+	var t = [];
 	for (i=1; ctrl.count) table.push(t, i); 
 	ctrl.selected = t; 
 }
@@ -301,8 +302,8 @@ listColSort = function(column, desc){
 		if !owner.source[i][name]
 			owner.source[i][name]=""
 		else
-			owner.source[i][name] = tostring(owner.source[i][name])
-		
+			owner.source[i][name] = tostring(owner.source[i][name]);
+
 	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
 	owner.setTable( owner.source );
 	return true; //返回 true 允许当前列排序	
@@ -331,7 +332,10 @@ getUserFolder = function(corp){
 				return	string.replace(UserFolder,"@OneDrive - ","");
 		}
 	}
-	return string.replace(string.getenv("OneDriveCommercial") ,"@OneDrive - ","");
+	var OneDriveCommercial = string.getenv("OneDriveCommercial");
+	if OneDriveCommercial
+		return string.replace( OneDriveCommercial ,"@OneDrive - ","");
+	return null; 
 }
 /**
 envFix = function(str){
@@ -364,7 +368,7 @@ envFix = function(str){
 	return outStr;
 }
 isWorkingHour = function(startHour = 8, endHour = 18){
-	var currentHour = time.now().hour;	
+	var currentHour = ..time.now().hour;	
 /*
 # 判断currentHour 是否在 startHour 和 endHour 区间内, 返回 true 或 false
 */
@@ -383,10 +387,11 @@ refreshSAP = function(winform){
 	if !config.settings.keepRefreshSAPGUI return ; 
 	..thread.invoke(
 		function(winform){
+			import domisoft;
 			winform.setInterval( 
 				function(){
 					try{
-						if !isWorkingHour() return ; 
+						if !domisoft.isWorkingHour() return ; 
     					import SAP.vm;
     					var session = SAP.vm();
     					if !session	return ; 
@@ -403,6 +408,20 @@ refreshSAP = function(winform){
 		}, winform
 	)	
 }
+getActiveAppName = function(){
+	import win;
+	import process;
+    var hwnd = win.getForeground();
+    if !hwnd return;
+    var title = win.getText(hwnd);
+    var proc = process.fromWindowHandle(hwnd);
+    var exePath;
+    if proc
+        exePath = proc.getPath();
+     return title, exePath; 
+}
+
+
 
 /**intellisense(domisoft)
 showInputBox(title, Msg,tips, winform) = 显示输入框
@@ -419,5 +438,6 @@ setColumnWidth(listview, widthTable) = 设置列宽
 copyTable(tab, selectedIndex) = 复制表格
 getFileDate(filename, formatString) = 获取文件修改时间
 envFix(str) = 查找并替换%组成的系统参数
+getActiveAppName() = 返回上层app完整路径名
 end intellisense**/
 

@@ -246,6 +246,8 @@ import console
 console.open();
 */
 	var step_db = sqlite(winform.stepDBpath);
+
+	
 	winform.log.print("合并临时数据...");	
 	if step_db.existsTable("所有物料")
 		step_db.exec("DROP table 所有物料;");
@@ -267,7 +269,8 @@ console.open();
 	`); /* A table created using CREATE TABLE AS has no PRIMARY KEY and no constraints of any kind. */
 	step_db.close();
 	var db = sqlite(io.joinpath(config.dbServer.path,"qhcsap.db"));
-
+	db.exec("PRAGMA temp_store_directory = 'c:\temp\';")
+	
 	winform.log.print("备份数据...");
 	if (db.existsTable("所有物料") and db.existsTable("备份所有物料"))
 		db.exec("DROP table 备份所有物料;");

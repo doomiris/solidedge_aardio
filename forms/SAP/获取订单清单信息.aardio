@@ -188,7 +188,9 @@ menu.add()
 	menu.add("下载COOIS生产订单BOM...", λ() SAP.downloadManufactureBOM(winform, t["SD 凭证"], itemList));
 menu.add()
 	menu.add("添加备注...", λ() winform.grid.beginEdit(item,6 /*备注列*/));
-	menu.add("按itemmaster汇总格式复制...", function(){		
+	menu.add("按itemmaster汇总格式复制...", function(){	
+		winform.listview.doNotCopyColumns = {}
+		winform.listview2.doNotCopyColumns = {}
 		var tab2 = domisoft.copySelectedItem(winform.listview);
 		if !winform.listview2.selIndex
 			winform.listview2.selIndex = table.indexOf(tarray.getCol(winform.grid2.source, "SD 凭证"), tab2[1][1/*"SD 凭证"*/],) : null;
@@ -210,6 +212,8 @@ menu.add()
 		domisoft.copyTable(formatTab);
 	});
 	menu.popup(x,y,true);
+	winform.listview.doNotCopyColumns = {6,7,8}
+	winform.listview2.doNotCopyColumns = {5,6,7}
 }
 winform.grid2.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
@@ -224,8 +228,8 @@ winform.grid2.onRightClick = function(item,subItem,nmListView){
 	menu.add("删除此订单记录...", function(){		
 		var order_number = winform.grid2.source[item]["SD 凭证"];
 		if !win.msgboxTest("确认删除此订单所有记录?" + '\n' + order_number,"需要确认",winform.hwnd) return; 
-		sdb.exec("DELETE * FROM `list`",{"SD 凭证":order_number})
-		sdb.exec("DELETE * FROM `content`",{"SD 凭证":order_number})
+		sdb.exec("DELETE FROM `list` WHERE ??",{{"SD 凭证":order_number}})
+		sdb.exec("DELETE FROM `content` WHERE ??",{{"SD 凭证":order_number}})
 		winform.publish("getFolderList",true);
 	});
 	menu.popup(x,y,true);
