@@ -7,12 +7,11 @@ var string = ..string;
 namespace SAP;
 class session{
 	ctor( ... ){
-		this.oGui = ..com.TryGetObject("SAPGUI");
-		..com.SetPreferredArrayType(this.oGui,0xC/*_VT_VARIANT*/);
+		this.oGui = ..com.TryGetObject("SAPGUI.ScriptingCtrl.1");
 		if( ! this.oGui ) return null,"请先打开SAP";
 		this.oApp =  this.oGui.GetScriptingEngine();
-		this.oConn = this.oApp.Children.item(0);
-		this.oSession = this.oConn.Children.item(0);
+		this.oConn = this.oApp.Children(0);
+		this.oSession = this.oConn.Children(0);
 	};
 	@_metaProperty;
 }
@@ -20,26 +19,30 @@ namespace session{
   import util.metaProperty; 
   _metaProperty = util.metaProperty( 
 	get = function(k){
-		return owner.oSession[k]
+		return owner.oSession
 	};
 	set = function(k,v){
-		owner.oSession[k] = v;
+		owner.oSession = v;
 	};
 	Close = function(){
 		owner.oConn.CloseSession(owner.oSession.id);
 	};
+	goHomePage = function(){
+		var session = owner.oSession;
+		while(session.findById("wnd[0]/tbar[0]/btn[12]").Changeable){
+			session.findById("wnd[0]/tbar[0]/btn[12]").press();
+			var btn = session.findById("wnd[1]/usr/btnSPOP-OPTION1");
+			if btn
+				btn.press(); //不保存退出订单界面
+		}
+	}
+	
 	downloadBOM = function(winform, etab){
 		//import win;
 		import QHC;	
 		var session = owner.oSession;
-		while(session.findById("wnd[0]/tbar[0]/btn[12]").Changeable){
-			session.findById("wnd[0]/tbar[0]/btn[12]").press();
-			try{
-				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press(); //不保存退出订单界面
-			}
-		}
-		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
-		session.findById("wnd[0]").sendVKey(0);
+		session.goHomePage();
+		session.StartTransaction("ZMDM_001");
 		var ftab = {};
 		for (i = 1; #etab){
     		session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab[i];
@@ -76,23 +79,57 @@ namespace session{
 /**intellisense()
 SAP.session = SAP支持库
 SAP.session() = !session.
-!session.Close() = 关闭GUI
-session.findById(controll_id) = 按ID查找控件
-session.downloadBOM(arr) = 下载BOM
-!session.findById() = !SAP_Element.
+end intellisense**/
+
+/**intellisense(!session)
+Close() = 关闭GUI
+downloadBOM(arr) = 下载BOM
+FindById() = !SAP_Element.
+FindById(control_id) = 按ID查找控件
+FindByPosition() = !SAP_Element.
+FindByPosition(X,Y,Raise) = This method can be used to do a hittest on an SAP GUI session. The parameters x and y should be given in screen coordinates. If no component is found an exception is raised unless raise is set to False. In that case a Null/Nothing object is returned.
+AddHistoryEntry(Fieldname, Value) = SAP GUI for Windows has an input historyfunctionality, which displays for text fields the entries made inthe past as a suggestion. With this function, an entry can be addedto the history database so that it will be available the next timethe end user accesses the text field with the given fieldname
+CreateGuiCollection() = Some functions accept collections asparameters. This function creates a collection object that isindependent of the scripting language used, such as VBScript or JavaScript.
+CreateSession() = !session.
+CreateSession() = create session
+DropHistory() = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
+Ignore(WindowHandle) = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
+OpenConnection(Description, Sync, Raise) = The parameter connectString should contain one of the descriptionsdisplayed in SAPlogon, for example "XYZ [PUBLIC]". If you want tocreate a new SAP GUI instance and place it within your applicationyou may add the suffix “/INPLACE”. \nThis function will raisethe exception E_ACCESSDENIED if the scripting support has beendisabled by the administrator or the user
+OpenConnectionByConnectionString(ConnectString, Sync, Raise) = The parameter connectionData is the connectionstring for the SAP server, for example “/R/ALR/G/SPACE”. See thedescription of the openConnection method for a discussion of thesync and raise parameters.
+RegisterROT() = Accessing the SAPGUI entry in the Running Object Table from a C++application may fail unless the interface is registered with astrong reference. This is not required when using Visual Basic orscripting languages.The reference must be released using revokeRotbefore shutting down the Scripting component. Failing to do so willlead to undefined behaviour.Most applications do not need to usethis method, and shouldn’t call it.
+RevokeROT() = This method must be called before shutting down the Scripting component ifregisterROT was used.
+SetCookie(WindowHandle) = Object
+ClearErrorList() = This method clears the list of errors that may be created when ActiveX controls are found on a screen that do not support SAP GUI Scripting. Otherwise the list is cleared after an error event was raised. This happens at the end of a round trip.
+StartTransaction(Transaction) = Calling this function with parameter "xyz" has the same effect as SendCommand("/nxyz").
+EndTransaction = Calling this function has the same effect as SendCommand("/n").
+GetIconResourceName(str) = In SAP GUI icons are often described as text in the format @nn@ where nn is a number. The function getIconResourceName translates the @nn@ notation into the name of the resource in sapbtmp.dll.
+GetVKeyDescription(VKey) = When a script is recorded, it will often contain sendVKey(n) calls, where n is a number. The method getVKeyDescription translates these numbers into a readable text. For example the number 0 is translated into the text “Enter”.
+LockSessionUI() = This method locks the session so that no user interaction is possible until the session is unlocked using UnlockSessionUI.
+UnlockSessionUI() = This method unlocks the session after it was locked using LockSessionUI.
+ContainerType =
+Id =
+Name =
+Parent =
+Type =
+TypeAsNumber =
+Children =
+ActiveWindow =
+Busy =
+ErrorList =
+Info =
+IsActive =
+IsListBoxActive =
+ProgressPercent=
+ProgressText =
+ShowDropdownKeys =
+SuppressBackendPopups =
+TestToolMode =
+end intellisense**/
+
+/**intellisense(!SAP_Element)
 !SAP_Element.press() = 点击
 !SAP_Element.text = 文本内容
 !SAP_Element.selected = 选中状态
 !SAP_Element.setFocus() = 获取焦点
 !SAP_Element.caretPosition = 光标位置
-?SAP.session = !session.
-session.AddHistoryEntry(Fieldname, Value) = SAP GUI for Windows has an input historyfunctionality, which displays for text fields the entries made inthe past as a suggestion. With this function, an entry can be addedto the history database so that it will be available the next timethe end user accesses the text field with the given fieldname
-session.CreateGuiCollection() = Some functions accept collections asparameters. This function creates a collection object that isindependent of the scripting language used, such as VBScript orJavaScript
-session.DropHistory() = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
-session.Ignore(WindowHandle) = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
-session.OpenConnection(Description, Sync, Raise) = The parameter connectString should contain one of the descriptionsdisplayed in SAPlogon, for example "XYZ [PUBLIC]". If you want tocreate a new SAP GUI instance and place it within your applicationyou may add the suffix “/INPLACE”. \nThis function will raisethe exception E_ACCESSDENIED if the scripting support has beendisabled by the administrator or the user
-session.OpenConnectionByConnectionString(ConnectString, Sync, Raise) = The parameter connectionData is the connectionstring for the SAP server, for example “/R/ALR/G/SPACE”. See thedescription of the openConnection method for a discussion of thesync and raise parameters.
-session.RegisterROT() = Accessing the SAPGUI entry in the Running Object Table from a C++application may fail unless the interface is registered with astrong reference. This is not required when using Visual Basic orscripting languages.The reference must be released using revokeRotbefore shutting down the Scripting component. Failing to do so willlead to undefined behaviour.Most applications do not need to usethis method, and shouldn’t call it.
-session.RevokeROT() = This method must be called before shutting down the Scripting component ifregisterROT was used.
-session.SetCookie( WindowHandle) = Object
 end intellisense**/
