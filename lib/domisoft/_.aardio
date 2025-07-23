@@ -242,7 +242,10 @@ readClipHcode = function(){
 			if string.startWith(s, "8008")
 				s = replace(s, "8008", "H008", 1);
 			if string.startWith(s, "'-1")
-				s = replace(s, "'-1", "H")
+				s = replace(s, "'-1", "H");
+			if string.startWith(s, "1--1")
+				s = replace(s, "1--1", "H");
+				
 			table.push(t,s);
 
 		}

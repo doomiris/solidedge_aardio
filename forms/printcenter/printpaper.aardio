@@ -37,14 +37,13 @@ renew();
 winform.onDropFiles = function(files){
 	var t = {}
 	for (i=1; #files){
-		var fn = string.match(files[i],".+\\(.+)$");
-		var fp = string.match(files[i],"^(.+)\\.+$");
-		//var tf = toFolder ++ string.replace(fn,"@@.psm",".dxf");
-		if !table.find(tarray.getCol(tab, "文件名"), fn)
+		var info = io.splitpath(files[i]);
+		if !string.cmpMatch(info.ext, ".pdf") continue;
+		if !table.find(tarray.getCol(tab, "文件名"), info.file)
 		table.push(tab, {
 			"#" = #tab + 1;
-			"文件名" =  fn;
-			"Path" = fp;
+			"文件名" =  info.file;
+			"Path" = info.dir;
 			//"output" = tf;
 		})
 	}
@@ -72,8 +71,7 @@ thread.invoke(addSysPrinter, winform);
 
 var print2printer = function(agent, filename, printername){
 	import process;
-	process.execute(agent, '/s /h /t "' + filename + '" "' + printername + '"',,6/*_SW_MINIMIZE*/);
-	
+	var pid = process.execute(agent, '/s /h /t "' + filename + '" "' + printername + '"',,6/*_SW_MINIMIZE*/);
 	/**	
 	Print Agent: C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe
 	Parameters:  /p /h 
@@ -84,26 +82,27 @@ var print2printer = function(agent, filename, printername){
 	/p <filename> - 打开并直接进入打印对话框
 	/t <filename> <printername> <drivername> <portname> - 在指定的打印机上打印文件.
 	**/
+	return pid; 
 }
 
 
 winform.button.oncommand = function(id,event){
-	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "正在发送..."};
-	var listview = winform.listview;
+	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "正在发送..."};	
 	var progress = winform.progress;
-	var st = listview.checked;
+	var checked = winform.listview.checked;
 	progress.pos = 0;
-	progress.max = #st;
+	progress.max = #checked;
 	var printername = winform.combobox.text;
-	for (k, v in st){
+	for (k, v in checked){
 		progress.pos ++;
-		var filename = listview.getItemText(v,3) ++ "\" ++ listview.getItemText(v,2);
-		thread.invokeAndWait(print2printer, apath, filename, printername);
+		var row = tab[v];
+		var filename = io.joinpath(row["Path"], row["文件名"]);
+		var pid = thread.invokeAndWait(print2printer, apath, filename, printername);
 		win.delay(1000);
 	}
-	//process(aid).
-
+	
 	owner.disabledText = null;
+	
 	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
 	tray.pop("All paper Print Done","TBM");
 }

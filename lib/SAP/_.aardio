@@ -55,22 +55,61 @@ sapQuickOpen = function(index=1){
 	//win.msgboxTimeout("正在启动SAP, 稍等...", _title, 10*1000);
 }
 Conncet = function(vm){
-    var vm = web.script("VBScript") ;
+	/*
+	import console; 
+	console.open();
+	*/
 	vm.script = /*
-		If Not IsObject(application) Then
-   		Set SapGuiAuto  = GetObject("SAPGUI")
-   		Set application = SapGuiAuto.GetScriptingEngine
-		End If
-		If Not IsObject(connection) Then
-   		Set connection = application.Children(0)
-		End If
-		If Not IsObject(session) Then
-   		Set session    = connection.Children(0)
-		End If
-		If IsObject(WScript) Then
-   		WScript.ConnectObject session,     "on"
-   		WScript.ConnectObject application, "on"
-		End If
+			dim sapguiExist
+			sapguiExist = true
+	*/
+	vm.script = /*
+			If Not IsObject(application) Then
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				Set application = SapGuiAuto.GetScriptingEngine
+			End If
+   			If Not IsObject(application) Then
+   				sapguiExist = false
+   			End If
+   			If application.Children.Length=0 Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiNotExist"; 
+	vm.script = /*
+			If Not IsObject(connection) Then
+   				Set connection = application.Children(0)
+			End If
+			If Not IsObject(connection) Then
+   				sapguiExist = false
+			End If
+   			If connection.Children.Length=0 Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiConnNotExist"; 
+	vm.script = /*
+			If Not IsObject(session) Then
+   				Set session    = connection.Children(0)
+			End If
+			If Not IsObject(session) Then
+   				sapguiExist = false
+			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiSessionNotExist"; 
+	vm.script = /*
+			If IsObject(WScript) Then
+   				WScript.ConnectObject session,     "on"
+   				WScript.ConnectObject application, "on"
+			End If
+	*/
+	vm.script = /*
+		do while session.findById("wnd[0]/titl").text <> "SAP 轻松访问"
+			session.findById("wnd[0]/tbar[0]/btn[12]").press
+			on error resume next
+				session.findById("wnd[1]/usr/btnSPOP-OPTION1").press	'不保存退出订单界面
+			on error goto 0
+		loop
 	*/
 }
 Close = function(vm){
@@ -94,12 +133,21 @@ downloadBOM = function(winform, etab){
     import console;
     
     var vm = web.script("VBScript") ;
-    
+	vm.script = /*
+			dim sapguiExist
+			sapguiExist = true
+	*/
 	vm.script = /*
 			If Not IsObject(application) Then
-   			Set SapGuiAuto  = GetObject("SAPGUI")
-   			Set application = SapGuiAuto.GetScriptingEngine
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				Set application = SapGuiAuto.GetScriptingEngine
 			End If
+   			If Not IsObject(application) Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiNotExist"; 
+	vm.script = /*
 			If Not IsObject(connection) Then
    			Set connection = application.Children(0)
 			End If
@@ -189,12 +237,21 @@ downloadB2CBOM = function(winform, orderId, itemList){
     var vm = web.script("VBScript");
 //	import console;
 //	console.open();
-
+	vm.script = /*
+			dim sapguiExist
+			sapguiExist = true
+	*/
+	vm.script = /*
+			If Not IsObject(application) Then
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				Set application = SapGuiAuto.GetScriptingEngine
+			End If
+   			If Not IsObject(application) Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiNotExist"; 
     vm.script = /*
-		If Not IsObject(application) Then
-   			Set SapGuiAuto  = GetObject("SAPGUI")
-   			Set application = SapGuiAuto.GetScriptingEngine
-		End If
 		If Not IsObject(connection) Then
    			Set connection = application.Children(0)
 		End If
@@ -469,21 +526,48 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 	import console; 
 	console.open();
 	*/
-	
+	vm.script = /*
+			dim sapguiExist
+			sapguiExist = true
+	*/
 	vm.script = /*
 			If Not IsObject(application) Then
-   			Set SapGuiAuto  = GetObject("SAPGUI")
-   			Set application = SapGuiAuto.GetScriptingEngine
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				Set application = SapGuiAuto.GetScriptingEngine
+			End If
+   			If Not IsObject(application) Then
+   				sapguiExist = false
+   			End If
+   			If application.Children.Length=0 Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiNotExist"; 
+	vm.script = /*
+			If Not IsObject(connection) Then
+   				Set connection = application.Children(0)
 			End If
 			If Not IsObject(connection) Then
-   			Set connection = application.Children(0)
+   				sapguiExist = false
+			End If
+   			If connection.Children.Length=0 Then
+   				sapguiExist = false
+   			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiConnNotExist"; 
+	vm.script = /*
+			If Not IsObject(session) Then
+   				Set session    = connection.Children(0)
 			End If
 			If Not IsObject(session) Then
-   			Set session    = connection.Children(0)
+   				sapguiExist = false
 			End If
+	*/
+	if !vm.script.sapguiExist return "sapGuiSessionNotExist"; 
+	vm.script = /*
 			If IsObject(WScript) Then
-   			WScript.ConnectObject session,     "on"
-   			WScript.ConnectObject application, "on"
+   				WScript.ConnectObject session,     "on"
+   				WScript.ConnectObject application, "on"
 			End If
 	*/
 	vm.script = /*

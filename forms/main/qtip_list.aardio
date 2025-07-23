@@ -42,11 +42,11 @@ winform.saveInput = function(str){
 }
 /*下载BOM{{*/
 var downloadbom = function(){
-    var tab=table.array();
+    var tab = [];
+    var source = winform.grid.source;
     for (k, v in winform.listview.selected){
-        var bg = winform.listview.getItemText(v, 1);
-            table.push(tab,  bg);
-    }  
+        table.push(tab,  source[v]["物料"]);
+    } 
     if !#tab return ;
     thread.invoke( 
     	function(wform,tab){
@@ -56,35 +56,35 @@ var downloadbom = function(){
     )
 };
 var copyPartNo = function(withDesp){
-    var tab=table.array();
-    var listview = winform.listview;
-    for (k, v in listview.selected){
-    	var pcode = listview.getItemText(v, 1);
-    	var desp = listview.getItemText(v, 2);
+    var tab = [];
+    var source = winform.grid.source;
+    for (k, v in winform.listview.selected){
+    	var pcode = source[v]["物料"];
+    	var desp = source[v]["物料描述"];
         if !withDesp
             table.push(tab,  pcode);
         else
         	table.push(tab,  pcode + '\t' + desp);        
     }  
     if #tab
-    	return string.join(tab, '\n');
+    	return string.join(tab, '\r\n');
 }
 var copyBomFormat = function(){
-    var tab=table.array();
-    var listview = winform.listview;
-    for (k, v in listview.selected){
+    var tab = [];
+    var source = winform.grid.source;
+    for (k, v in winform.listview.selected){
         table.push(tab,
         	string.join([
-        		listview.getItemText(v, 1),
-        		listview.getItemText(v, 2),
+        		source[v]["物料"],
+        		source[v]["物料描述"],
         		1,
-        		listview.getItemText(v, 3),
-        		listview.getItemText(v, 4)
+        		source[v]["单位"],
+        		source[v]["类型"]
         	],'\t')
         )       
     }  
     if #tab
-    	return string.join(tab, '\n');
+    	return string.join(tab, '\r\n');
 }
 
 /*}}*/
@@ -173,23 +173,23 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 		var prtLists = domisoft.getSelectedText(winform.listview);
 		if !#prtLists return ; 
 		thread.invoke(function(bomName, prtLists){
-			import access;
-			import console;			
+			import sqlite;
+			//import console;			
 			import config;
 			import QHC;
-			var path = io.joinpath(config.dbServer.path,"BOM_LIB.xls")
-			var acc, err = access(path);			
-			acc.beginTrans();
+			var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
+			var db = sqlite(path);			
+			db.beginTrans();
 			for(i=1;#prtLists;1){
 				var qitem = QHC.getSapItem(prtLists[i]);
-				acc.exec(
-					"INSERT INTO `Sheet1$`
+				db.exec(
+					"INSERT OR IGNORE INTO `lib`
 						(
-							大类, 中类, 小类, 物料, 物料描述, 属性, 可选项分类, 喷粉分类, 温度等级, 缓存日期
+							大类, 中类, 小类, 物料, 物料描述, 属性, 可选项分类, 喷粉分类, 温度等级
 						) 
 					VALUES
 						(
-							@bomName,@sort1,@sort2,@pcode,@pdesp,@roh,@kmat,@paint,@m2,@cacheDate
+							@bomName,@sort1,@sort2,@pcode,@pdesp,@roh,@kmat,@paint,@m2
 						)"
 					,{				
 						bomName = bomName;
@@ -205,8 +205,8 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 					} 
 				)
 			}
-			acc.commitTrans();
-			acc.close();
+			db.commitTrans();
+			db.close();
 		}, bomName, prtLists)	
 	})
 	menu.popup(x,y,true);	

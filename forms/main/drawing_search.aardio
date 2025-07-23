@@ -6,6 +6,7 @@ edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT
 listview2={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
+
 import global;
 import config;
 import domisoft;
@@ -139,7 +140,7 @@ winform.listview2.refreshFiles = function(){
 var deleteDrawingFile = function(fullname){
 	if !fullname return;
 	var info = io.splitpath(fullname);
-	if string.cmp(info.ext,".dft")
+	if string.cmpMatch(info.ext,".dft")
 		if !winform.msgboxTest("你正在删除dft文件, 请确认", info.file)
 			return ; 
 	
