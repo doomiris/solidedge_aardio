@@ -22,6 +22,7 @@ import domisoft;
 import SAP.vm;
 import config;
 import fsys;
+/*
 var site = {
 	{
 		name = "gitee.com",
@@ -32,16 +33,27 @@ var site = {
 		url = "https://raw.githubusercontent.com/doomiris/solidedge_aardio/master/forms/side_loader/"
 	}
 }
-var list = {
+*/
+var list = {fields = {[1] = "name",[2]="filename"}
+/*
 	{ name = "物料名称生成", filename = "物料名称生成.aardio"}
 	{ name = "获取文件名清单", filename = "获取文件名清单.aardio"}
 	{ name = "淘宝链接简化", filename = "淘宝链接简化.aardio"}
 	{ name = "关闭代理", filename = "关闭代理.aardio"}
 	{ name = "(新办公室)", filename = "注册表.aardio"}
+*/
 }
 
+/*
 for (i=1; #site)	
 	winform.combobox.add(site[i].name);
+*/
+var path = io.joinpath(config.__templateLib,"..","ext")
+var flist = fsys.list(path,,"*.aardio");
+for (i=1; #flist){
+	var info = io.splitpath(flist[i]);
+	table.push(list, {name=info.name, filename=info.file})
+} 
 
 winform.bindConfig( config.sideloader,{
 	combobox = "selIndex";
@@ -50,21 +62,26 @@ winform.bindConfig( config.sideloader,{
 var grid = win.ui.grid(winform.listview);
 
 grid.setTable(list)
+
 grid.ColumnWidth := domisoft.setColumnWidth(grid, {15,50,200,300})
 grid.onDoubleClick = function(item,subItem,nmListView){
-	if !winform.combobox.selIndex return ; 
-	var file = inet.url.append(site[winform.combobox.selIndex].url, list[item].filename);
+ 
+	var file = io.joinpath(path, list[item].filename);
 	win.setTimeout(function(){
-		var mTabs = mainForm.mTabs;
-		var idx = mTabs.add(
-				{
-					text = list[item].name;
-					iconText = '\uF094';
-					hasCloseButton = true
-				}
-		);
-		mTabs.loadForm(idx, inet.http().get(file));
-		mTabs.selIndex = idx
+		if mainForm {
+			var mTabs = mainForm.mTabs;
+			var idx = mTabs.add(
+					{
+						text = list[item].name;
+						iconText = '\uF094';
+						hasCloseButton = true
+					}
+			);
+			mTabs.loadForm(idx, file);
+			mTabs.selIndex = idx;
+		}else{
+			winform.loadForm(file).show(true)
+		}
 	})
 
 
