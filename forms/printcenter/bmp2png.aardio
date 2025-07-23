@@ -1,8 +1,8 @@
 import win;
 import win.ui;
 /*DSG{{*/
-var bmp2png_form = win.form(text="BMP_2_PNG";right=759;bottom=469;acceptfiles=1)
-bmp2png_form.add(
+var winform = win.form(text="BMP_2_PNG";right=759;bottom=469;acceptfiles=1)
+winform.add(
 button={cls="button";text="export PNG";left=648;top=424;right=752;bottom=456;db=1;dr=1;z=2};
 listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
 static={cls="static";text="把bmp文件拖放进来";left=8;top=432;right=312;bottom=456;db=1;dl=1;transparent=1;z=3};
@@ -27,18 +27,23 @@ var renew = function(){
 renew();
 
 import tarray;
-bmp2png_form.onDropFiles = function(files){
+var imgExt = [".jpg",".jpeg",".png",".gif",".bmp",".tif",".jfif"];
+
+winform.onDropFiles = function(files){
 	
 
 	var t = {}
 	for (i=1;#files){
 		var fn = string.match(files[i],".+\\(.+)$");
 		var fp = string.match(files[i],"^(.+)\\.+$");
-		var tf = config.setbm.workingDir;
-		if !string.endWith(tf,"\") tf = tf ++ "\";
-		var info = io.splitpath(fn);
+
+		var info = io.splitpath(fn);		
+		if !table.indexOf(imgExt, string.lower(info.ext)) continue;
 		
-		tf = tf ++ string.replace(fn,"@"+info.ext,".png");
+		var tf = io.joinpath(
+			config.setbm.workingDir,
+			info.name ++ ".png"
+		);
 		
 		if !table.find(tarray.getCol(tab, "文件名"), fn)
 			table.push(tab,	{
@@ -47,31 +52,33 @@ bmp2png_form.onDropFiles = function(files){
 					"output" = tf;
 			})
 	}
-	bmp2png_form.listview.setTable(tab);
+	winform.listview.setTable(tab);
 }
 
-bmp2png_form.button.oncommand = function(id,event){
-	for (i=1; bmp2png_form.listview.count){
-		var fn = bmp2png_form.listview.getItemText(i,2) ++ "\" ++ bmp2png_form.listview.getItemText(i,1);
-		var bmp = gdip.bitmap(fn);
-		
-		if !bmp return win.msgboxErr("不支持的格式"+'\n' + fn);
-		bmp.save(bmp2png_form.listview.getItemText(i,3));
+winform.button.oncommand = function(id,event){
+	for (i=1; winform.listview.count){
+		var fn = io.joinpath(tab[i]["Path"], tab[i]["文件名"])
+		var bmp = gdip.bitmap(fn);		
+		if !bmp {
+			win.msgboxErr("转换失败"+'\n' + fn);
+			continue;
+		} 
+		bmp.save(tab[i]["output"]);
 		bmp.dispose();
 		bmp = null;
-		//io.remove(fn);
+
 	}
 	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
 	tray.pop("All PNG Print Done","TBM");
 	//win.msgboxTimeout("done", "PNG", 5 * 1000);
 }
 
-bmp2png_form.static2.onHyperlinkClick = function(nmSysLink,url,id){
-	bmp2png_form.listview.clear(true);
+winform.static2.onHyperlinkClick = function(nmSysLink,url,id){
+	winform.listview.clear(true);
 	renew();
 }
 
 
-bmp2png_form.show();
+winform.show();
 win.loopMessage();
-return bmp2png_form;
+return winform;

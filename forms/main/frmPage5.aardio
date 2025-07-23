@@ -73,21 +73,10 @@ var initDeclare = function(){
 /*}}*/
 /*printAllFiles{{*/
 var getListViewTable = function(listview){
-	var fields = {};
-	for (i=1; listview.columnCount)
-		table.push(fields, listview.getColumnText(i));
-	var tab = {};
-	tab.fields = fields;
-	for (i=1; listview.count){
-		var t={}
-		for(j=1; #fields)			
-			t[fields[j]] = listview.getItemText(i,j);
-		table.push(tab, t);
-	}
-
-	return tab; 
+	var tab = listview.getTable(true);
+	var fields = table.shift(tab);
+	return listview.getTable(fields); 
 }
-
 var startPrintAllLV = function(vtab){
 	seApp = solidedge.application();
 	if !seApp return ; 
@@ -121,21 +110,6 @@ var startPrintAllLV = function(vtab){
 }
 /*}}*/
 /*控件事件{{*/
-
-//打印当前DFT
-/**
-winform.button.oncommand = function(id,event){
-    if !seApp return ; 
-    if (seApp.ActiveDocumentType !== 2 /*Draft Document Type*/) return ; 
-	var vtab = getListViewTable(tbs[1].listview);
-	for(i=1; #vtab)
-		if (string.upper(seApp.ActiveDocument.Name) !== string.upper(vtab[i].物料 ++ ".dft")) vtab[i] = null;
-	winform.progress.min = 0;
-	winform.progress.max = #winform.listbox.selected;
-	winform.progress.pos = 1;	
-	startPrintAllLV(vtab);
-}
-**/
 //打印所有DFT
 winform.button2.oncommand = function(id,event){
     if !seApp return ; 

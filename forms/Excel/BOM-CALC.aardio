@@ -132,25 +132,28 @@ winform.listview.translateAccelerator = function( msg ){
 
 	if (vk == 'C'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {	//CTRL_C 复制钣金用量
 	    	var tab = {};
-	    	for (k, v in winform.listview.selected){
-	        	table.push(tab, winform.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
-	    	}           
+	    	for (k, v in owner.selected){
+	        	table.push(tab, owner.source[v]["钣金用量"]);
+	    	}       
 			win.clip.write(string.join(tab,"\"));
 	}
 	if (vk == 'C'#) && !ctrl && alt && (msg.message == 0x104/*_WM_SYSKEYDOWN*/){ //ALT_C 复制粉末用量
         	var tab = {};
-        	for (k, v in winform.listview.selected){
-            	table.push(tab, winform.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
+        	for (k, v in owner.selected){
+            	table.push(tab, owner.source[v]["粉末用量"]);
         	}           
 			win.clip.write(string.join(tab,"\"));
+	}
+	if (vk == 'A'#) && ctrl && !alt && (msg.message == 0x100/*_WM_KEYDOWN*/) {	//CTRL_A 全选
+	    	domisoft.selectAll(owner);
 	}
 	if (vk == 'C'#) && ctrl && alt && (msg.message == 0x100/*_WM_KEYDOWN*/){ //CTRL+ALT+C 同时复制钣金和粉末用量
 	    	var t={};
 	    	var tab1 = {};
 	    	var tab2 = {};
 	    	for (k, v in winform.listview.selected){
-	        	table.push(tab1, winform.listview.getItemText(v, table.indexOf(fields,"钣金用量")));
-	        	table.push(tab2, winform.listview.getItemText(v, table.indexOf(fields,"粉末用量")));
+	        	table.push(tab1, owner.source[v]["钣金用量"]);
+	        	table.push(tab2, owner.source[v]["粉末用量"]);
 	    	} 
 	    	table.push(t, string.join(tab1,"\"));
 	    	table.push(t, string.join(tab2,"\"));

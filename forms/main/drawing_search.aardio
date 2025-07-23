@@ -6,7 +6,7 @@ edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT
 listview2={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
-
+import global;
 import config;
 import domisoft;
 import process;
@@ -26,13 +26,29 @@ console.open()
 var fileLibMap = function(fullpath){
 	if !fullpath return ; 
 	import config;
-	var maps = {
+	var libPathMaps = {
 		"{config.__pdfLib}" = config.__pdfLib,
 		"{config.__qhcLib}" = config.__qhcLib,
 		"{config.__cabinetModelServer}" = config.__cabinetModelServer
 	}
-	fullpath = string.replace(fullpath,'%{}', maps)
+	fullpath = string.replace(fullpath,'%{}', libPathMaps)
 	return fullpath; 
+}
+var reverseFileLibMap = function(fullpath){
+	if !fullpath return ; 
+	import config;
+	var libPathMaps = {
+		"{config.__pdfLib}" = io.joinpath(config.__pdfLib),
+		"{config.__qhcLib}" = io.joinpath(config.__qhcLib),
+		"{config.__cabinetModelServer}" = io.joinpath(config.__cabinetModelServer)
+	}
+	var invertLibPathMaps = table.invert(libPathMaps);
+	console.dumpTable(invertLibPathMaps)
+	var info = io.splitpath(fullpath);
+	var fileDir = io.joinpath(info.drive,info.path);
+	console.log(fileDir)
+	var formatPath = string.replace(fullpath, "@" + info.dir, invertLibPathMaps[info.dir]);	
+	return formatPath; 
 }
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
@@ -109,92 +125,75 @@ var searchDocument = function (filenumber){
 	flistDB.close();
 }
 /*}}*/
-var refreshFiles = function(){
-	var t = winform.listview2.items;
-	var header = winform.listview2.header;
-	for (i=1; #t){
-		//console.log(io.joinpath(t[i][2/*路径*/],t[i][1/*文件名*/]))
-		if !io.exist(io.joinpath(t[i][table.indexOf(header,"路径")],t[i][table.indexOf(header,"文件名")]))
-			t[i] = null;
+winform.listview2.refreshFiles = function(){
+    var rows = owner.getTable(owner.header);
+	for (i=1; #rows){
+		var fullName = io.joinpath(rows[i]["路径"], rows[i]["文件名"]);
+		if !io.exist(fullName)
+			rows[i] = null;
 	}
-	var nt = {}
-	for (i=1; #t)
-		if t[i]
-			table.push(nt, t[i])
-	winform.listview2.items = nt;
+	table.removeByValue(rows, null)
+	owner.setTable(rows)
 }
 
-
-
-var localMapping = function(fullpath){
-	import string;
-	fullpath = string.lower(fullpath);
+var deleteDrawingFile = function(fullname){
+	if !fullname return;
+	var info = io.splitpath(fullname);
+	if string.cmp(info.ext,".dft")
+		if !winform.msgboxTest("你正在删除dft文件, 请确认", info.file)
+			return ; 
 	
-/*
-	if string.getenv("OneDriveCommercial"){
-		var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");		
-		fullpath = string.replace(fullpath,"@\\ccnsia1a\separts\cabinet", io.joinpath(OneDriveCommercial,"CCR Detail Design - S - S")) 
-	}else{
-		import config;
-		fullpath = string.replace(fullpath,"@\\ccnsia1a\separts\cabinet", config.__cabinetModelServer);		
-	}
-*/
-	
-	
+	if !io.exist(fullname)
+		win.msgbox("文件不存在", info.file)
+	if !io.remove(fullname) 
+		win.msgbox("删除文件失败", info.file)
 
-	return fullpath; 
+	import sqlite;
+	import config;
+	var db = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));
+	db.exec("DELETE FROM `Lib` WHERE ??",{{"文件名"=info.file,"路径"=reverseFileLibMap(info.dir)}})
+	db.close();
+
 }
+winform.listview2.onRightClick = function(item,subItem,nmListView){
+    if !item return;
+    var row = owner.getTable(owner.header)[item];
+	var fullName = io.joinpath(row["路径"], row["文件名"]);
+	var x,y = win.getMessagePos();
+	var menu = win.ui.popmenu(winform);
+	menu.add("打开文件...", λ() process.execute(fullName));
+	menu.add("删除文件...", function(){
+		winform.listview2.delItem(item);
+		//deleteDrawingFile(fullName);
+	});
+	menu.add("刷新", λ() winform.listview2.refreshFiles());
+	menu.add("更多...", λ() godking.rightMenu(
+		winform/*父窗口*/,
+		fullName/*文件路径*/,
+		x/*菜单x*/,y/*菜单y*/,
+		false/*是否相对坐标*/,
+		false/*是否显示文件名*/)
+	);
+	menu.popup(x,y,true);
 
-
-winform.listview2.onnotify = function(id,code,ptr){//code很多 select外放代码很容易overflow
-    select(code) {
-    	case 0xFFFFFFFD/*_NM_DBLCLK*/ {
-    	    var header = owner.header;
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return;
-    		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
-			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")),pcode);
-			fullName = localMapping(fullName);
-			if io.exist(fullName)
-				process.execute(fullName);
-    	}
-    	case 0xFFFFFFFB/*_NM_RCLICK*/ {
-    		var selectedRow = owner.getSelection();
-    		if !selectedRow return;
-    		var header = owner.header;
-    		var pcode = owner.getItemText(selectedRow, table.indexOf(header,"文件名"));
-			var fullName = io.joinpath(owner.getItemText(selectedRow, table.indexOf(header,"路径")), pcode);
-			fullName = localMapping(fullName)
-			var x,y = win.getMessagePos();
-			var menu = win.ui.popmenu(winform);
-			menu.add("打开文件...", λ() process.execute(fullName));
-			menu.add("删除文件...", λ() io.remove(fullName));
-			menu.add("刷新", λ() refreshFiles());
-			;
-			menu.add("更多...", λ() godking.rightMenu(
-				winform/*父窗口*/,
-				fullName/*文件路径*/,
-				x/*菜单x*/,y/*菜单y*/,
-				false/*是否相对坐标*/,
-				false/*是否显示文件名*/)
-			);
-			menu.popup(x,y,true);
-
-    	}
-    }
 }
-
-
-winform.listview2.translateAccelerator = function( msg ){ 
+winform.listview2.onDoubleClick = function(item,subItem,nmListView){
+    if !item return;
+    var row = owner.getTable(owner.header)[item];
+	var fullName = io.joinpath(row["路径"], row["文件名"]);
+	if io.exist(fullName)
+		process.execute(fullName);
+}
+winform.listview2.translateAccelerator = function( msg ){ 	
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
     var vk = msg.wParam ;
-    var header = owner.header;
+
     if( ( vk == 'C'# ) && ctrl  ){
-		var tab = table.array();
+		var tab = [];
+    	var rows = owner.getTable(owner.header);
 		for (i=1; owner.count){
-			if (table.find(owner.selected,i)){
-				var fullName = owner.getItemText(i, table.indexOf(header,"路径")) ++ owner.getItemText(i, table.indexOf(header,"文件名"));
-				fullName = localMapping(fullName)
+			if table.indexOf(owner.selected, i){
+				var fullName =io.joinpath(rows[i]["路径"], rows[i]["文件名"]);
 				if io.exist(fullName)
 					table.push(tab, fullName);
 			}

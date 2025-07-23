@@ -91,16 +91,15 @@ var copyBomFormat = function(){
 /*双击打开事件{{*/
 winform.listview.onDoubleClick = function(item,subItem,nmListView){
 	if !item return ; 
-    var pcode = owner.getItemText(item, 1);
     qtbs.selIndex = 4;
-    qtbs.forms[4].qtip_search(pcode);
+    qtbs.forms[4].qtip_search(owner.source[item]["物料"]);
 }
 /*}}*/
 /*右键菜单事件{{*/
 winform.listview.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
-    var pcode = owner.getItemText(item, 1);
-    var desp = owner.getItemText(item, 2);
+    var pcode = owner.source[item]["物料"];
+    var desp = owner.source[item]["物料描述"];
 	var x,y = win.getMessagePos();
 	//var hItem,tvht = winform.listview.hitTest(x,y,true);
 	var menu = win.ui.popmenu(winform);			
