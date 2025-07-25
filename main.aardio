@@ -1,4 +1,5 @@
 import fonts.fontAwesome;
+import win.debounce;
 import win.ui;
 import win.ui.atom;
 import win.ui.tabs;
@@ -417,25 +418,17 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 				if !title return ;				
 				var kw = string.keywords(["专用号申请","BOM更改","BG","Item_Master"]);
 				switch( kw.findOne(title), {  
-					[1]: function(){
-						thread.invoke( λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio"))
-					};
-					[2]: function(){
-						thread.invoke( λ () loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio"))
-					}; 
-					[3]: function(){
-						thread.invoke( λ () loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio"))						
-					};  
-					[4]:function(){
-						thread.invoke( λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio"))
-					};  
+					[1]: λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio");					
+					[2]: λ () loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio");					
+					[3]: λ () loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio");					
+					[4]: λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio");					
 				})
 			}
 			case "edge.exe" {
 				if !title return ;
 				var kw = string.keywords(["- draft -",".dft","- 工程图 -"]);
-				if !kw.findOne(string.lower(title)) return ; 
-				thread.invoke( λ () loadcodex("\forms\main\frmPage1.aardio"))
+				if !kw.findOne(string.lower(title)) return ; 				
+				loadcodex("\forms\main\frmPage1.aardio");
 			}
 		}
 	}, table.unpack(config.setbm.wakeUpKey)

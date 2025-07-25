@@ -417,6 +417,9 @@ getActiveAppName = function(){
     var hwnd = win.getForeground();
     if !hwnd return;
     var title = win.getText(hwnd);
+    if !title or !#title {
+    		title = win.getText(win.getParentOwner(hwnd));
+    	}
     var proc = process.fromWindowHandle(hwnd);
     var exePath;
     if proc
