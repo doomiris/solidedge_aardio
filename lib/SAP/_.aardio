@@ -609,19 +609,20 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 			
 			session.findById("wnd[0]/tbar[1]/btn[8]").press
 			
-			'如果没排产
+			'如果没排产, 有Modal信息窗口弹出
 
-			on error resume next
-				if NOT session.findById("wnd[1]/usr/txtMESSTXT1") is Nothing then
-					session.findById("wnd[1]/tbar[0]/btn[0]").press
-					notFound = True
-				end if
-			on error goto 0
+			If session.ActiveWindow.Type = "GuiModalWindow" Then
+				session.findById("wnd[1]/tbar[0]/btn[0]").press
+				notFound = True
+			End If
+
+
+
 		*/
 		if vm.script.notFound {
-			win.msgboxTimeout("还没排产 " ++ orderId ++ " : " ++ itemList[i])
+			win.msgboxTimeout("还没排产:" ++ orderId ++ " : " ++ itemList[i]);
 			continue;
-		} 
+		}
 		vm.script = /*				
 			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").contextMenu
 			session.findById("wnd[0]/usr/cntlCUSTOM/shellcont/shell/shellcont/shell").selectContextMenuItem "&XXL"
