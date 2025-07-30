@@ -220,11 +220,11 @@ winform.button8.oncommand = function() winform.listbox.addCustom();
 winform.button9.oncommand = function() winform.listbox.clear();
 winform.button10.oncommand = function() winform.listbox.importFromDesp();
 
-listEdit.onEditChanged = win.debounce(function(text,selIndex){
+listEdit.onEditChanged = function(text,selIndex){
 	winform.listbox.refreshList()
 	winform.listbox.selIndex = selIndex;
-	//win.msgbox(text);
-}, 200)
+}
+//win.debounce(listEdit.onEditChanged)
 
 
 

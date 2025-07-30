@@ -148,9 +148,12 @@ winform.listview.onnotify = function(id, code, ptr) {
     }
 }
 
-grid.onEditEnd = win.debounce( function(iItem,iSubItem){
+grid.onEditEnd = function(iItem,iSubItem){
 	tab = grid.getTable(tab.fields)
-})
+}
+
+//win.debounce(grid.onEditEnd);
+
 winform.button.oncommand = function(id,event){
 	var mergedPdf = fsys.pdfium();
 	for (i=1; winform.listview.count){
