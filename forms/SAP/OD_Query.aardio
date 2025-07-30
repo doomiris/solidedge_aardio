@@ -29,6 +29,13 @@ static2={cls="static";text="查询特性";left=236;top=8;right=316;bottom=24;dl=
 import console
 console.open();
 */
+
+
+winform.edit.disableInputMethod();
+winform.edit.setCueBannerText("查询分类/喷粉组/成品编码");
+winform.edit2.disableInputMethod();
+winform.edit2.setCueBannerText("查询特性");
+
 /*sqliteDB{{*/
 import config;
 import sqlite;

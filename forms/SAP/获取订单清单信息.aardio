@@ -23,12 +23,15 @@ import config;
 import process;
 import SAP;
 import sqlite;
+import win.clip;
 
 /*
 import console
 console.open()
 
 */
+winform.edit.disableInputMethod();
+winform.edit.setCueBannerText("订单号");
 
 winform.listview.enableDoubleBuffering();
 winform.listview2.enableDoubleBuffering();
@@ -173,21 +176,24 @@ winform.grid.onRightClick = function(item,subItem,nmListView){
 	var menu = win.ui.popmenu(winform);
 	
 	var t = nData[item];
-	var c = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
-	c = io.joinpath(config.__sapDownload, c + ".xlsx") ;
-	var m = string.join({"COOIS", t["SD 凭证"], t["项目(SD)"]}, "_");
-	m = io.joinpath(config.__sapDownload, m + ".xlsx") ;
+	var orderBom_file = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
+	orderBom_file = io.joinpath(config.__sapDownload, orderBom_file + ".xlsx") ;
+	var mbom_file = string.join({"COOIS", t["SD 凭证"], t["项目(SD)"]}, "_");
+	mbom_file = io.joinpath(config.__sapDownload, mbom_file + ".xlsx") ;
+	menu.add("复制[SD 凭证]", λ() winform.grid.copyPartNo({"SD 凭证"}));
+menu.add()
 	menu.add("复制[物料]", λ() winform.grid.copyPartNo({"物料"}));
 	menu.add("复制[物料][物料描述]", λ() winform.grid.copyPartNo({"物料","描述"}));
 menu.add()
-	if io.exist(c)
-		menu.add("打开订单BOM...", λ() process.execute(c));
+	if io.exist(orderBom_file)
+		menu.add("打开订单BOM...", λ() process.execute(orderBom_file));
 	menu.add("下载订单BOM...", λ() SAP.downloadB2CBOM(winform, t["SD 凭证"], itemList));
-	if io.exist(m)
-		menu.add("打开COOIS生产订单BOM...", λ() process.execute(m));
+	if io.exist(mbom_file)
+		menu.add("打开COOIS生产订单BOM...", λ() process.execute(mbom_file));
 	menu.add("下载COOIS生产订单BOM...", λ() SAP.downloadManufactureBOM(winform, t["SD 凭证"], itemList));
 menu.add()
 	menu.add("添加备注...", λ() winform.grid.beginEdit(item,6 /*备注列*/));
+menu.add()
 	menu.add("按itemmaster汇总格式复制...", function(){	
 		winform.listview.doNotCopyColumns = {}
 		winform.listview2.doNotCopyColumns = {}
@@ -219,7 +225,10 @@ winform.grid2.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
 	var x,y = win.getMessagePos();
 	var menu = win.ui.popmenu(winform);
+	menu.add("复制[SD 凭证]", λ() win.clip.write(winform.grid2.source[item]["SD 凭证"]));
+menu.add();
 	menu.add("添加备注...", λ() winform.grid2.beginEdit(item,5 /*备注列*/));
+menu.add();
 	menu.add("刷新此订单记录...", function(){
 		var order_number = winform.grid2.source[item]["SD 凭证"];
 		if !order_number return ; 

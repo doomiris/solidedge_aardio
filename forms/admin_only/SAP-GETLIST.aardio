@@ -51,8 +51,8 @@ var getFromSAP = function(winform){
 	if !vm.script.session
 		winform.log.print("无法连接, 检查SAP是否已经启动?");
 	if vm.script.session
-		winform.log.print("连开成功, 开始获取清单...");
-    vm.addCode(`
+		winform.log.print("连接成功, 开始获取清单...");
+	vm.script = /*
 		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
 		session.findById("wnd[0]/usr/chkBEWFLG").selected = False
@@ -60,10 +60,10 @@ var getFromSAP = function(winform){
 		session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841"
 		session.findById("wnd[0]/tbar[1]/btn[8]").press
 		
-		'session.findById("wnd[0]/tbar[1]/btn[45]").press
-		'session.findById("wnd[1]/tbar[0]/btn[0]").press
-		'session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.txt"
-		
+
+	*/
+		winform.log.print("开始下载清单...");
+	vm.script = /*
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").contextMenu
 		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").selectContextMenuItem "&XXL"
 		
@@ -73,7 +73,7 @@ var getFromSAP = function(winform){
 		session.findById("wnd[1]/tbar[0]/btn[11]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
-    `);
+	*/
 	winform.publish("getFromSAP",true);
 }
 /*}}*/

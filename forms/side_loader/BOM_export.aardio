@@ -26,7 +26,8 @@ var ts_count = #etab;
 excel.Application.CutCopyMode = false;
 
 _start_col = 9 /* I */;
-_col_count = 2;
+
+_col_count = console.getNumber( "从I列开始, 共有几列需要导出?");
 _save_as_single_bom_file = false;
 
 var tbk, tsht, tsht_tab;

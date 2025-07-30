@@ -11,7 +11,7 @@ checkbox={cls="checkbox";text="如果没有展平自动展平";left=11;top=445;r
 checkbox2={cls="checkbox";text="左对齐/放在图纸上方/添加文件名做为标题";left=11;top=424;right=280;bottom=444;checked=1;db=1;disabled=1;dl=1;z=8};
 combobox={cls="combobox";left=151;top=46;right=710;bottom=72;aw=1;dr=1;dt=1;edge=1;items={};mode="dropdown";z=2};
 edit={cls="edit";left=5;top=88;right=131;bottom=354;ah=1;autohscroll=false;border=1;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='Consolas');multiline=1;z=11};
-edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;bgcolor=15780518;dl=1;dt=1;readonly=1;z=7};
+edit2={cls="edit";left=6;top=47;right=132;bottom=75;autovscroll=false;bgcolor=0xF0CAA6;dl=1;dt=1;readonly=1;z=7};
 listview={cls="listview";left=149;top=88;right=704;bottom=355;aw=1;border=1;db=1;dr=1;dt=1;z=9};
 splitter={cls="splitter";left=144;top=88;right=149;bottom=354;ah=1;border=1;db=1;dt=1;edge=1;z=13};
 static={cls="static";text="当前图纸";left=16;top=19;right=128;bottom=41;dl=1;dt=1;transparent=1;z=12};
@@ -108,10 +108,14 @@ var findFilesByKeywords = function(keywordList, folderPath) {
 
 var addFlatPatterns = function(sheetMetalFiles){
 	import solidedge.application;
+	import win;
 	//import console;
 	var seApp = solidedge.application();
 	var dftDoc = seApp.ActiveDocument;
 	var activeSheet = dftDoc.ActiveSheet;
+	
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
 	
 	// 放置 Flat Pattern
 	var yOffset = 0; // 用于垂直偏移以避免重叠
@@ -216,7 +220,8 @@ winform.button3.oncommand = function(id,event){
 	var psmFiles = {}
 	for (i=1; #listFile)
 		table.push(psmFiles, io.joinpath(listFile[i][2], listFile[i][1]))
-	winform.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "waiting"}	
+	winform.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "waiting"};
+	
 	if thread.invokeAndWait(addFlatPatterns,psmFiles)
 		winform.button3.disabledText = null;
 	

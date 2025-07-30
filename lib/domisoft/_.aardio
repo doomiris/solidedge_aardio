@@ -8,6 +8,8 @@ var replace = string.replace;
 var trim = string.trim;
 
 math.isNumber = function(str){
+	if type(str) == "number" return true;
+	if type(str) !=="string" return false;
 	return !!string.match(str, "^[+-]?\d+\.?\d*$")) ; 
 }
 table.toHTML = function(tab){
@@ -130,12 +132,14 @@ copySelectedItem = function(ctrl){
 		var sourceTab = ctrl.getTable(true);
 		var fields = table.shift(sourceTab)
 		var items = sourceTab;
-			
+
 		var selTab = {}
 		if ctrl.copyWithHeaders
 			table.push(selTab,fields); 
 		for (i=1; #selected)
 				table.push(selTab, items[selected[i]]);
+				
+				//稀疏数组有问题啊
 		for (i=1; #selTab)
 				for(j=1;#doNotCopyColumns)
 					table.remove(selTab[i],	doNotCopyColumns[j]);
@@ -247,7 +251,6 @@ readClipHcode = function(){
 				s = replace(s, "1--1", "H");
 				
 			table.push(t,s);
-
 		}
 	}
 	return t; 
@@ -304,8 +307,12 @@ listColSort = function(column, desc){
 	for (i=1; #owner.source)
 		if !owner.source[i][name]
 			owner.source[i][name]=""
-		else
-			owner.source[i][name] = tostring(owner.source[i][name]);
+		else{
+			if math.isNumber(owner.source[i][name])
+				owner.source[i][name] = tonumber(owner.source[i][name]);
+			else
+				owner.source[i][name] = tostring(owner.source[i][name]);
+		}
 
 	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
 	owner.setTable( owner.source );
@@ -340,22 +347,6 @@ getUserFolder = function(corp){
 		return string.replace( OneDriveCommercial ,"@OneDrive - ","");
 	return null; 
 }
-/**
-envFix = function(str){
-	if !str return str; 
-	var outStr = str;
-	var matches = string.matches(str, "%%%");
-	if !matches or !#matches return str; 
-	for k, v in matches {
-		if #v
-			var envVar = string.getenv(string.trim(v[1],"%"));
-		if envVar 
-			outStr = string.replace(outStr, "@"+v[1], envVar);
-	}
-	outStr = string.replace(outStr,"@OneDrive - ","");	/*bugfix*/
-	return outStr;
-}
-**/
 envFix = function(str){
 	if !str return str; 
 	var outStr = str;
@@ -371,16 +362,14 @@ envFix = function(str){
 	return outStr;
 }
 isWorkingHour = function(startHour = 8, endHour = 18){
-	var currentHour = ..time.now().hour;	
+	var currentHour = ..time.now().hour;
 /*
 # 判断currentHour 是否在 startHour 和 endHour 区间内, 返回 true 或 false
 */
-	if (startHour <= endHour) {
-		// Same-day range (e.g., 8 to 18)
+	if (startHour <= endHour) {		// Same-day range (e.g., 8 to 18)
 		return currentHour >= startHour and currentHour < endHour;
 	} 
-	else {
-		// Cross-day range (e.g., 22 to 6)
+	else {		// Cross-day range (e.g., 22 to 6)
 		return currentHour >= startHour or currentHour < endHour;
 	}
 }
@@ -447,3 +436,6 @@ envFix(str) = 查找并替换%组成的系统参数
 getActiveAppName() = 返回上层app完整路径名
 end intellisense**/
 
+/**intellisense(math)
+isNumber(str) = test string of number, return true or false
+end intellisense**/

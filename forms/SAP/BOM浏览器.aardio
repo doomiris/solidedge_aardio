@@ -187,7 +187,7 @@ grid.copyPartNo = function(fields){
 	var f = owner.source.fields;
 	owner.doNotCopyColumns = {};
 	for k, v in f
-		if !table.find(fields, v)
+		if !table.indexOf(fields, v)
 			table.push(owner.doNotCopyColumns, k);
 	domisoft.copySelectedItem(owner);
 	owner.doNotCopyColumns = {};

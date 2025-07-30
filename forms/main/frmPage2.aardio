@@ -153,7 +153,7 @@ winform.button.oncommand = function(id,event){
 	if mainForm mainForm.show(false); //隐藏窗口
 	seApp := solidedge.application();
 	win.setActive(seApp.hWnd);
-	win.setForeground(seApp.hWnd)
+	win.setForeground(seApp.hWnd);
 	
 	initDeclare();
 	if #winform.cb_desp.text savesetting()

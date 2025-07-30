@@ -295,6 +295,7 @@ var saveLists = function(winform){
 
 winform.button2.oncommand = function(id,event){
     if mainForm mainForm.show(false); //隐藏窗口
+    win.setForeground(seApp.hWnd);
 	win.setActive(seApp.hWnd);
 	
 	initDeclare();

@@ -1,10 +1,10 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+var winform = win.form(text="tools";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=73;dl=1;dr=1;dt=1;z=1};
-custom2={cls="custom";text="自定义控件";left=0;top=94;right=455;bottom=470;clip=1;db=1;dl=1;dt=1;z=2};
-static={cls="static";text="点击新建常用表格...";left=2;top=77;right=441;bottom=98;dl=1;dt=1;transparent=1;z=3}
+edit={cls="edit";left=2;top=77;right=441;bottom=98;autohscroll=false;autovscroll=false;dl=1;dt=1;z=3};
+listview={cls="listview";left=0;top=94;right=455;bottom=470;clip=1;db=1;dl=1;dt=1;fullRow=1;msel=false;z=2}
 )
 /*}}*/
 
@@ -12,15 +12,16 @@ static={cls="static";text="点击新建常用表格...";left=2;top=77;right=441;
 import console;
 console.open();
 */
-
+winform.edit.setCueBannerText("双击新建常用表格...")
 import win.ui.menu;
 import win.ui.toolbar;
+import win.debounce;
 
 import win.imageList;
 var imgList = win.imageList.shell( 0/*_SHIL_LARGE*/ )
 
 
-/*tbutton2{{*/
+/*tbutton2_edit_Dim{{*/
 var tbutton2 = function(id,event){
 	import solidedge.application;
 	
@@ -31,30 +32,36 @@ var tbutton2 = function(id,event){
     if SelSet.Count !== 1 return; 
     if (SelSet(1).Type !== 488188096 /* igDimension */) return;
     
+    win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
     import domisoft;
-    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L");
+    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L",seApp.hWnd);
     if !s return; 
     if ..string.len(..string.trim(s)) == 0 return ; 
     SelSet(1).OverrideString = s;
     SelSet(1).Style.NTSSymbol = 1 /* igDimStyleNTSNone */;
     
     //mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
-/*tbutton3{{*/
+/*tbutton3_edit_Balloon{{*/
 var tbutton3 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
 	import solidedge.DraftDocument;
     if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+    
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
 	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
 	var seSht = seDFT.ActiveSheet;
 	var BBS = seSht.Balloons;
 	var ee = seDFT.getTopRecordMark(seSht);
 	ee = ee ? string.pack( ee[1] + 1 ) : "a";
-	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee);
+	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee,seApp.hWnd);
 	if !e return ; 
 	if (string.len(string.trim(e)) == 0) return ; 
 	var setBB = function(balloonItem, txt){
@@ -79,16 +86,19 @@ var tbutton3 = function(id,event){
 		}
 	}
     //mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
-/*tbutton4{{*/
+/*tbutton4_Delete_Balloon{{*/
 var tbutton4 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
 	import solidedge.DraftDocument;
 	if seApp.Documents.Count==0 return ; 
     if seApp.ActiveDocumentType !== 2 /*Draft Document Type*/ return ; 
+    
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
 	var seDFT = solidedge.DraftDocument(seApp.ActiveDocument);
 	var seSht = seDFT.ActiveSheet;
 	var BBS = seSht.Balloons;
@@ -99,7 +109,7 @@ var tbutton4 = function(id,event){
         		ee = BBS.Item(i).BalloonText;
         		break;
 	}
-	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee);
+	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee,seApp.hWnd);
 	if !e return ; 
 	if (..string.len(..string.trim(e)) == 0) return ; 
 	
@@ -110,15 +120,18 @@ var tbutton4 = function(id,event){
         			BBS.Item(i).Delete();
 	}
     //mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
-/*tbutton5{{*/
+/*tbutton5_openDummy{{*/
 var tbutton5 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
 	import solidedge.AssemblyDocument;
 	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
 	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
 	select(seAsm.SelectSet.Count) {
 		case 1 {
@@ -142,25 +155,30 @@ var tbutton5 = function(id,event){
 		}
 	}
     //mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
-/*tbutton6{{*/
+/*tbutton6_closeDft_nosave{{*/
 var tbutton6 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
+	
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
 	seApp.closeDft(false);
     //mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
-/*tbutton7{{*/
+/*tbutton7_closeDft_SAVE{{*/
 var tbutton7 = function(id,event){
 	import solidedge.application;
 	var seApp = solidedge.application();
+	
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
 	seApp.closeDft(true);
    // mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
 /*菜单{{*/
@@ -185,6 +203,8 @@ var opent = function(n){
 	win.showForeground(excel.Application.hwnd);
 	//mainForm.show(false);
 }
+win.debounce(opent);
+
 winform.menuTable={};
 winform.menuTable[1] = win.ui.popmenu(winform);//创建弹出菜单
 winform.menuTable[2] = win.ui.popmenu(winform);//创建弹出菜单
@@ -206,7 +226,7 @@ winform.popmenu = function(index){
 
 
 /*}}*/
-/*tbutton8{{*/
+/*tbutton8_弹出菜单{{*/
 var tbutton8 = function(wform){
 	import console;
 	wform.popmenu(1);
@@ -216,7 +236,7 @@ var tbutton82 = function(wform){
 	wform.popmenu(2);
 }
 /*}}*/
-/*tbutton9{{*/
+/*tbutton9_replaceWithPartCopy{{*/
 var tbutton9 = function(id,event){
 	import console;
 	import solidedge.application;
@@ -225,9 +245,12 @@ var tbutton9 = function(id,event){
 	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
 	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
 	if (seAsm.SelectSet.Count != 1) return;
+	
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
 	seAsm.replaceWithPartCopy(seAsm.SelectSet.Item(1));
     //mainForm.show(false); //隐藏窗口
-	if seApp win.setActive(seApp.hWnd);
 }
 /*}}*/
 
@@ -281,6 +304,7 @@ var tools = {
 }
 /*}}*/
 
+/*创建顶部工具条{{*/
 var tbar = win.ui.toolbar(winform.custom);
 tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
 tbar.showLabel = true; //在按钮上显示文字
@@ -294,21 +318,38 @@ for (i=1; #tools)
 		i /* id */,
 		4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/
 	)
+/*}}*/
 
-var tform = win.ui.toolbar(winform.custom2)
-tform.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
-tform.showLabel = true; //在按钮上显示文字
-//tform.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
-tform.imageList = imgList;
+
+/*模版文件列表{{*/
+winform.listview.setImageList(imgList, 1/*_LVSIL_SMALL*/);
+winform.listview.insertColumn("文件名",-1);
+winform.listview.modifyStyle(,0x4000/*_LVS_NOCOLUMNHEADER*/);
+winform.listview.setExtended(0x1/*_LVS_EX_TRACKSELECT*/ | 0x20/*_LVS_EX_FULLROWSELECT*/, true);
+
+
+import fsys.info;
 for (i=1; #tlist){
-	tform.add(
+	var info = fsys.info.get(tlist[tlist[i]],0x100/*_SHGFI_ICON*/ | 0x80/*_SHGFI_USEFILEATTRIBUTES*/)
+	var iconIndex = info ? info.iIcon : -1; // 如果获取失败则不显示图标
+ 	winform.listview.addItem(
 		tlist[i],
-		λ() opent(i),
-		 81 /* img */,
 		i /* id */,
-		4/*_TBSTYLE_GROUP*/
+		iconIndex /* img */ 
 	)
-
+}
+//实现鼠标悬停效果
+import win.ui.tracker;
+var tracker = win.ui.tracker(winform.listview);
+tracker.onMouseMove = function(wParam,lParam){
+	var x,y = win.getMessagePos(lParam);
+	var item,subItem,nmListView = owner.hitTest(x,y);
+	if item
+		owner.selIndex = item
+}
+/*}}*/
+winform.listview.onDoubleClick = function(item,subItem,nmListView){
+	 opent(item)
 }
 
 winform.show();
