@@ -168,29 +168,26 @@ var downloadbom = function(){
 	ctrl := grid;
     var tab=table.array();
     var data = ctrl.getTable(ctrl.source.fields);
-//    win.msgbox(data)
     for (k, v in ctrl.selected){
         var bg = data[v]["物料"];
-//        if string.startWith(bg,"BG")
             table.push(tab,  bg);
     }  
     if !#tab return ;
     thread.invoke( 
     	function(wform,tab){
 			import SAP;
-			//var session=SAP.session();
 			SAP.downloadBOM(wform, tab);
     	},ctrl.getParent(),tab
     )
 };
 grid.copyPartNo = function(fields){
 	var f = owner.source.fields;
-	owner.doNotCopyColumns = {};
+	owner.doNotCopyColumns = [];
 	for k, v in f
-		if !table.indexOf(fields, v)
+		if !table.find(fields, v)
 			table.push(owner.doNotCopyColumns, k);
-	domisoft.copySelectedItem(owner);
-	owner.doNotCopyColumns = {};
+	domisoft.copySelectedItem(owner);	
+	owner.doNotCopyColumns = [];
 }
 grid.deleteItems = function(){
 	var selected = owner.selected;
@@ -200,9 +197,9 @@ grid.deleteItems = function(){
 		table.push(flist, owner.source[selected[i]]["物料"]);
 	var dtype = winform.listview2.items[winform.listview2.selIndex]["大类"]
 	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + table.tostring(flist),"需要确认",winform.hwnd) return; 
-	acc = access(path);
-	acc.exec("DELETE FROM `lib` WHERE ??", {{"大类" : dtype, "物料":flist}});
-	acc.close();	
+	db = sqlite(path);
+	db.exec("DELETE FROM `lib` WHERE ??", {{"大类" : dtype, "物料":flist}});
+	db.close();	
 
 	winform.frmReLoad();
 
@@ -213,8 +210,8 @@ menu.add("下载BOM...", downloadbom);
 menu.add()
 menu.add("删除选定行", λ() grid.deleteItems());
 menu.add()
-menu.add("复制[物料]", λ() grid.copyPartNo({"物料"}));
-menu.add("复制[物料][物料描述]", λ() grid.copyPartNo({"物料","物料描述"}));
+menu.add("复制[物料]", λ() grid.copyPartNo(["物料"]));
+menu.add("复制[物料][物料描述]", λ() grid.copyPartNo(["物料","物料描述"]));
 menu.add("复制所选BOM文件...", λ() grid.copyfiles(grid.getCopyFilesList()));
 
 

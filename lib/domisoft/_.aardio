@@ -118,10 +118,10 @@ getSelectedText = function(listCtrl){
 copySelectedItem = function(ctrl){
 		if !ctrl	ctrl = owner;
 		var doNotCopyColumns = ctrl.doNotCopyColumns;
-		doNotCopyColumns := {/* 防null报错 */};
+		doNotCopyColumns := [/* 防null报错 */];
 		
 		table.sort(doNotCopyColumns);
-		table.reverse(doNotCopyColumns);
+		//table.reverse(doNotCopyColumns);
 
         import win.clip;
         import win.clip.html;
@@ -133,16 +133,21 @@ copySelectedItem = function(ctrl){
 		var fields = table.shift(sourceTab)
 		var items = sourceTab;
 
-		var selTab = {}
+		var selTab = [];
 		if ctrl.copyWithHeaders
-			table.push(selTab,fields); 
+			table.push(selTab, fields); 
 		for (i=1; #selected)
 				table.push(selTab, items[selected[i]]);
 				
-				//稀疏数组有问题啊
-		for (i=1; #selTab)
-				for(j=1;#doNotCopyColumns)
-					table.remove(selTab[i],	doNotCopyColumns[j]);
+		for (i=1; #selTab){
+			for(j=1; #doNotCopyColumns)
+				selTab[i][doNotCopyColumns[j]] = null;
+			table.removeByValue(selTab[i], null);
+			var cacheTab = [];
+			for k, v in selTab[i] 
+				table.push(cacheTab,v); //处理稀疏数组问题
+			selTab[i] = cacheTab;
+		};
 
 		/* clip添加纯文本格式 */
         var txtTab = [];
