@@ -32,20 +32,16 @@ import com.excel;
 winform.listview.enableDoubleBuffering();
 winform.listview2.enableDoubleBuffering();
 
-var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
-var acc, db;
-/*
-var refreshDB = function(){
-	acc = access(path);
-	db = godking.tableToDB(acc.getTable("SELECT * FROM [Sheet1$]"),,"Sheet1$");
-	acc.close();
+winform.frmReLoad = function(){
+	owner.redraw();
 }
-*/
 
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
+
+var db;
 var refreshDB = function(){
 	db = sqlite(path);
 }
-
 
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.listview2);

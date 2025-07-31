@@ -81,7 +81,6 @@ winform.qtbs.open = function(selIndex,pcode){
 }
 
 /*}}*/
-
 /*搜索按钮{{*/
 winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
@@ -194,24 +193,19 @@ winform.buttonD.oncommand = function(id,event){
 }
 /*}}*/
 /*右键点击快速取消筛选{{*/
-winform.bkplus1.wndproc = function(hwnd,message,wParam,lParam){
-	if message == 0x205 /* _WM_RBUTTONUP */ winform.qtbs.forms[1].syslink.onHyperlinkClick();
-}
+winform.bkplus1.onRightMouseUp = winform.qtbs.forms[1].syslink.onHyperlinkClick;
 winform.qtbs.updateColor = function(btCtrl){
 	var t = #winform.qtbs.forms[1].clSapType.selected + #winform.qtbs.forms[1].clUnit.selected + #winform.qtbs.forms[1].clOrderType.selected;
 	btCtrl.border = t ? {top=5;color=-16711936} : null;
 	btCtrl.redraw();
 }
-
 /*}}*/
-
 /*后退按钮{{*/
 winform.button2.oncommand = function(id,event){
 	if event == 0/*_BN_CLICKED*/
 		winform.qtbs.selIndex = 2;
 }
 /*}}*/
-
 var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件
 tooltipCtrl.addTool(winform.buttonD, `
 查看搜索历史记录和清单收藏夹
