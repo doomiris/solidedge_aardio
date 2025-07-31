@@ -21,6 +21,11 @@ console.open()
 import config;
 import fsys.dlg;
 
+import win.imageList;
+var imgList = win.imageList.shell(1/*_SHIL_SMALL*/)
+
+winform.listview.setImageList(imgList, 1/*_LVSIL_SMALL*/);
+import fsys.info;
 var tab;
 
 var renew = function(){
@@ -35,6 +40,18 @@ grid.setReadonlyColumns([1,2,3])
 
 var pdfExt = [".pdf"];
 var imgExt = [".jpg",".jpeg",".png",".gif",".bmp",".tif",".jfif"];
+
+
+var refreshIcon = function(){
+	for (i=1; #tab){
+		var fullname = io.joinpath(tab[i]["Path"],tab[i]["文件名"]);
+		var info = fsys.info.get(fullname, 0x100/*_SHGFI_ICON*/ | 0x80/*_SHGFI_USEFILEATTRIBUTES*/)
+		var iconIndex = info ? info.iIcon : -1; // 如果获取失败则不显示图标
+		var item = winform.listview.getItem(i);		
+		item.iImage = iconIndex;		
+		winform.listview.setItem(item,i);
+	}
+}
 
 winform.onDropFiles = function(files){
 	var t = {}
@@ -53,6 +70,7 @@ winform.onDropFiles = function(files){
 		}
 	}
 	grid.setTable(tab);
+	refreshIcon();
 	winform.listview.adjust = function(cx,cy){
 	    winform.listview.fillParent(1);
 	    winform.listview.fillParent(2);
@@ -63,6 +81,7 @@ winform.onDropFiles = function(files){
 /*
 # 创建右键菜单, 在右键菜单里可以对listview里的选中项的: 上移, 下移, 删除操作.
 */
+
 // 创建右键菜单
 winform.popmenu = win.ui.popmenu(winform);
 winform.popmenu.add('上移', function(id){
@@ -73,6 +92,7 @@ winform.popmenu.add('上移', function(id){
         tab[selIndex - 1] = temp;
         grid.setTable(tab);
         winform.listview.selIndex = selIndex - 1;
+        refreshIcon();
     }
 });
 
@@ -84,6 +104,7 @@ winform.popmenu.add('下移', function(id){
         tab[selIndex + 1] = temp;
         grid.setTable(tab);
         winform.listview.selIndex = selIndex + 1;
+        refreshIcon();
     }
 });
 
@@ -92,6 +113,7 @@ winform.popmenu.add('删除', function(id){
     if(selIndex > 0){
         table.remove(tab, selIndex);
         grid.setTable(tab);
+        refreshIcon();
     }
 });
 
@@ -134,6 +156,7 @@ winform.listview.onnotify = function(id, code, ptr) {
                             grid.setTable(tab);
                             winform.listview.selIndex = row;
                             dragIndex = row;
+                            refreshIcon();
                         }
                     }
                 }
@@ -174,9 +197,15 @@ winform.button.oncommand = function(id,event){
 			}
 		}
 	}
-	var path = fsys.dlg.save('PDF文件|*.PDF|所有文件|*.*|',,config.setbm.workingDir,winform,,"合并PDF文件");
-	if path
-		mergedPdf.save(path);	
+	var path = fsys.dlg.save('PDF文件|*.pdf|所有文件|*.*|',,config.setbm.workingDir,winform,,"合并PDF文件");
+	if !path return ;
+	var succ = mergedPdf.save(path);
+	
+	if succ 
+		win.msgboxTimeout("已成功完成.",,,winform)
+	else
+		win.msgboxTimeout("保存失败",,,winform)
+
 }
 
 winform.show();
