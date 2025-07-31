@@ -16,7 +16,6 @@ winform.edit.setCueBannerText("双击新建常用表格...")
 import win.ui.menu;
 import win.ui.toolbar;
 import win.debounce;
-
 import win.imageList;
 var imgList = win.imageList.shell( 0/*_SHIL_LARGE*/ )
 
@@ -35,8 +34,9 @@ var tbutton2 = function(id,event){
     win.setActive(seApp.hWnd);
 	win.setForeground(seApp.hWnd);
 	
-    import domisoft;
-    var s = domisoft.showInputBox("Edit Dim", "input text to replace dimension:","L",seApp.hWnd);
+    import win.inputBox;
+    var s = win.inputBox(seApp, "input text to replace dimension:", "Edit Dim", "L").doModal();
+   
     if !s return; 
     if ..string.len(..string.trim(s)) == 0 return ; 
     SelSet(1).OverrideString = s;
@@ -61,7 +61,11 @@ var tbutton3 = function(id,event){
 	var BBS = seSht.Balloons;
 	var ee = seDFT.getTopRecordMark(seSht);
 	ee = ee ? string.pack( ee[1] + 1 ) : "a";
-	var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee,seApp.hWnd);
+	
+    import win.inputBox;
+    var e = win.inputBox(seApp, "What symbol change bolloons to ?", "Edit Balloon", ee).doModal();
+    
+	//var e = domisoft.showInputBox("Edit Balloon", "What symbol change bolloons to ?",ee,seApp.hWnd);
 	if !e return ; 
 	if (string.len(string.trim(e)) == 0) return ; 
 	var setBB = function(balloonItem, txt){
@@ -109,7 +113,10 @@ var tbutton4 = function(id,event){
         		ee = BBS.Item(i).BalloonText;
         		break;
 	}
-	var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee,seApp.hWnd);
+    import win.inputBox;
+    var e = win.inputBox(seApp, "What symbol bolloons you want to delete ?", "Delete Balloon", ee).doModal();
+    
+	//var e = domisoft.showInputBox("delete Balloon", "What symbol bolloons you want to delete ?",ee,seApp.hWnd);
 	if !e return ; 
 	if (..string.len(..string.trim(e)) == 0) return ; 
 	
@@ -325,8 +332,6 @@ for (i=1; #tools)
 winform.listview.setImageList(imgList, 1/*_LVSIL_SMALL*/);
 winform.listview.insertColumn("文件名",-1);
 winform.listview.modifyStyle(,0x4000/*_LVS_NOCOLUMNHEADER*/);
-winform.listview.setExtended(0x1/*_LVS_EX_TRACKSELECT*/ | 0x20/*_LVS_EX_FULLROWSELECT*/, true);
-
 
 import fsys.info;
 for (i=1; #tlist){

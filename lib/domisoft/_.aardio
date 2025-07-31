@@ -26,14 +26,6 @@ table.toHTML = function(tab){
     return html;
 }
 namespace domisoft;
-showInputBox = function(title, Msg,tips, winform){
-	import win.inputBox;
-	var inputBox = win.inputBox(winform)
-	inputBox.text = title;
-	inputBox.info.text = Msg;
-	inputBox.input.text = tips;
-	return inputBox.doModal();
-}
 
 clearExcelCorpse = function(){
 	..thread.invoke( 
@@ -424,10 +416,10 @@ getActiveAppName = function(){
 
 
 /**intellisense(domisoft)
-showInputBox(title, Msg,tips, winform) = 显示输入框
 clearExcelCorpse( ) = 清理异常的excel进程
 getComAppPath(keyword) = 查找com程序路径
-getSelectedText(listbox) = 返回选中的文本数组
+getActiveAppName() = 返回上层app完整路径名
+getSelectedText(listbox) = 返回选中的文本数组,listview返回首列
 getRunningWorkSheet(workbookName,worksheetName) = 获取worksheet对象 不指定worksheetName时返回sheets(1)
 taobaoURLsimple(taobaoUrl) = 简化taobao链接
 ctrlC(translateAccelerator, doNotCopyColumns) = 用于listview.translateAccelerator赋值启用CTRL+C复制功能
@@ -438,7 +430,6 @@ setColumnWidth(listview, widthTable) = 设置列宽
 copyTable(tab, selectedIndex) = 复制表格
 getFileDate(filename, formatString) = 获取文件修改时间
 envFix(str) = 查找并替换%组成的系统参数
-getActiveAppName() = 返回上层app完整路径名
 end intellisense**/
 
 /**intellisense(math)

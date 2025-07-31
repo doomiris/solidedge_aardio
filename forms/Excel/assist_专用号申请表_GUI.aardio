@@ -89,8 +89,11 @@ winform.button.oncommand = function(id,event){
 		tm.format = string.join({"%Y";"%m";"%d"},separator);
 		return tostring(tm);
 	}
+	
 	import config;
-	config.tbm.Designer :=  domisoft.showInputBox("姓名", "这是第一次使用, 请先输入姓名:","", winform) ;
+	import win.inputBox;
+	
+	config.tbm.Designer :=  winform.inputBox("这是第一次使用, 请先输入姓名:", "姓名") ;
 	config.tbm.save();
 	
 	var username = config.tbm.Designer;

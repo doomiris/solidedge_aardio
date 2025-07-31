@@ -25,7 +25,7 @@ import win.ui.tooltip;
 import color;
 import config;
 import domisoft;
-
+import win.inputBox;
 /*拆分条{{*/
 winform.splitter.split(winform.editUser3, winform.custom);
 winform.splitter.ltMin = 32;
@@ -92,20 +92,16 @@ winform.button.oncommand = function(id,event){
 }
 /*}}*/
 /*弹出历史记录菜单{{*/
-winform.historyMenu = win.ui.popmenu(winform);
+winform.historyMenu = {};
 var createHistoryMenu = function(){
-	var getSelectedList = function(){
-		var lv = winform.qtbs.forms[2].listview;		
-		var lst = lv.selected;
-		var tab = {};
-		for (i=1; #lv.items)
-			if table.indexOf(lst,i) or !#lst
-				table.push(tab, lv.getItemText(i,1));
-		return tab; 
+	winform.historyMenu = win.ui.popmenu(winform);
+	winform.historyMenu.onMenuItemClick = function(id){
+		winform.editUser3.text = winform.historyMenu.getString(id, 0);
+		winform.editUser3.setFocus();
 	}
 	var addFav = function(){
-		var fav = config.qtip.fav;
-		var favName = domisoft.showInputBox("收藏", "请为要收藏的清单命名:","", winform)
+		var fav = config.qtip.fav;		
+		var favName = winform.inputBox("请为要收藏的清单命名:","收藏");
 		if	!favName return ;
 		if #table.filter(fav, lambda(v,index) favName == v[["title"]]) 
 			if !win.msgboxTest("点击确认覆盖相同名称收藏","覆盖确认")
@@ -115,7 +111,7 @@ var createHistoryMenu = function(){
 				fav[i] = null; /*删除已经有的同名收藏*/
 			}
 
-		table.push(fav, {["title"] = favName; ["list"] = getSelectedList()});
+		table.push(fav, {["title"] = favName; ["list"] = domisoft.getSelectedText(winform.qtbs.forms[2].listview)});
 		config.qtip.save();		
 	}
 	winform.historyMenu.add("识别剪贴板图像", function(){
@@ -154,11 +150,11 @@ var createHistoryMenu = function(){
     					}
     				if !shift and ctrl /*按ctrl时替换为当前清单*/
     					if win.msgboxTest("替换为当前选择的清单?","确认替换") {
-    						fav[i]["list"] = getSelectedList();
+    						fav[i]["list"] = domisoft.getSelectedText(winform.qtbs.forms[2].listview);
     						config.qtip.save();
     					}
     				if shift and ctrl	/*同时按询问修改名称*/ {
-    				    var newFavName = domisoft.showInputBox("修改名称", "请输入新名称",fav[i]["title"] , winform);
+    				    var newFavName = winform.inputBox("请输入新名称", "修改名称", fav[i]["title"]);
     				    if newFavName {
     						fav[i]["title"] = newFavName;
     						winform.historyMenu.setString(id, newFavName, 0/*_MF_BYCOMMAND*/);
@@ -189,12 +185,10 @@ var createHistoryMenu = function(){
 	}
 
 }
-winform.setTimeout(createHistoryMenu);
-winform.historyMenu.onMenuItemClick = function(id){
-	winform.editUser3.text = winform.historyMenu.getString(id, 0);
-	winform.editUser3.setFocus();
-}
+
+
 winform.buttonD.oncommand = function(id,event){
+	createHistoryMenu();
 	var x,y = win.getMessagePos(); 
 	winform.historyMenu.popup(x,y,true)
 }

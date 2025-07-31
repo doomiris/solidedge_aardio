@@ -24,7 +24,7 @@ import config;
 import tarray;
 import win.ui.listEdit;
 import win.debounce;
-
+import win.inputBox;
 
 var listEdit = win.ui.listEdit(winform.listbox);
 
@@ -171,8 +171,8 @@ winform.listbox.remove = function(){
 }
 winform.listbox.addCustom = function(){
 	var selIndex = owner.selIndex;
-	var items = owner.items;
-	var t = domisoft.showInputBox("输入描述", "用/拆分","", owner.parent);
+	var items = owner.items;	
+	var t = winform.inputBox("输入描述,用/拆分","输入描述", ,"用/拆分");
 	if t table.push(items, t);
 	owner.items = items;
 	owner.refreshList();
@@ -180,7 +180,7 @@ winform.listbox.addCustom = function(){
 }
 winform.listbox.importFromDesp = function(id,event){
 	var items = owner.items;
-	var t = domisoft.showInputBox("输入描述", "自动按空格拆分并与下方列表匹配","", owner.parent);
+	var t = winform.inputBox("自动按空格拆分并与下方列表匹配","输入描述");
 	if !t return ;
 	var s = string.split(t, " ");
 	var clues = winform.lb_clue.items;
@@ -207,10 +207,6 @@ winform.lb_clue.wndproc = function(hwnd,message,wParam,lParam){
 
 	}
 }
-
-
-
-
 
 winform.listbox.refreshList();
 winform.button5.oncommand = function() winform.listbox.moveup();

@@ -3,6 +3,7 @@ import win.ui.menu;
 import win.ui.grid;
 import win.clip;
 import win.clip.file;
+import win.inputBox;
 import sqlite;
 import fsys;
 import fsys.file;
@@ -117,6 +118,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 		);
 		
 	}
+	menu.add("TEST", λ() win.msgbox(domisoft.getSelectedText(winform.listview)));
 	menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
 	menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
 	menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
@@ -128,12 +130,15 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	    	[1] = "添加进收藏"; 
 	    	[2] = { 
 	    			[1] = {
-	    				/*text = */"+ 新的收藏...",
-	    				/*proc = */function(id){
+	    				"+ 新的收藏...",
+	    				function(id){
+	    				    var newFavName = winform.inputBox("请输入简短收藏名称","收藏夹");
+	    				    if !newFavName return ; 
 	    					table.push(fav,{
-	    						"title":"新收藏";
-	    						"list":{pcode}
+	    						"title":newFavName;
+	    						"list": domisoft.getSelectedText(winform.listview);
 	    					});
+	    					config.qtip.save();	    					
 	    				};
 	        		};
 	        		[2] = {/* ---- */};
@@ -143,8 +148,8 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	for (i=1; #fav)	{
 		if !fav[i] continue;
 		table.push(favTab[2], {	
-				/*text =*/ fav[i]["title"],
-				/*proc =*/ function(id){
+				fav[i]["title"],
+				function(id){
 					if !table.find(fav[i]["list"],pcode)
     						table.push(fav[i]["list"],pcode);
    				}
@@ -153,7 +158,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	menu.addTable({favTab});
 	menu.add("添加图号...",function(){
 		import domisoft;
-		var drawing_No = domisoft.showInputBox("指定图号", "请给选中的零件输入图号","", winform);
+		var drawing_No = winform.inputBox("请给选中的零件输入图号","指定图号");
 		if !drawing_No return ; 
 		var prtLists = domisoft.getSelectedText(winform.listview);
 		if !#prtLists return ; 

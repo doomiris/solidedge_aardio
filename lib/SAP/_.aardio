@@ -192,7 +192,8 @@ downloadBOM = function(winform, etab){
 
     	var filename;
     	var vt = QHC.getSapItem(etab[i]);
- 		if vt filename = vt.物料描述; 			
+ 		if vt filename = vt.物料描述;
+ 		else filename = "";
     	filename = string.replace(filename, " ", "_");
     	filename = etab[i] ++ "_" ++ filename ++ ".xlsx";
     	filename = domisoft.formatWindowsFileName(filename);
