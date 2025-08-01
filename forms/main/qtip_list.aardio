@@ -118,13 +118,28 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 		);
 		
 	}
-	menu.add("TEST", λ() win.msgbox(domisoft.getSelectedText(winform.listview)));
+	//menu.add("TEST", λ() win.msgbox(domisoft.getSelectedText(winform.listview)));
+	menu.add()
 	menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
 	menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
 	menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
+	menu.add()
 	menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
+	menu.add()
 	menu.add("查找图纸...", λ() qtbs.open(4,pcode));
 	menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));
+	menu.add("添加图号...",function(){
+		import domisoft;
+		var drawing_No = winform.inputBox("请给选中的零件输入图号","指定图号");
+		if !drawing_No return ; 
+		var prtLists = domisoft.getSelectedText(winform.listview);
+		if !#prtLists return ; 
+		thread.invoke(function(drawing_No, prtLists){
+			import getList;
+    		getList.appendDrawingMapFromTable(drawing_No, prtLists)			
+		}, drawing_No, prtLists)	
+	})
+	menu.add()
     var fav = config.qtip.fav;
 	var favTab = {
 	    	[1] = "添加进收藏"; 
@@ -156,17 +171,6 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
     	})
     }
 	menu.addTable({favTab});
-	menu.add("添加图号...",function(){
-		import domisoft;
-		var drawing_No = winform.inputBox("请给选中的零件输入图号","指定图号");
-		if !drawing_No return ; 
-		var prtLists = domisoft.getSelectedText(winform.listview);
-		if !#prtLists return ; 
-		thread.invoke(function(drawing_No, prtLists){
-			import getList;
-    		getList.appendDrawingMapFromTable(drawing_No, prtLists)			
-		}, drawing_No, prtLists)	
-	})
 	menu.add("添加到BOM浏览器...",function(){
 		import domisoft;
 /*
