@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.658" ProductVersion="1.5.0.658" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.665" ProductVersion="1.5.0.665" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
-		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
+		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
 			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\admin_only\add_QHC_Drawing_Release_List.aardio" comment="forms\admin_only\add_QHC_Drawing_Release_List.aardio"/>
 			<file name="BOM_OD_LIB.aardio" path="forms\admin_only\BOM_OD_LIB.aardio" comment="forms\admin_only\BOM_OD_LIB.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>

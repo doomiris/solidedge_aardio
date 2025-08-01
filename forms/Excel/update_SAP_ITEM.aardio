@@ -1,7 +1,7 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="选择需要更新的列...";right=303;bottom=359)
+var winform = win.form(text="选择需要更新的列...";right=303;bottom=359;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="开始更新";left=160;top=328;right=296;bottom=352;db=1;dr=1;tabstop=1;z=2};
 button2={cls="button";text='\uF0E2';left=264;top=8;right=296;bottom=40;color=0x0000FF;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=3};

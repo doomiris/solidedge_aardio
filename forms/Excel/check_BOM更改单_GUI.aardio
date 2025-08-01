@@ -1,6 +1,6 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="检查BOM更改单";right=759;bottom=400)
+var winform = win.form(text="检查BOM更改单";right=759;bottom=400;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;default=1;dl=1;dt=1;tabstop=1;z=1};
 checkbox={cls="checkbox";text="自动修复部分简单错误";left=593;top=41;right=744;bottom=59;checked=1;color=0xFF0000;dr=1;dt=1;tabstop=1;transparent=1;z=5};

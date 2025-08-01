@@ -446,14 +446,6 @@ subscribe("status2", function(...){
 } )
 
 domisoft.refreshSAP(mainForm);
-mainForm.onSize = function( width,height,wParam ) {	 
-	win.setTimeout(
-		function(){
-				try{ //解决开启了winform.listview2.enableDoubleBuffering()也不刷新问题
-					mainForm.mTabs.forms[mainForm.mTabs.selIndex].frmReLoad();
-				}
-		}
-	)
-}
+
 win.loopMessage();
 return mainForm;

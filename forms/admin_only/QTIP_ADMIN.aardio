@@ -3,7 +3,7 @@ import fonts.fontAwesome;
 import config;
 import fsys.table;
 /*DSG{{*/
-winform_admin = win.form(text="qtip Admin";right=638;bottom=502)
+winform_admin = win.form(text="qtip Admin";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform_admin.add(
 button={cls="button";text='\uF09C \r 解密';left=536;top=8;right=632;bottom=40;dr=1;dt=1;flat=1;font=LOGFONT(name='FontAwesome');hide=1;z=5};
 button11={cls="button";text="更新";left=16;top=72;right=288;bottom=120;align="left";color=0xD77800;disabled=1;dl=1;dt=1;flat=1;font=LOGFONT(h=-14);note="更新图纸下发库";z=12};

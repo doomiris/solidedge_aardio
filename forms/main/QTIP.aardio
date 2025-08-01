@@ -68,7 +68,7 @@ for k,v in qfName
 	
 
 
-winform.qtbs.forms[1].publish("preload") //仅触发加载,无响应事件
+winform.qtbs.forms[1].publish("preload") //仅用来触发加载,无对应响应事件
 winform.qtbs.selIndex = 2; 
 
 winform.qtbs.onSelchange = function(idx,tab,form){

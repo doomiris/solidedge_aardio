@@ -1,9 +1,10 @@
+import fonts.fontAwesome;
 import win.ui;
 import win.ui.menu;
 import win.ui.grid;
 import win.ui.toolbar;
 /*DSG{{*/
-var winform = win.form(text="BOM浏览器";right=1012;bottom=469;clipch=1)
+var winform = win.form(text="BOM浏览器";right=1012;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="搜索";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
 custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;cp=1;dl=1;dr=1;dt=1;z=8};
@@ -16,25 +17,14 @@ static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;al
 )
 /*}}*/
 
+import process;
 import fsys;
 import fsys.file;
-import domisoft;
-import tarray;
-import config;
-import process;
-//import access;
 import sqlite;
 import com.excel;
-//import godking.tableToDB;
-//import tarray;
-
-
-winform.listview.enableDoubleBuffering();
-winform.listview2.enableDoubleBuffering();
-
-winform.frmReLoad = function(){
-	owner.redraw();
-}
+import config;
+import domisoft;
+import tarray;
 
 var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
 
@@ -135,9 +125,10 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 		win.msgboxErr(f,"请先下载")
 	else {
 		var excel = com.GetOrCreateObject("Excel.Application");
-		excel.WindowState = -4137/*_xlMaximized*/
+		//excel.WindowState = -4137/*_xlMaximized*/
 		var wb = excel.WorkBooks.Open(f /* filename */,false /* UpdateLinks */,true /* ReadOnly */);
 		win.showForeground(wb.Application.hwnd);
+		win.setActive(wb.Application.hwnd);
 	}
 
 }
@@ -219,14 +210,12 @@ grid.onRightClick = function(item,subItem,nmListView){
 
 winform.frmReLoad();
 
-winform.show();
-
 winform.splitter.split(winform.listview,winform.listview2);
 winform.listview.doNotCopyColumns = {-1};
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.listview2.translateAccelerator = domisoft.ctrlC;
 
-
+winform.show();
 win.loopMessage();
 return winform;

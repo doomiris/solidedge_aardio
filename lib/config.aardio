@@ -44,8 +44,8 @@ if !config.revmgr.desp
 	config.revmgr.desp = {};
 if !config.qtip.fav
 	config.qtip.fav = {};
-if !config.serverIndex.combobox
-	config.serverIndex.combobox = 1;
+if !config.settings.cbb_serverIndex
+	config.settings.cbb_serverIndex = 1;
 if config.settings.closeToTray === null
 	config.settings.closeToTray = true;
 if !config.admin.lastWorkingFolder

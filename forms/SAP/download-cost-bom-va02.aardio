@@ -1,7 +1,7 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="下载成本BOM";right=890;bottom=519)
+var winform = win.form(text="下载成本BOM";right=890;bottom=519;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="开始下载成本BOM";left=88;top=70;right=212;bottom=110;dl=1;dt=1;z=1};
 button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;color=0xD77800;dl=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
