@@ -4,7 +4,8 @@ var winform = win.form(text="切剪板文本查看器";right=759;bottom=469)
 winform.add(
 button={cls="button";text="Clear";left=711;top=46;right=748;bottom=64;dr=1;dt=1;flat=1;z=2};
 edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hidesel=1;multiline=1;readonly=1;z=1};
-static={cls="static";text="Static";left=26;top=85;right=700;bottom=398;transparent=1;z=3}
+listview={cls="listview";left=22;top=93;right=151;bottom=416;edge=1;z=3};
+listview2={cls="listview";left=151;top=93;right=706;bottom=416;edge=1;z=4}
 )
 /*}}*/
 
@@ -18,48 +19,105 @@ viewer.onDrawClipboard=function(){
 winform.button.oncommand = function(id,event){
 	win.clip.write()
 }
-import web.view;
-var wb = web.view(winform.static);
-wb.external = {
-	log = function(str){ 
-		import win.clip;
-		win.clip.write(str);
-	};
 
-	getData = function(){
-		import config;
-		var fav = config.qTipLog;		
-		var t={};
-		for (i=1; #fav)
-			table.push(t, {"name" = fav[i]})
-		import JSON;
-		return JSON.stringifyArray(t); 
-	}
-}
-
-wb.external.dblclick = function(str){
-    import win.clip;
-    win.clip.write(str);
-}
+import win.ui.grid;
+import win.clip;
+import sqlite;
 import config;
-var fav = config.qTipLog;
+import domisoft;
+import tarray;
+var grid = win.ui.grid(winform.listview);
+var grid2 = win.ui.grid(winform.listview2);
 
-import wsock.tcp.simpleHttpServer;
+var db = sqlite( config.__userDbPath,,1/*_SQLITE_OPEN_READONLY*/);
+if !db.existsTable("favClipTitle")
+	db.exec("CREATE TABLE favClipTitle( 
+		分类 TEXT,
+		排序 INTEGER
+		);"
+	)
+
+if !db.existsTable("favClipContent")
+	db.exec("CREATE TABLE favClipContent( 
+		分类 TEXT,
+		内容 TEXT,
+		标签 TEXT,
+		排序 INTEGER
+		);"
+	)
+var titleTab = db.getTable("SELECT 分类,排序 FROM [favClipTitle] ORDER BY 排序 ASC");
+titleTab.fields = {"分类"};
+grid.setTable(titleTab);
 
 
-winform.show()
+var cTab = db.getTable("SELECT * FROM [favClipContent]");
+db.close();
 
-if _STUDIO_INVOKED
-	wb.go("http://localhost:4000/clipviewer.html");
-else
-	wb.go("\web\clipviewer.html");
+var contentTitle;
+var contentTab;
 
 
-/*
-wb.waitEle("#list",function(){
-	wb.invoke("list.addOption", fav);
-})
-*/
+grid.onItemChanged = function(item,subItem,nmListView){
+	contentTitle = titleTab[item]["分类"];
+	contentTab = table.filter(cTab, λ(v,index) v["分类"] == contentTitle );
+	table.sort(contentTab, λ (next) owner["排序"] < next["排序"] );
+	contentTab.fields = {[1] = "内容", [2] = "标签"};
+	grid2.setTable(contentTab);
+}
 
+
+
+grid2.onItemChanged = function(item,subItem,nmListView){
+	
+	var content = contentTab[item]["内容"];
+	win.clip.write(content);
+}
+import win.inputBox;
+grid.onDoubleClick = function(item,subItem,nmListView){
+	if !item {
+		var newTitle = winform.inputBox("输入分类名","添加");
+		if !newTitle  return ; 
+		grid.addNewTitle (newTitle);
+	}
+		
+}
+grid2.onDoubleClick = function(item,subItem,nmListView){
+	if !item {
+		var newContent = winform.inputBox("输入内容","添加");
+		if !newContent  return ; 
+		grid2.addNewContent (newContent);
+	}
+		
+}
+grid.addNewTitle = function(title){
+	var newItem = {
+		"分类" = title,
+		"排序" = #titleTab + 1
+	};
+	db = sqlite( config.__userDbPath);
+	db.exec("INSERT INTO `favClipTitle`(??) VALUES(?)",{{'分类', '排序'},{title, #titleTab + 1}});
+	db.close();
+	table.push(	titleTab, newItem);
+	grid.setTable(titleTab);
+}
+grid2.addNewContent = function(content){
+	var newItem = {
+		"分类" = contentTitle;
+		"内容" = content,
+		"标签" = "",
+		"排序" = #contentTab + 1
+	};
+	db = sqlite( config.__userDbPath);
+	db.exec("INSERT INTO `favClipContent`(??) VALUES(?)", {
+		{'分类', '内容', '标签', '排序'},
+		{contentTitle, content, "", #contentTab + 1}
+	});
+	db.close();
+	table.push(	cTab, newItem);
+	grid.onItemChanged(winform.listview.findItem(contentTitle))
+}
+
+winform.setTimeout(grid.onItemChanged,,1);
+winform.show();
 win.loopMessage();
 return winform;

@@ -55,8 +55,10 @@ if !config.printingCenter.AllowSentToPdfLib
 
 if !config.webview.lang
 	config.webview.lang = "zh-cn";
-if !config.userDbPath
-	config.userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
+
+ config.__userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
+ 
+
 
 /**intellisense(config)
 __appName = 应用程序名

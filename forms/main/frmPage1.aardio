@@ -261,8 +261,8 @@ var saveLists = function(winform){
     
 
     // 2. 使用 INSERT OR IGNORE 在一个事务中尝试插入所有新条目
-    var dbpathuser = config.userDbPath;
-    var dbRs = sqlite(dbpathuser);
+
+    var dbRs = sqlite(config.__userDbPath);
 
     try {
         // 开启事务,将所有操作打包
