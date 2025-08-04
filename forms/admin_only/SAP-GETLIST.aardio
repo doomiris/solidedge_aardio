@@ -5,14 +5,14 @@ import fsys;
 /*DSG{{*/
 var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;z=1};
-button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;z=3};
-button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;z=4};
-button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;z=5};
-button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;font=LOGFONT(h=-16;name='FontAwesome');z=7};
-button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;z=8};
-edit={cls="edit";left=72;top=24;right=568;bottom=56;edge=1;z=6};
-log={cls="richedit";left=288;top=80;right=568;bottom=320;edge=1;multiline=1;z=2}
+button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;dl=1;dt=1;z=1};
+button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;dl=1;dt=1;z=3};
+button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;dl=1;dt=1;z=4};
+button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;dl=1;dt=1;z=5};
+button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
+button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;dl=1;dt=1;z=8};
+edit={cls="edit";left=72;top=24;right=568;bottom=56;dl=1;dr=1;dt=1;edge=1;z=6};
+log={cls="richedit";left=288;top=80;right=568;bottom=320;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
 )
 /*}}*/
 
@@ -330,18 +330,15 @@ console.open();
 		db.exec("CREATE INDEX BUn on 所有物料 (BUn);")
 	//	db.exec("CREATE INDEX 禁用 on 所有物料 (禁用);")
 	}
+	
+	if !db.existsTable("updateLog")
+		db.exec("CREATE TABLE updateLog(lastUpdate TEXT);")
+	db.exec("REPLACE INTO [updateLog] (lastUpdate) VALUES ('" ++ time().local() ++ "');" )
+	
 	db.close();
-	winform.button3.disabledText = null;
 	
-	import fsys.table;
-	var vtab = fsys.table(io.joinpath(config.dbServer.path,"dblog.table"));
-	vtab.assign(
-		last_updated = time().local();
-	);
-	vtab.save();
-	
-	winform.log.print("合并数据完成.");
-	
+	winform.button3.disabledText = null;	
+	winform.log.print("合并数据完成.");	
 }
 
 /*}}*/
@@ -352,19 +349,16 @@ winform.button3.oncommand = function(id,event){
 
 winform.button4.oncommand = function(id,event){
 	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
+	_5g_db = "\\CCNSIA1A\SEParts\Admin\SAP\db";
 
 	var fileList = {
-		"itemmaster_lists.table",
-		"BOM.db", 
 		"qhc_product_info_lib.db", 
-		"info.db", 
 		"drawing_lists.db", 
-		"dblog.table", 
 		"qhcsap.db", 
 		"qhc_OD_lib.db", 
 		"tbm.db", 
 		"qhc_dw_rel_list.db", 
-		"BOM_LIB.xls"
+		"BOM_LIB.db"
 	};
 	for (i=1; #fileList)
 		fileList[i] = io.joinpath(config.dbServer.path, fileList[i]);
@@ -376,9 +370,9 @@ winform.button4.oncommand = function(id,event){
 	}
 	if !io.exist(_qhc_db) winform.log.print("无法访问:" + _qhc_db);
 	else {
-		thread.invoke(copyfolder, winform, fileList, _qhc_db);
+		thread.invoke(copyfolder, winform, fileList, _qhc_db)
 	}
-	//thread.invoke(copyfolder, winform, "S:\Admin\SAP\db\*.*", "D:\users\CCL100100\Carrier Corporation\domisoft - General\db\");
+	thread.invoke(copyfolder, winform, fileList, _5g_db);
 }
 getXlsxDbPath = function(){
 	import fsys;
