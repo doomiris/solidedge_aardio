@@ -35,9 +35,6 @@ var refreshIcon = function(fileTab){
 	}
 }
 
-
-
-
 var fileLibMap = function(fullpath){
 	if !fullpath return ; 
 	import config;
