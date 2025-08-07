@@ -12,8 +12,7 @@ syslink={cls="syslink";text="<a>也可以自动查找当前图纸中的1:1展平
 
 import tarray;
 
-import win.util.tray;
-var tray = win.util.tray(mainForm) //创建托盘图标,用于通知 
+import win.dlg.message;
 
 /*
 import console
@@ -67,9 +66,7 @@ winform.button.oncommand = function(id,event){
 		sePSM.psm2dxf(tab[i]["output"]);
 		sePSM.close(true /* SaveChanges */);
 	}
-	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
-	tray.pop("All DXF Print Done","TBM");
-	//win.msgboxTimeout("done", "dxf", 5 * 1000);
+	winform.msgInfo("完成. All DXF job done.", 2000);
 }
 
 winform.static2.onHyperlinkClick = function(nmSysLink,url,id){

@@ -7,25 +7,34 @@ var string = ..string;
 namespace SAP;
 class session{
 	ctor( ... ){
-		this.oGui = ..com.TryGetObject("SAPGUI.ScriptingCtrl.1");
+		this.oGui = ..com.TryGetObject("SAPGUI");
 		if( ! this.oGui ) return null,"请先打开SAP";
 		this.oApp =  this.oGui.GetScriptingEngine();
 		this.oConn = this.oApp.Children(0);
 		this.oSession = this.oConn.Children(0);
+		this.close = function(){
+			..com.Release(this.oSession)
+			..com.Release(this.oConn)
+			..com.Release(this.oApp)
+			..com.Release(this.oGui)
+			this.oSession = null;
+			this.oConn = null;
+			this.oApp = null;
+			this.oGui = null;
+			collectgarbage("collect");			
+		}
+		..table.gc(this,"close");
 	};
 	@_metaProperty;
 }
 namespace session{
-  import util.metaProperty; 
-  _metaProperty = util.metaProperty( 
+import util.metaProperty; 
+_metaProperty = util.metaProperty( 
 	get = function(k){
 		return owner.oSession
 	};
 	set = function(k,v){
 		owner.oSession = v;
-	};
-	Close = function(){
-		owner.oConn.CloseSession(owner.oSession.id);
 	};
 	goHomePage = function(){
 		var session = owner.oSession;
@@ -37,6 +46,7 @@ namespace session{
 		}
 	}
 	
+/*downloadBOM{{*/
 	downloadBOM = function(winform, etab){
 		//import win;
 		import QHC;	
@@ -72,6 +82,23 @@ namespace session{
 		session = null;
 		winform.publish("dok_list", ftab);
 	};
+/*}}*/
+	addPlantCode = function(code = "0841"){
+		var session = owner.oSession;
+		session.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
+		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		
+		session.findById("wnd[1]/tbar[0]/btn[0]").press();	
+	};
+	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
+		var session = owner.oSession;
+		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01";
+		var txt = session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
+		if txt and string.len(txt)
+			session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+	};
+	_topointer = lambda() owner.oSession;
   )
 }
 

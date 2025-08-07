@@ -1,0 +1,17 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=606;bottom=469)
+winform.add(
+button={cls="button";text="Button";left=537;top=2;right=602;bottom=28;dr=1;dt=1;z=2};
+button2={cls="button";text="Button";left=537;top=53;right=602;bottom=79;dr=1;dt=1;z=3};
+button3={cls="button";text="Button";left=537;top=29;right=602;bottom=55;dr=1;dt=1;z=4};
+button4={cls="button";text="Button";left=538;top=79;right=603;bottom=105;dr=1;dt=1;z=5};
+button5={cls="button";text="Button";left=537;top=107;right=602;bottom=133;dr=1;dt=1;z=6};
+button6={cls="button";text="Button";left=537;top=132;right=602;bottom=158;dr=1;dt=1;z=7};
+button7={cls="button";text="Button";left=537;top=160;right=602;bottom=186;dr=1;dt=1;z=8};
+listview={cls="listview";left=0;top=0;right=535;bottom=469;db=1;dl=1;dr=1;dt=1;edge=1;z=1}
+)
+/*}}*/
+
+winform.show();
+win.loopMessage();

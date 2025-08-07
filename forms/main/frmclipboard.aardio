@@ -1,35 +1,43 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="切剪板文本查看器";right=759;bottom=469)
+var winform = win.form(text="切剪板文本查看器";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="Clear";left=711;top=46;right=748;bottom=64;dr=1;dt=1;flat=1;z=2};
+custom={cls="\dlg\listview-rt.aardio";text="listview-rt";left=153;top=92;right=753;bottom=414;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;z=6};
 edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hidesel=1;multiline=1;readonly=1;z=1};
-listview={cls="listview";left=22;top=93;right=151;bottom=416;edge=1;z=3};
-listview2={cls="listview";left=151;top=93;right=706;bottom=416;edge=1;z=4}
+edit2={cls="edit";left=153;top=70;right=704;bottom=88;dl=1;dr=1;dt=1;z=5};
+listview={cls="listview";left=22;top=93;right=151;bottom=416;db=1;dl=1;dt=1;edge=1;z=3};
+static={cls="static";text="双击空白处添加新项目";left=25;top=425;right=323;bottom=441;transparent=1;z=4}
 )
 /*}}*/
 
 import win.clip.viewer;
-viewer = win.clip.viewer(winform);
-viewer.onDrawClipboard=function(){
-	var str = win.clip.read();	
-	winform.edit.text = str;
-}
-
-winform.button.oncommand = function(id,event){
-	win.clip.write()
-}
-
 import win.ui.grid;
+import win.ui.listEdit;
 import win.clip;
 import sqlite;
 import config;
 import domisoft;
 import tarray;
-var grid = win.ui.grid(winform.listview);
-var grid2 = win.ui.grid(winform.listview2);
+import win.debounce;
 
-var db = sqlite( config.__userDbPath,,1/*_SQLITE_OPEN_READONLY*/);
+viewer = win.clip.viewer(winform);
+viewer.onDrawClipboard = function(){
+	var str = win.clip.read();	
+	winform.edit.text = str;
+}
+winform.edit2.setCueBannerText("点击右侧列表内项目可快速复制内容到剪切板")
+winform.button.oncommand = function(id,event){
+	if event = 0/*_BN_CLICKED*/
+		win.clip.write()
+}
+
+
+var grid = win.ui.grid(winform.listview);
+var grid2 = win.ui.grid(winform.custom.listview);
+
+
+var db = sqlite( config.__userDbPath);
 if !db.existsTable("favClipTitle")
 	db.exec("CREATE TABLE favClipTitle( 
 		分类 TEXT,
@@ -63,42 +71,47 @@ grid.onItemChanged = function(item,subItem,nmListView){
 	table.sort(contentTab, λ (next) owner["排序"] < next["排序"] );
 	contentTab.fields = {[1] = "内容", [2] = "标签"};
 	grid2.setTable(contentTab);
+	grid2.setColumnWidth(100,2)
+	winform.custom.listview.fillParent(1);
 }
 
-
-
-grid2.onItemChanged = function(item,subItem,nmListView){
-	
+grid2.onItemChanged = function(item,subItem,nmListView){	
 	var content = contentTab[item]["内容"];
 	win.clip.write(content);
 }
-import win.inputBox;
 grid.onDoubleClick = function(item,subItem,nmListView){
 	if !item {
-		var newTitle = winform.inputBox("输入分类名","添加");
-		if !newTitle  return ; 
-		grid.addNewTitle (newTitle);
+		winform.listview.addItem("",#titleTab + 1);
+		grid.beginEdit(#titleTab + 1, subItem)
 	}
 		
 }
-grid2.onDoubleClick = function(item,subItem,nmListView){
-	if !item {
-		var newContent = winform.inputBox("输入内容","添加");
-		if !newContent  return ; 
-		grid2.addNewContent (newContent);
-	}
-		
+grid.onEditChanged = function(text,iItem,iSubItem){
+	if !text return ; 
+	if !string.len(text) return ; 
+	grid.addNewTitle (text);
+	table.push(titleTab, {"分类" = text, "排序" = #titleTab + 1 });
 }
 grid.addNewTitle = function(title){
-	var newItem = {
-		"分类" = title,
-		"排序" = #titleTab + 1
-	};
 	db = sqlite( config.__userDbPath);
 	db.exec("INSERT INTO `favClipTitle`(??) VALUES(?)",{{'分类', '排序'},{title, #titleTab + 1}});
 	db.close();
-	table.push(	titleTab, newItem);
-	grid.setTable(titleTab);
+}
+
+grid2.onDoubleClick = function(item,subItem,nmListView){
+	if !item {
+		winform.custom.listview.addItem("",#contentTab + 1)
+		grid2.beginEdit(#contentTab + 1, subItem)
+	}else{
+		//grid2.onItemChanged(item) //已经触发不需要再触发了
+		winform.show(false);
+	}
+}
+grid2.onEditChanged = function(text,iItem,iSubItem){
+	if !text return ; 
+	if !string.len(text) return ; 
+	grid2.addNewContent (text);
+	table.push(contentTab, {"分类" = contentTitle,"内容" = text,"标签" = "", "排序" = #contentTab + 1 });
 }
 grid2.addNewContent = function(content){
 	var newItem = {
@@ -116,6 +129,10 @@ grid2.addNewContent = function(content){
 	table.push(	cTab, newItem);
 	grid.onItemChanged(winform.listview.findItem(contentTitle))
 }
+win.debounce(grid.onEditChanged);
+win.debounce(grid2.onEditChanged);
+win.debounce(grid.addNewTitle);
+win.debounce(grid2.addNewContent);
 
 winform.setTimeout(grid.onItemChanged,,1);
 winform.show();

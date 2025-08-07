@@ -19,8 +19,7 @@ tab={cls="tab";left=8;top=160;right=752;bottom=552;ah=1;aw=1;db=1;dl=1;dr=1;dt=1
 )
 /*}}*/
 
-import win.util.tray;
-var tray = win.util.tray(mainForm) //创建托盘图标,用于通知 
+import win.dlg.message;
 
 import process;
 import config;
@@ -81,7 +80,7 @@ var startPrintAllLV = function(vtab){
 	seApp = solidedge.application();
 	if !seApp return ; 
 	seApp.DisplayAlerts = 0;
-	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
+
 	seDfts = tbs[1].seDfts;
 	for x,j in tbs[1].listview.checked {
         	var	seDFT = solidedge.DraftDocument(seApp.Documents.item(seDfts.seIndex[j]));  //线程传出来的seDfts会丢失item内容
@@ -105,8 +104,7 @@ var startPrintAllLV = function(vtab){
 			}
 	}
 	seApp.DisplayAlerts = 1;
-	tray.pop("All Print Done","TBM");
-
+	winform.msgInfo("完成. All Print job done.", 2000);
 }
 /*}}*/
 /*控件事件{{*/

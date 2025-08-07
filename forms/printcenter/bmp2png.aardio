@@ -11,8 +11,7 @@ static2={cls="syslink";text="<a>清空列表</a>";left=576;top=432;right=632;bot
 /*}}*/
 
 import tarray;
-import win.util.tray;
-var tray = win.util.tray(mainForm) //创建托盘图标,用于通知 
+import win.dlg.message;
 
 /*
 import console
@@ -68,9 +67,8 @@ winform.button.oncommand = function(id,event){
 		bmp = null;
 
 	}
-	tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
-	tray.pop("All PNG Print Done","TBM");
-	//win.msgboxTimeout("done", "PNG", 5 * 1000);
+
+	winform.msgInfo("完成. All PNG job done.", 2000);
 }
 
 winform.static2.onHyperlinkClick = function(nmSysLink,url,id){

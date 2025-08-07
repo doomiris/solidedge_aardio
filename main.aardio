@@ -5,6 +5,7 @@ import win.ui.atom;
 import win.ui.tabs;
 import win.ui.tooltip; 
 import win.util.tray;
+import win.dlg.message;
 import key;
 import sqlite;
 import process;
@@ -156,29 +157,21 @@ mainForm.popmenu2.add('SE导出当前截图...', λ()	thread.invoke(
 	)
 );
 mainForm.popmenu2.add('SAP一键登入1', function(){
-	thread.invoke(SAP.sapQuickOpen)
-	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
-	mainForm.tray.pop("Starting SAP GUI ...","TBM");
+	thread.invoke(SAP.sapQuickOpen);
+	mainForm.msgInfo("请稍等...Starting SAP GUI ...", 3000);
+
 });
 mainForm.popmenu2.add('SAP一键登入2', function(){
-	thread.invoke(SAP.sapQuickOpen,2)
+	thread.invoke(SAP.sapQuickOpen,2);
+	mainForm.msgInfo("请稍等...Starting SAP GUI ...", 3000);
+/**
 	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
 	mainForm.tray.pop("Starting SAP GUI ...","TBM");
+**/
 });
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('ipconfig /flushdns',
-	λ()
-		thread.invoke(
-			function(){
-				import process.popen;
-				import win;
-				var prcs = process.popen.cmd(`
-						ipconfig /flushdns
-					`)
-				win.msgboxTimeout(prcs.readAll(),,3000)
-			}
-		)
-)
+mainForm.popmenu2.add('剪切板工具', λ() loadcodex("\forms\main\frmclipboard.aardio"));
+
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit TBM', λ() win.quitMessage());
 /*}}*/
@@ -400,17 +393,23 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 }
 /*}}*/
 
-
-var hkId;
+/*
+import console
+console.open();
+*/
+var hkId, clipHkId;
 	//删除之前注册的热键,hkId如果是null空值，此函数可忽略不做任何操
 mainForm.unreghotkey(hkId);
+mainForm.unreghotkey(clipHkId);
 //重新注册系统热键;
 hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
+
 		import domisoft
 		import string.keywords;		
 		var title, exePath = domisoft.getActiveAppName();
 		var exe_name = exePath ? string.lower(io.splitpath(exePath).file) : null;
+		console.log(title, exePath)
 		select(exe_name){
 			case "excel.exe" {
 				if !title return ;				
@@ -428,8 +427,32 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 				if !kw.findOne(string.lower(title)) return ; 				
 				loadcodex("\forms\main\frmPage1.aardio");
 			}
+			case "saplogon.exe" {
+				if !title return ;
+				var kw = string.keywords(["组织级别","展开 BOM"]);
+				switch( kw.findOne(title), {  
+					[1]: function () {
+						import SAP.session;
+						var session = SAP.session();
+						session.addPlantCode();
+						session.close();
+						//collectgarbage("collect");
+					};
+					[2] : function(){
+						import SAP.session;
+						var session = SAP.session();
+						session.addPlantCodeCS12();
+						session.close();
+					};					
+				})
+			}
 		}
 	}, table.unpack(config.setbm.wakeUpKey)
+);
+clipHkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
+	function(id,mod,vk){
+		thread.invoke(λ ()	loadcodex("\forms\main\frmclipboard.aardio"))
+	}, table.unpack([4 /*_MOD_SHIFT*/, 0x71/*_VK_F2*/])
 );
 
 

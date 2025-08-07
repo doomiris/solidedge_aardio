@@ -3,11 +3,10 @@ import win.ui.grid
 import win.ui.listEdit;
 import win.ui.tabs;
 /*DSG{{*/
-var winform = win.form(text="扩展中心";right=759;bottom=469)
+var winform = win.form(text="扩展中心";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="Button";left=616;top=35;right=737;bottom=77;hide=1;z=2};
-combobox={cls="combobox";left=42;top=42;right=216;bottom=68;edge=1;items={};mode="dropdown";z=3};
-listview={cls="listview";left=0;top=118;right=759;bottom=413;edge=1;z=1}
+edit={cls="edit";left=4;top=18;right=339;bottom=39;dl=1;dt=1;z=2};
+listview={cls="listview";left=0;top=41;right=759;bottom=470;db=1;dl=1;dr=1;dt=1;edge=1;msel=false;z=1}
 )
 /*}}*/
 
@@ -22,50 +21,26 @@ import domisoft;
 import SAP.vm;
 import config;
 import fsys;
-/*
-var site = {
-	{
-		name = "gitee.com",
-		url = "https://gitee.com/doomiris/solidedge_aardio/raw/master/forms/side_loader/"
-	},
-	{
-		name = "github.com",
-		url = "https://raw.githubusercontent.com/doomiris/solidedge_aardio/master/forms/side_loader/"
-	}
-}
-*/
-var list = {fields = {[1] = "name",[2]="filename"}
-/*
-	{ name = "物料名称生成", filename = "物料名称生成.aardio"}
-	{ name = "获取文件名清单", filename = "获取文件名清单.aardio"}
-	{ name = "淘宝链接简化", filename = "淘宝链接简化.aardio"}
-	{ name = "关闭代理", filename = "关闭代理.aardio"}
-	{ name = "(新办公室)", filename = "注册表.aardio"}
-*/
-}
 
-/*
-for (i=1; #site)	
-	winform.combobox.add(site[i].name);
-*/
-var path = io.joinpath(config.__templateLib,"..","ext")
+var list = {fields = {[1] = "name",[2]="filename"}};
+
+var path = io.joinpath(config.__templateLib,"..","ext");
 var flist = fsys.list(path,,"*.aardio");
 for (i=1; #flist){
 	var info = io.splitpath(flist[i]);
 	table.push(list, {name=info.name, filename=info.file})
 } 
 
-winform.bindConfig( config.sideloader,{
-	combobox = "selIndex";
-} );
+winform.edit.setCueBannerText("双击启动扩展...");
+winform.listview.modifyStyle(,0x4000/*_LVS_NOCOLUMNHEADER*/ + 0x800/*_LVS_ALIGNLEFT*/);
 
 var grid = win.ui.grid(winform.listview);
-
+list.fields = {"filename"}
 grid.setTable(list)
 
-grid.ColumnWidth := domisoft.setColumnWidth(grid, {15,50,200,300})
-grid.onDoubleClick = function(item,subItem,nmListView){
- 
+//grid.ColumnWidth := domisoft.setColumnWidth(grid, {15,50,200,300})
+
+grid.onDoubleClick = function(item,subItem,nmListView){ 
 	var file = io.joinpath(path, list[item].filename);
 	win.setTimeout(function(){
 		if mainForm {
