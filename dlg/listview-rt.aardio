@@ -1,17 +1,144 @@
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=606;bottom=469)
 winform.add(
-button={cls="button";text="Button";left=537;top=2;right=602;bottom=28;dr=1;dt=1;z=2};
-button2={cls="button";text="Button";left=537;top=53;right=602;bottom=79;dr=1;dt=1;z=3};
-button3={cls="button";text="Button";left=537;top=29;right=602;bottom=55;dr=1;dt=1;z=4};
-button4={cls="button";text="Button";left=538;top=79;right=603;bottom=105;dr=1;dt=1;z=5};
-button5={cls="button";text="Button";left=537;top=107;right=602;bottom=133;dr=1;dt=1;z=6};
-button6={cls="button";text="Button";left=537;top=132;right=602;bottom=158;dr=1;dt=1;z=7};
-button7={cls="button";text="Button";left=537;top=160;right=602;bottom=186;dr=1;dt=1;z=8};
-listview={cls="listview";left=0;top=0;right=535;bottom=469;db=1;dl=1;dr=1;dt=1;edge=1;z=1}
+button1={cls="button";text='\uF077';left=537;top=2;right=602;bottom=28;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=2};
+button2={cls="button";text='\uF078';left=537;top=29;right=602;bottom=55;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=4};
+button3={cls="button";text='\uF067';left=537;top=53;right=602;bottom=79;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=3};
+button4={cls="button";text='\uF068';left=536;top=79;right=601;bottom=105;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=5};
+button5={cls="button";text='\uF044';left=537;top=107;right=602;bottom=133;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=6};
+listview={cls="listview";left=0;top=0;right=535;bottom=469;db=1;dl=1;dr=1;dt=1;fullRow=1;gridLines=1;msel=false;vscroll=1;z=1}
 )
 /*}}*/
+
+import win.ui.grid
+//winform.grid = win.ui.grid(winform.listview);
+
+var tab = [
+["a","b","c"],
+["1","2","3"],
+["2","3","4"],
+["3","4","5"],
+["4","5","6"],
+["5","6","7"],
+["6","7","8"],
+["7","8","9"],
+["8","9","0"]
+]
+
+winform.listview.setTable(tab);
+if !tab.fields
+	table.shift(tab);
+
+winform.listview.selMoveUp = function(){
+    var selIndex = owner.selIndex;
+	if !selIndex return ; 
+	    if(selIndex > 1){
+        var tab = owner.items;
+		tab[selIndex-1], tab[selIndex] = tab[selIndex], tab[selIndex-1];
+		owner.replaceItems(tab);
+        owner.selIndex = selIndex - 1;
+    }
+    owner.setFocus();
+};
+
+winform.listview.selMoveDown = function(){
+    var selIndex = owner.selIndex;
+	if !selIndex return ; 
+    if(selIndex < owner.count){
+        var tab = owner.items;
+		tab[selIndex], tab[selIndex + 1] = tab[selIndex + 1], tab[selIndex];
+		owner.replaceItems(tab);
+        owner.selIndex = selIndex + 1;
+    }
+    owner.setFocus();
+};
+winform.listview.selInsert= function(){
+    var selIndex = owner.selIndex;
+	var tab = owner.items;
+	var newItem = table.array(owner.columnCount," ");
+	table.insert(tab,newItem,selIndex+1);
+	owner.replaceItems(tab);
+	owner.selIndex = selIndex + 1;
+	owner.setFocus();
+}
+winform.listview.selDelete = function(){
+    var selIndex = owner.selIndex;
+	if !selIndex return ; 
+	var tab = owner.items;
+    if(selIndex > 0){
+        table.remove(tab, selIndex);
+        owner.replaceItems(tab);
+    }
+    if selIndex > 1
+    	owner.selIndex = selIndex - 1;
+    owner.setFocus();
+};
+
+winform.listview.clearAll = function(){
+	owner.clear(false);
+	owner.setFocus();
+};
+
+// 右键点击列表项触发此事件
+winform.listview.onRightClick = function(item, subItem, nmListView){
+    if(item > 0){
+        winform.listview.selIndex = item;
+
+    }
+};
+winform.button1.oncommand = λ () winform.listview.selMoveUp();
+winform.button2.oncommand = λ () winform.listview.selMoveDown();
+winform.button3.oncommand = λ () winform.listview.selInsert();
+winform.button4.oncommand = λ () winform.listview.selDelete();
+winform.button5.oncommand = λ () winform.listview.clearAll();
+
+/*
+# 实现可以通过拖动选中项对listview条目执行: 上移, 下移操作.
+*/
+// 实现拖动选中项对listview条目执行上移、下移操作
+/**
+winform.listview.onnotify = function(id, code, ptr) {
+    if (code == 0xFFFFFF93/*_LVN_BEGINDRAG*/) {
+        var nm = winform.listview.getNotifyMessage(code, ptr);
+        var dragIndex = nm.iItem;
+        
+        // 监听鼠标移动和释放事件
+        winform.capture = true;
+        var dragging = true;        
+        winform.wndproc = function(hwnd, message, wParam, lParam) {
+            select(message) {
+                case 0x200 /*_WM_MOUSEMOVE*/ {
+                    if (dragging) {
+                        var x, y = win.getMessagePos(lParam);
+                        var row, col = winform.listview.hitTest();
+                        if (row && row != dragIndex) {
+                            // 拖动到新位置，交换数据
+                            var temp = tab[dragIndex];
+                            tab[dragIndex] = tab[row];
+                            tab[row] = temp;
+                            grid.setTable(tab);
+                            winform.listview.selIndex = row;
+                            dragIndex = row;
+                        }
+                    }
+                }
+                case 0x202 /*_WM_LBUTTONUP*/ {
+                    if (dragging) {
+                        dragging = false;
+                        winform.capture = false;
+                    }
+                }
+            }
+        }
+    }
+}
+
+grid.onEditEnd = function(iItem,iSubItem){
+	tab = grid.getTable(tab.fields)
+}
+**/
 
 winform.show();
 win.loopMessage();
