@@ -409,7 +409,7 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 		import string.keywords;		
 		var title, exePath = domisoft.getActiveAppName();
 		var exe_name = exePath ? string.lower(io.splitpath(exePath).file) : null;
-		console.log(title, exePath)
+		//console.log(title, exePath)
 		select(exe_name){
 			case "excel.exe" {
 				if !title return ;				
@@ -429,22 +429,15 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 			}
 			case "saplogon.exe" {
 				if !title return ;
-				var kw = string.keywords(["组织级别","展开 BOM"]);
+				import SAP.session;
+				var session = SAP.session();
+				var kw = string.keywords(["组织级别","展开 BOM","使用位置"]);				
 				switch( kw.findOne(title), {  
-					[1]: function () {
-						import SAP.session;
-						var session = SAP.session();
-						session.addPlantCode();
-						session.close();
-						//collectgarbage("collect");
-					};
-					[2] : function(){
-						import SAP.session;
-						var session = SAP.session();
-						session.addPlantCodeCS12();
-						session.close();
-					};					
+					[1]: λ () session.addPlantCodeMM03();
+					[2]: λ () session.addPlantCodeCS12();
+					[3]: λ () session.addPlantCodeCS15();
 				})
+				session = null;
 			}
 		}
 	}, table.unpack(config.setbm.wakeUpKey)

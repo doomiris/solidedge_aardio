@@ -177,7 +177,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 		import console
 		console.open();
 */
-		var bomName = domisoft.showInputBox("指定大分类名称", "请给选中的成品输入分类名称,尽量简短,例如Mendos","", winform);
+		var bomName = winform.inputBox("请给选中的成品输入分类名称,尽量简短,例如Mendos","指定大分类名称");
 		if !bomName return ; 
 		var prtLists = domisoft.getSelectedText(winform.listview);
 		if !#prtLists return ; 

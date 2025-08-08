@@ -12,18 +12,6 @@ class session{
 		this.oApp =  this.oGui.GetScriptingEngine();
 		this.oConn = this.oApp.Children(0);
 		this.oSession = this.oConn.Children(0);
-		this.close = function(){
-			..com.Release(this.oSession)
-			..com.Release(this.oConn)
-			..com.Release(this.oApp)
-			..com.Release(this.oGui)
-			this.oSession = null;
-			this.oConn = null;
-			this.oApp = null;
-			this.oGui = null;
-			collectgarbage("collect");			
-		}
-		..table.gc(this,"close");
 	};
 	@_metaProperty;
 }
@@ -83,11 +71,9 @@ _metaProperty = util.metaProperty(
 		winform.publish("dok_list", ftab);
 	};
 /*}}*/
-	addPlantCode = function(code = "0841"){
+	addPlantCodeMM03 = function(code = "0841"){
 		var session = owner.oSession;
 		session.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
-		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
-		
 		session.findById("wnd[1]/tbar[0]/btn[0]").press();	
 	};
 	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
@@ -97,6 +83,52 @@ _metaProperty = util.metaProperty(
 		var txt = session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
 		if txt and string.len(txt)
 			session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+	};
+	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
+		import console;
+		var session = owner.oSession;
+    	if(!session){
+        	console.error("SAP Session 对象无效");
+        	return;
+    	}
+	
+    	try {
+        	// 查找工厂输入框
+        	var werksField = session.findById("wnd[0]/usr/ctxtRC29L-WERKS");
+        	if(!werksField){
+            	console.error("未找到工厂输入框(WERKS)");
+            	return;
+        	}
+	
+        	// 检查输入框是否可更改
+        	if(!werksField.Changeable){
+             	console.error("工厂输入框(WERKS)当前不可用");
+             	return;
+        	}
+        	werksField.text = code;
+	
+	
+        	// 查找执行按钮
+        	var executeBtn = session.findById("wnd[0]/tbar[1]/btn[8]");
+        	if(!executeBtn){
+            	console.error("未找到执行按钮(btn[8])");
+            	return;
+        	}
+	
+        	// 按下按钮
+        	executeBtn.press();
+	
+    	}
+    	catch(e){
+        	// 捕获可能发生的COM异常
+        	console.error("操作SAP时发生错误：", e);
+    	}
+		
+/*
+		var session = owner.oSession;
+		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+*/
 	};
 	_topointer = lambda() owner.oSession;
   )
