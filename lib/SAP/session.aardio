@@ -85,50 +85,9 @@ _metaProperty = util.metaProperty(
 			session.findById("wnd[0]/tbar[1]/btn[8]").press();	
 	};
 	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
-		import console;
-		var session = owner.oSession;
-    	if(!session){
-        	console.error("SAP Session 对象无效");
-        	return;
-    	}
-	
-    	try {
-        	// 查找工厂输入框
-        	var werksField = session.findById("wnd[0]/usr/ctxtRC29L-WERKS");
-        	if(!werksField){
-            	console.error("未找到工厂输入框(WERKS)");
-            	return;
-        	}
-	
-        	// 检查输入框是否可更改
-        	if(!werksField.Changeable){
-             	console.error("工厂输入框(WERKS)当前不可用");
-             	return;
-        	}
-        	werksField.text = code;
-	
-	
-        	// 查找执行按钮
-        	var executeBtn = session.findById("wnd[0]/tbar[1]/btn[8]");
-        	if(!executeBtn){
-            	console.error("未找到执行按钮(btn[8])");
-            	return;
-        	}
-	
-        	// 按下按钮
-        	executeBtn.press();
-	
-    	}
-    	catch(e){
-        	// 捕获可能发生的COM异常
-        	console.error("操作SAP时发生错误：", e);
-    	}
-		
-/*
 		var session = owner.oSession;
 		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
 		session.findById("wnd[0]/tbar[1]/btn[8]").press();	
-*/
 	};
 	_topointer = lambda() owner.oSession;
   )

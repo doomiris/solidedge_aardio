@@ -201,6 +201,24 @@ namespace vm{
 		session.goBack();
 		winform.publish("dok_list", ftab);
 	};
+	addPlantCodeMM03 = function(code = "0841"){
+		var session = owner;
+		session.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
+		session.findById("wnd[1]/tbar[0]/btn[0]").press();	
+	};
+	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
+		var session = owner;
+		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01";
+		var txt = session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
+		if txt and string.len(txt)
+			session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+	};
+	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
+		var session = owner;
+		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+	};
 	_topointer = lambda() owner.ovm;	
 );
 }
