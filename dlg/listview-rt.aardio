@@ -12,9 +12,9 @@ listview={cls="listview";left=0;top=0;right=535;bottom=469;db=1;dl=1;dr=1;dt=1;f
 )
 /*}}*/
 
-import win.ui.grid
-//winform.grid = win.ui.grid(winform.listview);
 
+
+/*
 var tab = [
 ["a","b","c"],
 ["1","2","3"],
@@ -30,6 +30,7 @@ var tab = [
 winform.listview.setTable(tab);
 if !tab.fields
 	table.shift(tab);
+*/
 
 winform.listview.selMoveUp = function(){
     var selIndex = owner.selIndex;
@@ -54,8 +55,8 @@ winform.listview.selMoveDown = function(){
     }
     owner.setFocus();
 };
-winform.listview.selInsert= function(){
-    var selIndex = owner.selIndex;
+winform.listview.selInsert= function(position){	
+    var selIndex = position || owner.selIndex;
 	var tab = owner.items;
 	var newItem = table.array(owner.columnCount," ");
 	table.insert(tab,newItem,selIndex+1);
@@ -63,8 +64,8 @@ winform.listview.selInsert= function(){
 	owner.selIndex = selIndex + 1;
 	owner.setFocus();
 }
-winform.listview.selDelete = function(){
-    var selIndex = owner.selIndex;
+winform.listview.selDelete = function(position){
+    var selIndex = position || owner.selIndex;
 	if !selIndex return ; 
 	var tab = owner.items;
     if(selIndex > 0){
