@@ -3,6 +3,7 @@ import win.ui;
 var winform = win.form(text="切剪板文本查看器";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="Clear";left=711;top=46;right=748;bottom=64;dr=1;dt=1;flat=1;z=2};
+button2={cls="button";text="Button";left=334;top=421;right=508;bottom=451;z=7};
 custom={cls="\dlg\listview-rt.aardio";text="listview-rt";left=153;top=92;right=753;bottom=414;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;z=6};
 edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hidesel=1;multiline=1;readonly=1;z=1};
 edit2={cls="edit";left=153;top=70;right=704;bottom=88;dl=1;dr=1;dt=1;z=5};
@@ -129,6 +130,14 @@ grid2.addNewContent = function(content){
 	table.push(	cTab, newItem);
 	grid.onItemChanged(winform.listview.findItem(contentTitle))
 }
+
+winform.button2.oncommand = function(id,event){
+	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio")
+	var mdl = mdlfrm.doModal();
+	var a, b = mdl.edit.text, mdl.edit2.text;
+	win.msgbox(a,b);
+}
+
 win.debounce(grid.onEditChanged);
 win.debounce(grid2.onEditChanged);
 win.debounce(grid.addNewTitle);
