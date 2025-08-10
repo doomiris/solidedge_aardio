@@ -61,7 +61,7 @@ winform.button.oncommand = function(id,event){
 }
 
 
-winform.cbb_serverIndex.onListChange= function(){ 
+winform.cbb_serverIndex.onSelChange = function(){ 
 	select(owner.selIndex) {
 		case 1 {
 			config.dbServer.path = "\\ccnsia1a\separts\Admin\SAP\db\";
