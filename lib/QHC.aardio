@@ -288,6 +288,7 @@ formatBOM = function(sht,savechanges = true){
 	excel.ScreenUpdating = false   //关闭屏幕刷新
 	excel.EnableEvents = false //先禁止触发事件
 	excel.Calculation = -4135 /* xlCalculationManual */    //手动重算
+	excel.Interactive = false
 	
   	var UsedRange = sht.UsedRange;
 
@@ -348,7 +349,7 @@ formatBOM = function(sht,savechanges = true){
 	excel.EnableEvents = true; //恢复触发事件
 	excel.Calculation = -4105; /* xlCalculationAutomatic */   //自动重算
 	excel.ScreenUpdating = true;   //开启屏幕刷新
-	
+	excel.Interactive = true
 	/*
 # 给此excel文档添加一个自定义属性: formatedByTBM, 值是当前时间	
 	*/
