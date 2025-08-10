@@ -430,15 +430,16 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 			case "saplogon.exe" {
 				if !title return ;
     			import SAP.vm;
-    			var session = SAP.vm();
+    			var vm = SAP.vm();
 				var kw = string.keywords(["组织级别","展开 BOM","使用位置"]);				
 				switch( kw.findOne(title), {  
-					[1]: λ () session.addPlantCodeMM03();
-					[2]: λ () session.addPlantCodeCS12();
-					[3]: λ () session.addPlantCodeCS15();
+					[1]: λ () vm.addPlantCodeMM03();
+					[2]: λ () vm.addPlantCodeCS12();
+					[3]: λ () vm.addPlantCodeCS15();
 				})
-				session.Close();
-				session = null;
+				
+				vm.Close();
+				vm = null;
 			}
 		}
 	}, table.unpack(config.setbm.wakeUpKey)

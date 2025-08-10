@@ -89,16 +89,16 @@ namespace vm{
  	}
 	findById = function(id_str, Raise){
 		var proxy = {};
-		var session = owner.ovm;
-		session.script = /*
+		var vm = owner.ovm;
+		vm.script = /*
 			dim id_str
 			dim obj
 			dim Raise
 			dim text
 		*/
-		session.script.id_str = id_str;
-		session.script.Raise = Raise;
-		session.script = /*
+		vm.script.id_str = id_str;
+		vm.script.Raise = Raise;
+		vm.script = /*
 			'on error resume next
 			set obj = session.findById(id_str,Raise)
 			'on error goto 0
@@ -106,19 +106,19 @@ namespace vm{
 		proxy@ ={}
 		proxy@._get = function(s){
 			select(s) {
-				case "select","press","sendVKey" {
+				case "select","press","sendVKey","StartTransaction" {
 					return function(v){
 						if v==null //注意0值
-							session.script = `obj.` + s;
+							vm.script = `obj.` + s;
 						else
-							session.script = `obj.` + s + ` ` ++ v;
+							vm.script = `obj.` + s + ` ` ++ v;
 						
 						
 					}; 
 				}
 				case "text","selected","Text" {
-					session.script = `text = obj.` + s;
-					return session.script.text; 
+					vm.script = `text = obj.` + s;
+					return vm.script.text; 
 				}
 
 			}
@@ -126,7 +126,7 @@ namespace vm{
 		proxy@._set = function(s,n){
 			select(s) {
 				case "text","selected","Text" {
-					session.script = `obj.` + s + `= "` + n + `"`;
+					vm.script = `obj.` + s + `= "` + n + `"`;
 				}
 			}
 		}
@@ -158,7 +158,7 @@ namespace vm{
 	homepage = function(){
 		while(!owner.isHomepage){
 			owner.goBack();
-			//session.findById("wnd[1]/usr/btnSPOP-OPTION1").press'不保存退出订单界面
+			//owner.findById("wnd[1]/usr/btnSPOP-OPTION1").press()'不保存退出订单界面
 		}
 	};
 	downloadBOM = function(winform, etab){
@@ -166,14 +166,14 @@ namespace vm{
 		import config;
     	import domisoft;
     	import console;
-		var session = owner;
-		session.homepage();
-		session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
-		session.findById("wnd[0]").sendVKey(0);
+		var vm = owner;
+		vm.homepage();
+		vm.StartTransaction("ZMDM_001");
+
 		var ftab = {};
 		for (i = 1; #etab){
-    		session.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab[i];
-    		session.exec();
+    		vm.findById("wnd[0]/usr/ctxtS_MATNR-LOW").text = etab[i];
+    		vm.exec();
 			var vt = QHC.getSapItem(etab[i]);
  			var filename;
  			if vt filename = vt.物料描述;    		
@@ -185,61 +185,113 @@ namespace vm{
     		if io.exist(fn)
     			if !io.remove(fn)
     				console.debug("删除失败", fn);
-    		if session.status !== "无可用数据！" {
-    			session.findById("wnd[0]/tbar[1]/btn[9]").press(); //zmdm_001 里面的download
-    			session.saveAsName = filename;
-    			session.saveAsOK();
-    			session.goBack();
+    		if vm.status !== "无可用数据！" {
+    			vm.findById("wnd[0]/tbar[1]/btn[9]").press(); //zmdm_001 里面的download
+    			vm.saveAsName = filename;
+    			vm.saveAsOK();
+    			vm.goBack();
     			winform.publish("dok",filename);
     		}else{ //搜索不到时跳过,继续下一个
-				session.homepage();
-				session.findById("wnd[0]/tbar[0]/okcd").text = "ZMDM_001";
-				session.findById("wnd[0]").sendVKey(0);
+				vm.homepage();
+				vm.StartTransaction("ZMDM_001");
     			continue;
     		}
 		}
-		session.goBack();
+		vm.goBack();
 		winform.publish("dok_list", ftab);
 	};
 	addPlantCodeMM03 = function(code = "0841"){
-		var session = owner;
-		session.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
-		session.findById("wnd[1]/tbar[0]/btn[0]").press();	
+		var vm = owner;
+		vm.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
+		vm.findById("wnd[1]/tbar[0]/btn[0]").press();	
 	};
 	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
-		var session = owner;
-		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
-		session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01";
-		var txt = session.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
+		var vm = owner;
+		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		vm.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01";
+		var txt = vm.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
 		if txt and string.len(txt)
-			session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+			vm.findById("wnd[0]/tbar[1]/btn[8]").press();	
 	};
 	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
-		var session = owner;
-		session.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
-		session.findById("wnd[0]/tbar[1]/btn[8]").press();	
+		var vm = owner;
+		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		vm.findById("wnd[0]/tbar[1]/btn[8]").press();
 	};
 	_topointer = lambda() owner.ovm;	
 );
 }
-
-/**intellisense(SAP)
+/**intellisense()
 SAP.vm = SAP VM
-SAP.vm() = !vm.
-!vm.Close() = 断开与SAP连接
-!vm.homepage() = 返回首页
-!vm.findById(id_str) = 查找ID返回GuiComponent\n!GuiComponent.
-!GuiComponent.ContainerType = ContainerType
-!GuiComponent.Id = Id
-!GuiComponent.Name = Name
-!GuiComponent.Parent = Parent
-!GuiComponent.Type = Type
-!GuiComponent.TypeAsNumber = TypeAsNumber
-!GuiComponent.Children = Children
-!GuiComponent.text = 文本内容
-!GuiComponent.select() = 选取菜单
-!GuiComponent.press() = 点击
-!GuiComponent.selected = 选中状态
-!GuiComponent.setFocus() = 获取焦点
-!GuiComponent.caretPosition = 光标位置
+SAP.vm() = VM库\n!vm.
+end intellisense**/
+
+/**intellisense(!vm)
+? = 在此添加更多说明
+Close() = 断开与SAP连接
+homepage() = 返回首页
+findById() = 返回GuiComponent\n!GuiComponent.
+findById(__) = 查找ID返回GuiComponent @参数1 指定id字符串
+StartTransaction(tcode) = 在首页开启事务Calling this function with parameter "xyz" has the same effect as SendCommand("/nxyz").
+downloadBOM(winform, etab) = 下载BOM
+FindByPosition() = !GuiComponent.
+FindByPosition(X,Y,Raise) = This method can be used to do a hittest on an SAP GUI session. The parameters x and y should be given in screen coordinates. If no component is found an exception is raised unless raise is set to False. In that case a Null/Nothing object is returned.
+AddHistoryEntry(Fieldname, Value) = SAP GUI for Windows has an input historyfunctionality, which displays for text fields the entries made inthe past as a suggestion. With this function, an entry can be addedto the history database so that it will be available the next timethe end user accesses the text field with the given fieldname
+CreateGuiCollection() = Some functions accept collections asparameters. This function creates a collection object that isindependent of the scripting language used, such as VBScript or JavaScript.
+CreateSession() = !vm.
+CreateSession() = create session
+DropHistory() = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
+Ignore(WindowHandle) = Calling this function will delete all entries from theinput history. The function returns True if the history data havebeen deleted successfully
+OpenConnection(Description, Sync, Raise) = The parameter connectString should contain one of the descriptionsdisplayed in SAPlogon, for example "XYZ [PUBLIC]". If you want tocreate a new SAP GUI instance and place it within your applicationyou may add the suffix “/INPLACE”. \nThis function will raisethe exception E_ACCESSDENIED if the scripting support has beendisabled by the administrator or the user
+OpenConnectionByConnectionString(ConnectString, Sync, Raise) = The parameter connectionData is the connectionstring for the SAP server, for example “/R/ALR/G/SPACE”. See thedescription of the openConnection method for a discussion of thesync and raise parameters.
+RegisterROT() = Accessing the SAPGUI entry in the Running Object Table from a C++application may fail unless the interface is registered with astrong reference. This is not required when using Visual Basic orscripting languages.The reference must be released using revokeRotbefore shutting down the Scripting component. Failing to do so willlead to undefined behaviour.Most applications do not need to usethis method, and shouldn’t call it.
+RevokeROT() = This method must be called before shutting down the Scripting component ifregisterROT was used.
+SetCookie(WindowHandle) = Object
+ClearErrorList() = This method clears the list of errors that may be created when ActiveX controls are found on a screen that do not support SAP GUI Scripting. Otherwise the list is cleared after an error event was raised. This happens at the end of a round trip.
+EndTransaction = Calling this function has the same effect as SendCommand("/n").
+GetIconResourceName(str) = In SAP GUI icons are often described as text in the format @nn@ where nn is a number. The function getIconResourceName translates the @nn@ notation into the name of the resource in sapbtmp.dll.
+GetVKeyDescription(VKey) = When a script is recorded, it will often contain sendVKey(n) calls, where n is a number. The method getVKeyDescription translates these numbers into a readable text. For example the number 0 is translated into the text “Enter”.
+LockSessionUI() = This method locks the session so that no user interaction is possible until the session is unlocked using UnlockSessionUI.
+UnlockSessionUI() = This method unlocks the session after it was locked using LockSessionUI.
+ContainerType =ContainerType
+Id =Id
+Name =Name
+Parent =Parent
+Type =Type
+TypeAsNumber =TypeAsNumber
+Children =Children
+ActiveWindow =ActiveWindow
+Busy =Busy
+ErrorList =ErrorList
+Info =Info
+IsActive =IsActive
+IsListBoxActive =IsListBoxActive
+ProgressPercent= ProgressPercent
+ProgressText = ProgressText
+ShowDropdownKeys = ShowDropdownKeys
+SuppressBackendPopups = SuppressBackendPopups
+TestToolMode = TestToolMode
+end intellisense**/
+
+/**intellisense(!vm)
+addPlantCodeMM03() = 自动填写工厂代号
+addPlantCodeCS12() = 自动填写工厂代号
+addPlantCodeCS15() = 自动填写工厂代号
+end intellisense**/
+
+/**intellisense(!GuiComponent)
+ContainerType = ContainerType
+Id = Id
+Name = Name
+Parent = Parent
+Type = Type
+TypeAsNumber = TypeAsNumber
+Children = Children
+text = 文本内容
+select() = 选取菜单
+press() = 点击
+StartTransaction(tcode) = 首先开始执行
+selected = 选中状态
+setFocus() = 获取焦点
+caretPosition = 光标位置
 end intellisense**/
