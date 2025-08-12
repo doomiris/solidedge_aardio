@@ -4,24 +4,28 @@ import win.ui;
 var winform = win.form(text="PDF简单编辑器";right=1083;bottom=737)
 winform.add(
 button={cls="button";text='\uF01E';left=1028;top=8;right=1064;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=2};
+button10={cls="button";text='\uF1C9';left=621;top=7;right=658;bottom=46;dr=1;dt=1;font=LOGFONT(h=-19;name='FontAwesome');z=14};
 button2={cls="button";text='\uF0E2';left=988;top=8;right=1025;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=3};
-button3={cls="button";text='\uF0C7';left=61;top=7;right=100;bottom=46;dl=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=4};
+button3={cls="button";text='\uF0C7';left=61;top=7;right=100;bottom=46;dl=1;dt=1;font=LOGFONT(h=-19;name='FontAwesome');z=4};
 button4={cls="button";text='\uF07C';left=8;top=7;right=53;bottom=46;dl=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=5};
-button5={cls="button";text='\uF053';left=438;top=14;right=465;bottom=41;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=6};
-button6={cls="button";text='\uF054';left=548;top=13;right=575;bottom=40;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=7};
-button7={cls="button";text='\uF03E';left=705;top=8;right=742;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=11};
+button5={cls="button";text='\uF053';left=438;top=14;right=465;bottom=41;dr=1;dt=1;flat=1;font=LOGFONT(h=-18;name='FontAwesome');z=6};
+button6={cls="button";text='\uF054';left=548;top=13;right=575;bottom=40;dr=1;dt=1;flat=1;font=LOGFONT(h=-18;name='FontAwesome');z=7};
+button7={cls="button";text='\uF1C5';left=705;top=8;right=742;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=11};
 button8={cls="button";text='\uF014';left=749;top=7;right=786;bottom=46;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=12};
-button9={cls="button";text='\uF1C1';left=664;top=8;right=701;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=13};
-listview={cls="listview";left=5;top=57;right=163;bottom=626;db=1;dl=1;dt=1;z=9};
+button9={cls="button";text='\uF1C1';left=664;top=8;right=701;bottom=47;dr=1;dt=1;font=LOGFONT(h=-19;name='FontAwesome');z=13};
+listview={cls="listview";left=5;top=57;right=163;bottom=626;border=1;db=1;dl=1;dt=1;z=9};
 pageEdit={cls="edit";left=470;top=17;right=544;bottom=40;align="center";autohscroll=false;autovscroll=false;dr=1;dt=1;num=1;z=8};
-plus={cls="plus";left=171;top=57;right=1080;bottom=732;bgcolor=0xFFFFFF;db=1;dr=1;dt=1;repeat="scale";z=1};
+plus={cls="plus";left=171;top=57;right=1080;bottom=732;bgcolor=0xFFFFFF;border={color=0xFFA6CAF0;width=1};db=1;dr=1;dt=1;repeat="scale";z=1};
 splitter={cls="splitter";left=162;top=55;right=167;bottom=730;z=10}
 )
 /*}}*/
 
 import fsys.dlg;
 import win.dlg.message;
+import win.ui.tooltip; 
+import win.inputBox;
 import fsys.pdfium; 
+var tooltipCtrl = win.ui.tooltip(winform);//在窗口上创建tooltip控件
 var pdf = fsys.pdfium();
 var pdfpath;
 pdf@.setRotation = function(n){
@@ -38,13 +42,30 @@ winform.splitter.split(winform.listview,winform.plus);
 
 winform.frmRefresh = function(){
 	//这样比较方便，可以用 plus 设置显示模式，性能也相对较好
-	if pdf.pageNum
+	if pdf.pageNum{
 		winform.plus.background = pdf.asBitmap();
+		var textTab={fields={/*"left","top","right","bottom",*/"text"}}
+		for left,top,right,bottom,text in pdf.eachTextRect(){
+			table.push(textTab,{"left"=left,"top"=top,"right"=right,"bottom"=bottom,"text"=string.trim(text)})
+		}
+		winform.listview.setTable(textTab);
+	}
 	else
 		winform.plus.background = gdip.bitmap()
 	
 }
+winform.listview.onDoubleClick = function(item,subItem,nmListView){
+	var editItem = winform.listview.getItemData(item);
+	var editTo = winform.inputBox("modify text","修改",editItem["text"]);
+	if !editTo return ;
+/*
+	# 修改指定文本内容
+*/
+	//pdf.modifySpecifyText(editItem["text"],editTo);
+	winform.frmRefresh();
 
+
+}
 //加载目录
 /*
 var bm = pdf.extractBookmarks()
@@ -60,7 +81,6 @@ winform.treeview.onSelChanged = function(hItem,data,nmTreeView){
 	} 	
 }
 */
-
 winform.plus.onDrawBackground = function(graphics,rc,backgroundColor,foregroundColor){
 	winform.pageEdit.setCueBannerText(string.join([pdf.pageNum,pdf.pageCount],"/"));
 }
@@ -113,7 +133,6 @@ winform.pageEdit.onOk = function(ctrl,alt,shift){
 winform.pageEdit.onFocusLost = function(){
 	owner.text = "";
 }
-var imgExt = [".jpg",".jpeg",".png",".gif",".bmp",".tif",".jfif"];
 
 winform.button7.oncommand = function(id,event){
 	var imgpath = fsys.dlg.open("图像文件|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.tif;*.jfif;",'请选择要插入的 图像 文件',,winform)
@@ -137,7 +156,7 @@ winform.button8.oncommand = function(id,event){
 	if currentPage	pdf.pageNum = currentPage;
 	winform.frmRefresh();
 }
-import win.inputBox;
+
 winform.button9.oncommand = function(id,event){
 	var importPdfPath = fsys.dlg.open("PDF文件|*.pdf",'请选择要导入的 PDF 文件',,winform)
 	if !importPdfPath return ; 
@@ -162,6 +181,25 @@ winform.button9.oncommand = function(id,event){
 	
     winform.frmRefresh();
 }
+tooltipCtrl.add({
+	["button"] = "右转90度",
+	["button2"] = "左转90度",
+	["button4"] = "打开PDF文件",
+	["button3"] = "保存PDF文件",
+	["button6"] = "下一页",
+	["button5"] = "上一页",
+	["pageEdit"] = "输入页码回车跳转",
+	["button7"] = "插入图片页",
+	["button8"] = "删除当前页",
+	["button9"] = "导入其它PDF文档页",
+})
+
+winform.button10.oncommand = function(id,event){
+
+
+}
+import domisoft;
+winform.listview.translateAccelerator= domisoft.ctrlC 
 
 winform.show();
 win.loopMessage();
