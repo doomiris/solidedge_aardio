@@ -463,7 +463,7 @@ subscribe("status2", function(...){
 		statusbar.setText(tostring(...) , 2 /*第几个分块*/)
 } )
 
-domisoft.refreshSAP(mainForm);
+
 
 win.loopMessage();
 return mainForm;

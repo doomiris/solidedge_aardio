@@ -141,10 +141,20 @@ var loadPromptList = function(){
 		})
 		return tarray.getCol(t, "Title");
 	}
+	var listTab = {};
 	for(name,ctrl in winform.eachControl() ){
-		if ctrl.cls !== "combobox" continue ; 
+		if ctrl.cls !== "combobox" continue ; 		
 		var ctl = string.trimleft(name, "cb_");
-		ctrl.onDropDown = function(){
+		listTab[ctl] =[];
+	}
+	for (i=1;#winform.promTab){
+		table.push(listTab[winform.promTab[i]["ListName"]], winform.promTab[i]["Title"])		
+	}
+	for(name,ctrl in winform.eachControl() ){
+		if ctrl.cls !== "combobox" continue ; 		
+		var ctl = string.trimleft(name, "cb_");
+		ctrl.items = listTab[ctl];
+		ctrl.onEditChange = function(){
 			var result;
 			if !owner.text || !#owner.items || owner.items[[1]] == owner.text
 				result =  getSuggest(owner.parent.promTab, ctl, "");
