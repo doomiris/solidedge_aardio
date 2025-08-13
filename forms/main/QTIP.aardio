@@ -32,7 +32,6 @@ winform.splitter.ltMin = 32;
 winform.splitter.rbMin = 96;
 /*}}*/
 /*TABS{{*/
-//qtbs 不用var声明, 所有子项就都能直接访问了.
 winform.qtbs = win.ui.tabs(
 	winform.bkplus1,
 	winform.bkplus2,
@@ -69,15 +68,16 @@ for k,v in qfName
 
 
 winform.qtbs.forms[1].publish("preload") //仅用来触发加载,无对应响应事件
-winform.qtbs.selIndex = 2; 
+winform.qtbs.goto = function(index){
+	owner.selIndex = index;
+}
 
-winform.qtbs.onSelchange = function(idx,tab,form){
-	//
-} 
+winform.qtbs.goto(2); 
+
 
 winform.qtbs.open = function(selIndex,pcode){
-	winform.qtbs.selIndex = selIndex;
-	winform.qtbs.forms[selIndex].qtip_search(pcode);
+	owner.goto(selIndex);
+	owner.forms[selIndex].qtip_search(pcode);
 }
 
 /*}}*/
@@ -86,7 +86,7 @@ winform.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
 	var txt = winform.editUser3.text;
 	//if winform.qtbs.selIndex == 1
-		winform.qtbs.selIndex = 2
+		winform.qtbs.goto(2); 
 	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);
 }
 /*}}*/
@@ -203,7 +203,7 @@ winform.qtbs.updateColor = function(btCtrl){
 /*后退按钮{{*/
 winform.button2.oncommand = function(id,event){
 	if event == 0/*_BN_CLICKED*/
-		winform.qtbs.selIndex = 2;
+		winform.qtbs.goto(2); 
 }
 /*}}*/
 var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件
@@ -214,6 +214,29 @@ tooltipCtrl.addTool(winform.buttonD, `
 - 按住CTRL+点击:替换收藏内容为当前选择的清单
 - 同时按住SHIFT+CTRL+点击:修改收藏名称
 `)
+import mouse.hook;
+var mouseHook = mouse.hook();
+mouseHook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
+	if( injected ) return; //不处理模拟鼠标事件  
+	if winform.hide return ;	//窗口隐藏时不处理 
+    select(msg) {
+    	case 0x20C/*_WM_XBUTTONUP*/{
+    		var direction = ::HIWORD(mouseData) == 1 ? "back" : "forward" ;
+    	    switch(direction,{  
+    	    	["back"]: λ () winform.qtbs.goto(2);
+     	    	["forward"]: λ () winform.qtbs.goto(1); 
+    	    })	
+    	}
+    }   
+} 
+winform.beforeDestroy = function(){
+  if mouseHook mouseHook.close() 
+}
 
+/*
+winform.frmReLoad = function(){
+	
+}
+*/
 win.loopMessage();
 return winform;
