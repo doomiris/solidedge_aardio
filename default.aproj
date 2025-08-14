@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.673" ProductVersion="1.5.0.673" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.676" ProductVersion="1.5.0.676" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
@@ -80,6 +80,7 @@
 			<file name="查看系统图标.aardio" path="forms\side_loader\查看系统图标.aardio" comment="forms\side_loader\查看系统图标.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
+			<file name="PDF_Simple_Editor.aardio" path="forms\side_loader\PDF_Simple_Editor.aardio" comment="forms\side_loader\PDF_Simple_Editor.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
 			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>
@@ -128,7 +129,8 @@
 		<file name="ENGINE.ICO" path="res\ENGINE.ICO" comment="res\ENGINE.ICO"/>
 		<file name="tbm3.ico" path="res\tbm3.ico" comment="res\tbm3.ico"/>
 	</folder>
-	<folder name="dlg" path="dlg" comment="dlg">
+	<folder name="dlg" path="dlg" comment="dlg" local="false" embed="false" ignored="false">
+		<file name="inputbox2row.aardio" path="dlg\inputbox2row.aardio" comment="dlg\inputbox2row.aardio"/>
 		<file name="listview-rt.aardio" path="dlg\listview-rt.aardio" comment="dlg\listview-rt.aardio"/>
 	</folder>
 </project>

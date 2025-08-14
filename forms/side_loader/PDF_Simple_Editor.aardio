@@ -165,11 +165,13 @@ winform.button9.oncommand = function(id,event){
 	importPdf.destroy();
 	var pageIndiceOrRange = null;
 	if (pageCount > 1) {
+
 			var userInput = winform.inputBox(			
-			"此文件共有" + pageCount + "页, 请输入需要导入的页码, 导入不同页用逗号分隔, 连接页码用短横线分隔" +
-			 '\n' + "例如: 1,3,5-9" + '\n' + "此处取消可中止导入, 输入空值则导入全部页",
-			"请输入要导入的页码",
-			"1-" ++ pageCount
+		/*promot*/	"输入需要导入的页码, 例如: 1,3,5-9 ",
+		/*title*/	"此文件共有" + pageCount + "页",
+		/*default*/	"1-" ++ pageCount,
+		/*cuebannerText*/"此处Esc取消可中止导入, 输入空值则导入全部页"
+		/*password*/
 			)
 			if (userInput===null) return ; 
 			pageIndiceOrRange = userInput

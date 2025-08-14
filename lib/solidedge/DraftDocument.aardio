@@ -272,23 +272,6 @@ namespace DraftDocument{
     		select (fileExt){
         		case "dwg","pdf"{        		
         			owner.SaveAs(fname);  //savecopyas 和 saveas 效果一样
-        			if fileExt=="pdf" and owner.application.useQhcNameRule
-        				..thread.invoke( 
-        					function(fname){
-        					    import io;
-        						import fsys;
-        						import config;
-        						import sqlite;
-        						if !config.printingCenter.AllowSentToPdfLib return; 
-       							if !io.exist(config.__pdfLib) return ; 
-       							var destFile = io.joinpath(config.__pdfLib, fname);
-       							
-        						fsys.copy(fname, config.__pdfLib, 0x614/*_FOF_NO_UI*/ + 0x10/*_FOF_NOCONFIRMATION*/);
-        						var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"));
-        						db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {io.splitpath(fname).file, "{config.__pdfLib}"} } }); 
-        						db.close();
-        					}, fname
-        				);
         			succ = true; 
         		}
         		case "stp"{

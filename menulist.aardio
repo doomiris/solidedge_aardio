@@ -25,6 +25,7 @@
 	},
 	{
 		"\forms\main\frmPage3.aardio";
+		"\forms\main\settings.aardio";
 		"\forms\main\loader.aardio";
 	}
 }
@@ -73,6 +74,7 @@ menuList = {
         "\uF054,\uF078,其它",
         {
      		"\uF113,\uF113,关于",
+     		"\uF013,\uF013,设置",
       		"\uF0C3,\uF0C3,扩展"   		
         },
         opened = true,

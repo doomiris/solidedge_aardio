@@ -9,6 +9,50 @@ web.script 使用 ScriptControl 控件。
 ScriptControl 控件的不同版本每行字数上限在 1000 字到 2000 字以内是安全的，
 稳妥的方法是保证每行在 1000 字以内.
 */
+/*cityCode{{*/
+var cityCode = {
+	[1] = "北京",
+	[2] = "上海",
+	[3] = "天津",
+	[4] = "内蒙古",
+	[5] = "山西",
+	[6] = "河北",
+	[7] = "辽宁",
+	[8] = "吉林",
+	[9] = "黑龙江",
+	[10] = "江苏",
+	[11] = "安徽",
+	[12] = "山东",
+	[13] = "浙江",
+	[14] = "江西",
+	[15] = "福建",
+	[16] = "湖南",
+	[17] = "湖北",
+	[18] = "河南",
+	[19] = "广东",
+	[20] = "海南",
+	[21] = "广西",
+	[22] = "贵州",
+	[23] = "四川",
+	[24] = "云南",
+	[25] = "陕西",
+	[26] = "甘肃",
+	[27] = "宁夏",
+	[28] = "青海",
+	[29] = "新疆",
+	[30] = "西藏",
+	[32] = "重庆",
+	[99] = ""
+}
+var getQhcCityCode = function(cityName){
+	if !cityName return ""; 
+	cityName = string.trimright(cityName, "省");
+	cityName = string.trimright(cityName, "市");
+	var index = table.find(cityCode, cityName);	
+	return string.format("%02i0", index)
+}
+
+/*}}*/
 namespace SAP;
 class vm{
 	ctor( ... ){
@@ -126,6 +170,7 @@ namespace vm{
 		proxy@._set = function(s,n){
 			select(s) {
 				case "text","selected","Text" {
+					if !n return ; 
 					vm.script = `obj.` + s + `= "` + n + `"`;
 				}
 			}
@@ -155,6 +200,7 @@ namespace vm{
 	} 
 	saveAsOK = λ() owner.findById("wnd[1]/tbar[0]/btn[11]").press();
 	saveAsCancel = λ() owner.findById("wnd[1]/tbar[0]/btn[12]").press();
+
 	homepage = function(){
 		while(!owner.isHomepage){
 			owner.goBack();
@@ -217,6 +263,23 @@ namespace vm{
 		var vm = owner;
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
 		vm.findById("wnd[0]/tbar[1]/btn[8]").press();
+	};
+	addReciptAddr = function(code = "0841",wnd = "1"){
+		var vm = owner;
+		import config;
+		var settings = config.settings;
+		vm.findById("wnd[1]/usr/txtADDR1_DATA-NAME1").Text = settings.editRec;
+		vm.findById("wnd[1]/usr/txtADDR1_DATA-SORT1").Text = settings.editRec;
+		vm.findById("wnd[1]/usr/txtADDR1_DATA-STREET").Text = string.match(settings.editRoad,"^[^\d]+");
+		vm.findById("wnd[1]/usr/txtADDR1_DATA-HOUSE_NUM1").Text =  string.match(settings.editRoad,"\d+");
+		vm.findById("wnd[1]/usr/txtADDR1_DATA-POST_CODE1").Text = "";
+		vm.findById("wnd[1]/usr/txtADDR1_DATA-CITY1").Text = settings.editDistict;
+		vm.findById("wnd[1]/usr/ctxtADDR1_DATA-COUNTRY").Text = "CN";
+		vm.findById("wnd[1]/usr/ctxtADDR1_DATA-REGION").Text = getQhcCityCode(settings.editCity);
+		vm.findById("wnd[1]/usr/txtSZA1_D0100-MOB_NUMBER").Text = settings.editMobile;
+		vm.findById("wnd[1]").sendVKey(0);
+		vm.findById("wnd[2]/tbar[0]/btn[0]").press();
+		
 	};
 	_topointer = lambda() owner.ovm;	
 );

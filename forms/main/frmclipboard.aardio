@@ -42,6 +42,7 @@ grid2.editItem = function(position){
 	var tab = owner.items;
 	var item = tab[selIndex];
 	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio"); 
+	mdlfrm.text = "修改内容"
 	mdlfrm.edit.text = item[1];
 	mdlfrm.edit2.text = item[2];
 	var editedItem =  mdlfrm.doModal();
@@ -123,6 +124,11 @@ grid2.onEditChanged = function(text,iItem,iSubItem){
 	table.push(contentTab, {"分类" = contentTitle,"内容" = text,"标签" = "", "排序" = #contentTab + 1 });
 }
 */
+
+var fixSqliteFormat = function(str){
+	return string.replace(str,"@@","@@"); 
+}
+
 grid2.modifyContent = function(position,contentItem){
 	var selIndex = position || owner.selIndex;
 	var newItem = {
@@ -132,16 +138,33 @@ grid2.modifyContent = function(position,contentItem){
 		"排序" = selIndex
 	};
 	db = sqlite( config.__userDbPath);
-	db.exec("UPDATE `favClipContent` SET ? WHERE ??",{ 
+	/* "SQL语句中 @ 字符开始的命名参数使用参数表的名值对元素格式化" */ 
+	
+	
+
+/*
+	var sql ="UPDATE `favClipContent` SET `内容`='%s',`标签`='%s' WHERE `分类` ='%s' AND `排序` = %i" ;
+	sql = string.format(sql,
+		contentItem[1],
+		contentItem[2],
+		contentTitle,
+		selIndex
+	 )
+*/
+
+	var sql = "UPDATE `favClipContent` SET ? WHERE ??";
+	sql = sqlite.format(sql,{ 
 		{
-			"内容" = contentItem[1],
-			"标签" = contentItem[2]
+			"内容" : contentItem[1],
+			"标签" : contentItem[2]
 		},
 		{
-			"分类" = contentTitle,
-			"排序" = selIndex
+			"分类" : contentTitle,
+			"排序" : selIndex
 		}
 	});
+
+	db.exec(sql);
 	db.close();
 
 	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
@@ -150,8 +173,10 @@ grid2.modifyContent = function(position,contentItem){
 }
 
 winform.button2.oncommand = function(id,event){
-	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio")
+	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio");
+	mdlfrm.text = "添加新内容";
 	var item =  mdlfrm.doModal();
+	if !item return ; 
 	var newIndex = grid2.selInsert(,item)
 	var newItem = {
 		"分类" = contentTitle;

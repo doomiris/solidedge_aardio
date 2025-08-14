@@ -96,11 +96,36 @@ var startPrintAllLV = function(vtab){
 */			
 				//tray.pop(tip, x ++ "/" ++ #tbs[1].listview.checked);
 				if !vtab[j] continue;
-				var fname = seDFT.getNameByExt(winform.listbox.getItemText(k), vtab[j], config.setbm.workingDir);
+				var ext = winform.listbox.getItemText(k);
+				var fname = seDFT.getNameByExt(ext, vtab[j], config.setbm.workingDir);
 				var succ = seDFT.saveToExt(fname);
 				
-				if !mainForm or !mainForm.taskbar continue;
-				mainForm.taskbar.SetProgressValue(mainForm.hwnd, winform.progress.pos, winform.progress.max)	//win taskbar
+				if mainForm
+					mainForm.taskbar.SetProgressValue(mainForm.hwnd, winform.progress.pos, winform.progress.max)	//win taskbar
+/*上传云库*/
+
+				var fileinfo = io.splitpath(fname);
+
+        		if ext ==".pdf"
+        			and winform.radNameRule2.checked
+        			 and winform.AllowSentToPdfLib.checked {
+        			 
+        				..thread.invoke( 
+        					function(fname){
+        						import io;
+        						import fsys;
+        						import config;
+        						import sqlite;
+
+        						if !io.exist(config.__pdfLib) return ; 
+       							var destFile = io.joinpath(config.__pdfLib, fname);       							
+        						fsys.copy(fname, config.__pdfLib, 0x614/*_FOF_NO_UI*/ + 0x10/*_FOF_NOCONFIRMATION*/);
+        						var db = sqlite(io.joinpath(config.dbServer.path, "drawing_lists.db"));
+        						db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {io.splitpath(fname).file, "{config.pdfLib}"} } }); 
+        						db.close();
+        					}, fname
+        				);
+        		}
 			}
 	}
 	seApp.DisplayAlerts = 1;
@@ -162,7 +187,6 @@ winform.radNameRule2.oncommand = function(id,event){
 	config.printingCenter.save();
 	//console.log(seApp.useQhcNameRule);
 }
-
 
 
 winform.AllowSentToPdfLib.hide = !winform.radNameRule2.checked;
