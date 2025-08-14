@@ -72,15 +72,16 @@
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
 			<file name="clear_sys_temp_folder.aardio" path="forms\side_loader\clear_sys_temp_folder.aardio" comment="forms\side_loader\clear_sys_temp_folder.aardio"/>
 			<file name="localShare.aardio" path="forms\side_loader\localShare.aardio" comment="forms\side_loader\localShare.aardio"/>
+			<file name="PDF_Simple_Editor.aardio" path="forms\side_loader\PDF_Simple_Editor.aardio" comment="forms\side_loader\PDF_Simple_Editor.aardio"/>
 			<file name="registry.aardio" path="forms\side_loader\registry.aardio" comment="forms\side_loader\registry.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
 			<file name="压缩S文件.aardio" path="forms\side_loader\压缩S文件.aardio" comment="forms\side_loader\压缩S文件.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
+			<file name="新办公室.aardio" path="forms\side_loader\新办公室.aardio" comment="forms\side_loader\新办公室.aardio"/>
 			<file name="查看系统图标.aardio" path="forms\side_loader\查看系统图标.aardio" comment="forms\side_loader\查看系统图标.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
-			<file name="PDF_Simple_Editor.aardio" path="forms\side_loader\PDF_Simple_Editor.aardio" comment="forms\side_loader\PDF_Simple_Editor.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
 			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>

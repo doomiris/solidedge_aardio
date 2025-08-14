@@ -1,10 +1,11 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=741;bottom=429)
+var winform = win.form(text="注册表查看";right=741;bottom=429)
 winform.add(
+editPath={cls="edit";left=5;top=4;right=739;bottom=33;dl=1;dr=1;dt=1;edge=1;z=4};
 listview={cls="listview";left=307;top=37;right=738;bottom=417;db=1;dr=1;dt=1;edge=1;z=2};
 splitter={cls="splitter";left=297;top=35;right=302;bottom=417;db=1;dt=1;frame=1;z=3};
-treeview={cls="treeview";left=4;top=38;right=295;bottom=419;bgcolor=16777215;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1}
+treeview={cls="treeview";left=4;top=38;right=295;bottom=419;bgcolor=0xFFFFFF;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1}
 )
 /*}}*/
 
@@ -13,7 +14,7 @@ winform.splitter.split(winform.treeview,winform.listview);
 import win.ui.menu;
 import win.reg;
 import win.ui.grid;
-
+import domisoft;
 var grid = win.ui.grid(winform.listview);
 grid.setColumns({"key";"value";}) //可选自定义显示列名
 grid.setReadonlyColumns(1)
@@ -58,6 +59,7 @@ winform.treeview.onClick = function(hItem,data){
 		var ctext = winform.treeview.getItemPath(hChild)
 		getChild(ctext, hChild)
 	}
+	winform.editPath.text = reg.path;
 
 }
 winform.treeview.onnotify = function(id,code,ptr){
@@ -107,6 +109,24 @@ grid.onRightClick = function(item,subItem,nmListView){
     )
     menu.popup(x,y,true);
 }
+
+winform.editPath.onOk = function(ctrl,alt,shift){ 
+	var path = owner.text;
+	winform.treeview.findPath(path) 
+	return true;  	
+}
+winform.listview.translateAccelerator = domisoft.ctrlC;
+grid.onSortColumn = function(column, desc){
+	var fields = {"key","value"}
+	var tab = grid.getTable(fields);
+	var name = fields[column];
+	for (i=1; #tab)
+		if !tab[i][name]
+			tab[i][name]=""
+	table.sort(tab,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
+	owner.setTable( tab );
+	return true; //返回 true 允许当前列排序	
+};
 
 winform.show();
 win.loopMessage();

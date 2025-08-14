@@ -1,0 +1,67 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
+button={cls="button";text="Button";left=568;top=410;right=642;bottom=442;z=2};
+edit={cls="edit";left=6;top=64;right=757;bottom=336;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=1}
+)
+/*}}*/
+
+import console
+import win.reg;
+
+
+var setValueTable = function(path, valueTab){
+	var reg = win.reg(path);
+	winform.edit.print(path);
+	
+	for k, v in valueTab{
+		reg.setValue(k,v)
+		winform.edit.print(k,v)
+	}
+	winform.edit.print()
+	reg.close();
+}
+
+var tempPath = "HKEY_CURRENT_USER\SOFTWARE\Siemens\Solid Edge\Version 220\Global\Templates"
+var settingPath = "HKEY_CURRENT_USER\SOFTWARE\Siemens\Solid Edge\Version 220\Global"
+
+
+var tempValues = {
+	["PartTradTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Part.par",
+	["WeldAsmTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Assembly.asm",
+	["AsmTradTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Assembly.asm",
+	["Standard"] = "Template_2020//LISTTYPE_2/1/",
+	["PsmTradTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Sheet Metal.psm",
+	["DraftTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Draft.dft",
+	["DraftSymbolTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Blank.dft"
+}
+var settingValues = {
+	["AdminOptionsFile"] = "C:\Temp\SE\Settings\Options_CCR_2025_sharepoint.xml",
+	["UserTemplates"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020",
+	["LinkFileName"] = "C:\Temp\SE\Settings\LinkMgmt.txt",
+	["Reports"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Reports",
+	["MaterialLibraryFolder"] = "C:\Temp\SE\Templates\02_Material",
+	["Facebook"] = "0",
+	["YouTubeUpload"] = "0",
+	["YouTubeSearchAndPlayback"] = "0",
+	["SE Community"] = "0",
+	["3DPrintOrderOnline"] = "0",
+	["PDF_PRINT_ALL_SHEETS"] = "1",
+	["PDF_PRINT_QUALITY_DPI"] = "1200",
+	["PDF_SAVE_SEPARATE_SHEET_SIZES"] = "1",
+	["PDF_SAVE_ALL_COLORS_BLACK"] = "0",
+	["PDF_TURN_OFF_AUTO_ROTATE"] = "1"
+}
+
+
+
+winform.button.oncommand = function(id,event){
+	if !event == 0/*_BN_CLICKED*/ return ; 
+	setValueTable(tempPath,tempValues);
+	setValueTable(settingPath,settingValues);
+}
+
+
+winform.show();
+win.loopMessage();
