@@ -21,6 +21,44 @@ import config;
 import domisoft;
 import tarray;
 import win.debounce;
+import win.inputBox;
+
+
+/*initDB{{*/
+var db_init = function(){
+	var db = sqlite(config.__userDbPath);
+	if !db.existsTable("favClipTitle")
+		db.exec("CREATE TABLE favClipTitle( 
+			分类 TEXT,
+			排序 INTEGER
+			);"
+		)
+	
+	if !db.existsTable("favClipContent")
+		db.exec("CREATE TABLE favClipContent( 
+			分类 TEXT,
+			内容 TEXT,
+			标签 TEXT,
+			排序 INTEGER
+			);"
+		)	
+}
+db_init();
+/*}}*/
+
+var titleTab;//保存分类
+var cTab; //保存全部内容
+var contentTitle;	//当前分类
+var contentTab;	//当前分类下的内容
+/*db_refresh{{*/
+var db_refresh = function(){
+	var db = sqlite( config.__userDbPath,,1/*_SQLITE_OPEN_READONLY*/);
+	titleTab = db.getTable("SELECT 分类,排序 FROM [favClipTitle] ORDER BY 排序 ASC");
+	cTab = db.getTable("SELECT * FROM [favClipContent]");
+	db.close();	
+}
+db_refresh();
+/*}}*/
 
 viewer = win.clip.viewer(winform);
 viewer.onDrawClipboard = function(){
@@ -28,57 +66,17 @@ viewer.onDrawClipboard = function(){
 	winform.edit.text = str;
 }
 winform.edit2.setCueBannerText("点击右侧列表内项目可快速复制内容到剪切板")
+
 winform.button.oncommand = function(id,event){
 	if event = 0/*_BN_CLICKED*/
 		win.clip.write()
 }
 
-
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.custom.listview);
 
-grid2.editItem = function(position){
-	var selIndex = position || owner.selIndex;
-	var tab = owner.items;
-	var item = tab[selIndex];
-	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio"); 
-	mdlfrm.text = "修改内容"
-	mdlfrm.edit.text = item[1];
-	mdlfrm.edit2.text = item[2];
-	var editedItem =  mdlfrm.doModal();
-	if !editedItem return ; 
-	tab[selIndex] = editedItem;
-	owner.replaceItems(tab);
-	grid2.modifyContent(selIndex, editedItem);
-}
-winform.custom.button5.oncommand = λ () grid2.editItem();
-
-var db = sqlite( config.__userDbPath);
-if !db.existsTable("favClipTitle")
-	db.exec("CREATE TABLE favClipTitle( 
-		分类 TEXT,
-		排序 INTEGER
-		);"
-	)
-
-if !db.existsTable("favClipContent")
-	db.exec("CREATE TABLE favClipContent( 
-		分类 TEXT,
-		内容 TEXT,
-		标签 TEXT,
-		排序 INTEGER
-		);"
-	)
-var titleTab = db.getTable("SELECT 分类,排序 FROM [favClipTitle] ORDER BY 排序 ASC");
 titleTab.fields = {"分类"};
 grid.setTable(titleTab);
-
-
-var cTab = db.getTable("SELECT * FROM [favClipContent]");
-db.close();
-
-var contentTitle;
-var contentTab;
 
 grid.onItemChanged = function(item,subItem,nmListView){
 	contentTitle = titleTab[item]["分类"];
@@ -94,86 +92,15 @@ grid2.onItemChanged = function(item,subItem,nmListView){
 	var content = owner.items[item][1];
 	win.clip.write(content);
 }
-
-/*
-grid.onDoubleClick = function(item,subItem,nmListView){
-	if !item {
-		winform.listview.addItem("",#titleTab + 1);
-		grid.beginEdit(#titleTab + 1, subItem)
-	}
-		
-}
-*/
-
-grid.addNewTitle = function(title){
-	db = sqlite( config.__userDbPath);
-	db.exec("INSERT INTO `favClipTitle`(??) VALUES(?)",{{'分类', '排序'},{title, #titleTab + 1}});
-	db.close();
-}
-
 grid2.onDoubleClick = function(item,subItem,nmListView){
 	if !item return ; 
 	//grid2.onItemChanged(item) //已经触发不需要再触发了
 	winform.show(false);
 }
-/*
-grid2.onEditChanged = function(text,iItem,iSubItem){
-	if !text return ; 
-	if !string.len(text) return ; 
-	grid2.addNewContent (text);
-	table.push(contentTab, {"分类" = contentTitle,"内容" = text,"标签" = "", "排序" = #contentTab + 1 });
-}
-*/
 
-var fixSqliteFormat = function(str){
-	return string.replace(str,"@@","@@"); 
-}
-
-grid2.modifyContent = function(position,contentItem){
-	var selIndex = position || owner.selIndex;
-	var newItem = {
-		"分类" = contentTitle,
-		"内容" = contentItem[1],
-		"标签" = contentItem[2],
-		"排序" = selIndex
-	};
-	db = sqlite( config.__userDbPath);
-	/* "SQL语句中 @ 字符开始的命名参数使用参数表的名值对元素格式化" */ 
-	
-	
-
-/*
-	var sql ="UPDATE `favClipContent` SET `内容`='%s',`标签`='%s' WHERE `分类` ='%s' AND `排序` = %i" ;
-	sql = string.format(sql,
-		contentItem[1],
-		contentItem[2],
-		contentTitle,
-		selIndex
-	 )
-*/
-
-	var sql = "UPDATE `favClipContent` SET ? WHERE ??";
-	sql = sqlite.format(sql,{ 
-		{
-			"内容" : contentItem[1],
-			"标签" : contentItem[2]
-		},
-		{
-			"分类" : contentTitle,
-			"排序" : selIndex
-		}
-	});
-
-	db.exec(sql);
-	db.close();
-
-	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
-	cTab[i] = newItem;
-
-}
-
+/*插入新内容{{*/
 winform.button2.oncommand = function(id,event){
-	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio");
+	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio")
 	mdlfrm.text = "添加新内容";
 	var item =  mdlfrm.doModal();
 	if !item return ; 
@@ -186,26 +113,76 @@ winform.button2.oncommand = function(id,event){
 	};
 	table.push(cTab, newItem);
 }
-
+/*}}*/
 /*添加分类{{*/
+grid.addNewTitle = function(title){
+	db = sqlite( config.__userDbPath);
+	db.exec("INSERT INTO `favClipTitle`(??) VALUES(?)",{{'分类', '排序'},{title, #titleTab + 1}});
+	db.close();
+}
+
 winform.button3.oncommand = function(id,event){
-	winform.listview.addItem("",#titleTab + 1);
-	grid.beginEdit(#titleTab + 1, subItem)
+	var newItem = winform.inputBox("请输入分类名称","添加分类",,"输入简短描述")
+	if !newItem return ; 
+	if tarray.findValue(titleTab, newItem) 
+		return winform.msgInfo("已经存在这个分类了: " + newItem, 1000);
+	grid.addNewTitle (newItem);
+	table.push(titleTab, {"分类" = newItem, "排序" = #titleTab + 1 });
+	winform.listview.addItem(newItem);
 }
-grid.onEditChanged = function(text,iItem,iSubItem){
-	if !text return ; 
-	if !string.len(text) return ; 
-	grid.addNewTitle (text);
-	table.push(titleTab, {"分类" = text, "排序" = #titleTab + 1 });
+
+/*}}*/
+/*内容修改按钮定义{{*/
+grid2.modifyContent = function(position,contentItem){
+	var selIndex = position || owner.selIndex;
+	var newItem = {
+		"分类" = contentTitle,
+		"内容" = contentItem[1],
+		"标签" = contentItem[2],
+		"排序" = selIndex
+	};
+	db = sqlite( config.userDbPath);
+	db.exec("UPDATE `favClipContent` SET ? WHERE ??",{ 
+		{
+			"内容" = contentItem[1],
+			"标签" = contentItem[2]
+		},
+		{
+			"分类" = contentTitle,
+			"排序" = selIndex
+		}
+	});
+	db.close();
+	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
+	cTab[i] = newItem;
 }
+grid2.editItem = function(position){
+	var selIndex = position || owner.selIndex;
+	var tab = owner.items;
+	var item = tab[selIndex];
+	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio"); 
+	mdlfrm.edit.text = item[1];
+	mdlfrm.edit2.text = item[2];
+	var editedItem =  mdlfrm.doModal();
+	if !editedItem return ; 
+	tab[selIndex] = editedItem;
+	owner.replaceItems(tab);
+	grid2.modifyContent(selIndex, editedItem);
+}
+	//绑定到按钮
+winform.custom.button5.oncommand = λ () grid2.editItem();
 /*}}*/
 
+/*
 win.debounce(grid.onEditChanged);
 win.debounce(grid2.onEditChanged);
 win.debounce(grid.addNewTitle);
 win.debounce(grid2.modifyContent);
+*/
+
+winform.show();
 
 winform.setTimeout(grid.onItemChanged,,1);
-winform.show();
+
 win.loopMessage();
 return winform;
