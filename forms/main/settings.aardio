@@ -1,38 +1,40 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=718;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+var winform = win.form(text="aardio form";right=759;bottom=766;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="Save";left=574;top=399;right=703;bottom=459;color=0xD77800;db=1;dr=1;font=LOGFONT(h=-14);note="保存配置";z=3};
-cbb_serverIndex={cls="combobox";left=85;top=441;right=168;bottom=461;clipch=1;db=1;dl=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=22};
-closeToTray={cls="checkbox";text="close to &tray";left=48;top=24;right=184;bottom=56;dl=1;dt=1;group=1;tabstop=1;z=4};
-createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=213;top=58;right=454;bottom=75;dl=1;dt=1;z=17};
-editCity={cls="edit";text="上海市";left=499;top=284;right=646;bottom=307;dl=1;dt=1;edge=1;tabstop=1;z=30};
-editDistict={cls="edit";text="浦东新区";left=500;top=255;right=647;bottom=278;dl=1;dt=1;edge=1;tabstop=1;z=29};
-editMobile={cls="edit";text="手机";left=500;top=179;right=647;bottom=202;dl=1;dt=1;edge=1;tabstop=1;z=27};
-editRec={cls="edit";text="收货人";left=499;top=145;right=646;bottom=168;dl=1;dt=1;edge=1;group=1;tabstop=1;z=26};
-editRoad={cls="edit";text="路名门牌号";left=500;top=216;right=647;bottom=239;dl=1;dt=1;edge=1;tabstop=1;z=28};
-edit_SAP_client={cls="edit";text="220";left=55;top=256;right=202;bottom=279;dl=1;dt=1;edge=1;tabstop=1;z=10};
-edit_SAP_client2={cls="edit";text="220";left=276;top=255;right=423;bottom=278;dl=1;dt=1;edge=1;tabstop=1;z=15};
-edit_SAP_language={cls="edit";text="ZH";left=54;top=286;right=201;bottom=309;dl=1;dt=1;edge=1;tabstop=1;z=11};
-edit_SAP_language2={cls="edit";text="ZH";left=275;top=285;right=422;bottom=308;dl=1;dt=1;edge=1;tabstop=1;z=16};
-edit_SAP_pw={cls="edit";text="password";left=56;top=180;right=203;bottom=203;dl=1;dt=1;edge=1;tabstop=1;z=8};
-edit_SAP_pw2={cls="edit";text="password";left=277;top=179;right=424;bottom=202;dl=1;dt=1;edge=1;tabstop=1;z=13};
-edit_SAP_system={cls="edit";text="P11";left=56;top=218;right=203;bottom=241;dl=1;dt=1;edge=1;tabstop=1;z=9};
-edit_SAP_system2={cls="edit";text="P11";left=277;top=217;right=424;bottom=240;dl=1;dt=1;edge=1;tabstop=1;z=14};
-edit_SAP_user={cls="edit";text="username";left=55;top=146;right=202;bottom=169;dl=1;dt=1;edge=1;group=1;tabstop=1;z=7};
-edit_SAP_user2={cls="edit";text="username";left=276;top=145;right=423;bottom=168;dl=1;dt=1;edge=1;group=1;tabstop=1;z=12};
-groupbox={cls="groupbox";text="SAP一键登入1";left=33;top=128;right=250;bottom=320;dl=1;dt=1;edge=1;z=2};
-groupbox2={cls="groupbox";text="SAP一键登入2";left=252;top=128;right=472;bottom=320;dl=1;dt=1;edge=1;z=1};
-groupbox4={cls="groupbox";text="SAP订单收货";left=475;top=128;right=695;bottom=320;dl=1;dt=1;edge=1;z=25};
-hotkey={cls="hotkey";left=251;top=18;right=381;bottom=38;dr=1;dt=1;edge=1;z=19};
-keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=212;top=86;right=453;bottom=103;dl=1;dt=1;z=18};
-simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=48;top=88;right=184;bottom=120;dl=1;dt=1;tabstop=1;z=6};
-startupMinimized={cls="checkbox";text="startup &minimized";left=48;top=56;right=184;bottom=88;dl=1;dt=1;tabstop=1;z=5};
-static={cls="static";text="唤醒键";left=198;top=20;right=244;bottom=34;dr=1;dt=1;transparent=1;z=20};
-static2={cls="static";text="需重启TBM";left=392;top=20;right=468;bottom=34;dr=1;dt=1;transparent=1;z=21};
-static3={cls="static";left=179;top=441;right=291;bottom=457;center=1;db=1;dl=1;notify=1;transparent=1;z=24};
-static5={cls="static";text='\uF216  服务器:';left=10;top=444;right=80;bottom=463;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=23}
+button={cls="button";text="Save";left=540;top=99;right=669;bottom=159;color=0xD77800;db=1;dr=1;font=LOGFONT(h=-14);note="保存配置";z=3};
+cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;clipch=1;db=1;dl=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=22};
+closeToTray={cls="checkbox";text="close to &tray";left=42;top=79;right=178;bottom=111;dl=1;dt=1;group=1;tabstop=1;z=4};
+createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=207;top=113;right=448;bottom=130;dl=1;dt=1;z=17};
+editCity={cls="edit";text="上海市";left=494;top=376;right=641;bottom=399;dl=1;dt=1;edge=1;tabstop=1;z=30};
+editDistict={cls="edit";text="浦东新区";left=495;top=347;right=642;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=29};
+editMobile={cls="edit";text="手机";left=495;top=271;right=642;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=27};
+editRec={cls="edit";text="收货人";left=494;top=237;right=641;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=26};
+editRoad={cls="edit";text="路名门牌号";left=495;top=308;right=642;bottom=331;dl=1;dt=1;edge=1;tabstop=1;z=28};
+edit_SAP_client={cls="edit";text="220";left=50;top=348;right=197;bottom=371;dl=1;dt=1;edge=1;tabstop=1;z=10};
+edit_SAP_client2={cls="edit";text="220";left=271;top=347;right=418;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=15};
+edit_SAP_language={cls="edit";text="ZH";left=49;top=378;right=196;bottom=401;dl=1;dt=1;edge=1;tabstop=1;z=11};
+edit_SAP_language2={cls="edit";text="ZH";left=270;top=377;right=417;bottom=400;dl=1;dt=1;edge=1;tabstop=1;z=16};
+edit_SAP_pw={cls="edit";text="password";left=51;top=272;right=198;bottom=295;dl=1;dt=1;edge=1;tabstop=1;z=8};
+edit_SAP_pw2={cls="edit";text="password";left=272;top=271;right=419;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=13};
+edit_SAP_system={cls="edit";text="P11";left=51;top=310;right=198;bottom=333;dl=1;dt=1;edge=1;tabstop=1;z=9};
+edit_SAP_system2={cls="edit";text="P11";left=272;top=309;right=419;bottom=332;dl=1;dt=1;edge=1;tabstop=1;z=14};
+edit_SAP_user={cls="edit";text="username";left=50;top=238;right=197;bottom=261;dl=1;dt=1;edge=1;group=1;tabstop=1;z=7};
+edit_SAP_user2={cls="edit";text="username";left=271;top=237;right=418;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=12};
+groupbox={cls="groupbox";text="SAP一键登入1";left=28;top=220;right=245;bottom=412;dl=1;dt=1;edge=1;z=2};
+groupbox2={cls="groupbox";text="SAP一键登入2";left=247;top=220;right=467;bottom=412;dl=1;dt=1;edge=1;z=1};
+groupbox3={cls="groupbox";text="选项";left=31;top=47;right=470;bottom=194;dl=1;dt=1;edge=1;z=31};
+groupbox4={cls="groupbox";text="SAP订单收货";left=470;top=220;right=690;bottom=412;dl=1;dt=1;edge=1;z=25};
+hotkey={cls="hotkey";left=518;top=11;right=648;bottom=31;dr=1;dt=1;edge=1;z=19};
+keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=206;top=141;right=447;bottom=158;dl=1;dt=1;z=18};
+listview={cls="listview";left=24;top=447;right=689;bottom=692;edge=1;z=32};
+simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=42;top=143;right=178;bottom=175;dl=1;dt=1;tabstop=1;z=6};
+startupMinimized={cls="checkbox";text="startup &minimized";left=42;top=111;right=178;bottom=143;dl=1;dt=1;tabstop=1;z=5};
+static={cls="static";text="唤醒键";left=465;top=13;right=511;bottom=27;dr=1;dt=1;transparent=1;z=20};
+static2={cls="static";text="需重启TBM";left=659;top=13;right=735;bottom=27;dr=1;dt=1;transparent=1;z=21};
+static3={cls="static";left=188;top=11;right=300;bottom=27;center=1;db=1;dl=1;notify=1;transparent=1;z=24};
+static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=23}
 )
 /*}}*/
 
@@ -109,6 +111,34 @@ winform.hotkey.value = config.setbm.wakeUpKey;
 
 winform.group();
 
+
+
+import win.ui.grid;
+
+winform.listview.insertColumn("text",-1)
+var grid = win.ui.grid(winform.listview)
+for k, v in config.autoStart
+	if type(v)=="table"
+		winform.listview.addItem(v.text)
+
+import win.ui.menu;
+import win.dlg.message;
+grid.onRightClick = function(item,subItem,nmListView){
+	var popm = win.ui.popmenu(winform)
+	popm.add("删除此启动项",function(){
+		var asItemName = winform.listview.getItemText(item);
+		for k, v in config.autoStart {
+			if type(v)!=="table" continue;
+			if 	v.text == asItemName {
+				v = null;
+				winform.listview.delItem(item)
+			}
+		}
+		config.autoStart.save();
+		winform.msgInfo("已删除",500);
+	})
+	popm.popup()
+}
 winform.show();
 win.loopMessage();
 return winform;

@@ -29,15 +29,6 @@ titleBar={cls="bkplus";left=0;top=0;right=750;bottom=40;bgcolor=0xAB4700;dl=1;dr
 )
 /*}}*/
 
-mainForm.closeAll.skin({
-	color={
-		active=0xFF00FF00;
-		default=0xFF3C3C3C;
-		disabled=0xFF6D6D6D;
-		hover=0xFFFF0000		
-	}
-})
-
 /*只允许一个实例{{*/
 var atom, tbm_hwnd = mainForm.atom("domisoft.aardio.tbm");
 if(!atom and !_STUDIO_INVOKED){ 
@@ -48,6 +39,7 @@ if(!atom and !_STUDIO_INVOKED){
 }
 /*}}*/
 //win.ui.simpleWindow( mainForm );
+/*dpi改变时分隔条保存的位置我不会计算{{*/
 import gdi;
 var dpix, dpiy = gdi.getDpiScale();
 if dpix == 1 {
@@ -56,16 +48,7 @@ if dpix == 1 {
 		listbox = "width";
 	} );
 }
-mainForm.foldchk.skin(
-    color = { 
-        hover = 0xFFFF0000; 
-        active = 0xFF00FF00;
-    }
-    checked = {
-    	//text = '';//' 勾选了'/*_FA_CHECK_SQUARE*/;;
-    	iconText = '\uF03C';
-    }
-)  
+/*}}*/
 /*托盘图标{{*/
 mainForm.tray = win.util.tray(mainForm);
 mainForm.onMinimize = function(lParam){
@@ -175,7 +158,7 @@ mainForm.popmenu2.add('剪切板工具', λ() loadcodex("\forms\main\frmclipboar
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit TBM', λ() win.quitMessage());
 /*}}*/
-
+/*分隔条设置{{*/
 mainForm.splitter.split(mainForm.listbox, mainForm.custom);
 if dpix == 1 {
 	var tWidth = mainForm.stripTab1.width;
@@ -183,8 +166,8 @@ if dpix == 1 {
 	mainForm.stripTab1.width = tWidth;	
 	mainForm.stripTab2.left = mainForm.listbox.width + mainForm.stripTab1.width;
 }
+/*}}*/
 mainForm.mTabs = win.ui.tabs(mainForm.stripTab1, mainForm.stripTab2);
-
 /*tabStle{{*/
 mainForm.mTabs.margin = 40;
 mainForm.mTabs.clear();
@@ -207,7 +190,6 @@ mainForm.mTabs.skin({
     }
 })
 /*}}*/
-
 mainForm.mTabs.onSelchange = function(idx,tab,form){
 	mainForm.text = string.join({tab.text, "TBM工具箱"}," - ");
 	mainForm.listbox.selected = null;
@@ -221,7 +203,6 @@ mainForm.mTabs.onSelchange = function(idx,tab,form){
 	if form.frmReLoad
 		form.frmReLoad();
 }
-
 /*左侧导航按钮{{*/
 var loadfrmName, menuList, menuTheme = loadcodex("\menulist.aardio");
 var navlb = godking.listboxEx(
@@ -270,6 +251,21 @@ mainForm.mTabPopMenu.add("在新窗口中打开此标签页",function(){
 		}
 	}
 })
+mainForm.mTabPopMenu.add()
+mainForm.mTabPopMenu.add("把此页标记为自启动",function(){
+	for (i=1; mainForm.listbox.count) {
+		var txt = table.pop(string.split(mainForm.listbox.items[i],","))
+		if txt == rSelTab.text {
+			var navItem = mainForm.listbox.getSelMenuInfo(mainForm.listbox.items[i]);
+			table.push(
+				config.autoStart,				
+				navItem
+			)
+			break;
+		}
+	}
+})
+mainForm.mTabPopMenu.add()
 mainForm.mTabPopMenu.add("关闭此标签页",λ() mainForm.mTabs.deleteByTab(rSelTab))
 mainForm.listbox.addThisTab = function(navItem){
 	win.setTimeout(function(){
@@ -308,11 +304,18 @@ navlb.onClick = function(index,subindex,text){
 	}
 		
 }
-
 /*}}*/
-
-
 /*折叠导航按钮{{*/
+mainForm.foldchk.skin(
+    color = { 
+        hover = 0xFFFF0000; 
+        active = 0xFF00FF00;
+    }
+    checked = {
+    	//text = '';//' 勾选了'/*_FA_CHECK_SQUARE*/;;
+    	iconText = '\uF03C';
+    }
+) 
 var foldNave = function(){
     if mainForm.foldchk.checked {
     	mainForm.listbox.show(false);
@@ -330,10 +333,17 @@ mainForm.foldchk.oncommand = foldNave
 
 win.setTimeout(
 	function(){
-		mainForm.custom.loadForm(loadfrmName[4][1])
+		if !#config.autoStart
+			mainForm.custom.loadForm(loadfrmName[4][1]);
+		else{
+			for k, v in config.autoStart{
+				if type(v)!=="table" continue;
+				mainForm.listbox.addThisTab(v);
+			}
+		}
+		
 	}
 )
-
 if !config.settings.startupMinimized or !config.settings.closeToTray
 		mainForm.show();
 if _STUDIO_INVOKED
@@ -361,24 +371,36 @@ subscribe("dok", function(...){
 	)
 } )
 /*}}*/
-
-//mainForm.closeAll.oncommand = mainForm.mTabs.clear;
+/*右侧关闭按钮{{*/
+mainForm.closeAll.skin({
+	color={
+		active=0xFF00FF00;
+		default=0xFF3C3C3C;
+		disabled=0xFF6D6D6D;
+		hover=0xFFFF0000		
+	}
+})
 mainForm.closeAll.onMouseClick = function(wParam,lParam){
-    //var x,y = win.getMessagePos(lParam);
     var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
     if !ctrl
 		mainForm.mTabs.delete(mainForm.mTabs.selIndex);
 	else 
 		mainForm.mTabs.clear();
 }
+/*}}*/
+/*按钮提示文字{{*/
 var tooltipCtrl = win.ui.tooltip( mainForm );
-mainForm.closeAll.tooltip = tooltipCtrl.addTool(mainForm.closeAll,"点击: 关闭当前子窗口" ++ '\r\n' ++ "CTRL+点击: 关闭所有子窗口");
-mainForm.foldchk.tooltip = tooltipCtrl.addTool(mainForm.foldchk,"折叠左侧导航栏");
+tooltipCtrl.add({
+	["closeAll"] = "点击: 关闭当前子窗口" ++ '\r\n' ++ "CTRL+点击: 关闭所有子窗口";
+	["foldchk"] ="折叠左侧导航栏";
+});
 
+/*}}*/
+/*右键新建菜单{{*/
 mainForm.popmenu = win.ui.popmenu(mainForm); 
 mainForm.popmenu.add('在新选项卡中打开', λ() mainForm.listbox.addThisTab());
 mainForm.popmenu.add('在新窗口中打开', λ() mainForm.listbox.openThisTabAsWindow());
-/*右键新建菜单{{*/
+
 mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 	select( message ) { 
 		case 0x205/*_WM_RBUTTONUP*/{
@@ -397,6 +419,9 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 import console
 console.open();
 */
+
+/*热键部分{{*/
+
 var hkId, clipHkId;
 	//删除之前注册的热键,hkId如果是null空值，此函数可忽略不做任何操
 mainForm.unreghotkey(hkId);
@@ -456,20 +481,17 @@ clipHkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	}, table.unpack([4 /*_MOD_SHIFT*/, 0x71/*_VK_F2*/])
 );
 
-
+/*}}*/
+/*状态栏{{*/
 import win.ui.statusbar; 
 var statusbar = win.ui.statusbar( mainForm );
-
-
-statusbar.addItem(tostring(config.__appVersion), 100/*宽度*/);
+statusbar.addItem(tostring(config.appVersion), 100/*宽度*/);
 statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
 statusbar.addItem("", 200/*宽度*/);
-
 subscribe("status2", function(...){
-		statusbar.setText(tostring(...) , 2 /*第几个分块*/)
-} )
-
-
+		statusbar.setText(tostring(...) , 2 /*第几个分块*/);
+})
+/*}}*/
 
 win.loopMessage();
 return mainForm;

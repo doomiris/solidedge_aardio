@@ -346,11 +346,11 @@ tarray.replaceValue(arr,searchFor, replaceBy) = 替换指定值,返回新的arr
 tarray.drop(arr, index) = 删除指定列,返回新的arr
 tarray.pushFields(arr, tab) = 参考tab键名定义arr.fields,返回新的arr
 tarray.indexOfCol(arr, find, col) = 在指定col查找find所在的index值
-tarray.findValue(arr, what) = 查找值, 返回{row,col,value} \n!tFindItem.
+tarray.findValue(arr, what) = 多维数组内查找值, 返回{row,col,value} \n!tFindItem.
 tarray.cNum(str) = 转为数值
 tarray.indexContains(single_lvl_arr, what) = 是单层字符串数组内查找指定字符, 返回索引
 tarray.findKeyWords(arr, keywords) = keywords用|分隔 \n!tFindItem.
-tarray.findString(arr, what) = 查找值, 返回{index, value} \n!tFindStrItem.
+tarray.findString(arr, what) = 一维数组内查找值, 返回{index, value} \n!tFindStrItem.
 tarray.endwith(str, tail, cap = false) = 代替sting.endwith, 参数2允许传入数组
 tarray.startsWith(str, prefix, cap = false) = 代替sting.startsWith, 参数2允许传入数组
 !tFindItem.row = 行

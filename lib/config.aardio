@@ -57,7 +57,8 @@ if !config.webview.lang
 	config.webview.lang = "zh-cn";
 
  config.__userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
- 
+ if !config.autoStart
+ 	config.autoStart = {};
 
 
 /**intellisense(config)
