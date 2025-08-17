@@ -277,8 +277,8 @@ namespace vm{
 		vm.findById("wnd[1]/usr/ctxtADDR1_DATA-COUNTRY").Text = "CN";
 		vm.findById("wnd[1]/usr/ctxtADDR1_DATA-REGION").Text = getQhcCityCode(settings.editCity);
 		vm.findById("wnd[1]/usr/txtSZA1_D0100-MOB_NUMBER").Text = settings.editMobile;
-		vm.findById("wnd[1]").sendVKey(0);
-		vm.findById("wnd[2]/tbar[0]/btn[0]").press();
+		vm.findById("wnd[1]/tbar[0]/btn[8]").press();//检查地址按钮
+		vm.findById("wnd[2]/tbar[0]/btn[0]").press();//关闭检查结果通知
 		
 	};
 	_topointer = lambda() owner.ovm;	

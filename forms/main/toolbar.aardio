@@ -130,7 +130,7 @@ var tbutton4 = function(id,event){
 }
 /*}}*/
 /*tbutton5_openDummy{{*/
-var tbutton5 = function(id,event){
+var tbutton5 = function(){
 	import solidedge.application;
 	var seApp = solidedge.application();
 	import solidedge.AssemblyDocument;
@@ -262,6 +262,7 @@ var tbutton9 = function(id,event){
 /*}}*/
 
 /*toolsDefineTable{{*/
+import quickTools;
 var tools = {
 	{
 		Name = "Edit Dim";
@@ -281,7 +282,7 @@ var tools = {
 	{
 		Name = "openDummy";
 		img = 46;
-		proc = tbutton5;
+		proc = quickTools.se_openDummy;
 	};
 	{
 		Name = "closeDft(discardChanges)";
@@ -320,7 +321,7 @@ tbar.imageList = imgList;
 for (i=1; #tools)
 	tbar.add(
 		tools[i].Name,
-		λ() thread.invoke(tools[i].proc,winform),
+		λ() thread.invoke(tools[i].proc, winform),
 		tools[i].img /* img */,
 		i /* id */,
 		4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/

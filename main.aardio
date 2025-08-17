@@ -11,8 +11,6 @@ import sqlite;
 import process;
 import config;
 import domisoft;
-import SAP;
-import solidedge.application;
 import godking.listboxEx;
 import fsys.table;
 /*DSG{{*/
@@ -57,7 +55,6 @@ mainForm.onMinimize = function(lParam){
 }
 	
 mainForm.onClose = function(hwnd,message,wParam,lParam){
-	
 	mainForm.onMinimize();
 /*
 	if _STUDIO_INVOKED
@@ -114,13 +111,10 @@ mainForm.wndproc =  function(hwnd,message,wParam,lParam){
 }
 /*}}*/
 /*托盘右键菜单{{*/
-
 mainForm.popmenu2 = win.ui.popmenu(mainForm);//创建弹出菜单
 mainForm.popmenu2.add('&Open TBM', function(){
-	//在下面输入菜单响应代码
 	win.setForeground(mainForm.hwnd)
 	mainForm.show();
-	
 });
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add("check_专用号申请表",  λ() thread.invoke(λ() loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio")));
@@ -131,30 +125,11 @@ mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('SE导出当前截图...', λ()	thread.invoke( 
-		function(){
-			import solidedge.application;
-			var seApp = solidedge.application();
-			seApp.exportViewAsPng();
-		}
-	)
-);
-mainForm.popmenu2.add('SAP一键登入1', function(){
-	thread.invoke(SAP.sapQuickOpen);
-	mainForm.msgInfo("请稍等...Starting SAP GUI ...", 3000);
-
-});
-mainForm.popmenu2.add('SAP一键登入2', function(){
-	thread.invoke(SAP.sapQuickOpen,2);
-	mainForm.msgInfo("请稍等...Starting SAP GUI ...", 3000);
-/**
-	mainForm.tray.message = 0xACCF/*_WM_TRAYMESSAGE*/
-	mainForm.tray.pop("Starting SAP GUI ...","TBM");
-**/
-});
+mainForm.popmenu2.add('SE导出当前截图...', λ() quickTools.se_exportViewAsImage());
+mainForm.popmenu2.add('SAP一键登入1', λ() quickTools.sap_quickLogin(1));
+mainForm.popmenu2.add('SAP一键登入2', λ() quickTools.sap_quickLogin(2));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('剪切板工具', λ() loadcodex("\forms\main\frmclipboard.aardio"));
-
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit TBM', λ() win.quitMessage());
 /*}}*/
@@ -350,26 +325,7 @@ if _STUDIO_INVOKED
 	mainForm.show();
 
 /*格式化BOM{{*/
-subscribe("dok", function(...){
-	import win;
-	win.delay(3*1000);
-	
-	var ftab = ...;
-	if !ftab return ; 
-	thread.invoke( 
-		function(ftab){
-			import domisoft;
-			import config;
-			import QHC;
-			var sht = domisoft.getRunningWorkSheet(ftab);
-			QHC.formatBOM(sht);
-			import fsys;
-			var destPath = io.joinpath(config.dbServer.path,"\xl_lib\");
-			if sht.ParentPath !== destPath
-				fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
-		}, ftab
-	)
-} )
+subscribe("dok", quickTools.listen_excelBoms)
 /*}}*/
 /*右侧关闭按钮{{*/
 mainForm.closeAll.skin({
@@ -427,6 +383,7 @@ var hkId, clipHkId;
 mainForm.unreghotkey(hkId);
 mainForm.unreghotkey(clipHkId);
 //重新注册系统热键;
+import quickTools;
 hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
 
@@ -438,19 +395,24 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 		select(exe_name){
 			case "excel.exe" {
 				if !title return ;				
-				var kw = string.keywords(["专用号申请","BOM更改","BG","Item_Master"]);
+				var kw = string.keywords(["专用号申请","BOM更改","BG","Item_Master","用户需求调研表"]);
 				switch( kw.findOne(title), {  
-					[1]: λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio");					
-					[2]: λ () loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio");					
-					[3]: λ () loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio");					
-					[4]: λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio");					
+					[1]: λ () loadcodex("\forms\Excel\check_专用号申请表_GUI.aardio");
+					[2]: λ () loadcodex("\forms\Excel\check_BOM更改单_GUI.aardio");
+					[3]: λ () loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio");
+					[4]: λ () loadcodex("\forms\Excel\update_SAP_ITEM.aardio");
+					[5]: λ () loadcodex("\forms\SAP\OD_Query.aardio");
 				})
 			}
 			case "edge.exe" {
 				if !title return ;
-				var kw = string.keywords(["- draft -",".dft","- 工程图 -"]);
-				if !kw.findOne(string.lower(title)) return ; 				
-				loadcodex("\forms\main\frmPage1.aardio");
+				var kw = string.keywords(["- draft -", "- 工程图 -", "- assembly -", "- 装配 -"]);
+				switch( kw.findOne(string.lower(title)), { 
+					[1]: λ () loadcodex("\forms\main\frmPage1.aardio");
+					[2]: λ () loadcodex("\forms\main\frmPage1.aardio");
+					[3]: λ () quickTools.se_openDummy();
+					[4]: λ () quickTools.se_openDummy();
+				})
 			}
 			case "saplogon.exe" {
 				if !title return ;

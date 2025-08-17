@@ -1,0 +1,89 @@
+﻿//快速工具
+
+var table = ..table;
+var string = ..string;
+var io = ..io;
+var thread = ..thread;
+
+namespace quickTools;
+
+se_openDummy = function(){
+	import win;
+	import global;
+	import solidedge.application;
+	var seApp = solidedge.application();
+	import solidedge.AssemblyDocument;
+	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
+	
+	win.setActive(seApp.hWnd);
+	win.setForeground(seApp.hWnd);
+	
+	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
+	select(seAsm.SelectSet.Count) {
+		case 1 {
+			if !seAsm.IsFileFamilyByDocument
+				seAsm.openDummy(seAsm.SelectSet.Item(1));
+			else {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);			
+			}
+		}
+		case 0 {
+			if seAsm.IsFileFamilyByDocument {
+				var ofn = table.shift(string.split(seAsm.FullName,"!"))
+				seAsm.Close(false);
+				seApp.Open(ofn, false);				
+			}	
+		}
+		else {
+			return ; 
+		}
+	}
+}
+se_exportViewAsImage = function(){
+	import solidedge.application;
+	var seApp = solidedge.application();
+	seApp.exportViewAsPng();
+}
+sap_quickLogin = function(instance = 1){
+	import SAP;
+	thread.invoke(SAP.sapQuickOpen, instance);
+	import win.dlg.message;
+	var msg = win.dlg.message();
+	msg.info("请稍等...Starting SAP GUI ...", 3000);
+};
+excel_formatBom = function(ftab){
+	import domisoft;
+	import config;
+	import QHC;
+	var sht = domisoft.getRunningWorkSheet(ftab);
+	QHC.formatBOM(sht);
+	import fsys;
+	var destPath = io.joinpath(config.dbServer.path,"\xl_lib\");
+	if sht.ParentPath !== destPath
+		fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
+	return "完成"; 
+}
+listen_excelBoms = function(...){
+	var ftab = ...;
+	import win.timer
+	var timer = win.timer(,1000);
+	var count = 0;
+	timer.onTimer = function(hwnd,msg,id,tick){
+		if excel_formatBom(ftab)
+			count = count + 1;
+		if count = #ftab
+			timer.disable();
+	} 
+}
+
+/**intellisense()
+quickTools = 快速一键工具库
+end intellisense**/
+
+/**intellisense(quickTools)
+se_openDummy() = SE open dummy
+se_exportViewAsImage() = SE导出当前显示内容为png并打开查看
+sap_quickLogin(instance) = SAP一键启动
+end intellisense**/
