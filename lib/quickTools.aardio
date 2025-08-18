@@ -60,7 +60,7 @@ excel_formatBom = function(ftab){
 	var sht = domisoft.getRunningWorkSheet(ftab);
 	QHC.formatBOM(sht);
 	import fsys;
-	var destPath = io.joinpath(config.dbServer.path,"\xl_lib\");
+	var destPath = ..io.joinpath(config.dbServer.path,"\xl_lib\");
 	if sht.ParentPath !== destPath
 		fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
 	return "完成"; 
@@ -77,6 +77,14 @@ listen_excelBoms = function(...){
 			timer.disable();
 	} 
 }
+getMainDbModifiedDate = function(){
+	import sqlite;
+	import config;
+	var db = sqlite(..io.joinpath(config.dbServer.path,"qhcsap.db"),, 1/*_SQLITE_OPEN_READONLY*/)
+	var vtab = db.stepQuery("SELECT lastUpdate FROM [updateLog]")
+	db.close();
+	return vtab[["lastUpdate"]];
+}
 
 /**intellisense()
 quickTools = 快速一键工具库
@@ -86,4 +94,5 @@ end intellisense**/
 se_openDummy() = SE open dummy
 se_exportViewAsImage() = SE导出当前显示内容为png并打开查看
 sap_quickLogin(instance) = SAP一键启动
+getMainDbModifiedDate() = get last update date string
 end intellisense**/
