@@ -39,6 +39,7 @@ static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=3
 /*}}*/
 
 import config;
+import quickTools;
 if config.serverIndex.combobox {
 	config.settings.cbb_serverIndex = config.serverIndex.combobox
 	config.serverIndex.combobox = null;
@@ -89,17 +90,9 @@ winform.cbb_serverIndex.onSelChange = function(){
 	config.dbServer.save();
 	winform.static3.refresh();
 }
+
 winform.static3.refresh = function(id,event){
-	owner.text = thread.invokeAndWait(
-		function(){
-			import sqlite;
-			import config;
-			var db = sqlite(io.joinpath(config.dbServer.path,"qhcsap.db"),, 1/*_SQLITE_OPEN_READONLY*/)
-			var vtab = db.stepQuery("SELECT lastUpdate FROM [updateLog]")
-			db.close();
-			return vtab[["lastUpdate"]];
-		}
-	)
+	owner.text = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
 }
 
 winform.static3.oncommand = winform.static3.refresh;
