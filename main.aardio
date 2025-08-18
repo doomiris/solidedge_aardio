@@ -11,6 +11,7 @@ import sqlite;
 import process;
 import config;
 import domisoft;
+import quickTools;
 import godking.listboxEx;
 import fsys.table;
 /*DSG{{*/
@@ -383,10 +384,8 @@ var hkId, clipHkId;
 mainForm.unreghotkey(hkId);
 mainForm.unreghotkey(clipHkId);
 //重新注册系统热键;
-import quickTools;
 hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
-
 		import domisoft
 		import string.keywords;		
 		var title, exePath = domisoft.getActiveAppName();
@@ -418,12 +417,13 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 				if !title return ;
     			import SAP.vm;
     			var vm = SAP.vm();
-				var kw = string.keywords(["组织级别","展开 BOM","使用位置","交货地点"]);
+				var kw = string.keywords(["组织级别","展开 BOM","使用位置","交货地点","库存概览"]);
 				switch( kw.findOne(title), {  
 					[1]: λ () vm.addPlantCodeMM03();
 					[2]: λ () vm.addPlantCodeCS12();
 					[3]: λ () vm.addPlantCodeCS15();
 					[4]: λ () vm.addReciptAddr();
+					[5]: λ () vm.addPlantCodeMMBE();
 				})
 				
 				vm.Close();
@@ -447,7 +447,7 @@ clipHkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 /*状态栏{{*/
 import win.ui.statusbar; 
 var statusbar = win.ui.statusbar( mainForm );
-statusbar.addItem(tostring(config.appVersion), 100/*宽度*/);
+statusbar.addItem(tostring(config.__appVersion), 100/*宽度*/);
 statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
 statusbar.addItem("", 200/*宽度*/);
 subscribe("status2", function(...){
