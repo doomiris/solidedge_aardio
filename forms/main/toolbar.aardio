@@ -129,41 +129,6 @@ var tbutton4 = function(id,event){
     //mainForm.show(false); //隐藏窗口
 }
 /*}}*/
-/*tbutton5_openDummy{{*/
-var tbutton5 = function(){
-	import solidedge.application;
-	var seApp = solidedge.application();
-	import solidedge.AssemblyDocument;
-	if (seApp.ActiveDocumentType != 3 /* igAssemblyDocument */) return;
-	
-	win.setActive(seApp.hWnd);
-	win.setForeground(seApp.hWnd);
-	
-	var seAsm = solidedge.AssemblyDocument(seApp.ActiveDocument); 
-	select(seAsm.SelectSet.Count) {
-		case 1 {
-			if !seAsm.IsFileFamilyByDocument
-				seAsm.openDummy(seAsm.SelectSet.Item(1));
-			else {
-				var ofn = table.shift(string.split(seAsm.FullName,"!"))
-				seAsm.Close(false);
-				seApp.Open(ofn, false);			
-			}
-		}
-		case 0 {
-			if seAsm.IsFileFamilyByDocument {
-				var ofn = table.shift(string.split(seAsm.FullName,"!"))
-				seAsm.Close(false);
-				seApp.Open(ofn, false);				
-			}	
-		}
-		else {
-			return ; 
-		}
-	}
-    //mainForm.show(false); //隐藏窗口
-}
-/*}}*/
 /*tbutton6_closeDft_nosave{{*/
 var tbutton6 = function(id,event){
 	import solidedge.application;
@@ -193,25 +158,19 @@ import win.ui;
 import win.ui.menu;
 import QHC;
 import fsys;
-
 var tlist = fsys.list(config.__templateLib,,"*.xlsx");
-
 var opent = function(n){
 	import com.excel;
 	var excel = com.GetOrCreateObject("Excel.Application");
 	if !excel win.msgbox("请先打开Excel程序");
 	if !excel return ; 
 	if !excel.WorkBooks return ; 
-
 	var wb = excel.WorkBooks.Add(io.joinpath(config.__templateLib, tlist[n]));
-
-	
 	excel.Visible = true;
 	win.showForeground(excel.Application.hwnd);
 	//mainForm.show(false);
 }
 win.debounce(opent);
-
 winform.menuTable={};
 winform.menuTable[1] = win.ui.popmenu(winform);//创建弹出菜单
 winform.menuTable[2] = win.ui.popmenu(winform);//创建弹出菜单
@@ -222,16 +181,12 @@ winform.menuTable[2].addTable({
 	{"格式化BOM"; λ() QHC.formatBOM()};
 	{"格式化成本BOM"; λ() QHC.formatCostBom()}
 })
-
-
 winform.popmenu = function(index){
 	win.setForeground(winform.hwnd)	//弹出托盘菜单以前,一定要前置主窗口中,不然不点击菜单不会消失
 	var pt = ::POINT();
 	::User32.GetCursorPos(pt);   		
 	winform.menuTable[index].popup(pt.x,pt.y,true)
 }
-
-
 /*}}*/
 /*tbutton8_弹出菜单{{*/
 var tbutton8 = function(wform){
@@ -333,7 +288,6 @@ for (i=1; #tools)
 winform.listview.setImageList(imgList, 1/*_LVSIL_SMALL*/);
 winform.listview.insertColumn("文件名",-1);
 winform.listview.modifyStyle(,0x4000/*_LVS_NOCOLUMNHEADER*/);
-
 import fsys.info;
 for (i=1; #tlist){
 	var info = fsys.info.get(tlist[tlist[i]],0x100/*_SHGFI_ICON*/ | 0x80/*_SHGFI_USEFILEATTRIBUTES*/)
