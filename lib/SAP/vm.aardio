@@ -257,12 +257,17 @@ namespace vm{
 		vm.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01";
 		var txt = vm.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
 		if txt and string.len(txt)
-			vm.findById("wnd[0]/tbar[1]/btn[8]").press();	
+		vm.exec();	
 	};
 	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
 		var vm = owner;
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
-		vm.findById("wnd[0]/tbar[1]/btn[8]").press();
+		vm.exec();
+	};
+	addPlantCodeMMBE = function(code = "0841",wnd = "0"){
+		var vm = owner;
+		vm.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = code;
+		vm.exec();
 	};
 	addReciptAddr = function(code = "0841",wnd = "1"){
 		var vm = owner;
