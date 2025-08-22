@@ -24,7 +24,7 @@ import process;
 import SAP;
 import sqlite;
 import win.clip;
-
+import win.dlg.message;
 /*
 import console
 console.open()
@@ -131,7 +131,7 @@ winform.grid.onDoubleClick = function(item,subItem,nmListView){
 	var c = string.join({"B2C", t["SD 凭证"], t["项目(SD)"], t["物料"]},"_");
 	c = io.joinpath(config.__sapDownload, c ++ ".xlsx") ;
 	if !io.exist(c)
-		win.msgbox("没有找到" ++ '\n' ++ c ++ '\n' ++ "请下载");
+		winform.msgInfo("没有找到" ++ '\n' ++ c ++ '\n' ++ "请下载", 1000)
 	else 
 		process.execute(c)
 }
@@ -236,7 +236,8 @@ menu.add();
 	});
 	menu.add("删除此订单记录...", function(){		
 		var order_number = winform.grid2.source[item]["SD 凭证"];
-		if !win.msgboxTest("确认删除此订单所有记录?" + '\n' + order_number,"需要确认",winform.hwnd) return; 
+		
+		if !winform.msgAsk("确认删除此订单所有记录?" + '\n' + order_number) return; 
 		sdb.exec("DELETE FROM `list` WHERE ??",{{"SD 凭证":order_number}})
 		sdb.exec("DELETE FROM `content` WHERE ??",{{"SD 凭证":order_number}})
 		winform.publish("getFolderList",true);
@@ -381,7 +382,7 @@ winform.button3.oncommand = function(id,event){
 	if !#selected return ; 
 	for (i=1; #selected)
 		table.push(flist, winform.grid2.source[selected[i]]["SD 凭证"]);
-	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + table.tostring(flist),"需要确认",winform.hwnd) return; 
+	if !winform.msgAsk("确认删除这些订单所有记录? " + '\n' + table.tostring(flist)) return; 
 	sdb.exec("DELETE FROM `list` WHERE ??", {{"SD 凭证" : flist}});
 	sdb.exec("DELETE FROM `content` WHERE ??", {{"SD 凭证" : flist}});
 	winform.publish("getFolderList",true);
