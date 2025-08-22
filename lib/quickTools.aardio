@@ -1,5 +1,6 @@
 ﻿//快速工具
-
+import win.dlg.message;
+var msg = win.dlg.message();
 var table = ..table;
 var string = ..string;
 var io = ..io;
@@ -9,7 +10,6 @@ namespace quickTools;
 
 se_openDummy = function(){
 	import win;
-	import global;
 	import solidedge.application;
 	var seApp = solidedge.application();
 	import solidedge.AssemblyDocument;
@@ -46,13 +46,7 @@ se_exportViewAsImage = function(){
 	var seApp = solidedge.application();
 	seApp.exportViewAsPng();
 }
-sap_quickLogin = function(instance = 1){
-	import SAP;
-	thread.invoke(SAP.sapQuickOpen, instance);
-	import win.dlg.message;
-	var msg = win.dlg.message();
-	msg.info("请稍等...Starting SAP GUI ...", 3000);
-};
+
 excel_formatBom = function(ftab){
 	import domisoft;
 	import config;
@@ -63,7 +57,7 @@ excel_formatBom = function(ftab){
 	var destPath = ..io.joinpath(config.dbServer.path,"\xl_lib\");
 	if sht.ParentPath !== destPath
 		fsys.copy(sht.Parent.FullName, destPath, 0x10/*_FOF_NOCONFIRMATION*/)
-	return "完成"; 
+	return msg.info("完成",100); 
 }
 listen_excelBoms = function(...){
 	var ftab = ...;
@@ -85,7 +79,58 @@ getMainDbModifiedDate = function(){
 	db.close();
 	return vtab[["lastUpdate"]];
 }
+sapQuickOpen = function(index=1){
+	import win;
+	import config;
+	_title = "SAP一键启动";
+	if !config.settings.edit_SAP_system 
+		return msg.err("请先配置登陆信息",1000);
+	import domisoft;
 
+	_SAP_install_path := ..io.splitpath(domisoft.getComAppPath("SAP Logon")).dir;
+	_SAP_shcut_cmd := ..io.joinpath(_SAP_install_path, "sapshcut.exe");
+	if !..io.exist(_SAP_shcut_cmd) 
+		return msg.err("文件不在在:"+'\n'+_SAP_shcut_cmd); 
+	var para = `-max -system={SAP_system} -client={SAP_client} -user={SAP_user} -pw={SAP_pw} -language={SAP_language} -cmd=S000`;
+	
+	var c;
+	
+	select(index) {
+		case 1 {
+			c = {
+				"{SAP_system}" = config.settings.edit_SAP_system;
+				"{SAP_client}" = config.settings.edit_SAP_client;
+				"{SAP_user}" = config.settings.edit_SAP_user;
+				"{SAP_pw}" = config.settings.edit_SAP_pw;
+				"{SAP_language}" = config.settings.edit_SAP_language;
+			};
+		}
+		case 2 {
+			c = {
+				"{SAP_system}" = config.settings.edit_SAP_system2;
+				"{SAP_client}" = config.settings.edit_SAP_client2;
+				"{SAP_user}" = config.settings.edit_SAP_user2;
+				"{SAP_pw}" = config.settings.edit_SAP_pw2;
+				"{SAP_language}" = config.settings.edit_SAP_language2;
+			};
+		}
+	}
+
+	para = ..string.replace(para,'%{}',c);
+
+	..thread.invoke( 
+		function(cmd,para){
+			..raw.execute(cmd, para);
+		}, _SAP_shcut_cmd, para
+	)
+
+	//win.msgboxTimeout("正在启动SAP, 稍等...", _title, 10*1000);
+}
+sap_quickLogin = function(instance = 1){
+	import SAP;
+	thread.invoke(sapQuickOpen, instance);
+	msg.info("请稍等...Starting SAP GUI ...", 4000);
+};
 /**intellisense()
 quickTools = 快速一键工具库
 end intellisense**/
@@ -94,5 +139,7 @@ end intellisense**/
 se_openDummy() = SE open dummy
 se_exportViewAsImage() = SE导出当前显示内容为png并打开查看
 sap_quickLogin(instance) = SAP一键启动
+sapQuickOpen() = 一键打开SAP
 getMainDbModifiedDate() = get last update date string
+
 end intellisense**/
