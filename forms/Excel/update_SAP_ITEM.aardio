@@ -14,6 +14,7 @@ static={cls="static";left=8;top=8;right=248;bottom=40;aw=1;dl=1;dr=1;dt=1;transp
 /*}}*/
 
 import win.ui.tooltip; 
+import win.dlg.message;
 var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件
 tooltipCtrl.addTool(winform.button3,"为Excel选中的列添加 H开头" )
 import config;
@@ -110,7 +111,7 @@ var update = function(winform, tab){
 	var end_row = winform.edit2.text;
 	
 	var excel = com.excel(false);
-	if !excel  return "noexcel"; 
+	if !excel  return winform.msgErr("no excel",1000); 
 	var sht = excel.ActiveWorkbook.ActiveSheet;
 	sht.AutoFilterMode = false;
 	for (i=1; sht.ListObjects.Count)
@@ -169,7 +170,7 @@ var update = function(winform, tab){
         }
     }
 	excel.alerts = true;
-	return "done"; 
+	return winform.msgInfo("done",1000); 
 }
 
 winform.button.oncommand = function(id,event){
@@ -185,7 +186,7 @@ winform.onDestroy = function(){
 }
 
 winform.button3.oncommand = function(id,event){
-	if !win.msgboxTest("为当前活动单元格所在列所有专用号添加H开头?","确认",winform)	return ; 
+	if !winform.msgAsk("为当前活动单元格所在列所有专用号添加H开头?") return ; 
 	winform.button3.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = " "};
 	thread.invoke( 
 		function(winform){
