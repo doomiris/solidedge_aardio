@@ -16,6 +16,7 @@ import win.clip.file;
 import sqlite;
 import win.ui.accelerator;
 import godking.rightMenu;
+import win.dlg.message;
 /*
 import console;
 console.open()
@@ -154,20 +155,20 @@ var deleteDrawingFile = function(fullname){
 	if !fullname return;
 	var info = io.splitpath(fullname);
 	if string.cmpMatch(info.ext,".dft")
-		if !winform.msgboxTest("你正在删除dft文件, 请确认", info.file)
+		if !winform.msgAsk("你正在删除[" + info.file + "], 请确认")
 			return ; 
 	
 	if !io.exist(fullname)
-		win.msgbox("文件不存在", info.file)
+		return winform.msgErr("文件[" + info.file + "]不存在")
 	if !io.remove(fullname) 
-		win.msgbox("删除文件失败", info.file)
+		return winform.msgErr("删除文件[" + info.file + "]失败")
 
 	import sqlite;
 	import config;
 	var db = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"));
 	db.exec("DELETE FROM `Lib` WHERE ??",{{"文件名"=info.file,"路径"=reverseFileLibMap(info.dir)}})
 	db.close();
-
+	return winform.msgInfo("已删除文件[" + info.file + "]")
 }
 winform.listview.onRightClick = function(item,subItem,nmListView){
     if !item return;
