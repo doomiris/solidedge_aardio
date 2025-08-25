@@ -11,6 +11,7 @@ static2={cls="static";text="放进来后在文件名上点击右键调整顺序,
 
 import win.debounce;
 import tarray;
+import win.dlg.message;
 global.import("fsys.pdfium");
 
 
@@ -202,9 +203,10 @@ winform.button.oncommand = function(id,event){
 	var succ = mergedPdf.save(path);
 	
 	if succ 
-		win.msgboxTimeout("已成功完成.",,,winform)
+		winform.msgInfo("已成功完成.",1000)
+
 	else
-		win.msgboxTimeout("保存失败",,,winform)
+		winform.msgWarn("保存失败",1500)
 
 }
 

@@ -3,77 +3,125 @@ import win.ui;
 var winform = win.form(text="WebView2";right=966;bottom=622)
 winform.add()
 /*}}*/
+import console; 
+import win.dlg.message;
+var loginUrl = "http://ccnqif03:3000/tc/JsonRestServices/Core-2011-06-Session/login"
+var baseUrl = "http://ccnqif03:3000/"
+import inet;
+import web.rest.jsonClient;
+var session = web.rest.jsonClient(); // 创建 HTTP 客户端,它会自动管理 Cookie
+session@.login = function(){
+	var http = owner;
+	//http.setCookie(wb);
 
-import web.view;
-var wb = web.view(winform);
+    http.get(baseUrl)
+    // 1. 发起首次 GET 请求,以获取会话 Cookie 和 CSRF Token Cookie
+
+	var cookies = inet.getCookie(baseUrl,true);
+
+    // 2. 从 Cookie 中提取 CSRF Token
+    // 注意：Cookie 的域名参数应与 baseUrl 匹配
+
+    if(!cookies)
+        return winform.msgInfo("错误：未能从 Cookie 中获取到 CSRF Token。",3000);
+
+    // 3. 将获取到的 Token 添加到后续所有请求的 HTTP Header 中
+    // 注意：请求头的名称可能是 "X-CSRF-TOKEN", "X-XSRF-TOKEN" 等
+    // 您需要根据实际情况修改这里的 "X-CSRF-TOKEN"
+    http.setHeaders({
+    	"X-XSRF-TOKEN" = cookies["XSRF-TOKEN"]
+    })
+
+    // 4. 发起 POST 登录请求,此时请求头会自动带上 CSRF Token
+    var ret, err = http.post(loginUrl, {
+        header: {
+
+            state: {
+                stateless: true,
+                unloadObjects: true,
+                enableServerStateHeaders: true,
+                formatProperties: true,
+                clientID: "ActiveWorkspaceClient"
+            },
+            policy: {
+            },
+
+        },
+        body: {
+            credentials:{
+                user: "srd02",
+                password: "123456",
+                group: "",
+                role: "",
+                locale: "en_US",
+                descrimator: "TCWEB"
+            }
+        }
+    })
+
+    if(!ret){
+        return winform.msgInfo("登录失败：" + err, 3000);
+
+
+    }
+    else {
+        
+        return winform.msgInfo("登录成功!",1000);
+       // console.dumpJson(ret); 
+
+    }
+
+}
+session@.getPdf = function(){
+	// 2. 获取图纸 Item 信息 (替换 DRAWING_ITEM_UID)
+	var http = owner;
+	itemResponse = http.get(baseUrl + "/data/Item/DRAWING_ITEM_UID");
+	if (itemResponse.statusCode != 200) {
+    	error("获取图纸 Item 失败: " + itemResponse.statusCode);
+	}
 	
-wb.external = {
-	log = function(str){ 
-		winform.msgbox(str)
-		return str;
-	};
+	// 3. 获取关联的 Dataset
+	datasetsResponse = http.get(baseUrl + "/data/Item/DRAWING_ITEM_UID/datasets");
+	if (datasetsResponse.statusCode != 200) {
+    	error("获取 Dataset 失败: " + datasetsResponse.statusCode);
+	}
+	datasets = web.rest.json.parse(datasetsResponse.readAll());
+	datasetUid = datasets[1]["uid"]; // Aardio 数组索引从 1 开始
+	
+	// 4. 获取 Named References (查找 PDF)
+	namedRefsResponse = http.get(baseUrl + "/data/Dataset/" + datasetUid + "/namedreferences");
+	if (namedRefsResponse.statusCode != 200) {
+    	error("获取 Named References 失败: " + namedRefsResponse.statusCode);
+	}
+	namedRefs = web.rest.json.parse(namedRefsResponse.readAll());
+	
+	// 查找 PDF 类型的 Named Reference
+	pdfRefUid = null;
+	for(i = 1; #namedRefs; 1) {
+    	if (string.lower(namedRefs[i]["type"]) == "pdf") {
+        	pdfRefUid = namedRefs[i]["uid"];
+        	break;
+    	}
+	}
+	if (!pdfRefUid) {
+    	error("未找到 PDF 类型的 Named Reference");
+	}
+	
+	// 5. 下载 PDF
+	pdfUrl = baseUrl + "/data/Dataset/" + datasetUid + "/namedreferences/" + pdfRefUid + "/download";
+
+	pdfData = http.get(pdfUrl).readAll();
+	
+	// 保存 PDF 文件
+	fsys.file("d:\temp\drawing.pdf").write(pdfData);
+	
+
 }
 
-wb.go("http://ccnqif03:3000/")
+session.login();
 
-var test = function(){
-	import console; 
-	import web.rest.jsonClient;
-
-	/*
-	创建 HTTP( REST ) 客户端。
-	请求为网页表单编码，响应数据直接返回，使用 web.rest.client
-	请求为网页表单编码，响应数据为 JSON，使用 web.rest.jsonLiteClient
-	请求与响应数据都是 JSON，使用 web.rest.jsonClient
-	
-	*/
-	
-	console.showLoading("正在登录")
-	
- 	var url = "http://ccnqif03:3000/tc/JsonRestServices/Core-2011-06-Session/login"
-	//创建 HTTP 客户端
-	
-	var http = web.rest.jsonClient();
-	
-	var ret = http.get("http://ccnqif03:3000/");
-	
-	
-	var api = http.api(url)
-	
-	var ret, err = http.post(url, {
-		header: {
-    		state: {
-      			stateless: true,
-      			unloadObjects: true,
-      			enableServerStateHeaders: true,
-      			formatProperties: true,
-      			clientID: "ActiveWorkspaceClient"
-    		},
-    		policy: {
-			}
-		},
-	
-  		body: {
-			credentials:{
-				user: "srd02",
-				password: "123456",
-				group: "",
-				role: "",
-				locale: "en_US",
-				descrimator: "TCWEB"
-			}
-		}
-	
-	})
-	
-	if !ret 
-		console.log(err)
-	else 
-		console.dumpJson(ret); 
-	
-	console.pause(true);
-}
 
 
 winform.show();
+
 win.loopMessage();

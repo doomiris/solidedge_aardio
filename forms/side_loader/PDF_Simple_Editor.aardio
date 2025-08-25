@@ -3,9 +3,9 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="PDF简单编辑器";right=1083;bottom=737)
 winform.add(
-button={cls="button";text='\uF01E';left=1028;top=8;right=1064;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=2};
+bn_LT={cls="button";text='\uF0E2';left=988;top=8;right=1025;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=3};
+bn_RT={cls="button";text='\uF01E';left=1028;top=8;right=1064;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=2};
 button10={cls="button";text='\uF1C9';left=621;top=7;right=658;bottom=46;dr=1;dt=1;font=LOGFONT(h=-19;name='FontAwesome');z=14};
-button2={cls="button";text='\uF0E2';left=988;top=8;right=1025;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=3};
 button3={cls="button";text='\uF0C7';left=61;top=7;right=100;bottom=46;dl=1;dt=1;font=LOGFONT(h=-19;name='FontAwesome');z=4};
 button4={cls="button";text='\uF07C';left=8;top=7;right=53;bottom=46;dl=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=5};
 button5={cls="button";text='\uF053';left=438;top=14;right=465;bottom=41;dr=1;dt=1;flat=1;font=LOGFONT(h=-18;name='FontAwesome');z=6};
@@ -42,6 +42,7 @@ winform.splitter.split(winform.listview,winform.plus);
 
 winform.frmRefresh = function(){
 	//这样比较方便，可以用 plus 设置显示模式，性能也相对较好
+	winform.text =string.join(["PDF简单编辑器","-",io.splitpath(pdfpath).file]," ")
 	if pdf.pageNum{
 		winform.plus.background = pdf.asBitmap();
 		var textTab={fields={/*"left","top","right","bottom",*/"text"}}
@@ -84,11 +85,11 @@ winform.treeview.onSelChanged = function(hItem,data,nmTreeView){
 winform.plus.onDrawBackground = function(graphics,rc,backgroundColor,foregroundColor){
 	winform.pageEdit.setCueBannerText(string.join([pdf.pageNum,pdf.pageCount],"/"));
 }
-winform.button.oncommand = function(id,event){
-	pdf.setRotation(-1);
+winform.bn_RT.oncommand = function(id,event){
+	pdf.setRotation(1);
 	winform.frmRefresh();
 }
-winform.button2.oncommand = function(id,event){
+winform.bn_LT.oncommand = function(id,event){
 	pdf.setRotation(-1);
 	winform.frmRefresh();
 }

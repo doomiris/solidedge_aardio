@@ -88,6 +88,7 @@ taobaoURLsimple = function(url){
 	import inet.url;
 	import inet.urlpart;
 	url = inet.url.decode(url);
+	return url; 
 	var turl = inet.url.split(url ); 
 	var para = inet.urlpart.getQuery(url);
 	var s = inet.url.splitParameters(para);	
@@ -244,9 +245,12 @@ readClipHcode = function(){
 				s = replace(s, "8008", "H008", 1);
 			if string.startWith(s, "'-1")
 				s = replace(s, "'-1", "H");
+			if string.startWith(s, "11008")
+				s = replace(s, "11008", "H008");
+			if string.startWith(s, "1-1")
+				s = replace(s, "1-1", "H");
 			if string.startWith(s, "1--1")
 				s = replace(s, "1--1", "H");
-				
 			table.push(t,s);
 		}
 	}

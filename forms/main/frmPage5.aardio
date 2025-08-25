@@ -11,7 +11,7 @@ button4={cls="button";text='\uF07C';left=8;top=555;right=28;bottom=575;db=1;dl=1
 groupbox={cls="groupbox";text='\uF097  Actions';left=5;top=5;right=752;bottom=152;aw=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-16;name='FontAwesome');z=1};
 listbox={cls="listbox";left=24;top=32;right=157;bottom=146;border=1;dl=1;dt=1;font=LOGFONT(h=-16;name='微软雅黑');items={".pdf",".dwg",".dxf",".stp",".png"};msel=1;tabstop=1;z=2};
 outpath={cls="syslink";text="d:\workspaces";left=32;top=560;right=750;bottom=573;aw=1;center=1;db=1;dl=1;dr=1;notify=1;transparent=1;z=8};
-pdfLibPath={cls="syslink";text="\\ccnsia1a\separts\Cabinet\PDF图纸库";left=185;top=107;right=403;bottom=123;dl=1;dt=1;hide=1;transparent=1;z=13};
+pdfLibPath={cls="syslink";text="\\ccnsia1a\separts\Cabinet\PDF图纸库";left=185;top=107;right=607;bottom=123;dl=1;dr=1;dt=1;hide=1;transparent=1;z=13};
 progress={cls="progress";left=0;top=576;right=752;bottom=600;aw=1;color=0x008000;db=1;dl=1;dr=1;max=100;min=0;z=6};
 radNameRule0={cls="radiobutton";text="仅图号";left=168;top=56;right=228;bottom=76;bgcolor=0xFFFFFF;dl=1;dt=1;group=1;z=4};
 radNameRule2={cls="radiobutton";text="图号-版本-型号-名称";left=234;top=56;right=378;bottom=76;bgcolor=0xFFFFFF;dl=1;dt=1;z=5};

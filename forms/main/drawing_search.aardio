@@ -56,10 +56,10 @@ var reverseFileLibMap = function(fullpath){
 		"{config.__cabinetModelServer}" = io.joinpath(config.__cabinetModelServer)
 	}
 	var invertLibPathMaps = table.invert(libPathMaps);
-	console.dumpTable(invertLibPathMaps)
+	//console.dumpTable(invertLibPathMaps)
 	var info = io.splitpath(fullpath);
 	var fileDir = io.joinpath(info.drive,info.path);
-	console.log(fileDir)
+	//console.log(fileDir)
 	var formatPath = string.replace(fullpath, "@" + info.dir, invertLibPathMaps[info.dir]);	
 	return formatPath; 
 }
@@ -179,7 +179,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	menu.add("打开文件...", λ() process.execute(fullName));
 	menu.add("删除文件...", function(){
 		winform.listview.delItem(item);
-		//deleteDrawingFile(fullName);
+		deleteDrawingFile(fullName);
 	});
 	menu.add("刷新", λ() winform.listview.refreshFiles());
 	menu.add("更多...", λ() godking.rightMenu(

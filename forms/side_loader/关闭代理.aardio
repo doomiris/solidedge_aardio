@@ -10,7 +10,6 @@ static={cls="static";text="分钟 (间隔时间)";left=55;top=9;right=149;bottom
 )
 /*}}*/
 
-
 import config;
 winform.bindConfig( config.intervalJob, {	//绑定控件值
     edit = "text";
@@ -56,12 +55,14 @@ var interval = winform.edit2.text;
 var s1, s2
 
 winform.checkbox.oncommand = function(id,event){
+	interval = winform.edit2.text;
 	if !owner.checked
 		winform.clearInterval(s1);
 	else
 		s1 = winform.setInterval(reset, interval * 60 * 1000, winform); 
 }
 winform.checkbox2.oncommand = function(id,event){
+	interval = winform.edit2.text;
 	if !owner.checked
 		winform.clearInterval(s2);
 	else
@@ -76,9 +77,11 @@ if winform.checkbox2.checked
 	s2 = winform.setInterval(refreshSAP, interval * 60 * 1000, winform); 
 
 winform.show();
+
 global.onError = function( err,over ){ 
     winform.edit.print(err);
 }
+
 reset (winform); 
 refreshSAP (winform);
 

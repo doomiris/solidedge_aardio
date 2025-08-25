@@ -22,7 +22,7 @@ import domisoft;
 import tarray;
 import win.debounce;
 import win.inputBox;
-
+import win.dlg.message;
 
 /*initDB{{*/
 var db_init = function(){
@@ -100,17 +100,19 @@ grid2.onDoubleClick = function(item,subItem,nmListView){
 
 /*插入新内容{{*/
 winform.button2.oncommand = function(id,event){
+	if !contentTitle return winform.msgInfo("先选择分类",100); 
 	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio")
 	mdlfrm.text = "添加新内容";
 	var item =  mdlfrm.doModal();
 	if !item return ; 
-	var newIndex = grid2.selInsert(,item)
+	var newIndex = grid2.selInsert(,item)	
 	var newItem = {
 		"分类" = contentTitle;
 		"内容" = item[1],
 		"标签" = item[2],
 		"排序" = newIndex;
 	};
+	grid2.newContent(newIndex,newItem)
 	table.push(cTab, newItem);
 }
 /*}}*/
@@ -141,7 +143,7 @@ grid2.modifyContent = function(position,contentItem){
 		"标签" = contentItem[2],
 		"排序" = selIndex
 	};
-	db = sqlite( config.userDbPath);
+	db = sqlite( config.__userDbPath);
 	db.exec("UPDATE `favClipContent` SET ? WHERE ??",{ 
 		{
 			"内容" = contentItem[1],
@@ -155,6 +157,26 @@ grid2.modifyContent = function(position,contentItem){
 	db.close();
 	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
 	cTab[i] = newItem;
+}
+grid2.newContent = function(position,contentItem){
+	var selIndex = position || owner.selIndex;
+	db = sqlite( config.__userDbPath);
+	var sql = "INSERT INTO `favClipContent` (??) VALUES (?);"
+	sql = sqlite.format(sql,{
+		{"分类","内容","标签","排序"},
+		{
+			contentItem.分类,
+			contentItem.内容,
+			contentItem.标签,
+			contentItem.排序
+		}
+	})
+	if win.msgboxTest(sql)
+		db.exec(sql);
+	db.close();
+	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
+	if i
+		cTab[i] = contentItem;
 }
 grid2.editItem = function(position){
 	var selIndex = position || owner.selIndex;
@@ -171,6 +193,7 @@ grid2.editItem = function(position){
 }
 	//绑定到按钮
 winform.custom.button5.oncommand = λ () grid2.editItem();
+
 /*}}*/
 
 /*
