@@ -28,9 +28,8 @@ import tarray;
 
 var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
 
-var db;
 var refreshDB = function(){
-	db = sqlite(path);
+	return sqlite(path);
 }
 
 var grid = win.ui.grid(winform.listview);
@@ -59,7 +58,7 @@ var resetToolbar = function(){
 
 
 winform.frmReLoad = function(){
-	refreshDB();
+	var db = refreshDB();
 	var t = db.getTable("SELECT DISTINCT 大类 FROM [lib]");
 	grid2.source = t;
 	grid2.setTable(grid2.source);
@@ -96,6 +95,7 @@ winform.edit.onChange = function(){
 }
 grid2.onClick = function(item,subItem,nmListView){
 	if !item return ; 
+	var db = refreshDB();
 	var t = db.getTable(`SELECT 中类,小类,物料,物料描述,属性,可选项分类,喷粉分类,温度等级 FROM [lib] WHERE [大类]="` + owner.source[item]["大类"]+`";`)
 	table.push(t.fields, "缓存日期");
 	for (i=1;#t){
@@ -180,6 +180,7 @@ grid.deleteItems = function(){
 	var selected = owner.selected;
 	var flist = {};
 	if !#selected return ; 
+	var db = refreshDB();
 	for (i=1; #selected)
 		table.push(flist, owner.source[selected[i]]["物料"]);
 	var dtype = winform.listview2.items[winform.listview2.selIndex]["大类"]

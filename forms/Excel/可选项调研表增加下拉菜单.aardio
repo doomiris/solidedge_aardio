@@ -33,7 +33,7 @@ _od_list_sht = "_od_list_sht";
 console.log("打开数据库连接...")
 import config;
 import sqlite;
-var db, err = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"));	
+var db, err = sqlite(io.joinpath(config.dbServer.path,"qhc_OD_lib.db"),,1/*_SQLITE_OPEN_READONLY*/);	
 if err win.msgbox(err);
 
 
@@ -280,5 +280,6 @@ for(i=1; wb.sheets.count){
 */
 	}
 }
+db.close();
 
 console.pause(true);

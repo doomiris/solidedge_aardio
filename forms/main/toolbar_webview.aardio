@@ -1,0 +1,81 @@
+import win.ui;
+/*DSG{{*/
+mainForm = win.form(text="Industrial Air Cooler";right=1065;bottom=615)
+mainForm.add()
+/*}}*/
+
+//import tarray;
+import sqlite;
+var db = sqlite("iac.db");
+var f = db.getTable("SELECT * FROM [数据字段] ");
+var search_field = {};
+for (i=1; #f)
+	table.push(search_field, "`"++ f[i]["字段"]++"`")
+search_field = string.join(search_field,", ")
+var stringify = function(tab){
+	import web.json;
+	return web.json.stringify(tab, true);; 
+}
+
+import config;
+mainForm.text = "Industrial Air Cooler" + " [" +config.webview.lang + "]";
+
+import web.view;
+var theView  = web.view(mainForm); 
+ 
+//导出为 JavaScript 中的 aardio 对象
+theView.external = {
+    getFields = function(str){
+        var f = db.getTable("SELECT * FROM [数据字段] ");
+        if !str return stringify(f) ;
+        var nf = {}
+        for (i=1; #f)
+        	select(f[i]["字段"]) {
+        		case "SC1","SC2","SC3","SC4" {
+        		    if f[i]["字段"] == str
+        		    	table.push(nf,f[i])
+        		}
+        		else {
+        		    table.push(nf,f[i])
+        		}
+        		
+        	}
+        return stringify(nf)
+    }; 
+    getData = function(str){
+       if !str return stringify(db.getTable("SELECT * FROM [选型数据] ")) ;
+       var ss = string.replace(search_field,"@`SC1`, `SC2`, `SC3`, `SC4`", "`" + str + "`")
+       var sql = sqlite.format("SELECT " + ss+ " FROM [选型数据] where ?? IS NOT NULL",{str});
+       return stringify(db.getTable(sql)); 
+    };
+
+}
+theView.export({
+    webviewlang = {
+        _get = function(){
+        	return config.webview.lang; 
+        }
+        _set = function(str){
+            win.msgbox(str)
+        	config.webview.lang = str;
+        	config.saveAll();
+        	mainForm.text = "Industrial Air Cooler" + " [" +config.webview.lang + "]";
+        }
+        
+    } 
+})
+import wsock.tcp.simpleHttpServer;
+
+/*
+如果导入 simpleHttpServer，则单个斜杠开头的路径会转换为嵌入式 HTTP 地址，
+如果同时文件名为 index.html ，则上级目录自动设为根目录，前端应用发布根目录使用默认的 "/" 即可，不需要改动。
+
+去掉下面的前端项目调试端口号 37161 或发布 EXE 后运行才会打开 "\web\index.html"。
+否则打开 http://localhost:37161
+*/
+
+	theView.go("\web\index.html", /*37161*/);
+
+
+mainForm.show(3/*_SW_MAXIMIZE*/);
+win.loopMessage();
