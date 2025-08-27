@@ -4,6 +4,7 @@ import win.ui.menu;
 import tarray;
 import domisoft;
 import QHC;
+import win.debounce;
 /*DSG{{*/
 var winform = win.form(text="分类和特性查询";right=999;bottom=751;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
@@ -30,7 +31,19 @@ import console
 console.open();
 */
 
+import config;
+var historyList =[];
+for k,v in config.ODqueryLog
+	table.push(historyList,v);
+	
+import com.autoComplete;
+var aco = com.autoComplete(winform.edit);
+aco.setStrings(historyList);
 
+winform.edit.onCancel = function(){ 
+	aco.hide();
+	return true; 	
+}
 winform.edit.disableInputMethod();
 winform.edit.setCueBannerText("查询分类/喷粉组/成品编码");
 winform.edit2.disableInputMethod();
@@ -74,6 +87,22 @@ var filterDeleted = function(t){
 	else if table.indexOf(z.fields,"特性") table.sort(z, lambda(a) owner.特性 < a.特性);
 	return z;
 }
+
+var saveHistory = function(str){
+	if !str return;
+	str = string.trim(str);
+	if !string.len(str) return ;
+    if !(table.find(historyList, str)){
+    	table.unshift(historyList, str);
+    	if ( #historyList>15 ) table.pop(historyList);
+    	aco.setStrings(historyList);
+    	table.assign(config.ODqueryLog,historyList);
+    	config.ODqueryLog.save();
+
+    };
+}
+win.debounce(saveHistory, 500);
+
 var sortby = function(t,c){
 	if !#t return t; 
 	table.sort(t, lambda(a) (owner[c]) < a[c]);
@@ -84,6 +113,8 @@ var searchClass = function(str){	//search分类
 	var db, err = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"),,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
 	str = string.upper(string.trim(str));
 	var t = db.getTable("SELECT * FROM `分类`", { 分类 : str });
+	if #t
+		saveHistory(str);
 	return filterDeleted(t);
 }
 var searchClassByBG = function(str){	//按BG号search分类,喷粉分类
@@ -420,8 +451,6 @@ winform.splitter2.split(winform.listview_Characteristics, {
 	winform.splitter4,
 	winform.listview_Characteristic_statement
 });
-
-
 
 winform.show();
 win.loopMessage();
