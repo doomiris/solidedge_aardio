@@ -75,7 +75,7 @@ getMainDbModifiedDate = function(){
 	import sqlite;
 	import config;
 	var db = sqlite(..io.joinpath(config.dbServer.path,"qhcsap.db"),, 1/*_SQLITE_OPEN_READONLY*/)
-	var vtab = db.stepQuery("SELECT lastUpdate FROM [updateLog]")
+	var vtab = db.stepQuery("SELECT lastUpdate FROM [updateLog] ORDER BY rowid DESC LIMIT 1")
 	db.close();
 	return vtab[["lastUpdate"]];
 }

@@ -1,6 +1,7 @@
 //SAP vbs 支持库
 import web.script;
-
+import win.dlg.message;
+var msg = win.dlg.message();
 var table = ..table;
 var string = ..string;
 var time = ..time;
@@ -308,7 +309,7 @@ downloadB2CBOM = function(winform, orderId, itemList){
 	 				vm.script = /*
 	 				session.findById("wnd[1]/tbar[0]/btn[12]").press
 	 				*/		
-	 				win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
+	 				msg.err("不能保存"+ '\n' +fullname,"文件被占用", 1000);
 	 			}
 	 		}	 		
 			vm.script = /*	
@@ -456,7 +457,7 @@ downloadOrderList = function(winform, orderId){
 	 		vm.script = /*
 	 		session.findById("wnd[1]/tbar[0]/btn[12]").press
 	 		*/		
-	 		win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
+	 		msg.err("不能保存"+ '\n' +fullname,"文件被占用", 1000);
 	 	}
 	}
 	winform.publish("order_list_job_done",vm.script.filename);
@@ -575,7 +576,7 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 
 		*/
 		if vm.script.notFound {
-			win.msgboxTimeout("还没排产:" ++ orderId ++ " : " ++ itemList[i]);
+			msg.frown("还没排产:" ++ orderId ++ " : " ++ itemList[i], 1000);
 			continue;
 		}
 		vm.script = /*				
@@ -613,7 +614,7 @@ downloadManufactureBOM = function(winform, orderId, itemList){
 	 				vm.script = /*
 	 				session.findById("wnd[1]/tbar[0]/btn[12]").press
 	 				*/		
-	 				win.msgbox("不能保存"+ '\n' +fullname,"文件被占用");
+	 				msg.err("不能保存"+ '\n' +fullname,"文件被占用", 1000);
 	 			}
 			}
 			vm.script = /*

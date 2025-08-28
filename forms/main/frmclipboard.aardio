@@ -171,8 +171,8 @@ grid2.newContent = function(position,contentItem){
 			contentItem.排序
 		}
 	})
-	if win.msgboxTest(sql)
-		db.exec(sql);
+	//if !win.msgboxTest(sql) return ; 
+	db.exec(sql);
 	db.close();
 	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
 	if i

@@ -3,15 +3,15 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=766;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="Save";left=540;top=99;right=669;bottom=159;color=0xD77800;db=1;dr=1;font=LOGFONT(h=-14);note="保存配置";z=3};
-cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;clipch=1;db=1;dl=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=22};
+button={cls="button";text="Save";left=533;top=86;right=662;bottom=146;color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="保存配置";z=3};
+cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;clipch=1;dl=1;dt=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=21};
 closeToTray={cls="checkbox";text="close to &tray";left=42;top=79;right=178;bottom=111;dl=1;dt=1;group=1;tabstop=1;z=4};
 createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=207;top=113;right=448;bottom=130;dl=1;dt=1;z=17};
-editCity={cls="edit";text="上海市";left=494;top=376;right=641;bottom=399;dl=1;dt=1;edge=1;tabstop=1;z=30};
-editDistict={cls="edit";text="浦东新区";left=495;top=347;right=642;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=29};
-editMobile={cls="edit";text="手机";left=495;top=271;right=642;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=27};
-editRec={cls="edit";text="收货人";left=494;top=237;right=641;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=26};
-editRoad={cls="edit";text="路名门牌号";left=495;top=308;right=642;bottom=331;dl=1;dt=1;edge=1;tabstop=1;z=28};
+editCity={cls="edit";text="上海市";left=494;top=376;right=641;bottom=399;dl=1;dt=1;edge=1;tabstop=1;z=29};
+editDistict={cls="edit";text="浦东新区";left=495;top=347;right=642;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=28};
+editMobile={cls="edit";text="手机";left=495;top=271;right=642;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=26};
+editRec={cls="edit";text="收货人";left=494;top=237;right=641;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=25};
+editRoad={cls="edit";text="路名门牌号";left=495;top=308;right=642;bottom=331;dl=1;dt=1;edge=1;tabstop=1;z=27};
 edit_SAP_client={cls="edit";text="220";left=50;top=348;right=197;bottom=371;dl=1;dt=1;edge=1;tabstop=1;z=10};
 edit_SAP_client2={cls="edit";text="220";left=271;top=347;right=418;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=15};
 edit_SAP_language={cls="edit";text="ZH";left=49;top=378;right=196;bottom=401;dl=1;dt=1;edge=1;tabstop=1;z=11};
@@ -24,17 +24,16 @@ edit_SAP_user={cls="edit";text="username";left=50;top=238;right=197;bottom=261;d
 edit_SAP_user2={cls="edit";text="username";left=271;top=237;right=418;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=12};
 groupbox={cls="groupbox";text="SAP一键登入1";left=28;top=220;right=245;bottom=412;dl=1;dt=1;edge=1;z=2};
 groupbox2={cls="groupbox";text="SAP一键登入2";left=247;top=220;right=467;bottom=412;dl=1;dt=1;edge=1;z=1};
-groupbox3={cls="groupbox";text="选项";left=31;top=47;right=470;bottom=194;dl=1;dt=1;edge=1;z=31};
-groupbox4={cls="groupbox";text="SAP订单收货";left=470;top=220;right=690;bottom=412;dl=1;dt=1;edge=1;z=25};
-hotkey={cls="hotkey";left=518;top=11;right=648;bottom=31;dr=1;dt=1;edge=1;z=19};
+groupbox3={cls="groupbox";text="选项";left=31;top=47;right=470;bottom=194;dl=1;dt=1;edge=1;z=30};
+groupbox4={cls="groupbox";text="SAP订单收货";left=470;top=220;right=690;bottom=412;dl=1;dt=1;edge=1;z=24};
+hotkey={cls="hotkey";left=670;top=9;right=739;bottom=29;dr=1;dt=1;edge=1;z=19};
 keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=206;top=141;right=447;bottom=158;dl=1;dt=1;z=18};
-listview={cls="listview";left=24;top=447;right=689;bottom=692;edge=1;z=32};
+listview={cls="listview";left=24;top=447;right=689;bottom=692;db=1;dl=1;dr=1;dt=1;edge=1;z=31};
 simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=42;top=143;right=178;bottom=175;dl=1;dt=1;tabstop=1;z=6};
 startupMinimized={cls="checkbox";text="startup &minimized";left=42;top=111;right=178;bottom=143;dl=1;dt=1;tabstop=1;z=5};
-static={cls="static";text="唤醒键";left=465;top=13;right=511;bottom=27;dr=1;dt=1;transparent=1;z=20};
-static2={cls="static";text="需重启TBM";left=659;top=13;right=735;bottom=27;dr=1;dt=1;transparent=1;z=21};
-static3={cls="static";left=188;top=11;right=300;bottom=27;center=1;db=1;dl=1;notify=1;transparent=1;z=24};
-static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";db=1;dl=1;font=LOGFONT(name='FontAwesome');transparent=1;z=23}
+static={cls="static";text="唤醒键";left=610;top=13;right=656;bottom=27;dr=1;dt=1;transparent=1;z=20};
+static3={cls="static";left=188;top=11;right=300;bottom=27;center=1;dl=1;dt=1;notify=1;transparent=1;z=23};
+static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=22}
 )
 /*}}*/
 
@@ -62,9 +61,13 @@ winform.bindConfig( config.settings,{
 } );
 
 winform.button.oncommand = function(id,event){
+	var oldKey = config.setbm.wakeUpKey; 
 	config.setbm.wakeUpKey = winform.hotkey.value;
+	
 	config.setbm.save();
 	config.settings.save();
+	if oldKey !== winform.hotkey.value
+		winform.msgInfo("唤起快捷键修改后需要重启TBM程序", 1000);
 	if mainForm
 		mainForm.custom.loadForm("\forms\main\frmPage3.aardio");
 	if !winform.parent
@@ -132,6 +135,12 @@ grid.onRightClick = function(item,subItem,nmListView){
 	})
 	popm.popup()
 }
+
+
+
+
+
+
 winform.show();
 win.loopMessage();
 return winform;

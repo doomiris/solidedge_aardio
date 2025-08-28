@@ -69,6 +69,7 @@ mainForm.onClose = function(hwnd,message,wParam,lParam){
 			import config;
 			if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
 				var new_ver = fsys.version.getInfo("update\se_tbm.exe").productVersion;
+				if !new_ver return false; 
 				if new_ver > current_version
 					return true;
 		}, config.__appVersion
