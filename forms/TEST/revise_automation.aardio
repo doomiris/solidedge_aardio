@@ -14,10 +14,6 @@ var superHotkey = key.hotkey();
 import winex;
 import key.ime;
 
-var hkl = ime.getKeyboardLayout();
-// 临时切换为英语输入法
-ime.setKeyboardLayout(0x0409); // 0x0409 是英语输入法的键盘布局ID
-
 var revise = function(hwnd,str){
 	import win;
 	import FlaUI.UIA3;
@@ -69,16 +65,14 @@ superHotkey.loadTable({
 	["CTRL+ALT+R"] = revise;
 })
 
-var txts = {
-"LL-SV EU 178R 底搁板焊接件左 未喷粉", "LL-SV EU 178R 底搁板焊接件左 已喷粉", "LL-SV EU 178R 底搁板焊接件右 未喷粉", "LL-SV EU 178R 底搁板焊接件右 已喷粉", "LL-SV EU 178R 底搁板焊接件中左 未喷粉", "LL-SV EU 178R 底搁板焊接件中左 已喷粉", "LL-SV EU 178R 底搁板焊接件中右 未喷粉", "LL-SV EU 178R 底搁板焊接件中右 已喷粉", "LL-SV EU 178R 搁板焊接件左 W=200 未喷粉", "LL-SV EU 178R 搁板焊接件左 W=200 已喷粉", "LL-SV EU 178R 搁板焊接件右 W=200 未喷粉", "LL-SV EU 178R 搁板焊接件右 W=200 已喷粉", "LL-SV XU 125 顶盖板 未喷粉", "LL-SV XU 125 顶盖板 已喷粉", "LL-SV XU 188 顶盖板 未喷粉", "LL-SV XU 188 顶盖板 已喷粉", "LL-SV XU 250 顶盖板 未喷粉", "LL-SV XU 250 顶盖板 已喷粉", "LL-SV EU 178R 顶部灯支撑", "LL-SV EU 178R 蒸发器盖板", "LL-SV XU 125 底发泡外侧钣金", "LL-SV XU 188 底发泡外侧钣金", "LL-SV XU 250 底发泡外侧钣金", "LL-SV EU 178R 底发泡外侧焊接钣金", "LL-SV XU 125 底发泡内侧钣金 未喷粉", "LL-SV XU 125 底发泡内侧钣金 已喷粉", "LL-SV XU 188 底发泡内侧钣金 未喷粉", "LL-SV XU 188 底发泡内侧钣金 已喷粉", "LL-SV XU 250 底发泡内侧钣金 未喷粉", "LL-SV XU 250 底发泡内侧钣金 已喷粉", "LL-SV EU 178R 底发泡内侧钣金 未喷粉", "LL-SV EU 178R 底发泡内侧钣金 已喷粉", "LL-SV XU 125 底发泡背部外侧钣金", "LL-SV XU 188 底发泡背部外侧钣金", "LL-SV XU 250 底发泡背部外侧钣金", "LL-SV XU 125 底发泡背部内侧钣金", "LL-SV XU 188 底发泡背部内侧钣金", "LL-SV XU 250 底发泡背部内侧钣金", "LL-SV EU 178R 顶部发泡外侧钣金", "LL-SV EU 178R 顶部发泡内侧钣金", "LL-SV XU 中立柱焊接件 未喷粉", "LL-SV XU 中立柱焊接件 已喷粉", "LL-SV XU 125 蜂窝网", "LL-SV XU 188 蜂窝网", "LL-SV EU 178R 蜂窝网", "LL-SV XU 125 背风板组件", "LL-SV XU 188 背风板组件", "LL-SV XU 250 背风板组件", "LL-SV EU 178R 背风板组件", "LL-SV XU 125 顶风板组件", "LL-SV XU 188 顶风板组件", "LL-SV XU 250 顶风板组件", "LL-SV EU 178R 顶风板组件", "LL-SV XU 125 底搁板组件", "LL-SV XU 188 底搁板组件", "LL-SV XU 250 底搁板组件", "LL-SV EU 178R 底搁板组件", "LL-SV XU 125 搁板组装", "LL-SV XU 188 搁板组装", "LL-SV XU 250 搁板组装", "LL-SV EU 178R 搁板组装", "LL-SV XU 125 顶灯和支撑组装", "LL-SV XU 188 顶灯和支撑组装", "LL-SV XU 250 顶灯和支撑组装", "LL-SV EU 178R 顶灯和支撑组装", "LL-SV XU 125 顶部盖板组件", "LL-SV XU 188 顶部盖板组件", "LL-SV XU 250 顶部盖板组件", "LL-SV EU 178R 顶部盖板组件", "LL-SV XU 125 踢脚板安装组件", "LL-SV XU 188 踢脚板安装组件", "LL-SV XU 250 踢脚板安装组件", "LL-SV EU 178R 踢脚板安装组件", "LL-SV EU 178R 蒸发器组件 R404A 丹佛斯膨胀阀", "LL-SV EU 178R 蒸发器组件 R404A Carrier膨胀阀", "LL-SV XU 125 底支腿组件", "LL-SV XU 188 底支腿组件", "LL-SV XU 250 底支腿组件", "LL-SV EU 178R 底支腿组件", "LL-SV XU 125 木包装组件(国内)",
-"LL-SV XU 188 木包装组件(国内)", "LL-SV XU 250 木包装组件(国内)", "LL-SV EU 178R 木包装组件(国内)", "LL-SV XU 125 木包装组件(国外 加高)", "LL-SV XU 188 木包装组件(国外 加高)", "LL-SV XU 250 木包装组件(国外 加高)", "LL-SV EU 178R 木包装组件(国外 加高)", "LL-SV XU 125 木包装组件(国外 不加高)", "LL-SV XU 188 木包装组件(国外 不加高)", "LL-SV XU 250 木包装组件(国外 不加高)", "LL-SV EU 178R 木包装组件(国外 不加高)", "LL-SV XU 125 木包装组件(国外 不加高可侧叉)", "LL-SV XU 188 木包装组件(国外 不加高可侧叉)", "LL-SV XU 250 木包装组件(国外 不加高可侧叉)", "LL-SV EU 178R 木包装组件(国外 不加高可侧叉)", "LL-SV EU 178R 顶饰板组件 底部控制器", "LL-SV XU 125 蒸发风机组装", "LL-SV XU 188 蒸发风机组装", "LL-SV XU 250 蒸发风机组装", "LL-SV EU 178R 蒸发风机组装", "LL-SV XU 125 柜口装饰条组装", "LL-SV XU 188 柜口装饰条组装", "LL-SV XU 250 柜口装饰条组装", "LL-SV EU 178R 柜口装饰条组装", "LL-SV XU 125 CDU组装", "LL-SV XU 188 CDU组装", "LL-SV XU 250 CDU组装", "LL-SV EU 178R CDU组装", "LL-SV XU 125 木包装可选项", "LL-SV XU 188 木包装可选项", "LL-SV XU 250 木包装可选项", "LL-SV EU 178R 木包装可选项", "LL-SV EU 178R 柜口装饰条可选项", "LL-SV EU 178R 木包装底座", "LL-SV XU 250 木包装底座", "LL-SV XU 188 木包装底座", "LL-SV XU 125 木包装底座"};
+var txts = {}
 
 import console;
 console.open();
 
 
 winform.button.oncommand = function(id,event){
-	for (i=81;117){
+	for (i=1;#txts){
 		winform.edit.print(i, txts[i]);
 		revise(,txts[i]);
 		sleep(500)
