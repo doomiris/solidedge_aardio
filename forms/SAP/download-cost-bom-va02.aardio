@@ -271,7 +271,6 @@ winform.button5.oncommand = function(id,event){
 	winform.edit3.print('\n');
 	
 }
-
 winform.button6.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="working..."};
 	thread.invoke( 

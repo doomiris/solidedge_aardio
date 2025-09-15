@@ -414,7 +414,7 @@ getActiveAppName = function(){
     var exePath;
     if proc
         exePath = proc.getPath();
-     return title, exePath; 
+     return title, exePath, hwnd; 
 }
 
 

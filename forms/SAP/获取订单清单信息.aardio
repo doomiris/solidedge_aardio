@@ -201,16 +201,18 @@ menu.add()
 		if !winform.listview2.selIndex
 			winform.listview2.selIndex = table.indexOf(tarray.getCol(winform.grid2.source, "SD 凭证"), tab2[1][1/*"SD 凭证"*/],) : null;
 		if !winform.listview2.selIndex return ; 
-		var tab1 = domisoft.copySelectedItem(winform.listview2);
+		
+		var tab1 = winform.listview2.getItemText(,-1);
+
 		var formatTab = {}
 		for (i=1; #tab2)
 			table.push(formatTab, {
-				tab1[1][2/*"凭证日期"*/],
-				tab1[1][1/*"SD 凭证"*/],
+				tab1[2/*"凭证日期"*/],
+				tab1[1/*"SD 凭证"*/],
 				tab2[i][2/*"项目(SD)"*/],
-				tab1[1][3/*"售达方"*/],
-				tab1[1][4/*"名称 1"*/],
-				tab1[1][5/*"备注"*/],
+				tab1[3/*"售达方"*/],
+				tab1[4/*"名称 1"*/],
+				tab1[5/* 备注 */], 
 				tab2[i][3/*"物料"*/],
 				tab2[i][4/*"描述"*/],
 				tab2[i][5/*"订单数量"*/]

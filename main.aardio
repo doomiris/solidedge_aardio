@@ -376,8 +376,8 @@ mainForm.listbox.wndproc = function(hwnd,message,wParam,lParam){
 /*
 import console
 console.open();
-*/
 
+*/
 /*热键部分{{*/
 
 var hkId, clipHkId;

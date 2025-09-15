@@ -179,6 +179,8 @@ grid.onEditEnd = function(iItem,iSubItem){
 //win.debounce(grid.onEditEnd);
 
 winform.button.oncommand = function(id,event){
+	var path = fsys.dlg.save('PDF文件|*.pdf|所有文件|*.*|',,config.setbm.workingDir,winform,,"合并PDF文件");
+	if !path return ;
 	var mergedPdf = fsys.pdfium();
 	for (i=1; winform.listview.count){
 		var item = tab[i];
@@ -198,8 +200,7 @@ winform.button.oncommand = function(id,event){
 			}
 		}
 	}
-	var path = fsys.dlg.save('PDF文件|*.pdf|所有文件|*.*|',,config.setbm.workingDir,winform,,"合并PDF文件");
-	if !path return ;
+
 	var succ = mergedPdf.save(path);
 	
 	if succ 

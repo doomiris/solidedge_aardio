@@ -240,7 +240,7 @@ class ColDefType{
 	};
 }
 
-formatColor = function(UsedRange){
+formatColor = function(UsedRange, light){
 	UsedRange.formatConditions.Delete();   //清楚当前颜色
 	//设置表格线
 	import color;
@@ -259,22 +259,28 @@ formatColor = function(UsedRange){
 		fmtCds.Interior.Color = color.rgb(table.unpack(rgb));
 		fmtCds.Stopiftrue = false;
 	}
-
-	addCond("=($A1="".1"")",{0, 176, 80});
-	addCond("=($A1=""..2"")",{79, 98, 40});
-	addCond("=($A1=""...3"")",{118, 147, 60});
-	addCond("=($A1=""....4"")",{196, 215, 155});
-	addCond("=($A1="".....5"")",{216, 228, 188});
-	addCond("=($A1=""......6"")",{235, 241, 222});
+	if !light{
+		addCond("=($A1="".1"")",{0, 176, 80});
+		addCond("=($A1=""..2"")",{79, 98, 40});
+		addCond("=($A1=""...3"")",{118, 147, 60});
+		addCond("=($A1=""....4"")",{196, 215, 155});
+		addCond("=($A1="".....5"")",{216, 228, 188});
+		addCond("=($A1=""......6"")",{235, 241, 222});
+	}else{
+		addCond("=($A1="".1"")",{118, 147, 60});
+		addCond("=($A1=""..2"")",{196, 215, 155});
+		addCond("=($A1=""...3"")",{216, 228, 188});
+		addCond("=($A1=""....4"")",{235, 241, 222});
+	}
 }
 
-
-formatBOM = function(sht,savechanges = true){
+formatBOM = function(sht,savechanges = true, light=false){
 	import com.excel;
 	import console;
 	var excel;
 	if !sht {
 		excel = com.excel(false);
+		if !excel return ; 
 		excel = excel.Application;
 		sht = excel.ActiveWorkbook.ActiveSheet;
 	}else{
@@ -292,7 +298,7 @@ formatBOM = function(sht,savechanges = true){
 	
   	var UsedRange = sht.UsedRange;
 
-	formatColor(UsedRange);
+	formatColor(UsedRange,light);
 
 	import tarray;
 	var cot = UsedRange.Columns(coldef.LvlCol).value2;
@@ -498,7 +504,7 @@ formatCostBom = function(sht){
 
 	nsht.range("A1:" ++ etip.toColName(#etab.fields) ++ "1" ).value2 = etab.fields;
 	nsht.range("A2:" ++ etip.toColName(#etab[1]) ++ (#etab+1) ).value2 = etab;
-	formatBOM(nsht,false);
+	formatBOM(nsht,false,true);
 	
 	wk.Application.DisplayAlerts = false;
 	sht.delete();

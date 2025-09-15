@@ -24,7 +24,8 @@ import fsys;
 
 var list = {fields = {[1] = "name",[2]="filename"}};
 
-var path = io.joinpath(config.__templateLib,"..","ext");
+var path = io.joinpath( io._exedir, "ext");
+
 var flist = fsys.list(path,,"*.aardio");
 for (i=1; #flist){
 	var info = io.splitpath(flist[i]);

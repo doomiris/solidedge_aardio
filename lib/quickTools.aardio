@@ -61,15 +61,17 @@ excel_formatBom = function(ftab){
 }
 listen_excelBoms = function(...){
 	var ftab = ...;
-	import win.timer
-	var timer = win.timer(,1000);
-	var count = 0;
-	timer.onTimer = function(hwnd,msg,id,tick){
-		if excel_formatBom(ftab)
-			count = count + 1;
-		if count = #ftab
-			timer.disable();
-	} 
+/*
+	import console
+	console.open();
+*/
+	import win;
+	win.setTimeout(
+		excel_formatBom,
+		3000,
+		ftab
+	)
+
 }
 getMainDbModifiedDate = function(){
 	import sqlite;
