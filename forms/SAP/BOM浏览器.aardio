@@ -1,8 +1,6 @@
+import console
 import fonts.fontAwesome;
 import win.ui;
-import win.ui.menu;
-import win.ui.grid;
-import win.ui.toolbar;
 /*DSG{{*/
 var winform = win.form(text="BOM浏览器";right=1012;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
@@ -16,7 +14,9 @@ splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;z=3};
 static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;align="right";dr=1;dt=1;transparent=1;z=5}
 )
 /*}}*/
-
+import win.ui.menu;
+import win.ui.grid;
+import win.ui.toolbar;
 import process;
 import fsys;
 import fsys.file;
@@ -26,7 +26,10 @@ import config;
 import domisoft;
 import tarray;
 
+
 var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
+//var search_path = config.__sapDownload;
+var search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
 
 var refreshDB = function(){
 	return sqlite(path);
@@ -101,7 +104,7 @@ grid2.onClick = function(item,subItem,nmListView){
 	for (i=1;#t){
 		var f = string.join({t[i]["物料"], t[i]["物料描述"]},"_") ++ ".xlsx";
 		f = string.replace(f," ","_"); //在拼接前处理, 否则路径含空格
-		f = io.joinpath(config.__sapDownload, f);		
+		f = io.joinpath(search_path, f);		
 		if io.exist(f)
 			t[i]["缓存日期"] = domisoft.getFileDate(f);
 	}
@@ -120,7 +123,7 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 	var data = owner.getTable(owner.source.fields);
 	var n = string.join({data[item]["物料"], data[item]["物料描述"]},"_") ++ ".xlsx";
 	n = string.replace(n," ","_");
-	var f = io.joinpath(config.__sapDownload, n);	
+	var f = io.joinpath(search_path, n);	
 	if !io.exist(f)
 		win.msgboxErr(f,"请先下载")
 	else {
@@ -143,7 +146,7 @@ grid.getCopyFilesList = function(){
 	for (i=1; #selIndx ){
 		var n = string.join({data[selIndx[i]]["物料"], data[selIndx[i]]["物料描述"]},"_") ++ ".xlsx";
 		n = string.replace(n," ","_");
-		var f = io.joinpath(config.__sapDownload, n);	
+		var f = io.joinpath(search_path, n);	
 		if io.exist(f)
 			table.push(tab, f);
 	}
@@ -213,6 +216,8 @@ winform.frmReLoad();
 
 winform.splitter.split(winform.listview,winform.listview2);
 winform.listview.doNotCopyColumns = {-1};
+
+
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.listview2.translateAccelerator = domisoft.ctrlC;
