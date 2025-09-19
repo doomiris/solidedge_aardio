@@ -33,7 +33,7 @@ _save_as_single_bom_file = false;
 var tbk, tsht, tsht_tab;
 if _save_as_single_bom_file {
 	 tbk = excel.WorkBooks.Add(
-    	io.joinpath(config.__templateLib,  "新产品BOM申请单模板.xlsx")
+    	io.joinpath(config.__templateLib,  "新产品BOM申请单模板-姓名-日期.xlsx")
 	);
 	
 	 tsht = tbk.Sheets(1);
@@ -46,7 +46,7 @@ for(j = _start_col; _start_col + _col_count - 1 ){
 
 	if !_save_as_single_bom_file {
 		 tbk = excel.WorkBooks.Add(
-    		io.joinpath(config.__templateLib,  "新产品BOM申请单模板.xlsx")
+    		io.joinpath(config.__templateLib,  "新产品BOM申请单模板-姓名-日期.xlsx")
 		);
 		
 		 tsht = tbk.Sheets(1);

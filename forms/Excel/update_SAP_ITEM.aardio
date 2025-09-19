@@ -170,7 +170,8 @@ var update = function(winform, tab){
         }
     }
 	excel.alerts = true;
-	return winform.msgInfo("done",1000); 
+	winform.msgInfo("done",1000); 
+	return true;
 }
 
 winform.button.oncommand = function(id,event){

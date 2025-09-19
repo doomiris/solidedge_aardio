@@ -14,6 +14,7 @@ splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;z=3};
 static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;align="right";dr=1;dt=1;transparent=1;z=5}
 )
 /*}}*/
+
 import win.ui.menu;
 import win.ui.grid;
 import win.ui.toolbar;
@@ -28,8 +29,8 @@ import tarray;
 
 
 var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
-//var search_path = config.__sapDownload;
-var search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
+var search_path = config.__sapDownload;
+//var search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
 
 var refreshDB = function(){
 	return sqlite(path);

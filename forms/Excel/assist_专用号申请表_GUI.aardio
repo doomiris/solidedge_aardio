@@ -201,9 +201,12 @@ winform.button.oncommand = function(id,event){
     excel_2 = null;
     excel_0 = null;
 */
-	com.Release(sht)
-    com.Release(excel_2)
-    com.Release(excel_0)
+	try{
+		com.Release(sht);
+    	com.Release(excel_2);
+    	com.Release(excel_0);
+	}
+	
     collectgarbage("collect");
 	
 }
