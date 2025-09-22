@@ -10,11 +10,11 @@ button6={cls="button";text="\/";left=276;top=46;right=301;bottom=69;dl=1;dt=1;z=
 button7={cls="button";text="-";left=276;top=75;right=300;bottom=98;dl=1;dt=1;z=10};
 button8={cls="button";text="+";left=276;top=104;right=300;bottom=127;dl=1;dt=1;z=9};
 button9={cls="button";text="清空";left=276;top=133;right=300;bottom=156;dl=1;dt=1;z=8};
-lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;dl=1;dt=1;edge=1;items={};msel=1;z=3};
+lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;db=1;dl=1;dt=1;edge=1;items={};msel=1;z=3};
 listbox={cls="listbox";left=1;top=13;right=275;bottom=203;dl=1;dt=1;edge=1;items={};z=1};
 listview={cls="listview";left=310;top=11;right=928;bottom=793;db=1;dl=1;dr=1;dt=1;edge=1;z=2};
-splitter={cls="splitter";left=304;top=14;right=309;bottom=794;frame=1;hide=1;z=4};
-splitter2={cls="splitter";left=4;top=200;right=302;bottom=205;frame=1;hide=1;horz=1;z=7}
+splitter={cls="splitter";left=304;top=14;right=309;bottom=794;db=1;dt=1;frame=1;hide=1;z=4};
+splitter2={cls="splitter";left=4;top=200;right=302;bottom=208;frame=1;hide=1;horz=1;z=7}
 )
 /*}}*/
 
@@ -25,13 +25,37 @@ import tarray;
 import win.ui.listEdit;
 import win.debounce;
 import win.inputBox;
-
+/*
+winform.splitter.split(
+	{
+		winform.listbox,
+		winform.lb_clue,
+		winform.button5,
+		winform.button6,
+		winform.button7,
+		winform.button8,
+		winform.button9,
+		winform.splitter2
+	}, 
+	winform.listview
+);
+winform.splitter2.split(
+	{
+		winform.listbox,
+		winform.button3,
+		winform.button4,
+		winform.button10
+	},
+	winform.lb_clue
+)	
+*/
 var listEdit = win.ui.listEdit(winform.listbox);
 
 winform.bindConfig( config.物料描述,{
 	listbox = "items"	
 } );
 
+	
 
 var product = function(arr){
     var t = {};
@@ -87,21 +111,9 @@ if !#winform.lb_clue.items
 	winform.lb_clue.items = clue;
 
 
+
+
 winform.show();
-
-with winform{
-	splitter.split({
-		listbox,
-		lb_clue,
-		splitter2
-	}, listview)
-	splitter2.split({
-		listbox,
-	}, lb_clue)		
-}
-
-
-
 winform.listview.selectAll = domisoft.selectAll;
 winform.listview.copySelectedItem = domisoft.copySelectedItem;
 winform.listview.doNotCopyColumns = {2};
