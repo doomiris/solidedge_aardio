@@ -5,6 +5,7 @@ import win.ui;
 var winform = win.form(text="BOM浏览器";right=1012;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="搜索";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
+chkFromServer={cls="checkbox";text="查看共享版本";left=743;top=33;right=931;bottom=51;dr=1;dt=1;z=9};
 custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;cp=1;dl=1;dr=1;dt=1;z=8};
 edit={cls="edit";left=801;top=5;right=1007;bottom=31;dr=1;dt=1;edge=1;z=4};
 edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
@@ -27,10 +28,16 @@ import config;
 import domisoft;
 import tarray;
 
+winform.bindConfig( config.BOMExplorer,{
+	checkbox = checked	
+} );
 
-var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
-var search_path = config.__sapDownload;
-//var search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.db");
+var search_path;
+if !winform.chkFromServer.checked
+	search_path = config.__sapDownload;
+else
+	search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
 
 var refreshDB = function(){
 	return sqlite(path);
@@ -218,7 +225,12 @@ winform.frmReLoad();
 winform.splitter.split(winform.listview,winform.listview2);
 winform.listview.doNotCopyColumns = {-1};
 
-
+winform.chkFromServer.oncommand = function(id,event){
+	if !winform.chkFromServer.checked
+		search_path = config.__sapDownload;
+	else
+		search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
+}
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
 winform.listview2.translateAccelerator = domisoft.ctrlC;
