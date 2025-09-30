@@ -1,0 +1,69 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="Haier Title Print";right=759;bottom=469)
+winform.add(
+button={cls="button";text="Print";left=639;top=65;right=735;bottom=106;dr=1;dt=1;z=2};
+edit={cls="edit";left=192;top=117;right=743;bottom=400;db=1;dr=1;dt=1;edge=1;multiline=1;z=1};
+listview={cls="listview";left=5;top=117;right=190;bottom=398;db=1;dl=1;dt=1;edge=1;z=3};
+splitter={cls="splitter";left=189;top=116;right=194;bottom=400;db=1;dt=1;frame=1;z=4}
+)
+/*}}*/
+
+import solidedge.application;
+import solidedge.DraftDocument;
+import domisoft;
+import config;
+
+var workspace = config.setbm.workingDir;
+
+var seApp = solidedge.application();
+_AutoCadConfigFile := seApp.Documents.AutoCadConfigFile;
+
+//var seDfts = seApp.Documents;
+var reset = function(){
+	seApp.Documents.AutoCadConfigFile = _AutoCadConfigFile;
+	seApp.DisplayAlerts = true;
+	seApp.setPdfOptions();
+}
+
+var dftprint = function(seDft){
+	seDft := solidedge.DraftDocument();
+	winform.edit.print("--- 开始:",seDft.Name," ---");
+	for (i=1; seDft.SheetGroups.Item(1).Sheets.Count){
+		var seSht = seDft.SheetGroups.Item(1).Sheets.Item(i);
+		seSht.Activate();		
+		var seBlk = seDft.getTitleBlock(seSht, "Haier_titleblock");
+		var lTab = seDft.getLabelTable(seBlk, false);
+		
+		var filename = string.join([lTab["图样代号"], lTab["图样名称"]]," - ");	
+		filename = domisoft.formatWindowsFileName(filename);
+
+		var fullname_pdf = io.joinpath(workspace, filename  + ".pdf");
+		seApp.SetGlobalParameter( 
+			172 /* _seApplicationGlobalDraftSaveAsPDFSheetsRange */, 
+			0 /* _seDraftSaveAsPDFSheetOptionsConstantsActiveSheet */
+		)
+		seApp.DisplayAlerts = false;
+		winform.edit.print(fullname_pdf);
+		seDft.SaveAs(fullname_pdf);
+		
+		seApp.Documents.AutoCadConfigFile  = "S:\Admin\Settings\SEACAD_SinglePage.INI";
+		var fullname_dwg = io.joinpath(workspace, filename  + ".dwg");
+		winform.edit.print(fullname_dwg);
+		seDft.SaveAs(fullname_dwg);	
+	}
+	winform.edit.print("--- 完成 ---");
+	winform.button.disabledText = null;
+	reset();
+}
+
+
+
+winform.button.oncommand = function(id,event){
+	winform.button.disabledText = ["✶","✸","✹","✺","✹","✷"];
+	win.setTimeout(dftprint);	
+}
+winform.splitter.split(winform.listview,winform.edit);
+
+winform.show();
+win.loopMessage();

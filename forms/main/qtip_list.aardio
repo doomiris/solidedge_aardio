@@ -56,7 +56,7 @@ var downloadbom = function(){
     	},winform,tab
     )
 };
-var copyPartNo = function(withDesp){
+var copyPartNo = function(withDesp, separator = '\r\n'){
     var tab = [];
     var source = winform.grid.source;
     for (k, v in winform.listview.selected){
@@ -68,7 +68,7 @@ var copyPartNo = function(withDesp){
         	table.push(tab,  pcode + '\t' + desp);        
     }  
     if #tab
-    	return string.join(tab, '\r\n');
+    	return string.join(tab, separator);
 }
 var copyBomFormat = function(){
     var tab = [];
@@ -123,6 +123,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
 	menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
 	menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
+	menu.add("复制[专用号](水平展开)", λ() win.clip.write(copyPartNo(false,'\t')));
 	menu.add()
 	menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
 	menu.add()

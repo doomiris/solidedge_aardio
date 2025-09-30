@@ -138,7 +138,7 @@ copySelectedItem = function(ctrl){
 			table.removeByValue(selTab[i], null);
 			var cacheTab = [];
 			for k, v in selTab[i] 
-				table.push(cacheTab,v); //处理稀疏数组问题
+				table.push(cacheTab,v); //处理稀疏数组问题, 顺序有乱的情况?
 			selTab[i] = cacheTab;
 		};
 

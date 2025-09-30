@@ -11,6 +11,7 @@ button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;
 button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;dl=1;dt=1;z=11};
 button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;dl=1;dt=1;z=12};
 button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;dr=1;dt=1;z=15};
+button9={cls="button";text="clear";left=433;top=234;right=506;bottom=248;dr=1;dt=1;z=16};
 edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;dl=1;dt=1;edge=1;multiline=1;z=2};
 edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;dl=1;dt=1;edge=1;multiline=1;z=3};
 edit3={cls="edit";left=430;top=252;right=891;bottom=510;aw=1;db=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
@@ -363,7 +364,9 @@ winform.button8.oncommand = function(id,event){
 	)
 }
 
-
+winform.button9.oncommand = function(id,event){
+	winform.edit3.text="";
+}
 
 import domisoft;
 winform.listview.copyWithHeaders = true;

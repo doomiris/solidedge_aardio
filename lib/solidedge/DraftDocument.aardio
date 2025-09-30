@@ -45,9 +45,10 @@ namespace DraftDocument{
 		}
 	};
 
-	getTitleBlock = function(seSht){
+	getTitleBlock = function(seSht, targetName){
+		targetNames = targetName ? {targetName} : _titleBlockNames;
         for (i = 1;  seSht.BlockOccurrences.Count ) { //获取Titleblock
-        	if ..table.find(_titleBlockNames, seSht.BlockOccurrences.Item(i).Block.Name)
+        	if ..table.find(targetNames, seSht.BlockOccurrences.Item(i).Block.Name)
         		return seSht.BlockOccurrences.Item(i);
         }
 	};
@@ -62,12 +63,13 @@ namespace DraftDocument{
         }
         return null;
 	};
-	getLabelTable = function(seBlk){
+	getLabelTable = function(seBlk, org = true){
 		if !seBlk return null; 
 		var seLbs = seBlk.BlockLabelOccurrences;
 		var tar = {};
 		for (i=1; seLbs.Count){
     		tar[seLbs.item(i).Name] = ..string.trim(seLbs.item(i).Value);
+    		if !org continue;
     		if (seLbs.item(i).Name == "日期") { //旧模板命名问题: 重复日期
     			if (tar["日期"]){	
     				if (!tar["设计日期"]){
@@ -84,18 +86,20 @@ namespace DraftDocument{
     			}
     		}
 		}
-		tar["专用号"] := tar["图号"];
-		tar["版本"] := null;
-		tar["名称(中文)"]:= tar["名称(中)"];	//旧模板命名问题
-		tar["名称(英文)"]:= tar["名称(英)"];	//旧模板命名问题
-		tar["零件名称"] := tar["名称(中文)"];
-		tar["型号"] := tar["型  号"];			//旧模板命名问题
-    	tar["型号/项目名称"] := tar["型号"];	//旧模板命名问题
-    	tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
-    	tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
-    	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
-    	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-c");
-    	tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
+		if org {
+			tar["专用号"] := tar["图号"];
+			tar["版本"] := null;
+			tar["名称(中文)"]:= tar["名称(中)"];	//旧模板命名问题
+			tar["名称(英文)"]:= tar["名称(英)"];	//旧模板命名问题
+			tar["零件名称"] := tar["名称(中文)"];
+			tar["型号"] := tar["型  号"];			//旧模板命名问题
+    		tar["型号/项目名称"] := tar["型号"];	//旧模板命名问题
+    		tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J052005");
+    		tar["喷粉标准"] := owner.findTextFromBlkDef(seBlk,"Q/LD J52005");
+    		tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-m");
+    		tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-c");
+    		tar["公差等级"] := owner.findTextFromBlkDef(seBlk,"GB/T 1804-v");
+    	}
 		return tar; 
 	};
 	getBlkByName = function(blkName, seSht){
