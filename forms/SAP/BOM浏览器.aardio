@@ -27,6 +27,7 @@ import com.excel;
 import config;
 import domisoft;
 import tarray;
+import win.inputBox;
 
 winform.bindConfig( config.BOMExplorer,{
 	checkbox = checked	
@@ -71,8 +72,11 @@ var resetToolbar = function(){
 winform.frmReLoad = function(){
 	var db = refreshDB();
 	var t = db.getTable("SELECT DISTINCT 大类 FROM [lib]");
+	var selIndex = grid2.lastSelIndex;
 	grid2.source = t;
 	grid2.setTable(grid2.source);
+	db.close();
+	grid2.onClick (selIndex);
 }
 
 var filterTag = function(id){
@@ -106,6 +110,7 @@ winform.edit.onChange = function(){
 }
 grid2.onClick = function(item,subItem,nmListView){
 	if !item return ; 
+	owner.lastSelIndex = item;
 	var db = refreshDB();
 	var t = db.getTable(`SELECT 中类,小类,物料,物料描述,属性,可选项分类,喷粉分类,温度等级 FROM [lib] WHERE [大类]="` + owner.source[item]["大类"]+`";`)
 	table.push(t.fields, "缓存日期");
@@ -203,6 +208,21 @@ grid.deleteItems = function(){
 	winform.frmReLoad();
 
 }
+grid.updateProperty = function(prop, newValue){
+	newValue := winform.inputBox("输入新内容", "变更["+prop+"]");
+	if !newValue return ; 
+	var selected = owner.selected;
+	var selectdCodes = {};
+	for (i=1; #selected)
+		table.push(selectdCodes, owner.source[selected[i]]["物料"])
+	var sql = "UPDATE `lib` SET ? WHERE ??";
+	sql = sqlite.format(sql, {{[prop]:newValue},{"物料":selectdCodes}});
+	var db = refreshDB();
+	db.exec(sql);	
+	db.close();
+	winform.frmReLoad();
+}
+
 var menu = win.ui.popmenu(winform);
 menu.add("打开BOM", λ()	grid.onDoubleClick(winform.listview.selIndex));
 menu.add("下载BOM...", downloadbom);
@@ -212,7 +232,12 @@ menu.add()
 menu.add("复制[物料]", λ() grid.copyPartNo(["物料"]));
 menu.add("复制[物料][物料描述]", λ() grid.copyPartNo(["物料","物料描述"]));
 menu.add("复制所选BOM文件...", λ() grid.copyfiles(grid.getCopyFilesList()));
-
+menu.add()
+menu.add("添加[中类]...", λ () grid.updateProperty("中类"));
+menu.add("添加[小类]...", λ () grid.updateProperty("小类"));
+menu.add("添加[可选项分类]...",λ () grid.updateProperty("可选项分类") );
+menu.add("添加[喷粉分类]...",λ () grid.updateProperty("喷粉分类") );
+menu.add("添加[温度等级]...",λ () grid.updateProperty("温度等级") );
 
 grid.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
@@ -230,6 +255,7 @@ winform.chkFromServer.oncommand = function(id,event){
 		search_path = config.__sapDownload;
 	else
 		search_path = io.joinpath(config.dbServer.path,"xl_lib","\");
+	winform.frmReLoad();	
 }
 
 winform.listview.translateAccelerator = domisoft.ctrlC;
