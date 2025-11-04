@@ -228,7 +228,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 */
 import win.debounce;
 winform.listview.onSelChanged = win.debounce(function(selected,item,subItem,nmListView){
-    publish("status2", "选中了" + #winform.listview.selected + "条");
+    publish("status3", "选中了" + #winform.listview.selected + "条");
 })
 
 /*CTRLC复制模块{{*/

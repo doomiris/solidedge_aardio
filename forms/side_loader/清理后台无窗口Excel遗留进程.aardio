@@ -1,0 +1,6 @@
+import console; 
+
+import domisoft;
+domisoft.clearExcelCorpse();
+
+console.pause();

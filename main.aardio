@@ -447,13 +447,21 @@ clipHkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 /*}}*/
 /*状态栏{{*/
 import win.ui.statusbar; 
+// 一分块
 var statusbar = win.ui.statusbar( mainForm );
 statusbar.addItem("主程序: " + tostring(config.__appVersion), 100/*宽度*/);
 statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
+//二分块
 var lastUpdate = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
 if lastUpdate statusbar.addItem("主数据库: " + lastUpdate, 200/*宽度*/);
+//三分块
 statusbar.addItem("", 200/*宽度*/);
-subscribe("status2", function(...){
+//监听变化
+subscribe("status2", function(){
+	var lastUpdate = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
+	if lastUpdate statusbar.setText("主数据库: " + lastUpdate, 2 /*第几个分块*/);
+})
+subscribe("status3", function(...){
 		statusbar.setText(tostring(...) , 3 /*第几个分块*/);
 })
 /*}}*/

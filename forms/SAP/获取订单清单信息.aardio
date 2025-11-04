@@ -28,7 +28,6 @@ import win.dlg.message;
 /*
 import console
 console.open()
-
 */
 winform.edit.disableInputMethod();
 winform.edit.setCueBannerText("订单号");
@@ -104,6 +103,7 @@ var getDetailFromDb = function(orderId){
 
 winform.grid2.onClick = function(item,subItem,nmListView){
 	if !item and !winform.listview2.selIndex return ; 
+	winform.grid.clear();
 	var c =  winform.grid2.source[item || winform.listview2.selIndex][["SD 凭证"]];
 	if !c return; 
 	if subItem {
@@ -117,7 +117,7 @@ winform.grid2.onClick = function(item,subItem,nmListView){
 	winform.grid.source = getDetailFromDb(c);
 	if !winform.grid.source return ;
 	if !#winform.grid.source return;
-	winform.grid.clear();
+	
 	winform.editDesp.text = "";
 	winform.grid.onSortColumn(2, false);
 	winform.grid.ColumnWidth := domisoft.setColumnWidth(winform.listview, {80,40,80,350,40,80,120,120})
@@ -244,6 +244,40 @@ menu.add();
 		sdb.exec("DELETE FROM `content` WHERE ??",{{"SD 凭证":order_number}})
 		winform.publish("getFolderList",true);
 	});
+	menu.add("批量添加...",function(){
+		var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio")
+		mdlfrm.text = "批量添加";		
+		var item =  mdlfrm.doModal();
+		if !item return ; 
+		var userinput = item[1];
+    	userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
+    	
+    	//分隔符号转换行
+		for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} 
+			userinput = string.replace(userinput, v,'\r\n');
+	
+    	var userinputArr = string.split(userinput, '\r\n');
+    	
+    	for (i=1; #userinputArr){
+    	    if !string.len(userinputArr[i]) continue;
+    		//更新listview
+    		winform.listview2.addItem([userinputArr[i]],1);
+    		//更新缓存 
+    		table.unshift(winform.grid2.source,{"SD 凭证":userinputArr[i]});
+    		//更新数据库    		
+			var cmd = sdb.prepare("REPLACE INTO `LIST` VALUES(?,?,?,?,?,?)");
+			cmd.step({
+	 			userinputArr[i],
+	 			null,
+	 			null,
+	 			null,
+	 			null,
+	 			null
+			})
+			cmd.finalize();
+    	}   	
+	})
+	
 	menu.popup(x,y,true);
 }
 winform.editDesp.onChange = function(){ 
@@ -349,7 +383,7 @@ var getNewListFromXlsx = function(filename,wform){
 	 	null,
 	 	(tostring(time(),"%Y/%m/%d %H:%M:%S"))
 	})
-	cmd.finalize();	 		
+	cmd.finalize();
 	var cmd = sdb.prepare("REPLACE INTO `content` VALUES (?,?,?,?,?,?,?,?)");
 	for (j=1; #etab){			
 		cmd.step({

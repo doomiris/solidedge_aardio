@@ -208,10 +208,13 @@ getProductInfo = function(hcode){
 getSapItemByDesp = function(Desp){
 	if !Desp return null; 
 	var db,err = openDb(sap_db_path);
-	Desp = string.replace(Desp, "*", "%");
-	var symbol = string.indexOf(Desp, "%") ? "LIKE" : "=";
-	var sqlstr = "SELECT * FROM [所有物料] WHERE [物料描述] " ++ symbol ++ " ?";
-	var t = db.getTable (..sqlite.format( sqlstr, {Desp}));
+	var t = db.getTable("SELECT * FROM [所有物料] ", {物料描述:Desp})
+	return t; 
+};
+getSingleSapItemByDesp = function(Desp){
+	if !Desp return null; 
+	var db,err = openDb(sap_db_path);
+	var t = db.stepQuery("SELECT * FROM [所有物料]", {物料描述:Desp} )
 	return t; 
 };
 GetBomColumn = function(sht){

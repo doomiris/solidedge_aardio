@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.712" ProductVersion="1.5.0.712" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.717" ProductVersion="1.5.0.717" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
@@ -82,7 +82,9 @@
 			<file name="新办公室.aardio" path="forms\side_loader\新办公室.aardio" comment="forms\side_loader\新办公室.aardio"/>
 			<file name="查看系统图标.aardio" path="forms\side_loader\查看系统图标.aardio" comment="forms\side_loader\查看系统图标.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
+			<file name="清理后台无窗口Excel遗留进程.aardio" path="forms\side_loader\清理后台无窗口Excel遗留进程.aardio" comment="forms\side_loader\清理后台无窗口Excel遗留进程.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
+			<file name="要所描述向A列填入物料号.aardio" path="forms\side_loader\要所描述向A列填入物料号.aardio" comment="forms\side_loader\要所描述向A列填入物料号.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
 			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>

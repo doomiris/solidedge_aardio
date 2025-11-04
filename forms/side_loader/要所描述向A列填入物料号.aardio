@@ -1,0 +1,21 @@
+import console; 
+
+import com.excel;
+var excel = com.excel( false );
+
+var sht = excel.ActiveWorkbook.ActiveSheet;
+//console.log(sht.parent.path)
+var tab = sht.Range("B1:B1045").Value2;
+//console.dumpTable(tab);
+import QHC;
+
+var pcode ={};
+for (i=1; 1045){
+	var query = QHC.getSingleSapItemByDesp(tab[i][[1]]);
+
+	var pnum = query ? query.物料 : "";
+	table.push(pcode,{pnum});	
+}
+sht.Range("A1:A1045").Value2 = pcode;
+
+console.pause();

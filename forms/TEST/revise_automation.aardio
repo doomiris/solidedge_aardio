@@ -34,16 +34,16 @@ var revise = function(hwnd,str){
 	
 	//单击鼠标
 	mouse.click(24,6,ctrl);
-	winex.wait("修订 物料版本");
+	winex.wait("修订 ::版本");
 	sleep(1000)
-	var m_window = FlaUI.FindWindow("javaw.exe",,"@修订 物料版本 ");
+	var m_window = FlaUI.FindWindow("javaw.exe",,"修订 ::版本 ");
 
 	var ectrls  = m_window.FindAllByXPath(`//Edit[@ClassName="Edit"]`);	
 	var ectrl = FlaUI.AsTextBox(ectrls[2]);
-	//移动鼠标到 UIA 节点内的相对坐标
+
 	
 	ectrl.Enter(str);
-	sleep(100)
+	sleep(150)
 	//查找控件
 	var fctrl  = m_window.FindFirstByXPath(`//Button[@Name="完成(F)"]`);
 
@@ -52,7 +52,7 @@ var revise = function(hwnd,str){
 	
 	//单击鼠标
 	mouse.click(43,13,fctrl);	
-	winex.waitClose("修订 物料版本");
+	winex.waitClose("修订 ::版本");
 
 	window.Focus()
 	sleep(500)

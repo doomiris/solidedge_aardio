@@ -87,7 +87,12 @@ winform.button.oncommand = function(id,event){
 	var txt = winform.editUser3.text;
 	//if winform.qtbs.selIndex == 1
 		winform.qtbs.goto(2); 
-	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);
+	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);	
+	win.setTimeout(
+		function(){
+			winform.publish("status2","刷新数据库日期")
+		}
+	)	
 }
 /*}}*/
 /*弹出历史记录菜单{{*/

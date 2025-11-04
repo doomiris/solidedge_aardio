@@ -16,6 +16,7 @@ import config;
 import fsys.table;
 import QHC;
 import domisoft;
+import win.dlg.message;
 /*
 	import console
 	console.open()
@@ -224,7 +225,7 @@ winform.button.oncommand = function(id,event){
 					//else return true; 
 				}
 				[9] = function(i){
-						return !table.find({"ZA","KG","M","ROL","BOT"}, string.upper(etab[i].单位||""));
+						return !table.find({"ZA","KG","M","ROL","BOT","M2","L"}, string.upper(etab[i].单位||""));
 				}
 				[10] = function(i){
 					//console.log(i, hasChild(i))
@@ -359,7 +360,7 @@ winform.button.oncommand = function(id,event){
 	) 
 
 	winform.button.disabledText = null;
-	win.msgboxTimeout(succ);
+	winform.msgInfo(succ, 1000);
 	mylist = null;
 }
 

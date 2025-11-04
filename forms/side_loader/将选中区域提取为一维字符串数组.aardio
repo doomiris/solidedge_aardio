@@ -1,16 +1,84 @@
-import win;
+import fonts.fontAwesome;
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=786;bottom=469)
+winform.add(
+button1={cls="button";text="Copy";left=258;top=2;right=388;bottom=50;align="right";color=0xD77800;dr=0.51;dt=1;font=LOGFONT(h=-14);note="复制到剪切板";z=4};
+button2={cls="button";text="Copy";left=260;top=406;right=390;bottom=454;align="right";color=0xD77800;db=1;dr=0.5;font=LOGFONT(h=-14);note="复制到剪切板";z=3};
+button3={cls="button";text="Copy";left=650;top=3;right=780;bottom=51;align="right";color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="复制到剪切板";z=7};
+button4={cls="button";text="Copy";left=651;top=410;right=781;bottom=458;align="right";color=0xD77800;db=1;dr=1;font=LOGFONT(h=-14);note="复制到剪切板";z=9};
+buttonR={cls="button";text='\uF01E';left=3;top=3;right=61;bottom=52;dl=1;dt=1;font=LOGFONT(name='FontAwesome');z=5};
+edit1={cls="edit";left=3;top=59;right=391;bottom=216;ah=1;autohscroll=false;dl=1;dr=0.5;dt=1;edge=1;multiline=1;vscroll=1;z=1};
+edit2={cls="edit";left=3;top=223;right=391;bottom=404;ah=1;autohscroll=false;db=1;dl=1;dr=0.5;edge=1;multiline=1;vscroll=1;z=2};
+edit3={cls="edit";left=393;top=59;right=781;bottom=216;ah=1;autohscroll=false;dl=0.5;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=6};
+edit4={cls="edit";left=394;top=223;right=782;bottom=404;ah=1;autohscroll=false;db=1;dl=0.5;dr=1;edge=1;multiline=1;vscroll=1;z=8};
+splitter={cls="splitter";left=6;top=216;right=780;bottom=221;dl=1;dr=1;frame=1;horz=1;z=10}
+)
+/*}}*/
 
-import com.excel;
-var excel = com.excel(false);
-
-var range = table.flat(excel.Application.Selection.Value2);
-
-var txt = "{" +  string.join(table.map(range, lambda(v,k) '"'+v+'"'),', ') + "}";
-
-
-
+import win.dlg.message;
 import win.clip;
-win.clip.write( txt );
 
-win.msgbox(txt,"已写入剪切板");
+var hcode_goback = function(hcodeTab){
+	var tab = {};
+	for (i=1; #hcodeTab){
+		var hcode = hcodeTab[i];
+		if !string.startsWith(hcode,"H") continue;
+		var goback = string.left(hcode, 6, true) ++ (string.right(hcode, 5, true) -1);
+		table.push(tab, goback);
+	}
+	return tab; 
+}
 
+
+winform.frmReLoad = function(){
+	import com.excel;
+	var excel = com.excel(false);	
+	if excel.Application.Selection {
+		var range = table.flat(excel.Application.Selection.Value2);
+		owner.edit.text = string.join(range,', ') ;
+		owner.edit2.text = "{" +  string.join(table.map(range, lambda(v,k) '"'+v+'"'),', ') + "}";
+		owner.edit3.text = string.join(hcode_goback(range),', ');
+	}
+}
+
+winform.button1.oncommand = function(id,event){
+	var txt = winform.edit1.text;
+	win.clip.write( txt );	
+	winform.msgInfo("已写入剪切板", 500);	
+	winform.close(true);
+}
+winform.button2.oncommand = function(id,event){
+	var txt = winform.edit2.text;
+	win.clip.write( txt );	
+	winform.msgInfo("已写入剪切板", 500);	
+	winform.close(true);
+}
+winform.button3.oncommand = function(id,event){
+	var txt = winform.edit3.text;
+	win.clip.write( txt );	
+	winform.msgInfo("已写入剪切板", 500);	
+	winform.close(true);
+}
+winform.button4.oncommand = function(id,event){
+	var txt = winform.edit4.text;
+	win.clip.write( txt );	
+	winform.msgInfo("已写入剪切板", 500);	
+	winform.close(true);
+}
+winform.splitter.split(
+	{ winform.edit1, winform.edit3},
+	{ winform.edit2, winform.edit4}
+)
+
+winform.buttonR.oncommand = function(id,event){
+	winform.frmReLoad();
+}
+
+
+
+winform.show();
+winform.frmReLoad();
+
+
+win.loopMessage();

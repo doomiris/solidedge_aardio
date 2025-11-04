@@ -216,7 +216,7 @@ namespace DraftDocument{
 	name_cn = {
 		_get = function(){
 			return
-				domisoft.formatWindowsFileName(
+				..domisoft.formatWindowsFileName(
 					owner.getValueFromBlk(owner.firstTitleBlock(), "零件名称")
 				);
 		}
@@ -229,7 +229,7 @@ namespace DraftDocument{
 	productRange = {
 		_get = function(){
 			return
-				domisoft.formatWindowsFileName(
+				..domisoft.formatWindowsFileName(
 					owner.getValueFromBlk(owner.firstTitleBlock(), "型号/项目名称")
 				);
 		}

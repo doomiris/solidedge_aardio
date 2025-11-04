@@ -28,7 +28,9 @@ excel.Application.CutCopyMode = false;
 _start_col = 9 /* I */;
 
 _col_count = console.getNumber( "从I列开始, 共有几列需要导出?");
-_save_as_single_bom_file = false;
+
+//是否导出为单一文件
+_save_as_single_bom_file = true;
 
 var tbk, tsht, tsht_tab;
 if _save_as_single_bom_file {
@@ -168,7 +170,7 @@ if _save_as_single_bom_file {
 // console.log((j-9) ++ "/8", tbk.FullName);
 
 excel.alerts = true;
-
+raw.explore(config.setbm.workingDir)
 
 /*
 TODO:

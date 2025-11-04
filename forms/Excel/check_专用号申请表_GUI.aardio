@@ -16,6 +16,7 @@ import config;
 import fsys.table;
 import QHC;
 import domisoft;
+import win.dlg.message;
 
 /*
 	import console
@@ -185,7 +186,7 @@ winform.button.oncommand = function(id,event){
 		[40] = "物料描述有重复行";
 		[41] = "点焊组件(未喷)是SH组";
 		[42] = "SH组不需要填写展开尺寸和基本物料";
-		[43] = "系统已存在同名物料";
+		[43] = "系统已存在同名物料(可忽略)";
 		[44] = "发泡组件需要SD";
 		[45] = "已喷物料应是SC组";
 		[46] = "'喷粉'请用'已喷粉'或'已喷'替代";
@@ -254,7 +255,9 @@ winform.button.oncommand = function(id,event){
 		[42] = function(i){return (etab[i].SAP物料组=="SH" and (etab[i].SAP展开尺寸 or etab[i].SAP基本物料 or etab[i].SAP是否为点焊中最大件))}
 		[43] = function(i){
 			import QHC;
-			if #QHC.getSapItemByDesp(etab[i].物料描述) return true; 
+			var hitem = QHC.getSingleSapItemByDesp(etab[i].物料描述);
+			if #hitem[["物料"]]
+				return true; 
 		}
 		[44] = function(i){
 			if etab[i].物料类型=="HALB"
@@ -339,7 +342,7 @@ try{
     com.Release(excel_0)
 }
 
-
+	winform.msgInfo("完成",1000)
     collectgarbage("collect");
 	
 }
