@@ -1,0 +1,86 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add(
+button={cls="button";text="删除";left=42;top=149;right=213;bottom=209;color=0xD77800;font=LOGFONT(h=-14);note="请先关闭Excel";z=2};
+edit={cls="edit";left=36;top=59;right=706;bottom=91;autohscroll=false;edge=1;multiline=1;vscroll=1;z=1}
+)
+/*}}*/
+
+var findExcelAddinByName = function(addinName){
+	addinName := "dominic.xlam";
+	import win.reg;
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\16.0\Excel\AddInLoadTimes",true);	
+	for(name,value,t in reg.eachValue()) {		
+		if string.endsWith(name,addinName,true)
+			return name; 
+	}
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\16.0\Excel\Add-in Manager",true);	
+	for(name,value,t in reg.eachValue()) {		
+		if string.endsWith(name,addinName,true)
+			return name; 
+	}
+	reg.close()
+}
+
+var deleteExcelAddinByFullName = function(addinFullName){
+	if !addinFullName return ; 
+	if addinFullName=="" return ; 
+	import win.reg;
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\16.0\Excel\AddInLoadTimes",true);	
+	for(name,value,t in reg.eachValue()) {		
+		if ( name == addinFullName)
+
+			reg.delValue(name)
+	}
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\16.0\Excel\Add-in Manager",true);	
+	for(name,value,t in reg.eachValue()) {		
+		if ( name == addinFullName)
+			reg.delValue(name)
+	}
+	reg.close()	
+}
+
+
+var deletePdfMakerAddin = function(){
+	var keyword = "PDFMaker.OfficeAddin";
+	import win.reg;
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\16.0\Excel\AddInLoadTimes",true);
+	for(name,value,t in reg.eachValue()) 	
+		if ( name == keyword)
+			reg.delValue(name)
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\16.0\Word\AddInLoadTimes",true);
+	for(name,value,t in reg.eachValue()) 	
+		if ( name == keyword)
+			reg.delValue(name)
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\Excel\Addins",true);
+	reg.delKeyTree(keyword);
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\Excel\AddinsData",true);
+	reg.delKeyTree(keyword);
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\Word\Addins",true);
+	reg.delKeyTree(keyword);
+	reg.close()
+	var reg = win.reg("HKEY_CURRENT_USER\SOFTWARE\Microsoft\Office\Word\AddinsData",true);
+	reg.delKeyTree(keyword);
+	reg.close()
+}
+
+winform.edit.text = findExcelAddinByName();
+	
+
+winform.button.oncommand = function(id,event){
+	deleteExcelAddinByFullName(winform.edit.text);
+	winform.edit.text="";
+	winform.edit.text = findExcelAddinByName();
+	deletePdfMakerAddin()
+}
+
+winform.show();
+win.loopMessage();
+return winform;
