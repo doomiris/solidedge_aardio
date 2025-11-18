@@ -97,7 +97,9 @@ for(j = _start_col; _start_col + _col_count - 1 ){
     		
     		bun = arr[j - _start_col + 1];
     	}
+    	
     	if !bun or bun=="0" continue; //跳过数量为0的行
+    	//if !parent_bun or parent_bun=="0" continue; //跳过数量为0的行
     	
         var tar={};
         

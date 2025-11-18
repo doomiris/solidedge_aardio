@@ -13,14 +13,20 @@ var superHotkey = key.hotkey();
 
 import winex;
 import key.ime;
-
+import win.dlg.message;
 var revise = function(hwnd,str){
 	import win;
 	import FlaUI.UIA3;
 	//查找窗口，禁用模式匹配语法搜索窗口（首字符为 `@`）
-	var window = FlaUI.FindWindow("javaw.exe","@SWT_Window0","@我的 Teamcenter - Teamcenter 13");
-	if(!window) error("未找到窗口");
-		
+	var window = FlaUI.FindWindow("Teamcenter");
+	if !window {
+		winform.edit.print("未找到窗口");
+		return;
+	}
+	if !string.startsWith(window.Name,"Teamcenter RAC",true){
+		winform.edit.print("未找到窗口 Teamcenter RAC");
+		return;
+	}	
 	//前置窗口
 	window.Focus();
 	
@@ -65,7 +71,8 @@ superHotkey.loadTable({
 	["CTRL+ALT+R"] = revise;
 })
 
-var txts = {}
+var txts = {"MonaxEco-SE 125 蒸发器焊接组装", "MonaxEco-SE 188 蒸发器焊接组装", "MonaxEco-SE 250 蒸发器焊接组装", "MonaxEco-SE 375 蒸发器焊接组装", "MonaxEco-SE 125 蒸发器可选项", "MonaxEco-SE 188 蒸发器可选项", "MonaxEco-SE 250 蒸发器可选项", "MonaxEco-SE 375 蒸发器可选项"};
+
 
 import console;
 console.open();

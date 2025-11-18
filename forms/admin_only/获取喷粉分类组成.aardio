@@ -8,17 +8,28 @@ var usedrange = sht.usedrange
 
 var br = usedrange.columns.item(1 /* A */).value2
 var dr = usedrange.columns.item(2 /* B */).value2
+var MS = usedrange.columns.item(3 /* A */).value2
+var YS = usedrange.columns.item(4 /* B */).value2
+var MR = usedrange.columns.item(5 /* B */).value2
 
 table.shift(br)
 table.shift(dr)
+table.shift(MS)
+table.shift(YS)
+table.shift(MR)
 
 var tab = {}
 tab.title = "喷粉分类组成"
-tab.fields = {"喷粉类别","部位编号"}
+tab.fields = {"产品系列号","部位编号","喷粉部位描述","颜色分组","默认颜色可选项类别"}
 for (i=1; #br)
-	table.push(tab,{table.pop(br[i]),table.pop(dr[i])});
-
-
+	table.push(tab,
+		{
+			table.pop(br[i]),
+			table.pop(dr[i]),
+			table.pop(MS[i]),
+			table.pop(YS[i]),
+			table.pop(MR[i])
+		});
 //console.dump(tab)
 import config;
 import sqlite;
@@ -31,10 +42,21 @@ db.exec( "CREATE TABLE [" ++ tab.title ++ "](" ++ string.join(tab.fields,", ") +
 db.beginTrans();
 
 for(i=1; #tab){
-	var cmd = db.prepare("INSERT INTO [" ++ tab.title ++ "] VALUES(?,?);");
+	var cmd = db.prepare("INSERT INTO [" ++ tab.title ++ "] VALUES(?,?,?,?,?);");
 	cmd.bind.parameters(table.unpack(tab[i])).step();
 }
 	db.commitTrans();
 
+/*
+db.exec("ALTER TABLE 喷粉分类组成 ADD COLUMN 喷粉部位描述 TEXT;")
+
+db.exec(
+"UPDATE 喷粉分类组成 
+SET 喷粉部位描述 = (
+    SELECT 喷粉部位.喷粉部位描述 
+    FROM 喷粉部位 
+    WHERE 喷粉部位.喷粉部位编码 = 喷粉分类组成.部位编号
+);")
+*/
 db.close()
 console.pause(true);

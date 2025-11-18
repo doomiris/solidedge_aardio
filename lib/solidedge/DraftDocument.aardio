@@ -1,6 +1,13 @@
 ﻿//DraftDocument 常用函数
 import domisoft;
 import solidedge.application;
+
+var table = ..table;
+var string = ..string;
+var math = ..math;
+var config = ..config;
+var io = ..io;
+
 namespace solidedge;
 class DraftDocument{
 	ctor( seDFT ){
@@ -205,10 +212,9 @@ namespace DraftDocument{
 		return qhc_ver;
 	};
 	getFileName = function(){
-		var p_number;
-        p_number = ..string.upper(owner.Name);	
-		p_number = ..string.trimright(p_number, ".DFT");
-		// p_number = ..string.trimleft(p_number,"H"); //新要求:文件名不带H //2021.09.13取消要求
+		var p_number = io.splitpath(owner.Name).name;
+		if string.startsWith(p_number,"H", true)	
+        	p_number = "H" ++ string.right(p_number, #p_number -1 ); //H大写
 		return p_number; 
 	};
 	

@@ -8,7 +8,7 @@ _title = "喷粉类别";
 _fieldsName = {"物料","喷粉类别"};
 
 console.log("accessing...喷粉调研表...")
-var path = "D:\users\CCL100100\Carrier Corporation\SAP数据整理 - QHC开发部(只读,仅用于参考)\1.喷粉调研表\喷粉调研表-20240411.xlsx"
+var path = "C:\Users\ccl100100\CCR\QHC 开发部 - General\01 QHC产品资料汇总（新）\01 QHC产品资料汇总\3 SAP 数据整理\1.喷粉调研表\喷粉调研表-20240411.xlsx"
 import access.oleDb;
 var adb = access(path);
 var t = adb.getTable("SELECT * FROM `成品分组411 $`");

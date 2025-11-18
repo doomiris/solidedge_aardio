@@ -36,7 +36,7 @@ winform.frmReLoad = function(){
 	var excel = com.excel(false);	
 	if excel.Application.Selection {
 		var range = table.flat(excel.Application.Selection.Value2);
-		owner.edit.text = string.join(range,', ') ;
+		owner.edit1.text = string.join(range,', ') ;
 		owner.edit2.text = "{" +  string.join(table.map(range, lambda(v,k) '"'+v+'"'),', ') + "}";
 		owner.edit3.text = string.join(hcode_goback(range),', ');
 	}
@@ -46,25 +46,24 @@ winform.button1.oncommand = function(id,event){
 	var txt = winform.edit1.text;
 	win.clip.write( txt );	
 	winform.msgInfo("已写入剪切板", 500);	
-	winform.close(true);
+
 }
 winform.button2.oncommand = function(id,event){
 	var txt = winform.edit2.text;
 	win.clip.write( txt );	
 	winform.msgInfo("已写入剪切板", 500);	
-	winform.close(true);
+
 }
 winform.button3.oncommand = function(id,event){
 	var txt = winform.edit3.text;
 	win.clip.write( txt );	
 	winform.msgInfo("已写入剪切板", 500);	
-	winform.close(true);
+
 }
 winform.button4.oncommand = function(id,event){
 	var txt = winform.edit4.text;
 	win.clip.write( txt );	
 	winform.msgInfo("已写入剪切板", 500);	
-	winform.close(true);
 }
 winform.splitter.split(
 	{ winform.edit1, winform.edit3},

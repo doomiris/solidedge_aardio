@@ -72,9 +72,22 @@ var deletePdfMakerAddin = function(){
 }
 
 winform.edit.text = findExcelAddinByName();
-	
+
+var unRegisterFromExcel = function(){
+	import com.excel;
+	var excel = com.excel(false);
+	if !excel return ;	 
+	var myaddin;
+	try{
+		myaddin = excel.AddIns("domisoft");
+	}
+	if !myaddin return ; 
+	myaddin.Installed = false;
+}
+
 
 winform.button.oncommand = function(id,event){
+	unRegisterFromExcel();
 	deleteExcelAddinByFullName(winform.edit.text);
 	winform.edit.text="";
 	winform.edit.text = findExcelAddinByName();

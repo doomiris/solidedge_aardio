@@ -213,7 +213,7 @@ var editChange = function(text){
 		t = searchClass(text);
 	}
 	if !#t return ;
-	
+	//win.msgbox(t);
 	var tClass, tOpts, tBGs;
 	
 	if string.startWith(text, "CG",true){

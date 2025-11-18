@@ -379,6 +379,7 @@ formatAllBOM = function(){
 	import com.excel;
 	var excel = com.excel(false);
 	for(i = excel.WorkBooks.Count; 1; -1) {// 反向
+			if !string.startsWith(excel.WorkBooks(i).Name, "BG", true) continue;
 			formatBOM(excel.WorkBooks(i).WorkSheets(1))
 		 	excel.WorkBooks(i).Close(true /* _save_changes */);
 	}

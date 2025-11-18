@@ -350,6 +350,7 @@ winform.button3.oncommand = function(id,event){
 winform.button4.oncommand = function(id,event){
 	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
 	_5g_db = "\\CCNSIA1A\SEParts\Admin\SAP\db";
+	_onedrive_db = "C:\Users\ccl100100\CCR\domisoft - TBM\db"
 
 	var fileList = {
 		"qhc_product_info_lib.db", 
@@ -372,7 +373,8 @@ winform.button4.oncommand = function(id,event){
 	else {
 		thread.invoke(copyfolder, winform, fileList, _qhc_db)
 	}
-	thread.invoke(copyfolder, winform, fileList, _5g_db);
+	//thread.invoke(copyfolder, winform, fileList, _5g_db);
+	thread.invoke(copyfolder, winform, fileList, _onedrive_db);
 }
 getXlsxDbPath = function(){
 	import fsys;

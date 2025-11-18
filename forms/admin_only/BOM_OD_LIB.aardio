@@ -11,7 +11,7 @@ var sname = {"分类", "特性参数规划表", "分类", "特性参数规划表
 
 //var OneDriveCommercial = string.replace(string.getenv("OneDriveCommercial"), "OneDrive - ","");
 import domisoft;
-var OneDriveCommercial = domisoft.envFix("%CCR%")
+var OneDriveCommercial = "C:\Users\ccl100100\CCR\"; /*domisoft.envFix("%CCR%")*/
 var wbname = {
 	{io.joinpath(OneDriveCommercial,"CCR Cabinets - SAP数据整理(研发)", "(只读参考)0.参数及分类汇总表2023.08.31.xlsx"), false, true, null,"0000"},
 	{io.joinpath(OneDriveCommercial,"CCR Cabinets - SAP数据整理(研发)", "0.参数及分类汇总表更新日期-研发中心2021.06.11.xlsx"), false,true,null,null},

@@ -28,6 +28,8 @@ import config;
 import domisoft;
 import tarray;
 import win.inputBox;
+import QHC;
+import win.dlg.message;
 
 winform.bindConfig( config.BOMExplorer,{
 	checkbox = checked	
@@ -138,7 +140,7 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 	n = string.replace(n," ","_");
 	var f = io.joinpath(search_path, n);	
 	if !io.exist(f)
-		win.msgboxErr(f,"请先下载")
+		winform.msgInfo("请先下载: "+'\n'++f,1000)
 	else {
 		var excel = com.GetOrCreateObject("Excel.Application");
 		//excel.WindowState = -4137/*_xlMaximized*/
@@ -208,9 +210,14 @@ grid.deleteItems = function(){
 	winform.frmReLoad();
 
 }
+
 grid.updateProperty = function(prop, newValue){
 	newValue := winform.inputBox("输入新内容", "变更["+prop+"]");
 	if !newValue return ; 
+	grid.updateData(prop,newValue)
+	winform.frmReLoad();
+}
+grid.updateData = function(prop, newValue){
 	var selected = owner.selected;
 	var selectdCodes = {};
 	for (i=1; #selected)
@@ -219,6 +226,20 @@ grid.updateProperty = function(prop, newValue){
 	sql = sqlite.format(sql, {{[prop]:newValue},{"物料":selectdCodes}});
 	var db = refreshDB();
 	db.exec(sql);	
+	db.close();
+}
+grid.updateDespFromDB = function(){
+	var selected = owner.selected;
+	var selectdCodes = {};
+	var db = refreshDB();
+	
+	for (i=1; #selected){
+		var hcode = owner.source[selected[i]]["物料"];
+		var newValue = QHC.getSapItem(hcode).物料描述;
+		var sql = "UPDATE `lib` SET ? WHERE ??";	
+		sql = sqlite.format(sql, {{"物料描述":newValue},{"物料":hcode}});
+		db.exec(sql);	
+	}
 	db.close();
 	winform.frmReLoad();
 }
@@ -238,7 +259,8 @@ menu.add("添加[小类]...", λ () grid.updateProperty("小类"));
 menu.add("添加[可选项分类]...",λ () grid.updateProperty("可选项分类") );
 menu.add("添加[喷粉分类]...",λ () grid.updateProperty("喷粉分类") );
 menu.add("添加[温度等级]...",λ () grid.updateProperty("温度等级") );
-
+menu.add()
+menu.add("刷新[物料描述]...",λ () grid.updateDespFromDB() );
 grid.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
 	var x,y = win.getMessagePos();
