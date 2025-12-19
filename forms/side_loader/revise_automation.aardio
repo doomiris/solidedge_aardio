@@ -1,9 +1,13 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=759;bottom=469)
+var winform = win.form(text="Teamcent批量改名";right=759;bottom=469)
 winform.add(
-button={cls="button";text="Button";left=19;top=21;right=195;bottom=70;z=2};
-edit={cls="edit";left=16;top=92;right=741;bottom=445;edge=1;multiline=1;z=1}
+button={cls="button";text="开始";left=562;top=22;right=738;bottom=71;align="right";color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="修改物料描述";z=2};
+checkbox={cls="checkbox";text="只升版先不改描述";left=10;top=59;right=291;bottom=80;dl=1;dt=1;z=6};
+edit={cls="edit";left=354;top=92;right=758;bottom=445;db=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=1};
+edit2={cls="edit";left=4;top=92;right=341;bottom=445;db=1;dl=1;dt=1;edge=1;multiline=1;vscroll=1;z=3};
+splitter={cls="splitter";left=345;top=92;right=350;bottom=443;db=1;dl=0.45;dt=1;frame=1;z=4};
+static={cls="static";text="从[详细信息]选中行开始向下按顺序执行, 提前排序 , 中途不可变更排序";left=17;top=10;right=563;bottom=75;dl=1;dr=1;dt=1;transparent=1;z=5}
 )
 /*}}*/
 
@@ -14,7 +18,7 @@ var superHotkey = key.hotkey();
 import winex;
 import key.ime;
 import win.dlg.message;
-var revise = function(hwnd,str){
+var revise = function(hwnd,str,reviseOnly = false){
 	import win;
 	import FlaUI.UIA3;
 	//查找窗口，禁用模式匹配语法搜索窗口（首字符为 `@`）
@@ -47,9 +51,10 @@ var revise = function(hwnd,str){
 	var ectrls  = m_window.FindAllByXPath(`//Edit[@ClassName="Edit"]`);	
 	var ectrl = FlaUI.AsTextBox(ectrls[2]);
 
-	
-	ectrl.Enter(str);
-	sleep(150)
+	if !reviseOnly { //选中则只升版不改描述
+		ectrl.Enter(string.trim(str));
+		sleep(150)
+	}
 	//查找控件
 	var fctrl  = m_window.FindFirstByXPath(`//Button[@Name="完成(F)"]`);
 
@@ -71,21 +76,27 @@ superHotkey.loadTable({
 	["CTRL+ALT+R"] = revise;
 })
 
-var txts = {"MonaxEco-SE 125 蒸发器焊接组装", "MonaxEco-SE 188 蒸发器焊接组装", "MonaxEco-SE 250 蒸发器焊接组装", "MonaxEco-SE 375 蒸发器焊接组装", "MonaxEco-SE 125 蒸发器可选项", "MonaxEco-SE 188 蒸发器可选项", "MonaxEco-SE 250 蒸发器可选项", "MonaxEco-SE 375 蒸发器可选项"};
+//var txts = {}
 
-
+/*
 import console;
 console.open();
+*/
 
 
 winform.button.oncommand = function(id,event){
+	var txts = winform.edit2.text;
+	var reviseOnly = winform.checkbox.checked;
+	if !#txts return ; 
+	txts = string.splitEx(txts);
 	for (i=1;#txts){
-		winform.edit.print(i, txts[i]);
-		revise(,txts[i]);
+		if !#txts[i] continue;
+		winform.edit.print(i, txts[i], #txts[i]);
+		revise(,txts[i], reviseOnly);
 		sleep(500)
 	}
 }
-
+winform.splitter.split(winform.edit2, winform.edit)
 winform.show();
 win.loopMessage();
 return winform;

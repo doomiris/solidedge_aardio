@@ -37,7 +37,8 @@ namespace getList{
 		_searchLoc := [
 			[config.__pdfLib,	"*.*"],
 			[config.__qhcLib,	"*.*"],
-			[config.__cabinetModelServer,	"H*.dft"]
+			[config.__cabinetModelServer,	"H*.dft"],
+			["S:\Cabinet\LL-CF",	"H*.dft"]
 		]
 		import config;
 		import sqlite;
@@ -183,6 +184,7 @@ namespace getList{
 		console.open();
 /*codetrim{{*/
 		var codetrim =  function(str){
+			if !str return ""; 
 			str = ..string.upper(str);
 			str = ..string.trim(str);
 			str = ..string.trimleft(str, "H");

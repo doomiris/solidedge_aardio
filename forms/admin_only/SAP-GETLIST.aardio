@@ -8,16 +8,47 @@ winform.add(
 button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;dl=1;dt=1;z=1};
 button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;dl=1;dt=1;z=3};
 button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;dl=1;dt=1;z=4};
-button4={cls="button";text="分发";left=72;top=216;right=184;bottom=320;dl=1;dt=1;z=5};
+button4={cls="button";text="分发";left=72;top=216;right=184;bottom=248;dl=1;dt=1;z=5};
 button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
 button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;dl=1;dt=1;z=8};
+checkbox1={cls="checkbox";text="Checkbox1";left=65;top=299;right=560;bottom=318;db=1;dl=1;z=10};
+checkbox2={cls="checkbox";text="Checkbox2";left=65;top=323;right=560;bottom=342;db=1;dl=1;z=11};
+checkbox3={cls="checkbox";text="Checkbox3";left=65;top=348;right=560;bottom=367;db=1;dl=1;z=12};
 edit={cls="edit";left=72;top=24;right=568;bottom=56;dl=1;dr=1;dt=1;edge=1;z=6};
-log={cls="richedit";left=288;top=80;right=568;bottom=320;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
+edit2={cls="edit";left=8;top=437;right=343;bottom=458;db=1;dl=1;hidesel=1;readonly=1;z=9};
+log={cls="richedit";left=288;top=80;right=568;bottom=280;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
 )
 /*}}*/
 
+_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
+_5g_db = "\\CCNSIA1A\SEParts\Admin\SAP\db";
+_onedrive_db = "C:\Users\ccl100100\CCR\domisoft - TBM\db"
+
+winform.checkbox1.text = _qhc_db;
+winform.checkbox2.text = _5g_db;
+winform.checkbox3.text = _onedrive_db;
+
 /* 无法把对象传进线程 */
 winform.stepDBpath = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\", "step_qhcsap.db");
+winform.edit2.text = config.dbServer.path;
+
+import fsys.path;
+
+
+if fsys.path.cmp(_qhc_db, config.dbServer.path)==0
+	winform.checkbox1.disabled = true;
+else
+	winform.checkbox1.checked = true;
+
+if fsys.path.cmp(_5g_db, config.dbServer.path)==0
+	winform.checkbox2.disabled = true;
+else
+	winform.checkbox2.checked = true;
+	
+if fsys.path.cmp(_onedrive_db, config.dbServer.path)==0
+	winform.checkbox3.disabled = true;
+else
+	winform.checkbox3.checked = true;
 
 global.onError = function( err,over ){ 
 	winform.log.print(err);
@@ -348,9 +379,7 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.button4.oncommand = function(id,event){
-	_qhc_db = "\\CCNQIA05\temp-\LGP\_db";
-	_5g_db = "\\CCNSIA1A\SEParts\Admin\SAP\db";
-	_onedrive_db = "C:\Users\ccl100100\CCR\domisoft - TBM\db"
+
 
 	var fileList = {
 		"qhc_product_info_lib.db", 
@@ -364,17 +393,20 @@ winform.button4.oncommand = function(id,event){
 	for (i=1; #fileList)
 		fileList[i] = io.joinpath(config.dbServer.path, fileList[i]);
 	var copyfolder = function(winform, tart, dest){
+		import global;
+		if !io.exist(dest) return winform.log.print("无法访问:" + dest);
 		import fsys;
 		winform.log.print("...正在复制到" + dest);
 		fsys.copy(tart, dest, 0x4/*_FOF_SILENT*/ + 0x10/*_FOF_NOCONFIRMATION*/);
 		winform.log.print("完成:" + dest);
 	}
-	if !io.exist(_qhc_db) winform.log.print("无法访问:" + _qhc_db);
-	else {
+
+	if winform.checkbox1.checked
 		thread.invoke(copyfolder, winform, fileList, _qhc_db)
-	}
-	//thread.invoke(copyfolder, winform, fileList, _5g_db);
-	thread.invoke(copyfolder, winform, fileList, _onedrive_db);
+	if winform.checkbox2.checked
+		thread.invoke(copyfolder, winform, fileList, _5g_db);
+	if winform.checkbox3.checked
+		thread.invoke(copyfolder, winform, fileList, _onedrive_db);
 }
 getXlsxDbPath = function(){
 	import fsys;

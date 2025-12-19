@@ -260,11 +260,16 @@ menu.add();
     	
     	for (i=1; #userinputArr){
     	    if !string.len(userinputArr[i]) continue;
+
     		//更新listview
     		winform.listview2.addItem([userinputArr[i]],1);
     		//更新缓存 
     		table.unshift(winform.grid2.source,{"SD 凭证":userinputArr[i]});
-    		//更新数据库    		
+    		//更新数据库   
+    		
+    		var test = sdb.stepQuery("SELECT * FROM `LIST` WHERE ??",{{"SD 凭证":userinputArr[i]}});
+    		if test continue; //如果已经存在则跳过;
+    		
 			var cmd = sdb.prepare("REPLACE INTO `LIST` VALUES(?,?,?,?,?,?)");
 			cmd.step({
 	 			userinputArr[i],

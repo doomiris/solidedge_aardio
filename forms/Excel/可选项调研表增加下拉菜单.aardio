@@ -145,18 +145,23 @@ var trimColorDesp = function(desp){
 /*}}*/
 
 var 喷粉部分 = {
-	[1] = "柜内颜色";
-	[2] = "柜外颜色";
-	[3] = "肩膀型材颜色";
-	[4] = "侧板内板颜色";
-	[5] = "机舱护板颜色";
-	[6] = "侧板颜色";
-	[7] = "装饰板颜色";
-	[8] = "后护板颜色";
-	[9] = "内部颜色";
-	[10] = "外部颜色";
-	[11] = "底饰板颜色";
-	[12] = "顶饰板颜色";
+	["P01"] = "柜内颜色";
+	["P02"] = "柜外颜色";
+	["P03"] = "肩膀型材颜色";
+	["P04"] = "侧板内板颜色";
+	["P05"] = "机舱护板颜色";
+	["P06"] = "侧板颜色";
+	["P07"] = "装饰板颜色";
+	["P08"] = "后护板颜色";
+	["P09"] = "内部颜色";
+	["P10"] = "外部颜色";
+	["P11"] = "底饰板颜色";
+	["P12"] = "顶饰板颜色";
+	["F80"] = "白色";
+	["F81"] = "黑色";
+	["F82"] = "灰色";
+	["F90"] = "固定-白色/黑色";
+	["F91"] = "固定-白色/外观";
 }
 
 
@@ -220,6 +225,11 @@ var getDefaultConfig = function(classCode, productCode){
 var getDefaultValueText = function(tab,keyCode){
 	tarray.findValue(arr, what)
 }
+var 按值反查键名 = function (arr, targetValue) {
+	for k, v in arr 
+			if (v === targetValue) 
+				return k
+}
 for(i=1; wb.sheets.count){
 	var sht = wb.sheets(i);
 	if sht.name == _od_list_sht continue; 
@@ -252,9 +262,7 @@ for(i=1; wb.sheets.count){
 			case "颜色选项" {
 				code = sht.Cells(k, 2 /* B */).value2;
 				if !code continue;
-				var bw = table.indexOf(喷粉部分,code);
-						
-				bw = bw>9 ? "P"++bw : "P0"++bw;
+				var bw = 按值反查键名(喷粉部分,code);			
 				codeAddress = getColorRef(喷粉分类 /* 喷粉分类 */,bw /* 喷粉部位 */);
 				//code = string.left(code, 4);
 			}

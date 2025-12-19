@@ -195,6 +195,8 @@ winform.button.oncommand = function(id,event){
 		[49] = "含有非法空格符号(字体改为AIGDT就能发现了)";
 		[50] = "展平尺寸格式错误";
 		[51] = "展平尺寸原材料厚度错误";
+		[52] = "Ø符号在teamcenter里显示正常,导入SAP后会变成问号, 建议用Φ代替";
+		
 	}
 
 /*}}*/
@@ -303,6 +305,10 @@ winform.button.oncommand = function(id,event){
 				if etab[i].SAP物料组!=="SB" return; 
 				var d = string.split(etab[i].SAP展开尺寸, "*");
 				return !table.indexOf(["0.4","0.5","0.6","0.7","0.8","1.0","1.2","1.5","2.0"], d[3]);
+		}
+;
+		[52] = function(i){
+				return string.indexOf(etab[i].物料描述, "Ø");
 		}
 	};
 	/*}}*/

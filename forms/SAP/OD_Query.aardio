@@ -290,21 +290,19 @@ winform.edit2.onChange = function(){
 }
 var lastOpt1,lastOpt2,lastOpt3,lastOpt4;//记住上次搜索项, 减少搜索频率
 
-winform.listview_Characteristics.onSelChanged = function(selected,item,subItem,nmListView){
+winform.listview_Characteristics.onSelChanged = win.debounce(function(selected,item,subItem,nmListView){
 	var c = owner.getItemText(item,1);
 	if c == lastOpt2 return ; 
 	if !c return; 
-	win.setTimeout( function(){
-		var t = searchOption(c);
-		if !#t return;	
-		var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
-		winform.listview_Characteristic_value.clear(true);
-		if cType	winform.listview_Characteristic_value.setTable(cType);
-		lastOpt2 = c;
-		winform.listview_Characteristic_statement.refresh();
-		return true; 
-	})
-}
+	var t = searchOption(c);
+	if !#t return;	
+	var cType = tarray.uniqueCol(tarray.sliceCol(t,3,4));
+	winform.listview_Characteristic_value.clear(true);
+	if cType	winform.listview_Characteristic_value.setTable(cType);
+	lastOpt2 = c;
+	winform.listview_Characteristic_statement.refresh();
+	return true; 
+}, 200)
 winform.listview_Classification.onSelChanged = function(selected,item,subItem,nmListView){
 	var c = owner.getItemText(item,1);
 	if c == lastOpt1 return ; 
@@ -451,6 +449,10 @@ winform.splitter2.split(winform.listview_Characteristics, {
 	winform.splitter4,
 	winform.listview_Characteristic_statement
 });
+
+winform.listview_Characteristics.onnotify = function(id,code,ptr){
+	
+}
 
 winform.show();
 win.loopMessage();

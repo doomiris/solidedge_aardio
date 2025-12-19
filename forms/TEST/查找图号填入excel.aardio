@@ -16,6 +16,16 @@ var getDrawingFile= function(pcode){
 	if t return pcode;
 	else return null;
 }
+var getDrawingRevision= function(pcode){
+	var sdb,err = sqlite(io.joinpath(config.dbServer.path,"qhc_dw_rel_list.db"),,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
+	pcode = string.trim(pcode);
+	if !pcode return null ; 	
+    if !(string.startWith(pcode,"H",true)) pcode = "H" ++ pcode;
+	var tab = sdb.getTable("SELECT * FROM [qhc_dw_rel_list]", { 物料号码 = pcode } );
+	if !#tab return ""; 
+	table.sort(tab, lambda(next) tonumber(owner.图纸版次) < tonumber(next.图纸版次));	
+	return tab[#tab].图纸版次;
+}
 
 import com.excel;
 var excel = com.excel(false);
@@ -31,8 +41,11 @@ var count = sht.usedRange.rows.count;
 
 //import fsys;
 
-_P_COL = 1 /* A */	//查找专用号所在列
-_D_COL = 3 /* C */	//图号填入列
+_P_COL = 2 /* b */	//查找专用号所在列
+_D_COL = 1 /* a */	//图号填入列
+_R_COL = 5 /* e */	//版本填入列
+
+
 for (i=2; count){
 	progress.setProgress( i/count * 100 );
 	var p = sht.cells(i, _P_COL).value2;
@@ -41,6 +54,7 @@ for (i=2; count){
 	
 	var d = getDrawingNumber(p) : getDrawingFile(p);
 	if d sht.cells(i, _D_COL).value2 = d;
+	sht.cells(i, _R_COL).value2 = getDrawingRevision(p);
 }
 excel.alerts = true;
 db.close();

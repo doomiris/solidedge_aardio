@@ -1,5 +1,6 @@
 import fonts.fontAwesome;
 import win.ui;
+import win.debounce;
 import solidedge.application;
 import solidedge.DraftDocument;
 import win.ui.menu;
@@ -154,7 +155,7 @@ var loadPromptList = function(){
 		if ctrl.cls !== "combobox" continue ; 		
 		var ctl = string.trimleft(name, "cb_");
 		ctrl.items = listTab[ctl];
-		ctrl.onEditChange = function(){
+		ctrl.onEditChange = win.debounce(function(){
 			var result;
 			if !owner.text || !#owner.items || owner.items[[1]] == owner.text
 				result =  getSuggest(owner.parent.promTab, ctl, "");
@@ -163,7 +164,7 @@ var loadPromptList = function(){
 			result = table.slice(result,1,20);
 			owner.autoComplete(result);
 			return true; 
-		}
+		},200)
 		//ctrl.onDropDown = ctrl.onEditChange;
 	}
 }

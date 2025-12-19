@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.719" ProductVersion="1.5.0.719" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.725" ProductVersion="1.5.0.725" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
@@ -71,6 +71,7 @@
 		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="true">
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
 			<file name="clear_sys_temp_folder.aardio" path="forms\side_loader\clear_sys_temp_folder.aardio" comment="forms\side_loader\clear_sys_temp_folder.aardio"/>
+			<file name="excel插件安装删除.aardio" path="forms\side_loader\excel插件安装删除.aardio" comment="forms\side_loader\excel插件安装删除.aardio"/>
 			<file name="Haier_DFT_SaveAs_Pdf_Dwg.aardio" path="forms\side_loader\Haier_DFT_SaveAs_Pdf_Dwg.aardio" comment="forms\side_loader\Haier_DFT_SaveAs_Pdf_Dwg.aardio"/>
 			<file name="localShare.aardio" path="forms\side_loader\localShare.aardio" comment="forms\side_loader\localShare.aardio"/>
 			<file name="PDF_Simple_Editor.aardio" path="forms\side_loader\PDF_Simple_Editor.aardio" comment="forms\side_loader\PDF_Simple_Editor.aardio"/>
@@ -85,6 +86,7 @@
 			<file name="清理后台无窗口Excel遗留进程.aardio" path="forms\side_loader\清理后台无窗口Excel遗留进程.aardio" comment="forms\side_loader\清理后台无窗口Excel遗留进程.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
 			<file name="要所描述向A列填入物料号.aardio" path="forms\side_loader\要所描述向A列填入物料号.aardio" comment="forms\side_loader\要所描述向A列填入物料号.aardio"/>
+			<file name="revise_automation.aardio" path="forms\side_loader\revise_automation.aardio" comment="forms\side_loader\revise_automation.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
 			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>
@@ -117,7 +119,6 @@
 			<file name="查找图号填入excel.aardio" path="forms\TEST\查找图号填入excel.aardio" comment="forms\TEST\查找图号填入excel.aardio"/>
 			<file name="获取订单清单.aardio" path="forms\TEST\获取订单清单.aardio" comment="forms\TEST\获取订单清单.aardio"/>
 			<file name="默认值view.aardio" path="forms\TEST\默认值view.aardio" comment="forms\TEST\默认值view.aardio"/>
-			<file name="revise_automation.aardio" path="forms\TEST\revise_automation.aardio" comment="forms\TEST\revise_automation.aardio"/>
 		</folder>
 		<folder name="webview" path="forms\webview" comment="forms\webview" local="false" embed="false" ignored="true">
 			<file name="od_value_helper.html" path="forms\webview\od_value_helper.html" comment="forms\webview\od_value_helper.html"/>

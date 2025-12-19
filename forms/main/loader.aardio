@@ -17,6 +17,8 @@ import inet.http;
 import table.product;
 import sys.reg;
 import win.reg;
+import win.version;
+import process;
 import domisoft;
 import SAP.vm;
 import config;

@@ -189,6 +189,7 @@ namespace vm{
 	refresh = λ() owner.findById("wnd[0]/mbar/menu[0]/menu[5]").select();
 	goBack = λ() owner.findById("wnd[0]/tbar[0]/btn[12]").press();
 	exec = λ() owner.findById("wnd[0]/tbar[1]/btn[8]").press();
+	exec1 = λ() owner.findById("wnd[0]/tbar[0]/btn[0]").press();
 	saveAsName = {
 		_get = λ() owner.findById("wnd[1]/usr/ctxtDY_FILENAME").text;
 		_set = function(filename){owner.findById("wnd[1]/usr/ctxtDY_FILENAME").text = filename};
@@ -253,11 +254,19 @@ namespace vm{
 	};
 	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
 		var vm = owner;
+
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
 		vm.findById("wnd[0]/usr/ctxtRC29L-CAPID").text = "PP01";
 		var txt = vm.findById("wnd[0]/usr/ctxtRC29L-CAPID").text;
 		if txt and string.len(txt)
-		vm.exec();	
+			vm.exec();	
+	};
+	addPlantCodeCS03 = function(code = "0841",wnd = "0"){
+		var vm = owner;
+
+		vm.findById("wnd[0]/usr/ctxtRC29N-WERKS").text = code;
+		vm.findById("wnd[0]/usr/ctxtRC29N-STLAN").text = "1";
+		vm.exec1();	
 	};
 	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
 		var vm = owner;

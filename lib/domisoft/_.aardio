@@ -62,7 +62,7 @@ getRunningWorkSheet = function(workbookName,worksheetName){
 								if worksheetName
 									sht = object.Sheets(worksheetName) : null; 
 								else
-									sht = object.Sheets(1); 
+									sht = object.ActiveSheet 
 								return true; 
 							}
 						}
