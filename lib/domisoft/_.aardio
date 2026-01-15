@@ -12,6 +12,12 @@ math.isNumber = function(str){
 	if type(str) !=="string" return false;
 	return !!string.match(str, "^[+-]?\d+\.?\d*$")) ; 
 }
+math.toNumber = function(str){
+	if !str return 0;
+	if string.len(str)==0 return 0;
+	else return (tonumber(str));
+}
+
 table.toHTML = function(tab){
     var html = "<table border=1>";
     for (i = 1; #tab) {
@@ -43,11 +49,11 @@ clearExcelCorpse = function(){
 	)
 }
 getComAppPath = function(keyword){
-	import com.shell;
-	import fsys.knownFolder
-	var s = com.shell.findApp("@"+ keyword);
-	var g = string.match(s.path,'%{}');		
-	return (replace(s.path, "@"+g, fsys.knownFolder(g)));
+	import process;
+	import process.cache; 
+	//用下面的方法可以搜索运行或 AppPath 注册过的程序，找不到再查找快捷方式
+	var appPath = process.cache.find(keyword);
+	return appPath;
 }
 getRunningWorkSheet = function(workbookName,worksheetName){
 	import com;
@@ -318,7 +324,12 @@ listColSort = function(column, desc){
 				owner.source[i][name] = tostring(owner.source[i][name]);
 		}
 
-	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
+	table.sort(
+		owner.source, 
+		desc ?
+			(λ (next) math.toNumber(owner[name]) > math.toNumber(next[name])) :
+			(λ (next) math.toNumber(owner[name]) < math.toNumber(next[name]))
+	);	
 	owner.setTable( owner.source );
 	return true; //返回 true 允许当前列排序	
 };

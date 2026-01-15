@@ -90,7 +90,7 @@ sapQuickOpen = function(index=1){
 		return msg.err("请先配置登陆信息",1000);
 	import domisoft;
 
-	_SAP_install_path := ..io.splitpath(domisoft.getComAppPath("SAP Logon")).dir;
+	_SAP_install_path := ..io.splitpath(domisoft.getComAppPath("saplogon.exe")).dir;
 	_SAP_shcut_cmd := ..io.joinpath(_SAP_install_path, "sapshcut.exe");
 	if !..io.exist(_SAP_shcut_cmd) 
 		return msg.err("文件不在在:"+'\n'+_SAP_shcut_cmd); 

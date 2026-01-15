@@ -24,15 +24,8 @@ var qtbs;
 if winform.parent
 	qtbs = winform.parent.parent.qtbs;
 	
-winform.grid.onSortColumn = function(column, desc){
-	var name = owner.source.fields[column];
-	for (i=1; #owner.source)
-		if !owner.source[i][name]
-			owner.source[i][name]=""
-	table.sort(owner.source,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
-	owner.setTable( owner.source );
-	return true; //返回 true 允许当前列排序	
-};
+winform.grid.onSortColumn = domisoft.listColSort;
+
 winform.saveInput = function(str){
 	if !str return ; 
     if !(table.find(config.qTipLog, str)){
