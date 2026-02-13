@@ -23,7 +23,7 @@ import tarray;
 import win.debounce;
 import win.inputBox;
 import win.dlg.message;
-
+import winex.editor;
 /*initDB{{*/
 var db_init = function(){
 	var db = sqlite(config.__userDbPath);
@@ -91,6 +91,7 @@ grid.onItemChanged = function(item,subItem,nmListView){
 grid2.onItemChanged = function(item,subItem,nmListView){
 	var content = owner.items[item][1];
 	win.clip.write(content);
+	//winex.editor.sendStringByClip(content);
 }
 grid2.onDoubleClick = function(item,subItem,nmListView){
 	if !item return ; 

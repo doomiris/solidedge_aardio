@@ -23,25 +23,25 @@ var setValueTable = function(path, valueTab){
 	reg.close();
 }
 
-var tempPath = "HKEY_CURRENT_USER\SOFTWARE\Siemens\Solid Edge\Version 220\Global\Templates"
-var settingPath = "HKEY_CURRENT_USER\SOFTWARE\Siemens\Solid Edge\Version 220\Global"
+var tempPath = "HKEY_CURRENT_USER\SOFTWARE\Siemens\Solid Edge\Version 225\Global\Templates"
+var settingPath = "HKEY_CURRENT_USER\SOFTWARE\Siemens\Solid Edge\Version 225\Global"
 
-
+var server_path = "\\ccnsia1a\separts\Admin\Templates\Solidedge_Template\Template_2020"
 var tempValues = {
-	["PartTradTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Part.par",
-	["WeldAsmTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Assembly.asm",
-	["AsmTradTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Assembly.asm",
+	["PartTradTemplate"] = io.joinpath(server_path,"Part.par"),
+	["WeldAsmTemplate"] = io.joinpath(server_path,"Assembly.asm"),
+	["AsmTradTemplate"] = io.joinpath(server_path,"Assembly.asm"),
 	["Standard"] = "Template_2020//LISTTYPE_2/1/",
-	["PsmTradTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Sheet Metal.psm",
-	["DraftTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Draft.dft",
-	["DraftSymbolTemplate"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Blank.dft"
+	["PsmTradTemplate"] = io.joinpath(server_path,"Sheet Metal.psm"),
+	["DraftTemplate"] = io.joinpath(server_path,"Draft.dft"),
+	["DraftSymbolTemplate"] = io.joinpath(server_path,"Blank.dft")
 }
 var settingValues = {
-	["AdminOptionsFile"] = "C:\Temp\SE\Settings\Options_CCR_2025_sharepoint.xml",
-	["UserTemplates"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020",
-	["LinkFileName"] = "C:\Temp\SE\Settings\LinkMgmt.txt",
-	["Reports"] = "C:\Temp\SE\Templates\Solidedge_Template\Template_2020\Reports",
-	["MaterialLibraryFolder"] = "C:\Temp\SE\Templates\02_Material",
+	["AdminOptionsFile"] = "\\ccnsia1a\separts\Admin\Settings\Options_CCR_2_QHC.xml",
+	["UserTemplates"] = server_path,
+	["LinkFileName"] = "\\ccnsia1a\separts\Admin\Settings\LinkMgmt.txt",
+	["Reports"] = "Reports",
+	["MaterialLibraryFolder"] = "\\ccnsia1a\separts\Admin\Templates\02_Material",
 	["Facebook"] = "0",
 	["YouTubeUpload"] = "0",
 	["YouTubeSearchAndPlayback"] = "0",
@@ -58,7 +58,7 @@ var settingValues = {
 
 winform.button.oncommand = function(id,event){
 	if !event == 0/*_BN_CLICKED*/ return ; 
-	setValueTable(tempPath,tempValues);
+	setValueTable(tempPath, tempValues);
 	setValueTable(settingPath,settingValues);
 }
 
