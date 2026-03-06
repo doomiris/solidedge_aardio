@@ -1,0 +1,95 @@
+import console; 
+
+import sqlite;
+import config;
+import com.excel;
+import domisoft;
+import win.dlg.message;
+var msg = win.dlg.message();
+
+
+var sht = domisoft.getRunningWorkSheet("专用号申请模板-2021.xlsx");
+console.log(sht.name)
+if !sht return msg.err("sht err"); 
+var excel = sht.Parent.Application;
+if sht.AutoFilterMode
+	sht.AutoFilterMode = false;
+if sht.ListObjects.Count {
+	for (i=1;sht.ListObjects.Count){			
+		select(sht.ListObjects.item(i).Name) {
+			case "Table1","表1" {
+				sht.ListObjects.item(i).AutoFilter.ShowAllData();
+				break;
+			}
+		}
+
+	}
+}
+
+if !sht.Rows("2:2").find("物料描述") return msg.err("专用号申请表格式错误, 请从上方下拉列表选择专用号申请表",500); 
+if !sht.Rows("2:2").find("产品大类") return msg.err("不是最新版专用号申请表",500); 
+
+
+var etab = (function(){
+			var fields = {
+				"序号";
+				"长度检查";
+				"申请人";
+				"申请日期";
+				"物料描述";
+				"基本计量单位";
+				"SAP物料组";
+				"产品大类";
+				"物料类型";
+				"属性";
+				"物料分类明细";
+				"材质分类";
+				"用途";
+				"SAP展开尺寸";
+				"SAP基本物料";
+				"SAP颜色分组";
+				"SAP是否为点焊中最大件";
+				"SAP密度";
+				"适用产品型号";
+				"换算关系";
+				"图号";
+				"是否关键部件";
+			};
+			var etr = function(){
+				return  sht.usedrange.rows[sht.usedrange.rows.count].row;
+			}
+			
+			if !etr() return msg.err("格式错误:找不到物料描述",500);
+			
+			var tab = {};
+			var eArr = sht.Range("$A$3:$V$" ++ etr()).value2
+			for(i=1;#eArr;1){    
+	    		var d = table.array();
+	    		for (j=1;#fields;1){
+	    			d[fields[j]] = eArr[i][j];
+				}		
+				table.push(tab,d);
+			}
+			return tab; 
+	})()
+	
+var etab_count = #etab;
+
+var sap_db_path = io.joinpath(config.dbServer.path, "QHCSAP.db");
+
+
+var db = sqlite(sap_db_path);
+
+
+
+for (i=1; etab_count){
+	if etab[i][["SAP展开尺寸"]]{
+		db.exec("UPDATE `所有物料` SET ? WHERE ??",{{"生产展平尺寸":etab[i]["SAP展开尺寸"]},{"物料描述":etab[i]["物料描述"]}});
+		console.log(i, etab[i].物料描述, etab[i].SAP展开尺寸)
+	}
+}
+
+db.close()
+
+
+console.pause();
