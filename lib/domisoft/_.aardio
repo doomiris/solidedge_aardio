@@ -12,12 +12,18 @@ math.isNumber = function(str){
 	if type(str) !=="string" return false;
 	return !!string.match(str, "^[+-]?\d+\.?\d*$")) ; 
 }
+/*
 math.toNumber = function(str){
 	if !str return 0;
 	if string.len(str)==0 return 0;
 	else return (tonumber(str));
 }
-
+*/
+math.toNumber = function(str){
+    if(!str) return 0;
+    // 将转换结果强制转为数值,失败则返回 0,确保排序比较不报错
+    return tonumber(str) : 0;
+}
 table.toHTML = function(tab){
     var html = "<table border=1>";
     for (i = 1; #tab) {
@@ -63,8 +69,9 @@ getRunningWorkSheet = function(workbookName,worksheetName){
 			function(displayName,object){
 					if com.GetTypeInfo(object) {
 						if string.indexOf(com.GetTypeInfo(object).GetDocumentation().name,"_Workbook") {
-							if !workbookName return object;							
-							if string.endWith(displayName, workbookName, true) {		
+							if !workbookName 
+								sht = object.ActiveSheet ;							
+							elseif string.endWith(displayName, workbookName, true) {
 								if worksheetName
 									sht = object.Sheets(worksheetName) : null; 
 								else
@@ -314,15 +321,27 @@ sendFileTo = function(fullname, dest){
 }
 listColSort = function(column, desc){
 	var name = owner.source.fields[column];
-	for (i=1; #owner.source)
-		if !owner.source[i][name]
-			owner.source[i][name]=""
-		else{
-			if math.isNumber(owner.source[i][name])
-				owner.source[i][name] = tonumber(owner.source[i][name]);
-			else
-				owner.source[i][name] = tostring(owner.source[i][name]);
-		}
+    // 1. 规范化数据
+    for (i=1; #owner.source) {
+        // 如果当前行本身就是空行(null),则跳过
+        if (owner.source[i] === null) {
+            continue;
+        }
+
+        var val = owner.source[i][name];
+
+        if (val === null || val === "") {
+            owner.source[i][name] = "";
+        }
+        else {
+            if (math.isNumber(val)) {
+                owner.source[i][name] = tonumber(val);
+            }
+            else {
+                owner.source[i][name] = tostring(val);
+            }
+        }
+    }
 
 	table.sort(
 		owner.source, 
