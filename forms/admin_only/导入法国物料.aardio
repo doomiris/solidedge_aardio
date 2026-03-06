@@ -1,0 +1,68 @@
+import console; 
+
+import sqlite;
+import config;
+
+var dbpath = io.joinpath(config.dbServer.path,"Tarif.db");
+var db = sqlite(dbpath);
+
+/*
+#当前excel里的activesheet里有一个Table, 名称是table名:mapTable, 把它的所有内容导入sqlite数据库, 所有数据按text导入; 
+*/
+import com.excel;
+
+var excel = com.excel(false); 
+if(excel){
+    var sheet = excel.ActiveSheet;
+    var tableName = "mapTable";
+    
+    var listObj;
+    try{
+        listObj = sheet.ListObjects(tableName);
+    }
+    
+    if(listObj){
+        console.log("正在读取表格数据...");
+        var headers = listObj.HeaderRowRange.Value2;
+        var data = listObj.DataBodyRange.Value2;
+        
+        if(headers && data){
+            var headerRow = type(headers[1]) == "table" ? headers[1] : headers;
+            
+            var colDefs = {};
+            var placeholders = {};
+            for(i=1; #headerRow){
+                table.push(colDefs, "[" + tostring(headerRow[i]) + "] TEXT");
+                table.push(placeholders, "?");
+            }
+            
+            db.exec("DROP TABLE IF EXISTS [" + tableName + "]");
+            db.exec("CREATE TABLE [" + tableName + "] (" + string.join(colDefs, ", ") + ")");
+            
+            var cmd = db.prepare("INSERT INTO [" + tableName + "] VALUES (" + string.join(placeholders, ", ") + ")");
+            
+            db.beginTrans();
+            for(r=1; #data){
+                var rowData = type(data[r]) == "table" ? data[r] : data;
+                var bindParams = {};
+                
+                for(c=1; #headerRow){
+                    var val = rowData[c];
+                    table.push(bindParams, val !== null ? tostring(val) : "");
+                }
+                cmd.step(bindParams);
+            }
+            cmd.finalize();
+            db.commitTrans();
+            
+            console.log("成功导入 " + #data + " 行数据到 sqlite 数据库。");
+        } else {
+            console.log("指定的表格没有数据。");
+        }
+    } else {
+        console.log("当前工作表中未找到名为 " + tableName + " 的表格。");
+    }
+} else {
+    console.log("未检测到正在运行的 Excel。");
+}
+console.pause();

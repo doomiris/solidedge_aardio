@@ -17,6 +17,7 @@ import fsys.table;
 import QHC;
 import domisoft;
 import win.dlg.message;
+import mmseg;
 
 /*
 	import console
@@ -196,6 +197,7 @@ winform.button.oncommand = function(id,event){
 		[50] = "展平尺寸格式错误";
 		[51] = "展平尺寸原材料厚度错误";
 		[52] = "Ø符号在teamcenter里显示正常,导入SAP后会变成问号, 建议用Φ代替";
+		[53] = "识别到重复存在的法国进口物料号 ";
 		
 	}
 
@@ -310,6 +312,17 @@ winform.button.oncommand = function(id,event){
 		[52] = function(i){
 				return string.indexOf(etab[i].物料描述, "Ø");
 		}
+		[53] = function(i){
+				var newDesp = etab[i].物料描述;
+				for word,attr in mmseg.each(newDesp){
+					if attr!==101 continue;
+					var fr_item = QHC.checkFrImported(word);
+					if !fr_item continue;
+					if fr_item[["QHC物料"]]
+						return fr_item[["QHC物料"]];
+				}
+		}
+		
 	};
 	/*}}*/
 	

@@ -388,6 +388,7 @@ winform.button4.oncommand = function(id,event){
 		"qhc_OD_lib.db", 
 		"tbm.db", 
 		"qhc_dw_rel_list.db", 
+		"Tarif.db", 
 		"BOM_LIB.db"
 	};
 	for (i=1; #fileList)

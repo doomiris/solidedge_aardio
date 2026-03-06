@@ -614,6 +614,11 @@ getCharList = function(arr){
 	}
 	return uniqueSubstrings; 
 }
+checkFrImported = function(str){
+	var fr_db = ..sqlite(io.joinpath(config.dbServer.path, "Tarif.db"),,1/*_SQLITE_OPEN_READONLY*/)
+	return fr_db.stepQuery("SELECT * FROM [mapTable]",{"法国物料":str});
+}
+
 
 /**intellisense()
 QHC.openDb(sap_db_path) = 返回DB
