@@ -91,7 +91,7 @@ winform.button.oncommand = function(id,event){
 	txts = string.splitEx(txts);
 	for (i=1;#txts){
 		if !#txts[i] continue;
-		winform.edit.print(i, txts[i], #txts[i]);
+		winform.edit.print(i, txts[i], string.len(txts[i]));
 		revise(,txts[i], reviseOnly);
 		sleep(500)
 	}
