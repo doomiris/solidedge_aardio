@@ -17,6 +17,7 @@
 			<file name="获取喷粉调研表.aardio" path="forms\admin_only\获取喷粉调研表.aardio" comment="forms\admin_only\获取喷粉调研表.aardio"/>
 			<file name="获取成品分类对应表.aardio" path="forms\admin_only\获取成品分类对应表.aardio" comment="forms\admin_only\获取成品分类对应表.aardio"/>
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
+			<file name="add_flatpattern_size_by_apply_form.aardio" path="forms\admin_only\add_flatpattern_size_by_apply_form.aardio" comment="forms\admin_only\add_flatpattern_size_by_apply_form.aardio"/>
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
