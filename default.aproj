@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.728" ProductVersion="1.5.0.728" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.732" ProductVersion="1.5.0.732" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
-		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="false">
+		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
+			<file name="add_flatpattern_size_by_apply_form.aardio" path="forms\admin_only\add_flatpattern_size_by_apply_form.aardio" comment="forms\admin_only\add_flatpattern_size_by_apply_form.aardio"/>
 			<file name="add_QHC_Drawing_Release_List.aardio" path="forms\admin_only\add_QHC_Drawing_Release_List.aardio" comment="forms\admin_only\add_QHC_Drawing_Release_List.aardio"/>
 			<file name="BOM_OD_LIB.aardio" path="forms\admin_only\BOM_OD_LIB.aardio" comment="forms\admin_only\BOM_OD_LIB.aardio"/>
 			<file name="QTIP_ADMIN.aardio" path="forms\admin_only\QTIP_ADMIN.aardio" comment="forms\admin_only\QTIP_ADMIN.aardio"/>
@@ -11,13 +12,15 @@
 			<file name="同步QHC可选项文件.aardio" path="forms\admin_only\同步QHC可选项文件.aardio" comment="forms\admin_only\同步QHC可选项文件.aardio"/>
 			<file name="处理产品技术数据表.aardio" path="forms\admin_only\处理产品技术数据表.aardio" comment="forms\admin_only\处理产品技术数据表.aardio"/>
 			<file name="处理默认值表格.aardio" path="forms\admin_only\处理默认值表格.aardio" comment="forms\admin_only\处理默认值表格.aardio"/>
+			<file name="导入新申请的物料.aardio" path="forms\admin_only\导入新申请的物料.aardio" comment="forms\admin_only\导入新申请的物料.aardio"/>
+			<file name="导入法国物料.aardio" path="forms\admin_only\导入法国物料.aardio" comment="forms\admin_only\导入法国物料.aardio"/>
+			<file name="导入颜色分组表.aardio" path="forms\admin_only\导入颜色分组表.aardio" comment="forms\admin_only\导入颜色分组表.aardio"/>
 			<file name="批量下载工厂生成的订单.aardio" path="forms\admin_only\批量下载工厂生成的订单.aardio" comment="forms\admin_only\批量下载工厂生成的订单.aardio"/>
 			<file name="收集BOM.aardio" path="forms\admin_only\收集BOM.aardio" comment="forms\admin_only\收集BOM.aardio"/>
 			<file name="获取喷粉分类组成.aardio" path="forms\admin_only\获取喷粉分类组成.aardio" comment="forms\admin_only\获取喷粉分类组成.aardio"/>
 			<file name="获取喷粉调研表.aardio" path="forms\admin_only\获取喷粉调研表.aardio" comment="forms\admin_only\获取喷粉调研表.aardio"/>
 			<file name="获取成品分类对应表.aardio" path="forms\admin_only\获取成品分类对应表.aardio" comment="forms\admin_only\获取成品分类对应表.aardio"/>
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
-			<file name="add_flatpattern_size_by_apply_form.aardio" path="forms\admin_only\add_flatpattern_size_by_apply_form.aardio" comment="forms\admin_only\add_flatpattern_size_by_apply_form.aardio"/>
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
@@ -88,11 +91,11 @@
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
 			<file name="要所描述向A列填入物料号.aardio" path="forms\side_loader\要所描述向A列填入物料号.aardio" comment="forms\side_loader\要所描述向A列填入物料号.aardio"/>
 			<file name="revise_automation.aardio" path="forms\side_loader\revise_automation.aardio" comment="forms\side_loader\revise_automation.aardio"/>
+			<file name="更新Teamcenter插件.aardio" path="forms\side_loader\更新Teamcenter插件.aardio" comment="forms\side_loader\更新Teamcenter插件.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
 			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>
 			<file name="收集temp内的PDF文件放入PDF库.aardio" path="forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio" comment="forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio"/>
-			<file name="更新插件.aardio" path="forms\Teamcenter\更新插件.aardio" comment="forms\Teamcenter\更新插件.aardio"/>
 		</folder>
 		<folder name="TEST" path="forms\TEST" comment="forms\TEST" local="false" embed="false" ignored="true">
 			<file name="BOM_FILL_FROM_BASE.aardio" path="forms\TEST\BOM_FILL_FROM_BASE.aardio" comment="forms\TEST\BOM_FILL_FROM_BASE.aardio"/>

@@ -1,0 +1,151 @@
+import console; 
+
+import sqlite;
+import config;
+var db = sqlite(io.joinpath(config.dbServer.path, "qhc_OD_lib.db"));
+
+/*
+# 如果已经有"颜色分组"则删除重新创建
+```
+var sql_createTab = 
+	`CREATE TABLE "颜色分组" (
+		"颜色分组"	INTEGER,
+		"默认颜色可选项类别"	INTEGER,
+		"特性值描述"	TEXT,
+		"粉末物料号码"	TEXT
+	);`
+db.exec(sql_createTab)
+```
+*/
+db.exec("DROP TABLE IF EXISTS [颜色分组]");
+
+var sql_createTab = `
+CREATE TABLE "颜色分组" (
+	"颜色分组"	INTEGER,
+	"默认颜色可选项类别"	INTEGER,
+	"特性值描述"	TEXT,
+	"粉末物料号码"	TEXT
+);`
+db.exec(sql_createTab);
+
+/*
+# 要处理的workbook: C:\Users\ccl100100\CCR\QHC 开发部 - General\01 QHC产品资料汇总（新）\01 QHC产品资料汇总\3 SAP 数据整理\1.喷粉调研表\喷粉调研表-20240411.xlsx
+# 要处理的worksheet: 颜色分组
+# 第一行是标题, 从第二行开始导入
+# A列对应 颜色分组
+# B列对应 默认颜色可选项类别
+# C列对应 粉末物料号码
+# D列对应 特性值描述
+# I列是备注不导入, 但是如果备注内包含"禁用"则跳过此行
+# D列数据中如果有旧的物料号升级为新格式物料号, 新格式物料号是在旧的物料号前面加H, 例如 0080205308 升级后是 H0080205308
+# C列如果没有数据, 就从D列获取新格式物料号, 匹配不到就算了
+# A列 和B列转为整数数字, 其它列是text;
+# 没有提到的列不处理, 不导入;
+*/
+import NPOI;
+import System.IO;
+
+var excelPath = `C:\Users\ccl100100\CCR\QHC 开发部 - General\01 QHC产品资料汇总（新）\01 QHC产品资料汇总\3 SAP 数据整理\1.喷粉调研表\喷粉调研表-20240411.xlsx`;
+
+if(!io.exist(excelPath)){
+    console.error("找不到 Excel 文件:", excelPath);
+    return;
+}
+
+var workbook = NPOI.Workbook.Create(excelPath);
+var sheet = workbook.GetSheet("颜色分组");
+
+if(!sheet){
+    console.error("未找到名为 '颜色分组' 的工作表");
+    workbook.Close();
+    return;
+}
+
+db.beginTrans();
+
+var lastRowNum = sheet.LastRowNum;
+for(i=1;lastRowNum){ // 从第二行开始，索引为 1
+    var row = sheet.GetRow(i);
+    if(!row) continue;
+    
+    // I列（索引 8）是备注
+    var cellI = row.GetCell(8);
+    var remark = cellI ? cellI.ToString() : "";
+    if(string.find(remark,"禁用")) continue;
+    
+    // A列（索引 0）: 颜色分组，B列（索引 1）: 默认颜色可选项类别
+    var cellA = row.GetCell(0);
+    var cellB = row.GetCell(1);
+    var colorGroup = cellA ? tonumber(cellA.ToString()) : 0;
+    var colorType = cellB ? tonumber(cellB.ToString()) : 0;
+    
+    // C列（索引 2）: 粉末物料号码，D列（索引 3）: 特性值描述
+    var cellC = row.GetCell(2);
+    var cellD = row.GetCell(3);
+    var powderNum = cellC ? cellC.ToString() : "";
+    var desc = cellD ? cellD.ToString() : "";
+    
+    // C列如果没有数据, 就从D列获取新格式物料号 (H + 008开头的10位数字)
+    if(!#powderNum && #desc){
+        var matchNum = string.match(desc, "008\d{7}"); 
+        if(matchNum) powderNum = "H" + matchNum;
+    }
+    
+    db.exec("INSERT INTO [颜色分组] (颜色分组, 默认颜色可选项类别, 特性值描述, 粉末物料号码) VALUES (@group, @type, @desc, @num)",{
+        group = colorGroup;
+        type = colorType;
+        desc = desc;
+        num = powderNum;
+    });
+}
+
+db.commitTrans();
+workbook.Close();
+
+console.log("Excel 数据解析导入完成");
+
+
+/*
+# 按如下整理刚刚导入的数据
+# 特性值描述 去除文本中的 粉末物料号码, 不论是新格式还是旧格式,  并去除首尾空格
+*/
+db.beginTrans();
+for(rowid, colorGroup, colorType, desc, powderNum in db.each("SELECT rowid, * FROM [颜色分组]")) {
+    
+    var newDesc = desc : "";
+    var pNum = powderNum : "";
+    
+    if(#pNum){
+        // 构造新旧两种格式的号码以便从描述中剔除
+        var numWithH, numWithoutH;
+        if( string.startsWith(pNum,"H") ){
+            numWithH = pNum;
+            numWithoutH = string.slice(pNum,2);
+        }
+        else {
+            numWithH = "H" + pNum;
+            numWithoutH = pNum;
+        }
+        
+        // 从描述中去除这两种格式的物料号
+        newDesc = string.replace(newDesc, numWithH, "");
+        newDesc = string.replace(newDesc, numWithoutH, "");
+    }
+    
+    // 去除首尾空格
+    newDesc = string.trim(newDesc);
+    
+    // 如果描述有变化则更新数据库
+    if(newDesc != desc){
+        db.exec("UPDATE [颜色分组] SET 特性值描述=@desc WHERE rowid=@rowid",{
+            desc = newDesc;
+            rowid = rowid;
+        });
+    }
+}
+db.commitTrans();
+
+console.log("数据清理：特性值描述已去除物料号及多余空格");
+
+db.close();
+console.pause();

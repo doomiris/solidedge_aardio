@@ -210,7 +210,22 @@ grid.deleteItems = function(){
 	winform.frmReLoad();
 
 }
+grid2.deleteItems = function(){
+	var selected = owner.selected;
+	var flist = {};
+	if !#selected return ; 
+	var db = refreshDB();
+	for (i=1; #selected)
+		table.push(flist, owner.source[selected[i]]["大类"]);
+	//var dtype = winform.listview2.items[winform.listview2.selIndex]["大类"]
+	if !win.msgboxTest("确认删除这些订单所有记录? " + '\n' + table.tostring(flist),"需要确认",winform.hwnd) return; 
+	db = sqlite(path);
+	db.exec("DELETE FROM `lib` WHERE ??", {{"大类" : flist}});
+	db.close();	
 
+	winform.frmReLoad();
+
+}
 grid.updateProperty = function(prop, newValue){
 	newValue := winform.inputBox("输入新内容", "变更["+prop+"]");
 	if !newValue return ; 
@@ -245,6 +260,7 @@ grid.updateDespFromDB = function(){
 }
 
 var menu = win.ui.popmenu(winform);
+var menu2 = win.ui.popmenu(winform);
 menu.add("打开BOM", λ()	grid.onDoubleClick(winform.listview.selIndex));
 menu.add("下载BOM...", downloadbom);
 menu.add()
@@ -261,12 +277,17 @@ menu.add("添加[喷粉分类]...",λ () grid.updateProperty("喷粉分类") );
 menu.add("添加[温度等级]...",λ () grid.updateProperty("温度等级") );
 menu.add()
 menu.add("刷新[物料描述]...",λ () grid.updateDespFromDB() );
+menu2.add("删除选定行", λ() grid2.deleteItems());
 grid.onRightClick = function(item,subItem,nmListView){
 	if !item return ; 
 	var x,y = win.getMessagePos();
 	menu.popup(x,y,true,item);
 }
-
+grid2.onRightClick = function(item,subItem,nmListView){
+	if !item return ; 
+	var x,y = win.getMessagePos();
+	menu2.popup(x,y,true,item);
+}
 winform.frmReLoad();
 
 winform.splitter.split(winform.listview,winform.listview2);

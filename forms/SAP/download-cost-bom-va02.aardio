@@ -201,10 +201,16 @@ console.open()
     			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
 			on error goto 0
 
+
     		if not markcost is nothing then
-        			markcost.press
+    				markcost.press
+    				on error resume next
+        			session.findById("wnd[1]/tbar[0]/btn[0]").press
+        			
+        			
         			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
         			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
+        			on error goto 0
         			session.findById("wnd[0]/tbar[0]/btn[0]").press
 			else 
         		set tdstr = nothing

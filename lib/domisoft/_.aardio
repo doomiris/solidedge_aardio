@@ -10,7 +10,7 @@ var trim = string.trim;
 math.isNumber = function(str){
 	if type(str) == "number" return true;
 	if type(str) !=="string" return false;
-	return !!string.match(str, "^[+-]?\d+\.?\d*$")) ; 
+	return !!string.match(str, "^[+-]?\d+\.?\d*$") ; 
 }
 /*
 math.toNumber = function(str){
@@ -225,6 +225,7 @@ ctrlC = function(msg){
 
 
 readClipHcode = function(){
+
 	import win.clip;
 	import dotNet.ocr;
 	var ocr = dotNet.ocr();
@@ -237,6 +238,9 @@ readClipHcode = function(){
 	
 	var bmp = ..gdip.bitmap(hBmp);
 	var ocrRet = ocr.detectBitmap(bmp);
+    // 【关键修复】识别完成后,立即释放 GDI+ 和 GDI 图像对象,防止内存泄漏！
+    bmp.delete();
+    ::DeleteObject(hBmp); 
 	var t = {};
 	if(ocrRet){  
 		//winform.edit.text = ocrRet.text;
@@ -256,6 +260,7 @@ readClipHcode = function(){
 			s = replace(s,"t","6");
 			s = replace(s,"S","5");
 			s = replace(s,"/","7");
+			s = replace(s," ","");
 			
 			if string.startWith(s, "8008")
 				s = replace(s, "8008", "H008", 1);
@@ -281,7 +286,9 @@ getContentFromHTTP = function(url, parseJson = false){
 	import web.json;
 	return web.json.parse(t);
 }
+/*
 formatWindowsFileName = function (nameStr) {
+	if !nameStr return null; 
     nameStr = replace(nameStr, "@\", "＼");
     nameStr = replace(nameStr, "@/", "／");
     nameStr = replace(nameStr, "@:", "：");
@@ -295,6 +302,36 @@ formatWindowsFileName = function (nameStr) {
     nameStr = replace(nameStr, '\n', " ");  //替换换行符
     return trim(nameStr);
 };
+*/
+formatWindowsFileName = function (nameStr) {
+    if(!nameStr) return ""; 
+
+    /*
+    使用映射表一次性处理所有非法字符。
+    模式串解释：
+    - [ ... ]：表示字符类，匹配其中任意一个字符。
+    - \/ 和 \\ ：匹配斜杠与反斜杠。
+    - \: ：在模式匹配的 [] 内，冒号具有特殊语义（匹配多字节字符），表示普通冒号需转义。
+    - \* 和 \? ：在模式匹配中是量词，表示字面值需转义。
+    - \" ：匹配双引号s。
+    - \r \n ：匹配回车换行。
+*/
+var result = string.replace(nameStr, `[\/\\\:\*\?\"\<\>\|\r\n]`, {
+        ["\"] = "＼";
+        ["/"] = "／";
+        [":"] = "：";
+        ["*"] = "＊";
+        ["?"] = "？";
+        ['"'] = "“";
+        ["<"] = "＜";
+        [">"] = "＞";
+        ["|"] = "｜";
+        ['\r'] = " ";
+        ['\n'] = " "
+    }); 
+    return string.trim(result);
+};
+
 setColumnWidth = function(lv, widthTab){
 	var count = math.max(lv.columnCount, #widthTab)
 	for (i=1; count)
@@ -319,6 +356,7 @@ getFileDate = function(filename, formatString = "%Y/%m/%d %H:%M:%S"){
 sendFileTo = function(fullname, dest){
 	
 }
+/*
 listColSort = function(column, desc){
 	var name = owner.source.fields[column];
     // 1. 规范化数据
@@ -327,9 +365,7 @@ listColSort = function(column, desc){
         if (owner.source[i] === null) {
             continue;
         }
-
         var val = owner.source[i][name];
-
         if (val === null || val === "") {
             owner.source[i][name] = "";
         }
@@ -341,17 +377,62 @@ listColSort = function(column, desc){
                 owner.source[i][name] = tostring(val);
             }
         }
-    }
-
+            }
 	table.sort(
 		owner.source, 
 		desc ?
 			(λ (next) math.toNumber(owner[name]) > math.toNumber(next[name])) :
 			(λ (next) math.toNumber(owner[name]) < math.toNumber(next[name]))
-	);	
-	owner.setTable( owner.source );
+    );  
+
+    owner.setTable( owner.source );
 	return true; //返回 true 允许当前列排序	
 };
+*/
+listColSort = function(column, desc){
+    var name = owner.source.fields[column];
+    if(!name) return;
+
+    var data = owner.source;
+
+    // 定义一个内部函数用于提取可比较的值
+    var getSortableValue = function(val){
+        if( val === null || val === "" ) return ""; // 空值排在最前/最后
+
+        // 1. 如果已经是数值或看起来像数字
+        if( type(val) == "number" || ..math.isNumber(val) ){
+            return tonumber(val);
+        }
+
+        // 2. 尝试识别日期格式 (例如 2023/01/01 或 2023-01-01)
+        // 匹配常见的日期模式
+        if( type(val) == "string" && ..string.match(val,"^\d({2,4})[\/\-\.]\d({1,2})[\/\-\.]\d{1,2}") ){
+            var tm = ..time(val); // 尝试解析
+            if(tm) return tonumber(tm); // 返回时间戳数值用于比较
+        }
+
+        // 3. 否则作为字符串处理（统一转小写以实现不区分大小写排序）
+        return ..string.lower(tostring(val));
+    };
+
+    ..table.sort(data, function(next) {
+        var a = getSortableValue(owner[name]);
+        var b = getSortableValue(next[name]);
+
+        // 如果类型不同（例如数字和字符串混在一起）,强制转为字符串比较,防止报错
+        if( type(a) != type(b) ){
+            a = tostring(a);
+            b = tostring(b);
+        }
+
+        if(desc) return a > b;
+        return a < b;
+    });
+
+    owner.setTable(data);
+    return true; 
+};
+
 getUserFolder = function(corp){
 
 	corp := "CCR"

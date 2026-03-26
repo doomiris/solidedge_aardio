@@ -19,10 +19,8 @@ import domisoft;
 import win.dlg.message;
 import mmseg;
 
-/*
 	import console
 	console.open()
-*/
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
@@ -286,7 +284,9 @@ winform.button.oncommand = function(id,event){
 				return !#etab[i].是否关键部件; 	
 		};
 		[49] = function(i){			
-				return (string.indexAny(etab[i].物料描述, 194)); 
+				//return (string.indexAny(etab[i].物料描述, 194)); 
+				return string.indexOf(etab[i].物料描述, '\xC2\xA0'); 
+
 		};
 		[50] = function(i){
 				if etab[i].物料类型=="HALB" {
@@ -305,6 +305,7 @@ winform.button.oncommand = function(id,event){
 		};
 		[51] = function(i){
 				if etab[i].SAP物料组!=="SB" return; 
+				if !etab[i].SAP展开尺寸 return ; 
 				var d = string.split(etab[i].SAP展开尺寸, "*");
 				return !table.indexOf(["0.4","0.5","0.6","0.7","0.8","1.0","1.2","1.5","2.0"], d[3]);
 		}

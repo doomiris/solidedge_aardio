@@ -1,8 +1,8 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-winform = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
-winform.add(
+winform_qtip = win.form(text="QHC物料查询";right=638;bottom=502;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+winform_qtip.add(
 bkplus1={cls="plus";text="过滤";left=24;top=8;right=64;bottom=40;bgcolor=0xC0C0C0;dl=1;dt=1;z=10};
 bkplus2={cls="plus";text="SAP";left=64;top=8;right=104;bottom=40;bgcolor=0xC0C0C0;border={bottom=5;color=0xFF000080};dl=1;dt=1;notify=1;z=6};
 bkplus3={cls="plus";text="详细";left=104;top=8;right=144;bottom=40;bgcolor=0xC0C0C0;dl=1;dt=1;notify=1;z=8};
@@ -18,7 +18,7 @@ splitter={cls="splitter";left=0;top=48;right=640;bottom=56;aw=1;frame=1;horz=1;z
 )
 /*}}*/
 
-winform.show();
+winform_qtip.show();
 
 import win.ui.tabs;
 import win.ui.tooltip; 
@@ -26,22 +26,23 @@ import color;
 import config;
 import domisoft;
 import win.inputBox;
+import thread.table;
 /*拆分条{{*/
-winform.splitter.split(winform.editUser3, winform.custom);
-winform.splitter.ltMin = 32;
-winform.splitter.rbMin = 96;
+winform_qtip.splitter.split(winform_qtip.editUser3, winform_qtip.custom);
+winform_qtip.splitter.ltMin = 32;
+winform_qtip.splitter.rbMin = 96;
 /*}}*/
 /*TABS{{*/
-winform.qtbs = win.ui.tabs(
-	winform.bkplus1,
-	winform.bkplus2,
-	winform.bkplus3,
-	winform.bkplus4,
-	winform.bkplus5
+winform_qtip.qtbs = win.ui.tabs(
+	winform_qtip.bkplus1,
+	winform_qtip.bkplus2,
+	winform_qtip.bkplus3,
+	winform_qtip.bkplus4,
+	winform_qtip.bkplus5
 );
-//var qtbs = winform.qtbs;
+//var qtbs = winform_qtip.qtbs;
 
-winform.qtbs.skin({
+winform_qtip.qtbs.skin({
 	foreground={
 		active=0xFFFFFFFF;
 		default=0x00FFFFFF;
@@ -63,49 +64,49 @@ var qfName = {
 	[5] = "\forms\main\check_QHC_Release.aardio";
 }
 for k,v in qfName
-	winform.qtbs.loadForm(k, v);
+	winform_qtip.qtbs.loadForm(k, v);
 	
 
 
-winform.qtbs.forms[1].publish("preload") //仅用来触发加载,无对应响应事件
-winform.qtbs.goto = function(index){
+winform_qtip.qtbs.forms[1].publish("preload") //仅用来触发加载,无对应响应事件
+winform_qtip.qtbs.goto = function(index){
 	owner.selIndex = index;
 }
 
-winform.qtbs.goto(2); 
+winform_qtip.qtbs.goto(2); 
 
 
-winform.qtbs.open = function(selIndex,pcode){
+winform_qtip.qtbs.open = function(selIndex,pcode){
 	owner.goto(selIndex);
 	owner.forms[selIndex].qtip_search(pcode);
 }
 
 /*}}*/
 /*搜索按钮{{*/
-winform.button.oncommand = function(id,event){
+winform_qtip.button.oncommand = function(id,event){
 	if event !== 0/*_BN_CLICKED*/ return ;
-	var txt = winform.editUser3.text;
-	//if winform.qtbs.selIndex == 1
-		winform.qtbs.goto(2); 
-	winform.qtbs.forms[winform.qtbs.selIndex].qtip_search(txt);	
+	var txt = winform_qtip.editUser3.text;
+	//if winform_qtip.qtbs.selIndex == 1
+		winform_qtip.qtbs.goto(2); 
+	winform_qtip.qtbs.forms[winform_qtip.qtbs.selIndex].qtip_search(txt);	
 	win.setTimeout(
 		function(){
-			winform.publish("status2","刷新数据库日期")
+			winform_qtip.publish("status2","刷新数据库日期")
 		}
 	)	
 }
 /*}}*/
 /*弹出历史记录菜单{{*/
-winform.historyMenu = {};
+winform_qtip.historyMenu = {};
 var createHistoryMenu = function(){
-	winform.historyMenu = win.ui.popmenu(winform);
-	winform.historyMenu.onMenuItemClick = function(id){
-		winform.editUser3.text = winform.historyMenu.getString(id, 0);
-		winform.editUser3.setFocus();
+	winform_qtip.historyMenu = win.ui.popmenu(winform_qtip);
+	winform_qtip.historyMenu.onMenuItemClick = function(id){
+		winform_qtip.editUser3.text = winform_qtip.historyMenu.getString(id, 0);
+		winform_qtip.editUser3.setFocus();
 	}
 	var addFav = function(){
 		var fav = config.qtip.fav;		
-		var favName = winform.inputBox("请为要收藏的清单命名:","收藏");
+		var favName = winform_qtip.inputBox("请为要收藏的清单命名:","收藏");
 		if	!favName return ;
 		if #table.filter(fav, lambda(v,index) favName == v[["title"]]) 
 			if !win.msgboxTest("点击确认覆盖相同名称收藏","覆盖确认")
@@ -115,15 +116,15 @@ var createHistoryMenu = function(){
 				fav[i] = null; /*删除已经有的同名收藏*/
 			}
 
-		table.push(fav, {["title"] = favName; ["list"] = domisoft.getSelectedText(winform.qtbs.forms[2].listview)});
+		table.push(fav, {["title"] = favName; ["list"] = domisoft.getSelectedText(winform_qtip.qtbs.forms[2].listview)});
 		config.qtip.save();		
 	}
-	winform.historyMenu.add("识别剪贴板图像", function(){
+	winform_qtip.historyMenu.add("识别剪贴板图像", function(){
 		var t = domisoft.readClipHcode();
 		if t
-			winform.editUser3.text = string.join(t,'\r\n');		
+			winform_qtip.editUser3.text = string.join(t,'\r\n');		
 	});
-	winform.historyMenu.add();
+	winform_qtip.historyMenu.add();
 	var favTab = {
     	[1] = "★ 收藏夹"; 
     	[2] = { 
@@ -145,23 +146,23 @@ var createHistoryMenu = function(){
 					var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
 					
 					if !shift and !ctrl	/*无按钮时打开清单*/
-    					winform.qtbs.forms[2].qtip_search(string.join(fav[i]["list"],";"));
+    					winform_qtip.qtbs.forms[2].qtip_search(string.join(fav[i]["list"],";"));
     				if shift and !ctrl	/*按shift时询问删除*/
     					if win.msgboxTest("确认删除此条收藏?","删除收藏"){
     						fav[i] = null;
-    						winform.historyMenu.delete(id, 0/*_MF_BYCOMMAND*/)
+    						winform_qtip.historyMenu.delete(id, 0/*_MF_BYCOMMAND*/)
     						config.qtip.save();
     					}
     				if !shift and ctrl /*按ctrl时替换为当前清单*/
     					if win.msgboxTest("替换为当前选择的清单?","确认替换") {
-    						fav[i]["list"] = domisoft.getSelectedText(winform.qtbs.forms[2].listview);
+    						fav[i]["list"] = domisoft.getSelectedText(winform_qtip.qtbs.forms[2].listview);
     						config.qtip.save();
     					}
     				if shift and ctrl	/*同时按询问修改名称*/ {
-    				    var newFavName = winform.inputBox("请输入新名称", "修改名称", fav[i]["title"]);
+    				    var newFavName = winform_qtip.inputBox("请输入新名称", "修改名称", fav[i]["title"]);
     				    if newFavName {
     						fav[i]["title"] = newFavName;
-    						winform.historyMenu.setString(id, newFavName, 0/*_MF_BYCOMMAND*/);
+    						winform_qtip.historyMenu.setString(id, newFavName, 0/*_MF_BYCOMMAND*/);
     						config.qtip.save();
     					}
     				}
@@ -169,18 +170,18 @@ var createHistoryMenu = function(){
     			}
     	})
     }
-	winform.historyMenu.addTable({favTab})
-	winform.historyMenu.add();//分隔线
+	winform_qtip.historyMenu.addTable({favTab})
+	winform_qtip.historyMenu.add();//分隔线
 	for (i=1; #config.qTipLog){
 		if !config.qTipLog[i] continue;
-    	winform.historyMenu.add(
+    	winform_qtip.historyMenu.add(
     		text = config.qTipLog[i];
 /**
     		proc = function(id){
     		    var shift = ::GetKeyState(0x10/*_VK_SHIFT*/) & 0x8000;
 				if !shift {
-    			winform.editUser3.text = config.qTipLog[i];
-    			winform.editUser3.setFocus();
+    			winform_qtip.editUser3.text = config.qTipLog[i];
+    			winform_qtip.editUser3.setFocus();
     			}else
     				config.qTipLog[i] = null;
     		}
@@ -191,28 +192,28 @@ var createHistoryMenu = function(){
 }
 
 
-winform.buttonD.oncommand = function(id,event){
+winform_qtip.buttonD.oncommand = function(id,event){
 	createHistoryMenu();
 	var x,y = win.getMessagePos(); 
-	winform.historyMenu.popup(x,y,true)
+	winform_qtip.historyMenu.popup(x,y,true)
 }
 /*}}*/
 /*右键点击快速取消筛选{{*/
-winform.bkplus1.onRightMouseUp = winform.qtbs.forms[1].syslink.onHyperlinkClick;
-winform.qtbs.updateColor = function(btCtrl){
-	var t = #winform.qtbs.forms[1].clSapType.selected + #winform.qtbs.forms[1].clUnit.selected + #winform.qtbs.forms[1].clOrderType.selected;
+winform_qtip.bkplus1.onRightMouseUp = winform_qtip.qtbs.forms[1].syslink.onHyperlinkClick;
+winform_qtip.qtbs.updateColor = function(btCtrl){
+	var t = #winform_qtip.qtbs.forms[1].clSapType.selected + #winform_qtip.qtbs.forms[1].clUnit.selected + #winform_qtip.qtbs.forms[1].clOrderType.selected;
 	btCtrl.border = t ? {top=5;color=-16711936} : null;
 	btCtrl.redraw();
 }
 /*}}*/
 /*后退按钮{{*/
-winform.button2.oncommand = function(id,event){
+winform_qtip.button2.oncommand = function(id,event){
 	if event == 0/*_BN_CLICKED*/
-		winform.qtbs.goto(2); 
+		winform_qtip.qtbs.goto(2); 
 }
 /*}}*/
-var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件
-tooltipCtrl.addTool(winform.buttonD, `
+var tooltipCtrl = win.ui.tooltip( winform_qtip );//在窗口上创建tooltip控件
+tooltipCtrl.addTool(winform_qtip.buttonD, `
 查看搜索历史记录和清单收藏夹
 > 创建清单时仅保存当前选择的物料, 无选择时保存整个清单
 - 按住SHIFT+点击:删除记录/收藏
@@ -223,25 +224,25 @@ import mouse.hook;
 var mouseHook = mouse.hook();
 mouseHook.proc = function(msg,x,y,mouseData,injected,flags,timeStamp,extraInfo){
 	if( injected ) return; //不处理模拟鼠标事件  
-	if winform.hide return ;	//窗口隐藏时不处理 
+	if winform_qtip.hide return ;	//窗口隐藏时不处理 
     select(msg) {
     	case 0x20C/*_WM_XBUTTONUP*/{
     		var direction = ::HIWORD(mouseData) == 1 ? "back" : "forward" ;
     	    switch(direction,{  
-    	    	["back"]: λ () winform.qtbs.goto(2);
-     	    	["forward"]: λ () winform.qtbs.goto(1); 
+    	    	["back"]: λ () winform_qtip.qtbs.goto(2);
+     	    	["forward"]: λ () winform_qtip.qtbs.goto(1); 
     	    })	
     	}
     }   
 } 
-winform.beforeDestroy = function(){
+winform_qtip.beforeDestroy = function(){
   if mouseHook mouseHook.close() 
 }
 
 /*
-winform.frmReLoad = function(){
+winform_qtip.frmReLoad = function(){
 	
 }
 */
 win.loopMessage();
-return winform;
+return winform_qtip;

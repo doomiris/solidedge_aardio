@@ -21,7 +21,11 @@ var qtbs;
 if winform.parent
 	qtbs = winform.parent.parent.qtbs;
 	
-var refreshColor = λ() qtbs.updateColor(qtbs.tabList[1]);
+var refreshColor = function(){
+	if qtbs
+		qtbs.updateColor(qtbs.tabList[1]);
+}
+ 
 
 winform.syslink.onHyperlinkClick = function(nmSysLink,url,id){
 	winform.clLegacyType.selected = null;

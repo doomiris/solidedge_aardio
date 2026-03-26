@@ -124,7 +124,6 @@ mainForm.popmenu2.add("check_BOM更改单",  λ() thread.invoke(λ() loadcodex("
 mainForm.popmenu2.add("check_新BOM申请表",  λ() thread.invoke(λ() loadcodex("\forms\Excel\check_新BOM申请表_GUI.aardio")));
 mainForm.popmenu2.add("fill_专用号申请表", λ() thread.invoke( λ() loadcodex("\forms\Excel\assist_专用号申请表_GUI.aardio")));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('Teamcenter插件更新...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\更新插件.aardio")));
 mainForm.popmenu2.add('收集Teamcenter打开的图纸...', λ() thread.invoke(λ() loadcodex("\forms\Teamcenter\收集temp内的PDF文件放入PDF库.aardio")));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('SE导出当前截图...', λ() quickTools.se_exportViewAsImage());

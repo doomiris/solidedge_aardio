@@ -1,0 +1,162 @@
+import win.ui;
+import fonts.fontAwesome;
+import process.popen;
+import win.reg;
+import thread.table; 
+import win.dlg.message;
+/*DSG{{*/
+winform = win.form(text="Solid Edge 许可证一键查询与切换工具";right=751;bottom=599;bgcolor=0xFFFFFF)
+winform.add(
+btnQuery={cls="plus";text="立即查询所有服务器";left=20;top=15;right=220;bottom=55;align="left";bgcolor=0xB0B68F;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF021';notify=1;textPadding={left=45};z=2};
+btnSwitch={cls="plus";text="一键切换至可用服务器";left=488;top=15;right=730;bottom=55;align="left";bgcolor=0xB0B68F;dr=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF0EC';notify=1;textPadding={left=45};z=3};
+editResult={cls="edit";left=20;top=72;right=730;bottom=580;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='Consolas');multiline=1;vscroll=1;z=1}
+)
+/*}}*/
+
+// 配置信息
+var serverConfig = {
+    // 修正后的路径
+    lmutilPath = io.joinpath(_STUDIO_INVOKED ? "S:\Admin\Addons\" : io._exedir, "ext", "se_tool", "lmutil.exe");
+    featureName = "solidedgepremium";
+    list = {
+        { title = "上海 Office"; addr = "28000@CCNSIA1A" };
+        { title = "青岛 Office"; addr = "28000@CCNQIA05" }
+    }
+}
+
+// 建立线程安全的共享表（用于存放有空闲 License 的服务器地址）
+var sharedAvailable = thread.table("AVAILABLE_LICENSE_SERVERS", true);
+
+// 按钮交互样式
+var btnSkin = {
+    background={ default=0xFFEEEEEE; hover=0xFFDDDDDD; active=0xFFCCCCCC; };
+    color={ default=0xFF333333; hover=0xFF000000; }
+}
+winform.btnQuery.skin(btnSkin);
+winform.btnSwitch.skin(btnSkin);
+
+winform.btnQuery.oncommand = function(id,event){
+    winform.btnQuery.disabledText = {'\uf110';'\uf111';'\uf112';'\uf113';'\uf114'};
+    winform.editResult.text = "正在同步查询所有服务器状态, 请稍候..." + '\r\n';
+
+    sharedAvailable.clear(); // 清空上次结果
+
+thread.invoke( 
+    function(winform, serverConfig){
+        import process.popen;
+        import thread.table;
+
+        var shared = thread.table("AVAILABLE_LICENSE_SERVERS");
+        var allDisplayTxt = {};
+
+        for(i=1;#serverConfig.list;1){
+            var server = serverConfig.list[i];
+            // 注意：process.popen 的参数 1 如果包含空格,建议用数组或先处理好引号
+            var cmd = `"` + serverConfig.lmutilPath + `" lmstat -f ` + serverConfig.featureName + " -c " + server.addr;
+            var prcs = process.popen(cmd);
+
+            if(prcs){
+                var result = prcs.readAll();
+                prcs.close();
+
+                var totalLic = string.match(result, "Total of\s+(\d+)\s+licenses issued") : "0";
+                var inUseLic = string.match(result, "Total of\s+(\d+)\s+licenses in use") : "0";
+                var freeCount = tonumber(totalLic) - tonumber(inUseLic);
+
+                if(freeCount > 0) shared[server.addr] = server.title;
+
+                var info = {
+                    "===== " + server.title + " (" + server.addr + ") =====",
+                    "状态: " + (freeCount > 0 ? "【有空闲】" : "【已满额】") + " (已用:" + inUseLic + "/总计:" + totalLic + " | 剩余:" + freeCount + ")",
+                    "--------------------------------------------------"
+                };
+
+                for line in string.lines(result) {
+                    // 1. 过滤掉不含授权信息的行（授权行通常包含关键词 "start"）
+                    if(!string.find(line, "\s+start\s+")) continue;
+
+                    /* 
+                    2. 解析用户名和机器名。
+                    lmutil 格式通常为：用户名 机器名 屏幕名 (版本) (服务器), start 时间
+                    使用 \s+ 分隔匹配前两个非空部分
+                    */
+                    var user, pc = string.match(line, "^\s*(\S+)\s+(\S+)");
+
+                    if(user && pc){
+                        /* 
+                        3. 提取 linger 剩余秒数。
+                        格式：(linger: 8990968 / 10367940)
+                        注意模式匹配中需要转义冒号 \:
+                        */
+                        var remainSeconds = string.match(line, "linger\:\s*(\d+)");
+
+                        var userRow;
+                        if(remainSeconds){
+                            // 借出状态处理
+                            var s = tonumber(remainSeconds);
+                            var days = math.floor(s / 86400);
+                            var hours = math.floor((s % 86400) / 3600);
+
+                            var timeDesc = "";
+                            if(days > 0) timeDesc = days + "天" + (hours > 0 ? hours + "时" : "");
+                            else timeDesc = hours + "小时";
+
+                            userRow = string.format("  %-12s | %-12s | [借出] 剩余:%s", user, pc, timeDesc);
+                        }
+                        else {
+                            // 非借出状态：按要求只输出用户和机器名,不输出借出信息
+                            userRow = string.format("  %-12s | %-12s", user, pc);
+                        }
+
+                        table.push(info, userRow);
+                    }
+                }
+
+                table.push(allDisplayTxt, string.join(info, '\r\n') + '\r\n');
+            }
+        }
+
+        winform.editResult.text = string.join(allDisplayTxt, '\r\n');
+        winform.editResult.print("查询完成：" + tostring(time()));
+        winform.btnQuery.disabledText = null;
+
+    }, winform, serverConfig
+)
+}
+
+winform.btnSwitch.oncommand = function(id,event){
+
+    // 获取共享表中的第一个可用服务器
+    var addr, title = sharedAvailable.next();
+
+    if(!addr){
+        return winform.msgInfo("未检测到可用的服务器。" + '\r\n' + "请先执行查询,并确保至少有一个服务器有空闲 License。",3000);
+    }
+
+    /*
+    修改环境变量：
+    win.reg 的第一个参数必须包含根键全名，或者使用 win.reg.query 直接操作。
+    这里使用 win.reg 对象方式。
+    */
+    var reg = win.reg("HKEY_CURRENT_USER\Environment"); 
+    if(reg){
+        if( reg.setSzValue("SE_LICENSE_SERVER", addr) ){
+
+            // 广播环境变量修改消息,让系统及新运行的程序立即识别
+            // 修改这里：将 0 改为 null 以符合 API 声明的指针要求
+            ::SendMessageTimeout(0xFFFF/*_HWND_BROADCAST*/, 0x1A/*_WM_SETTINGCHANGE*/, null, "Environment", 0x2/*_SMTO_ABORTIFHUNG*/, 2000, 0);
+
+            winform.msgInfo("成功！已将 SE_LICENSE_SERVER 切换至：" + '\r\n' + title + " (" + addr + ")" + '\r\n\r\n' + "提示：请重启 Solid Edge 以加载新配置。", 3000);
+        }
+        else {
+            winform.msgErr("无法写入注册表,请检查权限。", 1000);
+        }
+        reg.close();
+    }
+    else {
+        winform.msgErr("无法打开注册表环境变量路径。", 1000);
+    }
+}
+
+winform.show();
+win.loopMessage();

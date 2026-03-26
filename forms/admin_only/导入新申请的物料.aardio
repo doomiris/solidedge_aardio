@@ -1,0 +1,75 @@
+import console; 
+
+import config;
+var dbpath = io.joinpath(config.dbServer.path, "qhcsap.db");
+
+if !io.exist(dbpath) return error("dbpath"); 
+
+import sqlite;
+var db = sqlite(dbpath);
+
+/*
+
+# 获取Excel当前ActiveSheet里的表"Table1"的数据
+# 把所有数据新增到db库内的现有表"所有物料"中, 字段名对应不变; 
+# 如果BUn数据不存在, 则用"ZA"代替
+*/
+
+import com.excel;
+
+var excel = com.excel(false);
+if(!excel) return error("未找到 Excel 进程");
+
+var sheet = excel.ActiveSheet;
+if(!sheet) return error("未找到活动工作表");
+
+// 获取名为 "Table1" 的表对象（ListObject）
+var listObj;
+try {
+    listObj = sheet.ListObjects("Table1");
+}
+catch(e){
+    return error("当前工作表不存在名为 Table1 的表格");
+}
+
+if(!listObj) return error("表格 Table1 为空");
+
+// 获取表数据（包含标题行）
+var tabData = listObj.Range.Value2;
+if(!tabData) return error("Table1 数据为空");
+
+// 提取标题行以映射字段名
+var headers = tabData[1];
+var rows = #tabData;
+var cols = #headers;
+
+// 准备插入数据的预处理语句，假设目标表名为 "所有物料"
+// 这里动态构建 SQL，或者根据 Table1 的字段名匹配数据库字段
+db.beginTrans();
+
+var cmd = db.prepare("INSERT INTO [所有物料] ( " + string.join(headers,",") + " ) 
+    VALUES ( @" + string.join(headers,",@") + " );");
+
+for(i=2;rows){
+    var rowData = {};
+    for(j=1;cols){
+        var name = headers[j];
+        var val = tabData[i][j];
+        
+        // 处理 BUn 字段逻辑：如果不存在（null 或 空字符串）则设为 "ZA"
+        if(name == "BUn" && (val === null || val == "")){
+            val = "ZA";
+        }
+        
+        rowData[name] = val;
+    }
+   // console.dumpTable(rowData)
+    cmd.step(rowData);
+}
+
+db.commitTrans();
+cmd.finalize();
+
+console.log("数据已成功从 Table1 导入至数据库表：所有物料");
+
+console.pause();

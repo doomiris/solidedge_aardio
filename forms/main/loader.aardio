@@ -23,6 +23,7 @@ import domisoft;
 import SAP.vm;
 import config;
 import fsys;
+import process.popen;
 
 var list = {fields = {[1] = "name",[2]="filename"}};
 
