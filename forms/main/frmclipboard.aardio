@@ -1,16 +1,21 @@
-
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="切剪板文本查看器";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="Clear";left=711;top=46;right=748;bottom=64;dr=1;dt=1;flat=1;z=2};
-button2={cls="button";text="添加内容";left=578;top=103;right=752;bottom=133;z=6};
-button3={cls="button";text="添加分类";left=20;top=110;right=147;bottom=132;z=7};
-custom={cls="\dlg\listview-rt.aardio";text="listview-rt";left=154;top=137;right=754;bottom=459;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;z=5};
+button2={cls="button";text="添加内容";left=578;top=103;right=752;bottom=133;z=5};
+button3={cls="button";text="添加分类";left=20;top=110;right=147;bottom=132;z=6};
+button4={cls="button";text='\uF077';left=725;top=135;right=755;bottom=160;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=9};
+button5={cls="button";text='\uF078';left=725;top=165;right=755;bottom=190;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=10};
+button6={cls="button";text='\uF067';left=725;top=195;right=755;bottom=220;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=11};
+button7={cls="button";text='\uF068';left=725;top=225;right=755;bottom=250;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=12};
+button8={cls="button";text='\uF044';left=725;top=255;right=754;bottom=280;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=13};
 edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hidesel=1;multiline=1;readonly=1;z=1};
 edit2={cls="edit";left=153;top=70;right=704;bottom=88;dl=1;dr=1;dt=1;z=4};
 listview={cls="listview";left=18;top=137;right=147;bottom=460;db=1;dl=1;dt=1;edge=1;z=3};
-static={cls="static";left=411;top=4;right=755;bottom=18;align="right";aw=1;dl=0.54;dr=1;dt=1;transparent=1;z=8}
+listview2={cls="listview";left=155;top=134;right=720;bottom=460;db=1;dl=1;dr=1;dt=1;edge=1;z=8};
+static={cls="static";left=411;top=4;right=755;bottom=18;align="right";aw=1;dl=0.54;dr=1;dt=1;transparent=1;z=7}
 )
 /*}}*/
 
@@ -75,7 +80,7 @@ winform.button.oncommand = function(id,event){
 }
 
 var grid = win.ui.grid(winform.listview);
-var grid2 = win.ui.grid(winform.custom.listview);
+var grid2 = win.ui.grid(winform.listview2);
 
 titleTab.fields = {"分类"};
 grid.setTable(titleTab);
@@ -87,7 +92,7 @@ grid.onItemChanged = function(item,subItem,nmListView){
 	contentTab.fields = {[1] = "内容", [2] = "标签"};
 	grid2.setTable(contentTab);
 	grid2.setColumnWidth(100,2)
-	winform.custom.listview.fillParent(1);
+	winform.listview2.fillParent(1);
 }
 
 grid2.onItemChanged = function(item,subItem,nmListView){
@@ -195,6 +200,7 @@ grid2.newContent = function(position,contentItem){
 }
 grid2.editItem = function(position){
 	var selIndex = position || owner.selIndex;
+	if !selIndex return ; 
 	var tab = owner.items;
 	var item = tab[selIndex];
 	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio"); 
@@ -207,7 +213,7 @@ grid2.editItem = function(position){
 	grid2.modifyContent(selIndex, editedItem);
 }
 	//绑定到按钮
-winform.custom.button5.oncommand = λ () grid2.editItem();
+
 
 /*}}*/
 
@@ -226,6 +232,9 @@ if userFocus {
 	var title = winex.getText(userFocus);	
 	winform.static.text = title;
 }
+
+winform.button8.oncommand = λ () grid2.editItem();
+
 winform.setTimeout(grid.onItemChanged,,1);
 
 win.loopMessage();
