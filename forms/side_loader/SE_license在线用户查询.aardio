@@ -7,7 +7,7 @@ import win.dlg.message;
 /*DSG{{*/
 winform = win.form(text="Solid Edge 许可证一键查询与切换工具";right=751;bottom=599;bgcolor=0xFFFFFF)
 winform.add(
-btnQuery={cls="plus";text="立即查询所有服务器";left=20;top=15;right=220;bottom=55;align="left";bgcolor=0xB0B68F;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF021';notify=1;textPadding={left=45};z=2};
+btnQuery={cls="plus";text="立即查询所有服务器";left=16;top=13;right=216;bottom=53;align="left";bgcolor=0xB0B68F;dl=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF021';notify=1;textPadding={left=45};z=2};
 btnSwitch={cls="plus";text="一键切换至可用服务器";left=488;top=15;right=730;bottom=55;align="left";bgcolor=0xB0B68F;dr=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF0EC';notify=1;textPadding={left=45};z=3};
 editResult={cls="edit";left=20;top=72;right=730;bottom=580;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='Consolas');multiline=1;vscroll=1;z=1}
 )

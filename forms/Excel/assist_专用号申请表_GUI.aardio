@@ -147,7 +147,7 @@ winform.button.oncommand = function(id,event){
 			ePush({"SA","HALB","非配置","08","总装","否"});
 			
 		elseif string.keywords('已喷').findOne(str)	
-			ePush({"SC","HALB","非配置","01","喷粉件","否"});
+			ePush({"SC","HALB","非配置","11","喷粉件","否"});
 			
 		elseif string.keywords('玻璃门').findOne(str)	
 			ePush({"R08","ROH","非配置","08","玻璃门","否"});		
@@ -165,16 +165,16 @@ winform.button.oncommand = function(id,event){
 			ePush({"R14","ROH","非配置","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)],"否"});
 			
 		elseif string.keywords('点焊').findOne(str)
-			ePush({"SH","HALB","非配置","01","焊接件","否"});
+			ePush({"SH","HALB","非配置","11","焊接件","否"});
 			
 		elseif string.keywords(_metal).findOne(str)
-			ePush({"R01","ROH","非配置","01", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
+			ePush({"R01","ROH","非配置","11", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
 			
 		elseif string.keywords('木包装').findOne(str)
 			ePush({"R15","ROH","非配置","16","木包装","否"});
 			
 		elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
-			ePush({"SB","HALB","非配置","01","钣金","否"});
+			ePush({"SB","HALB","非配置","11","钣金","否"});
 			
 		elseif string.keywords(_cooper).findOne(str)
 			ePush({"R07","ROH","非配置","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)],"否"});

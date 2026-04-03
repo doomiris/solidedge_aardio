@@ -1,3 +1,4 @@
+
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="切剪板文本查看器";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
@@ -8,7 +9,8 @@ button3={cls="button";text="添加分类";left=20;top=110;right=147;bottom=132;z
 custom={cls="\dlg\listview-rt.aardio";text="listview-rt";left=154;top=137;right=754;bottom=459;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;z=5};
 edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hidesel=1;multiline=1;readonly=1;z=1};
 edit2={cls="edit";left=153;top=70;right=704;bottom=88;dl=1;dr=1;dt=1;z=4};
-listview={cls="listview";left=18;top=137;right=147;bottom=460;db=1;dl=1;dt=1;edge=1;z=3}
+listview={cls="listview";left=18;top=137;right=147;bottom=460;db=1;dl=1;dt=1;edge=1;z=3};
+static={cls="static";left=411;top=4;right=755;bottom=18;align="right";aw=1;dl=0.54;dr=1;dt=1;transparent=1;z=8}
 )
 /*}}*/
 
@@ -45,7 +47,7 @@ var db_init = function(){
 }
 db_init();
 /*}}*/
-
+var userFocus = ...;
 var titleTab;//保存分类
 var cTab; //保存全部内容
 var contentTitle;	//当前分类
@@ -97,6 +99,18 @@ grid2.onDoubleClick = function(item,subItem,nmListView){
 	if !item return ; 
 	//grid2.onItemChanged(item) //已经触发不需要再触发了
 	winform.show(false);
+/*
+# 发送 CTRL+V 
+*/
+	import winex;
+	import key;	
+	
+	if userFocus 
+		if winex.attach(userFocus,true)
+			key.combine("CTRL","V");
+	
+
+
 }
 
 /*插入新内容{{*/
@@ -205,7 +219,13 @@ win.debounce(grid2.modifyContent);
 */
 
 winform.show();
+win.showForeground(winform.hwnd);
 
+if userFocus {
+	import winex;
+	var title = winex.getText(userFocus);	
+	winform.static.text = title;
+}
 winform.setTimeout(grid.onItemChanged,,1);
 
 win.loopMessage();

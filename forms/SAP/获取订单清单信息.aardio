@@ -301,6 +301,15 @@ winform.editDesp.onChange = function(){
 }
 
 winform.button.oncommand = function(id,event){
+/*
+	# 检查SAPGUI进程是否存在了, 如果没有则返回
+	# 用这样的方法来检查:  查看是否有一个窗口标题以字符串"P11(1)/220"开头的, 如果有,就认为SAPGUI存在了
+*/
+	import winex;
+	if(!winex.find(,"^P11\(1\)/220")){
+		return winform.msgInfo("还没启动SAPGUI",500);
+	}
+
 	var order_number = string.trim(winform.edit.text);
 	var note = #winform.listview2.selected ? winform.listview2.getItemText(winform.listview2.selIndex,5) : null;
 	if !order_number return ; 

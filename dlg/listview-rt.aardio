@@ -12,7 +12,8 @@ listview={cls="listview";left=0;top=0;right=535;bottom=469;db=1;dl=1;dr=1;dt=1;f
 )
 /*}}*/
 
-/*
+/*  测试用的数据
+
 var tab = [
 ["a","b","c"],
 ["1","2","3"],
@@ -95,51 +96,6 @@ winform.button3.oncommand = λ () winform.listview.selInsert();
 winform.button4.oncommand = λ () winform.listview.selDelete();
 //winform.button5.oncommand = λ () winform.listview.clearAll();
 
-/*
-# 实现可以通过拖动选中项对listview条目执行: 上移, 下移操作.
-*/
-// 实现拖动选中项对listview条目执行上移、下移操作
-/**
-winform.listview.onnotify = function(id, code, ptr) {
-    if (code == 0xFFFFFF93/*_LVN_BEGINDRAG*/) {
-        var nm = winform.listview.getNotifyMessage(code, ptr);
-        var dragIndex = nm.iItem;
-        
-        // 监听鼠标移动和释放事件
-        winform.capture = true;
-        var dragging = true;        
-        winform.wndproc = function(hwnd, message, wParam, lParam) {
-            select(message) {
-                case 0x200 /*_WM_MOUSEMOVE*/ {
-                    if (dragging) {
-                        var x, y = win.getMessagePos(lParam);
-                        var row, col = winform.listview.hitTest();
-                        if (row && row != dragIndex) {
-                            // 拖动到新位置，交换数据
-                            var temp = tab[dragIndex];
-                            tab[dragIndex] = tab[row];
-                            tab[row] = temp;
-                            grid.setTable(tab);
-                            winform.listview.selIndex = row;
-                            dragIndex = row;
-                        }
-                    }
-                }
-                case 0x202 /*_WM_LBUTTONUP*/ {
-                    if (dragging) {
-                        dragging = false;
-                        winform.capture = false;
-                    }
-                }
-            }
-        }
-    }
-}
-
-grid.onEditEnd = function(iItem,iSubItem){
-	tab = grid.getTable(tab.fields)
-}
-**/
 
 winform.show();
 win.loopMessage();

@@ -388,7 +388,7 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
 		import domisoft
 		import string.keywords;		
-		var title, exePath = domisoft.getActiveAppName();
+		var title, exePath, tarHwnd = domisoft.getActiveAppName();
 		var exe_name = exePath ? string.lower(io.splitpath(exePath).file) : null;
 //console.log(title, exePath)
 		select(exe_name){
@@ -441,7 +441,13 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 );
 clipHkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 	function(id,mod,vk){
-		thread.invoke(λ ()	loadcodex("\forms\main\frmclipboard.aardio"))
+		import winex;
+		var x = winex.getFocus()
+		thread.invoke(
+			function(userFocus){
+				loadcodex("\forms\main\frmclipboard.aardio",userFocus)
+			}, x
+		)
 	}, table.unpack([4 /*_MOD_SHIFT*/, 0x71/*_VK_F2*/])
 );
 

@@ -144,12 +144,12 @@ winform.button.oncommand = function(id,event){
 /*RULES_DESP{{*/
 	var rule_desp = {
 		[1] = "S-组不能是ROH";
-		[2] = "S-组只能是01,08,09";
+		[2] = "S-组只能是01,11, 08,09";
 		[3] = "SA组只能是08";
-		[4] = "SG组只能是08,09";
+		[4] = "SG组只能是08, 09";
 		[5] = "SD组只能是08";
-		[6] = "SH组只能是01";
-		[7] = "SC组只能是01";
+		[6] = "SH组只能是01, 11";
+		[7] = "SC组只能是01, 11";
 		[8] = "SB组需要填写展开尺寸";
 		[9] = "SB组需要填写基本物料";
 		[10] = "SC组需要填写颜色分组";
@@ -164,7 +164,7 @@ winform.button.oncommand = function(id,event){
 		[19] = "09 不能是ROH";
 		[20] = "SG组只能是配置";
 		[21] = "HALB只能是S组";
-		[22] = "HALB只能是01,02, 08 ";
+		[22] = "HALB只能是01, 11, 02, 08 ";
 		[23] = "ROH只能是R组";
 		[24] = "R-结尾数字需要和物料分类明细对应";
 		[25] = "ROH不能填写:展开尺寸,基本物料,颜色分组,点焊";
@@ -204,12 +204,12 @@ winform.button.oncommand = function(id,event){
 /*RULES{{*/
 	var sapErr={
 		[1] = function(i){return (etab[i].SAP物料组[[1]]=="S" and etab[i].物料类型 == "ROH")};
-		[2] = function(i){return (etab[i].SAP物料组[[1]]=="S" and !table.find({"01";"08";"09"}, etab[i].物料分类明细))};
+		[2] = function(i){return (etab[i].SAP物料组[[1]]=="S" and !table.find({"01";"08";"09";"11"}, etab[i].物料分类明细))};
 		[3] = function(i){return (etab[i].SAP物料组=="SA" and etab[i].物料分类明细 !== "08")};
 		[4] = function(i){return (etab[i].SAP物料组=="SG" and !table.find({"08";"09"}, etab[i].物料分类明细))};
 		[5] = function(i){return (etab[i].SAP物料组=="SD" and etab[i].物料分类明细 !== "08")};
-		[6] = function(i){return (etab[i].SAP物料组=="SH" and etab[i].物料分类明细 !== "01")};
-		[7] = function(i){return (etab[i].SAP物料组=="SC" and etab[i].物料分类明细 !== "01")};
+		[6] = function(i){return (etab[i].SAP物料组=="SH" and !table.find({"01";"11"}, etab[i].物料分类明细))};
+		[7] = function(i){return (etab[i].SAP物料组=="SC" and !table.find({"01";"11"}, etab[i].物料分类明细))};
 		[8] = function(i){return (etab[i].SAP物料组=="SB" and !etab[i].SAP展开尺寸)};
 		[9] = function(i){return (etab[i].SAP物料组=="SB" and !table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料))};
 		[10] = function(i){return (etab[i].SAP物料组=="SC" and !etab[i].SAP颜色分组)};
@@ -224,7 +224,7 @@ winform.button.oncommand = function(id,event){
 		[19] = function(i){return (etab[i].物料分类明细 == "09" and etab[i].物料类型 == "ROH")};
 		[20] = function(i){return (etab[i].SAP物料组=="SG" and etab[i].属性 !== "配置") or (etab[i].SAP物料组 !== "SG" and etab[i].属性 == "配置")};
 		[21] = function(i){return (etab[i].物料类型=="HALB" and etab[i].SAP物料组[[1]] !== "S")};
-		[22] = function(i){return (etab[i].物料类型=="HALB" and !table.find({"01";"02";"08"}, etab[i].物料分类明细))};
+		[22] = function(i){return (etab[i].物料类型=="HALB" and !table.find({"01";"11";"02";"08"}, etab[i].物料分类明细))};
 		[23] = function(i){return (etab[i].物料类型=="ROH" and etab[i].SAP物料组[[1]] !== "R")};
 		[24] = function(i){if etab[i].SAP物料组 !== "R05" and etab[i].物料分类明细 !== "16" return (etab[i].SAP物料组[[1]]=="R" and string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细)};
 		[25] = function(i){return (etab[i].物料类型=="ROH" and (etab[i].SAP展开尺寸 or table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料) or etab[i].SAP颜色分组 or etab[i].SAP是否为点焊中最大件))};

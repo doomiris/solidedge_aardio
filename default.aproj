@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.732" ProductVersion="1.5.0.732" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.740" ProductVersion="1.5.0.740" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
@@ -74,24 +74,28 @@
 		</folder>
 		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="true">
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
+			<file name="BPM上传附件.aardio" path="forms\side_loader\BPM上传附件.aardio" comment="forms\side_loader\BPM上传附件.aardio"/>
 			<file name="clear_sys_temp_folder.aardio" path="forms\side_loader\clear_sys_temp_folder.aardio" comment="forms\side_loader\clear_sys_temp_folder.aardio"/>
 			<file name="excel插件安装删除.aardio" path="forms\side_loader\excel插件安装删除.aardio" comment="forms\side_loader\excel插件安装删除.aardio"/>
+			<file name="ext (qhc).lnk" path="forms\side_loader\ext (qhc).lnk" comment="forms\side_loader\ext (qhc).lnk"/>
+			<file name="ext (sh).lnk" path="forms\side_loader\ext (sh).lnk" comment="forms\side_loader\ext (sh).lnk"/>
 			<file name="Haier_DFT_SaveAs_Pdf_Dwg.aardio" path="forms\side_loader\Haier_DFT_SaveAs_Pdf_Dwg.aardio" comment="forms\side_loader\Haier_DFT_SaveAs_Pdf_Dwg.aardio"/>
 			<file name="localShare.aardio" path="forms\side_loader\localShare.aardio" comment="forms\side_loader\localShare.aardio"/>
 			<file name="PDF_Simple_Editor.aardio" path="forms\side_loader\PDF_Simple_Editor.aardio" comment="forms\side_loader\PDF_Simple_Editor.aardio"/>
 			<file name="registry.aardio" path="forms\side_loader\registry.aardio" comment="forms\side_loader\registry.aardio"/>
+			<file name="revise_automation.aardio" path="forms\side_loader\revise_automation.aardio" comment="forms\side_loader\revise_automation.aardio"/>
+			<file name="SE_license在线用户查询.aardio" path="forms\side_loader\SE_license在线用户查询.aardio" comment="forms\side_loader\SE_license在线用户查询.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
 			<file name="压缩S文件.aardio" path="forms\side_loader\压缩S文件.aardio" comment="forms\side_loader\压缩S文件.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
 			<file name="新办公室.aardio" path="forms\side_loader\新办公室.aardio" comment="forms\side_loader\新办公室.aardio"/>
+			<file name="更新Teamcenter插件.aardio" path="forms\side_loader\更新Teamcenter插件.aardio" comment="forms\side_loader\更新Teamcenter插件.aardio"/>
 			<file name="查看系统图标.aardio" path="forms\side_loader\查看系统图标.aardio" comment="forms\side_loader\查看系统图标.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="清理后台无窗口Excel遗留进程.aardio" path="forms\side_loader\清理后台无窗口Excel遗留进程.aardio" comment="forms\side_loader\清理后台无窗口Excel遗留进程.aardio"/>
 			<file name="获取文件名清单.aardio" path="forms\side_loader\获取文件名清单.aardio" comment="forms\side_loader\获取文件名清单.aardio"/>
 			<file name="要所描述向A列填入物料号.aardio" path="forms\side_loader\要所描述向A列填入物料号.aardio" comment="forms\side_loader\要所描述向A列填入物料号.aardio"/>
-			<file name="revise_automation.aardio" path="forms\side_loader\revise_automation.aardio" comment="forms\side_loader\revise_automation.aardio"/>
-			<file name="更新Teamcenter插件.aardio" path="forms\side_loader\更新Teamcenter插件.aardio" comment="forms\side_loader\更新Teamcenter插件.aardio"/>
 		</folder>
 		<folder name="Teamcenter" path="forms\Teamcenter" comment="forms\Teamcenter" local="false" embed="false" ignored="false">
 			<file name="aardio3.aardio" path="forms\Teamcenter\aardio3.aardio" comment="forms\Teamcenter\aardio3.aardio"/>

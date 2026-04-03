@@ -1,0 +1,75 @@
+import console; 
+
+/*
+# 写一个脚本控制EDGE浏览器帮助我提交指定文件夹内的所有文件
+# 循环点击当前页面中的"添加附件"按钮, 每次只能上传一个文件,直到所有文件上传完成
+# 当我开始运行程序后.等我3秒切换到EDGE界面. 
+# 所有功能通过winex, key, mouse 等aardio内置库相关功能实现
+*/
+
+import win;
+import fsys;
+import fsys.dlg.dir;
+import key;
+import mouse;
+import winex;
+import thread;
+import win.clip;
+import win.dlg.message;
+
+var fapiao_folder = fsys.dlg.dir(,,"选择发票所在的文件夹","上传所有文件");
+
+if !fapiao_folder return ; 
+var msg = win.dlg.message();
+
+msg.info("请在 3 秒内切换到 Edge 浏览器，并将鼠标悬停在「添加附件」按钮上...",500);
+thread.delay(3000);
+
+//保存鼠标位置
+var myx, myy = win.getMessagePos();
+
+
+// 遍历指定文件夹下的所有文件（不递归子目录）
+fsys.enum( fapiao_folder, "*.*",
+	function(dirname,filename,fullpath,findData){ 
+		if(filename){
+			console.log("准备上传:", filename);
+			win.clip.write(fullpath);
+			//# 在鼠标当前屏幕上按文字查找"添加附件"按钮, 鼠标指针移动过去
+			
+			mouse.moveTo(myx, myy);
+			thread.delay(300);
+			mouse.click();
+
+			// 等待系统的文件选择对话框处于激活状态（类名通常为 "#32770"，标题为 "打开" 或 "Open"）
+			var hwndDlg = winex.waitActive("Open");
+
+			if(hwndDlg){
+				// 延迟一小段时间以确保输入框已准备好接收输入
+				thread.delay(2000);
+				
+				// 将完整的文件路径发送到文件名输入框
+				key.combine("CTRL","V");
+
+				//key.sendString(filename)
+				thread.delay(500);
+				win.clip.clear();
+				// 模拟按下回车键确认提交
+				key.press("ENTER");
+				
+				// 等待文件选择对话框关闭
+				winex.waitClose(hwndDlg);
+				
+				// 预留一些时间等待网页完成附件的读取与上传（根据实际网络情况可适当调整）
+				thread.delay(2000);
+			}
+			else {
+				msg.info("未检测到文件选择对话框，跳过当前文件",200);
+			}
+		}
+	}, false
+);
+
+msg.info("全部文件上传任务执行完毕！", 5000);
+
+console.pause();

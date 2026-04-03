@@ -45,15 +45,17 @@ var revise = function(hwnd,str,reviseOnly = false){
 	//单击鼠标
 	mouse.click(24,6,ctrl);
 	winex.wait("修订 ::版本");
-	sleep(1000)
+	thread.delay(1000);
 	var m_window = FlaUI.FindWindow("javaw.exe",,"修订 ::版本 ");
-
+	thread.delay(500);
 	var ectrls  = m_window.FindAllByXPath(`//Edit[@ClassName="Edit"]`);	
 	var ectrl = FlaUI.AsTextBox(ectrls[2]);
 
+
+
 	if !reviseOnly { //选中则只升版不改描述
 		ectrl.Enter(string.trim(str));
-		sleep(150)
+		thread.delay(500);
 	}
 	//查找控件
 	var fctrl  = m_window.FindFirstByXPath(`//Button[@Name="完成(F)"]`);
@@ -66,7 +68,7 @@ var revise = function(hwnd,str,reviseOnly = false){
 	winex.waitClose("修订 ::版本");
 
 	window.Focus()
-	sleep(500)
+	thread.delay(500);
 	key.press(0x28/*_VK_DOWN*/);
 
 }
@@ -93,7 +95,7 @@ winform.button.oncommand = function(id,event){
 		if !#txts[i] continue;
 		winform.edit.print(i, txts[i], string.len(txts[i]));
 		revise(,txts[i], reviseOnly);
-		sleep(500)
+		thread.delay(500);
 	}
 }
 winform.splitter.split(winform.edit2, winform.edit)
