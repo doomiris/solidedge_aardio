@@ -5,7 +5,7 @@ import win.reg;
 import thread.table; 
 import win.dlg.message;
 /*DSG{{*/
-winform = win.form(text="Solid Edge 许可证一键查询与切换工具";right=751;bottom=599;bgcolor=0xFFFFFF)
+winform = win.form(text="SE许可证工具";right=751;bottom=599;bgcolor=0xFFFFFF)
 winform.add(
 btnQuery={cls="plus";text="立即查询所有服务器";left=16;top=13;right=216;bottom=53;align="left";bgcolor=0xB0B68F;dl=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF021';notify=1;textPadding={left=45};z=2};
 btnSwitch={cls="plus";text="一键切换至可用服务器";left=488;top=15;right=730;bottom=55;align="left";bgcolor=0xB0B68F;dr=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF0EC';notify=1;textPadding={left=45};z=3};
@@ -137,7 +137,8 @@ winform.btnSwitch.oncommand = function(id,event){
     修改环境变量：
     win.reg 的第一个参数必须包含根键全名，或者使用 win.reg.query 直接操作。
     这里使用 win.reg 对象方式。
-    */
+   */
+/**
     var reg = win.reg("HKEY_CURRENT_USER\Environment"); 
     if(reg){
         if( reg.setSzValue("SE_LICENSE_SERVER", addr) ){
@@ -156,6 +157,10 @@ winform.btnSwitch.oncommand = function(id,event){
     else {
         winform.msgErr("无法打开注册表环境变量路径。", 1000);
     }
+**/
+import environment;
+environment.user().update({"SE_LICENSE_SERVER":addr});
+winform.msgInfo("成功！已将 SE_LICENSE_SERVER 切换至：" + '\r\n' + title + " (" + addr + ")" + '\r\n\r\n' + "提示：请重启 Solid Edge 以加载新配置。", 3000);
 }
 
 winform.show();

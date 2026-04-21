@@ -1,0 +1,30 @@
+//RUNAS
+import console; 
+
+/*
+# 写一个函数 解锁注册表
+*/
+
+var unlockRegistry = function(){
+	import win.reg;
+	
+	// 解除当前用户的注册表工具禁用
+	var regUser = win.reg("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\System");
+	if(regUser){
+		regUser.delValue("DisableRegistryTools");
+		regUser.close();
+	}
+	
+	// 解除所有用户的注册表工具禁用
+	var regMachine = win.reg("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System");
+	if(regMachine){
+		regMachine.delValue("DisableRegistryTools");
+		regMachine.close();
+	}
+	
+	console.log("注册表解锁操作完成！");
+}
+
+unlockRegistry();
+
+console.pause();

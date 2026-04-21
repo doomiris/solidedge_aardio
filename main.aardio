@@ -51,7 +51,7 @@ if dpix == 1 {
 /*托盘图标{{*/
 mainForm.tray = win.util.tray(mainForm);
 mainForm.onMinimize = function(lParam){
-	mainForm.show(false); 
+	mainForm.show(false);
 	return true; 
 }
 	
@@ -61,21 +61,7 @@ mainForm.onClose = function(hwnd,message,wParam,lParam){
 	if _STUDIO_INVOKED
 		win.quitMessage();
 */
-	var hasNewVer = thread.invokeAndWait(
-		function(current_version){
-			import win;
-			import global;
-			import fsys.version;
-			import config;
-			if io.exist(io.joinpath(io._exedir,"update\se_tbm.exe"))
-				var new_ver = fsys.version.getInfo("update\se_tbm.exe").productVersion;
-				if !new_ver return false; 
-				if new_ver > current_version
-					return true;
-		}, config.__appVersion
-	)
-	if hasNewVer win.quitMessage();
-	return true;
+	return false; // 返回 false 阻止窗口真正关闭并销毁
 }
 mainForm.onDestroy = function(){
 	if(mainForm.tray){

@@ -19,8 +19,11 @@ import domisoft;
 import win.dlg.message;
 import mmseg;
 
+
+/*
 	import console
 	console.open()
+*/
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
@@ -226,7 +229,18 @@ winform.button.oncommand = function(id,event){
 		[21] = function(i){return (etab[i].物料类型=="HALB" and etab[i].SAP物料组[[1]] !== "S")};
 		[22] = function(i){return (etab[i].物料类型=="HALB" and !table.find({"01";"11";"02";"08"}, etab[i].物料分类明细))};
 		[23] = function(i){return (etab[i].物料类型=="ROH" and etab[i].SAP物料组[[1]] !== "R")};
-		[24] = function(i){if etab[i].SAP物料组 !== "R05" and etab[i].物料分类明细 !== "16" return (etab[i].SAP物料组[[1]]=="R" and string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细)};
+		[24] = function(i){
+/*
+			if etab[i].SAP物料组 !== "R05" and etab[i].物料分类明细 !== "16" 
+			return (etab[i].SAP物料组[[1]]=="R" and string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细)
+*/
+			if etab[i].SAP物料组[[1]]=="R" {
+				if etab[i].SAP物料组 = "R01" and etab[i].物料分类明细 == "11" return false; 
+				if etab[i].SAP物料组 = "R05" and etab[i].物料分类明细 == "16" return false; 
+				return string.trimleft(etab[i].SAP物料组,"R") !== etab[i].物料分类明细
+			}
+			
+		};
 		[25] = function(i){return (etab[i].物料类型=="ROH" and (etab[i].SAP展开尺寸 or table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料) or etab[i].SAP颜色分组 or etab[i].SAP是否为点焊中最大件))};
 		[26] = function(i){return (etab[i].物料类型=="ROH" and etab[i].属性 !== "非配置")};
 		[27] = function(i){return (etab[i].SAP物料组=="SC" and table.find({"热锌板";"不锈钢"}, etab[i].SAP基本物料))};

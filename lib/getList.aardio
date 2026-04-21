@@ -37,8 +37,7 @@ namespace getList{
 		_searchLoc := [
 			[config.__pdfLib,	"*.*"],
 			[config.__qhcLib,	"*.*"],
-			[config.__cabinetModelServer,	"H*.dft"],
-			["S:\Cabinet\LL-CF",	"H*.dft"]
+			[config.__cabinetModelServer,	"H*.dft"]
 		]
 		import config;
 		import sqlite;

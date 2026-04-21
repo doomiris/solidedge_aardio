@@ -83,8 +83,14 @@ var filterDeleted = function(t){
 			if string.find(t[i].更改标记,"删") continue;
 		table.push(z, t[i])
 	}
-	if table.indexOf(z.fields,"特性值") table.sort(z, lambda(a) tonumber((owner.特性值)) < tonumber(a.特性值));
-	else if table.indexOf(z.fields,"特性") table.sort(z, lambda(a) owner.特性 < a.特性);
+	if table.indexOf(z.fields,"特性值") {
+    	// 遇到空值或非数字时,默认将其视为 0 进行排序
+    	table.sort(z, lambda(a) (tonumber(owner.特性值) || 0) < (tonumber(a.特性值) || 0));
+	}
+	else if table.indexOf(z.fields,"特性") {
+    	// 遇到空值时,默认将其视为 "" (空字符串) 进行排序
+    	table.sort(z, lambda(a) (owner.特性 || "") < (a.特性 || ""));
+	}
 	return z;
 }
 

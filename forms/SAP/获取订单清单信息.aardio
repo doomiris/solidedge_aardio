@@ -6,7 +6,7 @@ winform.add(
 button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7};
 button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;dl=1;dt=1;z=8};
 button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;dl=1;dt=1;z=9};
-edit={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
+edit={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hideSel=1;tabstop=1;z=6};
 editDesp={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4};
 listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1};
 listview2={cls="listview";left=0;top=53;right=224;bottom=469;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=2};
@@ -306,7 +306,7 @@ winform.button.oncommand = function(id,event){
 	# 用这样的方法来检查:  查看是否有一个窗口标题以字符串"P11(1)/220"开头的, 如果有,就认为SAPGUI存在了
 */
 	import winex;
-	if(!winex.find(,"^P11\(1\)/220")){
+	if(!winex.find(,"^P11\(\d\)/220")){
 		return winform.msgInfo("还没启动SAPGUI",500);
 	}
 

@@ -143,8 +143,11 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 		winform.msgInfo("请先下载: "+'\n'++f,1000)
 	else {
 		var excel = com.GetOrCreateObject("Excel.Application");
-		//excel.WindowState = -4137/*_xlMaximized*/
+		
 		var wb = excel.WorkBooks.Open(f /* filename */,false /* UpdateLinks */,true /* ReadOnly */);
+		
+		excel.ActiveWindow.DisplayRibbon = true; 
+
 		win.showForeground(wb.Application.hwnd);
 		win.setActive(wb.Application.hwnd);
 	}
