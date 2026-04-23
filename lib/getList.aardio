@@ -35,9 +35,9 @@ namespace getList{
 		};
 */
 		_searchLoc := [
-			[config.__pdfLib,	"*.*"],
-			[config.__qhcLib,	"*.*"],
-			[config.__cabinetModelServer,	"H*.dft"]
+			[config.qtip.pdfLib,	"*.*"],
+			[config.qtip.qhcLib,	"*.*"],
+			[config.qtip.cabinetModelServer,	"H*.dft"]
 		]
 		import config;
 		import sqlite;
@@ -68,9 +68,9 @@ namespace getList{
 				fullpath = io.splitpath(fullpath).dir;
 				
 				//替换成代号, 用户端解析, 否则其他人打开我的链接地址;
-				fullpath = string.replace(fullpath, "@" + _searchLoc[1][1],"{config.__pdfLib}");
-				fullpath = string.replace(fullpath, "@" + _searchLoc[2][1],"{config.__qhcLib}");
-				fullpath = string.replace(fullpath, "@" + _searchLoc[3][1],"{config.__cabinetModelServer}");
+				fullpath = string.replace(fullpath, "@" + _searchLoc[1][1],"{config.qtip.pdfLib}");
+				fullpath = string.replace(fullpath, "@" + _searchLoc[2][1],"{config.qtip.qhcLib}");
+				fullpath = string.replace(fullpath, "@" + _searchLoc[3][1],"{config.qtip.cabinetModelServer}");
 				
 				fullpath = string.trim(fullpath,"\");
 				

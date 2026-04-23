@@ -26,10 +26,12 @@ namespace config {
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
+/*
 	__pdfLib = domisoft.envFix(lib.pdfLib);
 	__qhcLib = domisoft.envFix(lib.qhcLib);
 	__cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
 	__templateLib = domisoft.envFix(lib.templateLib);
+*/
 }
 
 	
@@ -56,9 +58,13 @@ if !config.printingCenter.AllowSentToPdfLib
 if !config.webview.lang
 	config.webview.lang = "zh-cn";
 
- config.__userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
+ config.tbmclip.userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
  if !config.autoStart
  	config.autoStart = {};
+ config.qtip.pdfLib = domisoft.envFix(lib.pdfLib);
+ config.qtip.qhcLib = domisoft.envFix(lib.qhcLib);
+ config.qtip.cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
+ config.qtip.templateLib = domisoft.envFix(lib.templateLib);
 
 
 /**intellisense(config)
@@ -67,10 +73,10 @@ __appVersion = 应用程序内部版本号
 __appDescription = 程序说明
 __website = 官方网站
 __sapDownload = sap下载目录
-__pdfLib = 研发PDF存档库
-__qhcLib = 开发PDF存档库
-__templateLib = 模版文件库位置
-__cabinetModelServer = 3D模型库位置
+qtip.pdfLib = 研发PDF存档库
+qtip.qhcLib = 开发PDF存档库
+qtip.templateLib = 模版文件库位置
+qtip.cabinetModelServer = 3D模型库位置
 __formTemplateSharepointServer = sharepoint文档库位置
 dbServer.path = 数据库位置
 setbm.workingDir = 打印工作目录

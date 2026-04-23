@@ -11,7 +11,7 @@ button5={cls="button";text='\uF078';left=725;top=165;right=755;bottom=190;dr=1;d
 button6={cls="button";text='\uF067';left=725;top=195;right=755;bottom=220;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=11};
 button7={cls="button";text='\uF068';left=725;top=225;right=755;bottom=250;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=12};
 button8={cls="button";text='\uF044';left=725;top=255;right=754;bottom=280;dr=1;dt=1;font=LOGFONT(name='FontAwesome');z=13};
-edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hidesel=1;multiline=1;readonly=1;z=1};
+edit={cls="edit";left=24;top=17;right=702;bottom=65;border=1;dl=1;dr=1;dt=1;hideSel=1;multiline=1;readonly=1;z=1};
 edit2={cls="edit";left=153;top=70;right=704;bottom=88;dl=1;dr=1;dt=1;z=4};
 listview={cls="listview";left=18;top=137;right=147;bottom=460;db=1;dl=1;dt=1;edge=1;z=3};
 listview2={cls="listview";left=155;top=134;right=720;bottom=460;db=1;dl=1;dr=1;dt=1;edge=1;z=8};
@@ -33,7 +33,7 @@ import win.dlg.message;
 import winex.editor;
 /*initDB{{*/
 var db_init = function(){
-	var db = sqlite(config.__userDbPath);
+	var db = sqlite(config.tbmclip.userDbPath);
 	if !db.existsTable("favClipTitle")
 		db.exec("CREATE TABLE favClipTitle( 
 			分类 TEXT,
@@ -59,7 +59,7 @@ var contentTitle;	//当前分类
 var contentTab;	//当前分类下的内容
 /*db_refresh{{*/
 var db_refresh = function(){
-	var db = sqlite( config.__userDbPath,,1/*_SQLITE_OPEN_READONLY*/);
+	var db = sqlite( config.tbmclip.userDbPath,,1/*_SQLITE_OPEN_READONLY*/);
 	titleTab = db.getTable("SELECT 分类,排序 FROM [favClipTitle] ORDER BY 排序 ASC");
 	cTab = db.getTable("SELECT * FROM [favClipContent]");
 	db.close();	
@@ -138,7 +138,7 @@ winform.button2.oncommand = function(id,event){
 /*}}*/
 /*添加分类{{*/
 grid.addNewTitle = function(title){
-	db = sqlite( config.__userDbPath);
+	db = sqlite( config.tbmclip.userDbPath);
 	db.exec("INSERT INTO `favClipTitle`(??) VALUES(?)",{{'分类', '排序'},{title, #titleTab + 1}});
 	db.close();
 }
@@ -163,7 +163,7 @@ grid2.modifyContent = function(position,contentItem){
 		"标签" = contentItem[2],
 		"排序" = selIndex
 	};
-	db = sqlite( config.__userDbPath);
+	db = sqlite( config.tbmclip.userDbPath);
 	db.exec("UPDATE `favClipContent` SET ? WHERE ??",{ 
 		{
 			"内容" = contentItem[1],
@@ -180,7 +180,7 @@ grid2.modifyContent = function(position,contentItem){
 }
 grid2.newContent = function(position,contentItem){
 	var selIndex = position || owner.selIndex;
-	db = sqlite( config.__userDbPath);
+	db = sqlite( config.tbmclip.userDbPath);
 	var sql = "INSERT INTO `favClipContent` (??) VALUES (?);"
 	sql = sqlite.format(sql,{
 		{"分类","内容","标签","排序"},

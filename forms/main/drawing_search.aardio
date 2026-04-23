@@ -40,9 +40,9 @@ var fileLibMap = function(fullpath){
 	if !fullpath return ; 
 	import config;
 	var libPathMaps = {
-		"{config.__pdfLib}" = config.__pdfLib,
-		"{config.__qhcLib}" = config.__qhcLib,
-		"{config.__cabinetModelServer}" = config.__cabinetModelServer
+		"{config.qtip.pdfLib}" = config.qtip.pdfLib,
+		"{config.qtip.qhcLib}" = config.qtip.qhcLib,
+		"{config.qtip.cabinetModelServer}" = config.qtip.cabinetModelServer
 	}
 	fullpath = string.replace(fullpath,'%{}', libPathMaps)
 	return fullpath; 
@@ -51,9 +51,9 @@ var reverseFileLibMap = function(fullpath){
 	if !fullpath return ; 
 	import config;
 	var libPathMaps = {
-		"{config.__pdfLib}" = io.joinpath(config.__pdfLib),
-		"{config.__qhcLib}" = io.joinpath(config.__qhcLib),
-		"{config.__cabinetModelServer}" = io.joinpath(config.__cabinetModelServer)
+		"{config.qtip.pdfLib}" = io.joinpath(config.qtip.pdfLib),
+		"{config.qtip.qhcLib}" = io.joinpath(config.qtip.qhcLib),
+		"{config.qtip.cabinetModelServer}" = io.joinpath(config.qtip.cabinetModelServer)
 	}
 	var invertLibPathMaps = table.invert(libPathMaps);
 	//console.dumpTable(invertLibPathMaps)

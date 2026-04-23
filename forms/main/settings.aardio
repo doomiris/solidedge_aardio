@@ -7,6 +7,10 @@ button={cls="button";text="Save";left=533;top=86;right=662;bottom=146;color=0xD7
 cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;clipch=1;dl=1;dt=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=21};
 closeToTray={cls="checkbox";text="close to &tray";left=42;top=79;right=178;bottom=111;dl=1;dt=1;group=1;tabstop=1;z=4};
 createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=207;top=113;right=448;bottom=130;dl=1;dt=1;z=17};
+edit={cls="edit";left=244;top=454;right=686;bottom=492;dl=1;dr=1;dt=1;edge=1;vscroll=1;z=32};
+edit2={cls="edit";left=242;top=516;right=684;bottom=554;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=34};
+edit3={cls="edit";left=242;top=582;right=684;bottom=620;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=36};
+edit4={cls="edit";left=240;top=649;right=682;bottom=687;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=38};
 editCity={cls="edit";text="上海市";left=494;top=376;right=641;bottom=399;dl=1;dt=1;edge=1;tabstop=1;z=29};
 editDistict={cls="edit";text="浦东新区";left=495;top=347;right=642;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=28};
 editMobile={cls="edit";text="手机";left=495;top=271;right=642;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=26};
@@ -28,12 +32,16 @@ groupbox3={cls="groupbox";text="选项";left=31;top=47;right=470;bottom=194;dl=1
 groupbox4={cls="groupbox";text="SAP订单收货";left=470;top=220;right=690;bottom=412;dl=1;dt=1;edge=1;z=24};
 hotkey={cls="hotkey";left=670;top=9;right=739;bottom=29;dr=1;dt=1;edge=1;z=19};
 keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=206;top=141;right=447;bottom=158;dl=1;dt=1;z=18};
-listview={cls="listview";left=24;top=447;right=689;bottom=692;db=1;dl=1;dr=1;dt=1;edge=1;z=31};
+listview={cls="listview";left=28;top=439;right=220;bottom=684;db=1;dl=1;dt=1;edge=1;z=31};
 simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=42;top=143;right=178;bottom=175;dl=1;dt=1;tabstop=1;z=6};
 startupMinimized={cls="checkbox";text="startup &minimized";left=42;top=111;right=178;bottom=143;dl=1;dt=1;tabstop=1;z=5};
 static={cls="static";text="唤醒键";left=610;top=13;right=656;bottom=27;dr=1;dt=1;transparent=1;z=20};
+static2={cls="static";text="PDF Lib";left=245;top=438;right=407;bottom=450;dl=1;dr=1;dt=1;transparent=1;z=33};
 static3={cls="static";left=188;top=11;right=300;bottom=27;center=1;dl=1;dt=1;notify=1;transparent=1;z=23};
-static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=22}
+static4={cls="static";text="QHC Lib";left=243;top=500;right=405;bottom=512;dl=1;dr=1;dt=1;transparent=1;z=35};
+static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=22};
+static6={cls="static";text="Team Workspace";left=243;top=566;right=405;bottom=578;dl=1;dr=1;dt=1;transparent=1;z=37};
+static7={cls="static";text="Templates";left=241;top=633;right=403;bottom=645;dl=1;dr=1;dt=1;transparent=1;z=39}
 )
 /*}}*/
 
@@ -64,8 +72,15 @@ winform.button.oncommand = function(id,event){
 	var oldKey = config.setbm.wakeUpKey; 
 	config.setbm.wakeUpKey = winform.hotkey.value;
 	
+	config.qtip.pdfLib = winform.edit.text;
+	config.qtip.qhcLib = winform.edit2.text;
+	config.qtip.cabinetModelServer = winform.edit3.text;
+	config.qtip.templateLib = winform.edit4.text;
+
 	config.setbm.save();
 	config.settings.save();
+	config.qtip.save();
+	
 	if oldKey !== winform.hotkey.value
 		winform.msgInfo("唤起快捷键修改后需要重启TBM程序", 1000);
 	if mainForm
@@ -111,7 +126,7 @@ winform.group();
 
 import win.ui.grid;
 
-winform.listview.insertColumn("text",-1)
+winform.listview.insertColumn("AutoStart",-1)
 var grid = win.ui.grid(winform.listview)
 for k, v in config.autoStart
 	if type(v)=="table"
@@ -137,7 +152,10 @@ grid.onRightClick = function(item,subItem,nmListView){
 }
 
 
-
+winform.edit.text = config.qtip.pdfLib;
+winform.edit2.text = config.qtip.qhcLib;
+winform.edit3.text = config.qtip.cabinetModelServer;
+winform.edit4.text = config.qtip.templateLib;
 
 
 
