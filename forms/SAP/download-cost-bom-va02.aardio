@@ -262,10 +262,12 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.button2.oncommand = function(id,event){
+/*
 	import winex;
-	if(!winex.find(,"^P11\(1\)/220")){
+	if(!winex.find(,"^P11\(\d+\)/220")){
 		return winform.msgInfo("还没启动SAPGUI",500);
 	}
+*/
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="creating..."};
 	thread.invoke(createOrder, winform);
 }

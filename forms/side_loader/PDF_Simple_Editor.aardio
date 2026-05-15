@@ -1,7 +1,7 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="PDF简单编辑器";right=1083;bottom=737)
+var winform = win.form(text="PDF简单编辑器";right=1083;bottom=737);
 winform.add(
 bn_LT={cls="button";text='\uF0E2';left=988;top=8;right=1025;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=3};
 bn_RT={cls="button";text='\uF01E';left=1028;top=8;right=1064;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=2};
@@ -13,133 +13,139 @@ button6={cls="button";text='\uF054';left=548;top=13;right=575;bottom=40;dr=1;dt=
 button7={cls="button";text='\uF1C5';left=705;top=8;right=742;bottom=47;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=11};
 button8={cls="button";text='\uF014';left=749;top=7;right=786;bottom=46;dr=1;dt=1;font=LOGFONT(h=-18;name='FontAwesome');z=12};
 button9={cls="button";text='\uF1C1';left=664;top=8;right=701;bottom=47;dr=1;dt=1;font=LOGFONT(h=-19;name='FontAwesome');z=13};
-listview={cls="listview";left=5;top=57;right=163;bottom=626;border=1;db=1;dl=1;dt=1;z=9};
+listview={cls="listview";left=5;top=57;right=163;bottom=626;border={width=1};db=1;dl=1;dt=1;z=9};
 pageEdit={cls="edit";left=470;top=17;right=544;bottom=40;align="center";autohscroll=false;autovscroll=false;dr=1;dt=1;num=1;z=8};
-plus={cls="plus";left=171;top=57;right=1080;bottom=732;bgcolor=0xFFFFFF;border={color=0xFFA6CAF0;width=1};db=1;dr=1;dt=1;repeat="scale";z=1};
+plus={cls="plus";left=171;top=57;right=1080;bottom=732;bgcolor=0xFFFFFF;border={width={color=0xF0CAA6}};db=1;dr=1;dt=1;repeat="scale";z=1};
 splitter={cls="splitter";left=162;top=55;right=167;bottom=730;z=10}
-)
+);
 /*}}*/
-
 import fsys.dlg;
 import win.dlg.message;
-import win.ui.tooltip; 
+import win.ui.tooltip;
 import win.inputBox;
 import fsys.pdfium; 
-var tooltipCtrl = win.ui.tooltip(winform);//在窗口上创建tooltip控件
+
+var tooltipCtrl = win.ui.tooltip(winform); //在窗口上创建tooltip控件
 var pdf = fsys.pdfium();
 var pdfpath;
-pdf@.setRotation = function(n){
-/*
-# 完成这个函数, 把PDF当前页旋转n个90度. n为正数时顺时针旋转, 负数时逆时针旋转, 0不变;
-*/
-	if(!owner.currentPage) error("请先指定 pageNum 属性！",2);		
-	var currentRotation = ::PDFium.FPDFPage_GetRotation(owner.currentPage);
-	var newRotation = (currentRotation + (n % 4) + 4) % 4;		
-	::PDFium.FPDFPage_SetRotation(owner.currentPage, newRotation);
+
+// 将给 pdf 扩展旋转功能改为独立函数，避免重新创建对象时方法丢失
+var setPdfRotation = function(pdfObj, n){
+    /*
+    # 把PDF当前页旋转n个90度. n为正数时顺时针旋转, 负数时逆时针旋转, 0不变;
+    */
+    if(!pdfObj.currentPage) error("请先指定 pageNum 属性！", 2);     
+    var currentRotation = ::PDFium.FPDFPage_GetRotation(pdfObj.currentPage);
+    var newRotation = (currentRotation + (n % 4) + 4) % 4;      
+    ::PDFium.FPDFPage_SetRotation(pdfObj.currentPage, newRotation);
 }
 
 winform.splitter.split(winform.listview,winform.plus);
 
 winform.frmRefresh = function(){
-	//这样比较方便，可以用 plus 设置显示模式，性能也相对较好
-	winform.text =string.join(["PDF简单编辑器","-",io.splitpath(pdfpath).file]," ")
-	if pdf.pageNum{
-		winform.plus.background = pdf.asBitmap();
-		var textTab={fields={/*"left","top","right","bottom",*/"text"}}
-		for left,top,right,bottom,text in pdf.eachTextRect(){
-			table.push(textTab,{"left"=left,"top"=top,"right"=right,"bottom"=bottom,"text"=string.trim(text)})
-		}
-		winform.listview.setTable(textTab);
-	}
-	else
-		winform.plus.background = gdip.bitmap()
-	
+    winform.text = string.join(["PDF简单编辑器", "-", io.splitpath(pdfpath).file], " ")
+
+    // 修复 if 语句缺少括号的问题
+    if(pdf.pageNum){
+        winform.plus.background = pdf.asBitmap();
+        var textTab = {fields={"text"}}; //省略了部分无用表头
+        for left,top,right,bottom,text in pdf.eachTextRect(){
+            table.push(textTab,{left=left, top=top, right=right, bottom=bottom, text=string.trim(text)})
+        }
+        winform.listview.setTable(textTab);
+    }
+    else {
+        winform.plus.background = gdip.bitmap()
+    }
 }
+
 winform.listview.onDoubleClick = function(item,subItem,nmListView){
-	var editItem = winform.listview.getItemData(item);
-	var editTo = winform.inputBox("modify text","修改",editItem["text"]);
-	if !editTo return ;
-/*
-	# 修改指定文本内容
-*/
-	//pdf.modifySpecifyText(editItem["text"],editTo);
-	winform.frmRefresh();
+    var editItem = winform.listview.getItemData(item);
+    var editTo = winform.inputBox("modify text","修改",editItem["text"]);
+
+    if(!editTo) return; // 修复 if 缺少括号的问题
+
+    /*
+    # 修改指定文本内容
+    */
+    winform.msgboxErr("fsys.pdfium 不支持直接修改 PDF 文本内容！");
 
 
+    winform.frmRefresh();
 }
-//加载目录
-/*
-var bm = pdf.extractBookmarks()
-winform.treeview.insertItem( bm.asTree() )
 
-*/
-//点击目录切换页面
-/*
-winform.treeview.onSelChanged = function(hItem,data,nmTreeView){
-	if(data){
-		pdf.pageNum = data.pageIndex;		
-		winform.frmRefresh();
-	} 	
-}
-*/
 winform.plus.onDrawBackground = function(graphics,rc,backgroundColor,foregroundColor){
-	winform.pageEdit.setCueBannerText(string.join([pdf.pageNum,pdf.pageCount],"/"));
+    winform.pageEdit.setCueBannerText(string.join([pdf.pageNum, pdf.pageCount], "/"));
 }
+
 winform.bn_RT.oncommand = function(id,event){
-	pdf.setRotation(1);
-	winform.frmRefresh();
+    setPdfRotation(pdf, 1);
+    winform.frmRefresh();
 }
+
 winform.bn_LT.oncommand = function(id,event){
-	pdf.setRotation(-1);
-	winform.frmRefresh();
+    setPdfRotation(pdf, -1);
+    winform.frmRefresh();
 }
+
 winform.button4.oncommand = function(id,event){
-	pdfpath = fsys.dlg.open("pdf文件|*.pdf",'请选择要打开的 PDF 文件',,winform)
-	if !pdfpath return ; 
-	pdf = fsys.pdfium(pdfpath);
-	pdf.pageNum = 1;
-	winform.frmRefresh();
+    pdfpath = fsys.dlg.open("pdf文件|*.pdf", '请选择要打开的 PDF 文件', , winform);
+    if(!pdfpath) return;  // 修复 if 缺少括号的问题
+
+    pdf = fsys.pdfium(pdfpath);
+    pdf.pageNum = 1;
+    winform.frmRefresh();
 }
 
 winform.button3.oncommand = function(id,event){
-	var info = io.splitpath(pdfpath);
-	var newFilePath = fsys.dlg.saveOp("pdf文件|*.pdf",'保存当前 PDF 文件',info.dir,winform,info.file);
-	if !newFilePath return ; 
-	var succ = pdf.save(newFilePath);
-	if !succ win.msgboxErr(fsys.pdfium.lasterr());
-	else winform.msgInfo("已保存.",500)
+    var info = io.splitpath(pdfpath);
+    var newFilePath = fsys.dlg.saveOp("pdf文件|*.pdf",'保存当前 PDF 文件',info.dir,winform,info.file);
+
+    if(!newFilePath) return;  
+
+    var succ = pdf.save(newFilePath);
+    if(!succ) {
+        win.msgboxErr(fsys.pdfium.lasterr());
+    } else {
+        winform.msgInfo("已保存.", 500)
+    }
 }
 
 winform.button6.oncommand = function(id,event){
-	if !(pdf.pageNum < pdf.pageCount) return ; 
-	pdf.pageNum += 1;
-	winform.frmRefresh();
+    if(!(pdf.pageNum < pdf.pageCount)) return; 
+    pdf.pageNum += 1;
+    winform.frmRefresh();
 }
 
 winform.button5.oncommand = function(id,event){
-	if (pdf.pageNum <= 1) return ; 
-	pdf.pageNum -= 1;
-	winform.frmRefresh();
+    if(pdf.pageNum <= 1) return; 
+    pdf.pageNum -= 1;
+    winform.frmRefresh();
 }
 
 winform.pageEdit.onOk = function(ctrl,alt,shift){ 
-	var userGotoPage = tonumber(owner.text);	
-	if !userGotoPage return ;
-	if (userGotoPage < 1) userGotoPage = 1;
-	if (userGotoPage > pdf.pageCount) userGotoPage = pdf.pageCount;	
-	pdf.pageNum = userGotoPage;
-	winform.frmRefresh();	
-	return true;  	
+    var userGotoPage = tonumber(owner.text);    
+    if(!userGotoPage) return;
+
+    if(userGotoPage < 1) userGotoPage = 1;
+    if(userGotoPage > pdf.pageCount) userGotoPage = pdf.pageCount;  
+
+    pdf.pageNum = userGotoPage;
+    winform.frmRefresh();   
+    return true;    
 }
+
 winform.pageEdit.onFocusLost = function(){
-	owner.text = "";
+    owner.text = "";
 }
 
 winform.button7.oncommand = function(id,event){
-	var imgpath = fsys.dlg.open("图像文件|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.tif;*.jfif;",'请选择要插入的 图像 文件',,winform)
-	if !imgpath return ; 
+    var imgpath = fsys.dlg.open("图像文件|*.jpg;*.jpeg;*.png;*.gif;*.bmp;*.tif;*.jfif;",'请选择要插入的 图像 文件',,winform)
+    if(!imgpath) return; 
+
     var img = gdip.bitmap(imgpath);
-    if !img return ; 
+    if(!img) return; 
+
     pdf.createPage(pdf.pageNum, img.width, img.height);
     pdf.insertBitmap(img);
     img.dispose(); // 释放图片资源
@@ -147,62 +153,65 @@ winform.button7.oncommand = function(id,event){
 }
 
 winform.button8.oncommand = function(id,event){
-	var deletePageNum = pdf.pageNum;
-	pdf.deletePage(deletePageNum);
+    var deletePageNum = pdf.pageNum;
+    pdf.deletePage(deletePageNum);
 
-	var currentPage = deletePageNum; //默认显示后一页
-	if (pdf.pageCount==0) currentPage = 0
-	if (currentPage > pdf.pageCount) currentPage = pdf.pageCount; //显示最后一页
-	
-	if currentPage	pdf.pageNum = currentPage;
-	winform.frmRefresh();
+    var currentPage = deletePageNum; //默认显示后一页
+    if(pdf.pageCount == 0) currentPage = 0;
+    if(currentPage > pdf.pageCount) currentPage = pdf.pageCount; //显示最后一页
+
+    if(currentPage) pdf.pageNum = currentPage;
+    winform.frmRefresh();
 }
 
 winform.button9.oncommand = function(id,event){
-	var importPdfPath = fsys.dlg.open("PDF文件|*.pdf",'请选择要导入的 PDF 文件',,winform)
-	if !importPdfPath return ; 
-	var importPdf = fsys.pdfium(importPdfPath);
-	var pageCount = importPdf.pageCount;
-	importPdf.destroy();
-	var pageIndiceOrRange = null;
-	if (pageCount > 1) {
+    var importPdfPath = fsys.dlg.open("PDF文件|*.pdf",'请选择要导入的 PDF 文件',,winform)
+    if(!importPdfPath) return; 
 
-			var userInput = winform.inputBox(			
-		/*promot*/	"输入需要导入的页码, 例如: 1,3,5-9 ",
-		/*title*/	"此文件共有" + pageCount + "页",
-		/*default*/	"1-" ++ pageCount,
-		/*cuebannerText*/"此处Esc取消可中止导入, 输入空值则导入全部页"
-		/*password*/
-			)
-			if (userInput===null) return ; 
-			pageIndiceOrRange = userInput
-	}
-	
-    pdf.importPages(importPdfPath,pdf.pageNum +1,pageIndiceOrRange);
-    
-	if !pdf.pageNum pdf.pageNum = 1;
-	
+    var importPdf = fsys.pdfium(importPdfPath);
+    var pageCount = importPdf.pageCount;
+    importPdf.destroy();
+
+    var pageIndiceOrRange = null;
+    if(pageCount > 1) {
+        var userInput = winform.inputBox(           
+            "输入需要导入的页码, 例如: 1,3,5-9 ",
+            "此文件共有" + pageCount + "页",
+            "1-" ++ pageCount,
+            "此处Esc取消可中止导入, 输入空值则导入全部页"
+        )
+        if(userInput === null) return; 
+        pageIndiceOrRange = userInput
+    }
+
+    pdf.importPages(importPdfPath, pdf.pageNum + 1, pageIndiceOrRange);
+
+    if(!pdf.pageNum) pdf.pageNum = 1;
+
     winform.frmRefresh();
 }
+
 tooltipCtrl.add({
-	["button"] = "右转90度",
-	["button2"] = "左转90度",
-	["button4"] = "打开PDF文件",
-	["button3"] = "保存PDF文件",
-	["button6"] = "下一页",
-	["button5"] = "上一页",
-	["pageEdit"] = "输入页码回车跳转",
-	["button7"] = "插入图片页",
-	["button8"] = "删除当前页",
-	["button9"] = "导入其它PDF文档页",
+    ["button"] = "右转90度",
+    ["button2"] = "左转90度",
+    ["button4"] = "打开PDF文件",
+    ["button3"] = "保存PDF文件",
+    ["button6"] = "下一页",
+    ["button5"] = "上一页",
+    ["pageEdit"] = "输入页码回车跳转",
+    ["button7"] = "插入图片页",
+    ["button8"] = "删除当前页",
+    ["button9"] = "导入其它PDF文档页",
 })
 
 winform.button10.oncommand = function(id,event){
 
-
 }
+
+
 import domisoft;
-winform.listview.translateAccelerator= domisoft.ctrlC 
+winform.listview.translateAccelerator = domisoft.ctrlC;
+
 
 winform.show();
 win.loopMessage();

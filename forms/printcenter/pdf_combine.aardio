@@ -3,7 +3,7 @@ import win.ui;
 var winform = win.form(text="合并PDF";right=759;bottom=469;acceptfiles=1)
 winform.add(
 button={cls="button";text="合并PDF";left=648;top=424;right=752;bottom=456;db=1;dr=1;z=2};
-listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;msel=false;z=1};
+listview={cls="listview";left=0;top=0;right=760;bottom=416;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;multiSelect=false;z=1};
 static={cls="static";text="把要合并的文件拖放进来, 支持.pdf 和图片 .jpg .bmp .png .gif";left=8;top=429;right=354;bottom=445;db=1;dl=1;transparent=1;z=3};
 static2={cls="static";text="放进来后在文件名上点击右键调整顺序, 也可拖动调整顺序";left=8;top=448;right=354;bottom=464;db=1;dl=1;transparent=1;z=4}
 )
@@ -192,11 +192,49 @@ winform.button.oncommand = function(id,event){
             	mergedPdf.importPages(filepath,,pagesStr);
 			}
 			case "image" {
-            	var img = gdip.bitmap(filepath);
-            	if !img continue;
-                mergedPdf.createPage(i,img.width, img.height);
-                mergedPdf.insertBitmap(img);
-                img.dispose(); // 释放图片资源
+
+                var img = gdip.bitmap(filepath);
+                if !img continue;
+
+                // 默认页面尺寸设为图片原尺寸A4 595,842
+                var pgWidth, pgHeight = 595, 842; //img.width, img.height;
+                var lastPage = mergedPdf.pageCount;
+
+                // 如果存在上一页，获取上一页的尺寸，使 PDF 页面大小保持一致
+                if (lastPage > 0) {
+                    mergedPdf.pageNum = lastPage;
+
+                    // 修复点：fsys.pdfium 获取页面宽高应该用 pageWidth 和 pageHeight
+                    if (mergedPdf.pageWidth && mergedPdf.pageHeight) {
+                        pgWidth = mergedPdf.pageWidth;
+                        pgHeight = mergedPdf.pageHeight;
+                    }
+                }
+
+                // 追加页面 (如果最后需要留边距可以对 pgWidth / pgHeight 稍微调整)
+                var newPageNum = lastPage + 1;
+                mergedPdf.createPage(newPageNum, pgWidth, pgHeight);
+
+                // 焦点切换到新页面
+                mergedPdf.pageNum = newPageNum;
+
+                // 计算保持比例的缩放率
+                var scaleX = pgWidth / img.width;
+                var scaleY = pgHeight / img.height;
+
+                // 取最小缩放比以保证图片完整显示。如果图片比页面小，则不放大（限制最大缩放比例为 1）
+                var scale = math.min(scaleX, scaleY, 1); 
+
+                var dstWidth = img.width * scale;
+                var dstHeight = img.height * scale;
+
+                // 计算居中显示的坐标
+                var dstX = (pgWidth - dstWidth) / 2;
+                var dstY = (pgHeight - dstHeight) / 2;
+
+                // 插入图像
+                mergedPdf.insertBitmap(img, dstX, dstY, dstWidth, dstHeight);
+                img.delete(); // 释放图片资源
 			}
 		}
 	}

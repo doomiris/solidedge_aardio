@@ -156,7 +156,9 @@ winform.button.oncommand = function(id,event){
     sht = null;
     excel_2 = null;
     excel_0 = null;
+    winform.msgInfo("检查完成", 500);
     collectgarbage("collect");
+
 	
 }
 

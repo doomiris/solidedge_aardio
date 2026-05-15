@@ -22,15 +22,17 @@ var revise = function(hwnd,str,reviseOnly = false){
 	import win;
 	import FlaUI.UIA3;
 	//查找窗口，禁用模式匹配语法搜索窗口（首字符为 `@`）
-	var window = FlaUI.FindWindow("Teamcenter");
+	var window = FlaUI.FindWindow("javaw.exe",,"Teamcenter 13",3000);
 	if !window {
 		winform.edit.print("未找到窗口");
 		return;
 	}
+/*
 	if !string.startsWith(window.Name,"Teamcenter RAC",true){
 		winform.edit.print("未找到窗口 Teamcenter RAC");
 		return;
 	}	
+*/
 	//前置窗口
 	window.Focus();
 	
@@ -45,13 +47,13 @@ var revise = function(hwnd,str,reviseOnly = false){
 	//单击鼠标
 	mouse.click(24,6,ctrl);
 	winex.wait("修订 ::版本");
-	thread.delay(1000);
-	var m_window = FlaUI.FindWindow("javaw.exe",,"修订 ::版本 ");
-	thread.delay(500);
-	var ectrls  = m_window.FindAllByXPath(`//Edit[@ClassName="Edit"]`);	
-	var ectrl = FlaUI.AsTextBox(ectrls[2]);
 
+	var m_window = FlaUI.FindWindow("javaw.exe",,"修订 ::版本 ",5000);
 
+    thread.delay(2000);
+    var ectrls = m_window.FindAllByXPath(`//Edit[@ClassName="Edit"]`);  
+	thread.delay(2000);
+    var ectrl = FlaUI.AsTextBox(ectrls[2]);
 
 	if !reviseOnly { //选中则只升版不改描述
 		ectrl.Enter(string.trim(str));

@@ -3,20 +3,21 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=470;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-custom={cls="custom";text="loading...";left=0;top=0;right=760;bottom=470;db=1;dl=1;dr=1;dt=1;z=1}
+richedit={cls="richedit";left=0;top=0;right=760;bottom=470;ah=1;autohscroll=false;aw=1;clipch=1;db=1;dl=1;dr=1;dt=1;editable=1;hideSel=false;link=1;multiline=1;readonly=1;transparent=1;valign="top";vscroll=1;wrap=1;z=1}
 )
 /*}}*/
 
 import config;
+/*
 import web.form.simpleMarkdown;
 var wb = web.form.simpleMarkdown(winform.custom);
 
-
+*/
 
 var loadUpdateLog = function(){
-	var text = string.load("~\update_history.md")
-	if !text  return ; 
-	wb.writeDelta(text);
+	var txt = string.load("~\update_history.txt");
+	if txt
+		winform.richedit.text = txt;
 }
 
 /**

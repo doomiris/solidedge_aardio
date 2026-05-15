@@ -7,7 +7,7 @@ _path = io.appData("Temp");
 /*
 _toFolder = "\\CCNSIA1A\SEParts\Cabinet\QHC图纸库"
 */
-_toFolder = config.__qhcLib;
+_toFolder = config.qtip.qhcLib;
 fsys.enum( _path , "tc_*",
 	function(dir,filename,fullpath,findData){ 
 		if(filename){ 
@@ -58,7 +58,7 @@ var add2pdfDB = function(fullname){
 		)
 	`,{})
 */
-	db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {filename, "{config.__qhcLib}"} } }); 
+	db.exec("INSERT INTO `Lib`(文件名,路径) VALUES @values",{ values = { {filename, "{config.qtip.qhcLib}"} } }); 
 	db.close();
 	
 }

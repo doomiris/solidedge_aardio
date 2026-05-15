@@ -1,4 +1,5 @@
 //SAP VM
+import win;
 import web.script;
 var table = ..table;
 var string = ..string;
@@ -53,37 +54,39 @@ var getQhcCityCode = function(cityName){
 }
 
 /*}}*/
+
 namespace SAP;
 class vm{
-	ctor( ... ){
-		this.instance = ...;
+	ctor(){
 		this.ovm = ..web.script("VBScript");
 		this.ovm.allowUi = true;
+		this.topHwnd = ..win.find("SAP_FRONTEND_SESSION"); 
 		this.ovm.script = /*
-			dim instance
-			instance = 0
+			Dim SapGuiAuto, application, connection, session
+			Dim topHwnd, wnd
+			topHwnd = 0
 			If Not IsObject(application) Then
-   				Set SapGuiAuto  = GetObject("SAPGUI")
-   				
-   				Set application = SapGuiAuto.GetScriptingEngine
+   				Set SapGuiAuto  = GetObject("SAPGUI")   				
+   				Set application = SapGuiAuto.GetScriptingEngine()
 			End If
 		*/
-		if this.instance
-			this.ovm.script.instance = tonumber(this.instance);
+
+		if this.topHwnd
+			this.ovm.script.topHwnd = tonumber(this.topHwnd);
+
 		this.ovm.script = /*
-			on error resume next
-			If Not IsObject(connection) Then
-   				Set connection = application.Children(0)
-			End If
-			'If connection Is Nothing Then msgbox "请先启动SAP"
-			on error goto 0
-		*/
-				
-		if !this.ovm.script.connection return null;
-		this.ovm.script = /*
-			If Not IsObject(session) Then
-   				Set session = connection.Children(CLng(instance))
-			End If
+    		For Each connection In application.Children
+        		For Each osession In connection.Children
+            		Set wnd = osession.findById("wnd[0]")
+            		If Not (wnd Is Nothing) Then
+                		' 将句柄强制转为字符串比对, 避免 VBScript 出现长整型溢出错误
+                		If CStr(wnd.Handle) = CStr(topHwnd) Then
+                    		 Set session = osession
+                    		exit for
+                		End If
+            		End If
+        		Next
+    		Next
 		*/
 		this.ovm.script = /*
 			If IsObject(WScript) Then
@@ -169,9 +172,15 @@ namespace vm{
 		}
 		proxy@._set = function(s,n){
 			select(s) {
-				case "text","selected","Text" {
+				case "text","Text" {
 					if !n return ; 
 					vm.script = `obj.` + s + `= "` + n + `"`;
+				}
+				case "selected" {
+					if (n===true)
+						vm.script = `obj.` + s + `= True`;
+					elseif(n===false)
+						vm.script = `obj.` + s + `= False`;
 				}
 			}
 		}
@@ -270,6 +279,14 @@ namespace vm{
 	};
 	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
 		var vm = owner;
+		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
+		vm.exec();
+	};
+	addDirectMatCS15= function(code = "0841",wnd = "0"){
+		var vm = owner;
+		vm.findById("wnd[0]/usr/chkRC29L-DIRKT").selected = true
+		vm.findById("wnd[0]/usr/chkRC29L-MATTP").selected = true
+		vm.findById("wnd[0]/tbar[1]/btn[5]").press()
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
 		vm.exec();
 	};

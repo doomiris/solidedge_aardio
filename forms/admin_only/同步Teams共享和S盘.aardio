@@ -1,0 +1,110 @@
+import console; 
+//# 等待到晚上20:00后再开始后面的程序.
+console.showLoading("等待时间到达 20:00...");
+while( time().hour < 20 ){
+	sleep(1000);
+}
+var sourceFolder = {
+	[1]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\Monaxis",
+	[2]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\CDU",
+/*
+	[3]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\CIF",
+	[4]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\E6",
+	[5]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\E6 SV",
+	[6]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\ICF Phase II",
+	[7]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\Service_Counter",
+	[8]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\气冷器",
+	[9]="C:\Users\ccl100100\CCR\CCR Detail Design - S - S\热泵蒸发器"
+*/
+
+};
+var targetFolder = "S:\Cabinet\";
+
+/*
+# 把sourceFolder所有内容(含子文件夹)同步到targetFolder里的同名文件夹里, 复制时间较新的文件, 时间相同则跳过, 显示进度
+*/
+import fsys;
+import fsys.path;
+import fsys.file;
+import console.progress;
+
+var bar = console.progress();
+var fileList = {};
+
+console.showLoading("正在扫描文件...");
+
+// 遍历源文件夹数组
+for i, srcDir in sourceFolder {
+
+    // 获取当前源文件夹自身的名称 (例如 "AMADP"、"CDU")
+    var folderName = io.splitpath(srcDir).file; 
+
+    fsys.enum( srcDir, "*.*",
+        function(dirname,filename,fullpath,findData){ 
+            if(filename){
+                // 算出文件相对于当前源文件夹的路径 (例如 "test.txt" 或 "sub\test.txt")
+                var relPath = fsys.path.relative(fullpath, srcDir);
+
+                // 拼上外层文件夹的名字，实现同步到 targetFolder 下的"同名文件夹里"
+                var rel = io.joinpath(folderName, relPath);
+
+                // 将完整源路径和计算好的相对路径作为一个表存入，供后续使用
+                table.push(fileList, {
+                    src = fullpath;
+                    rel = rel;
+                });
+            }
+        } 
+    );
+}
+
+
+var total = #fileList;
+for(i=1; total; 1){
+	var src = fileList[i].src;
+	var rel = fileList[i].rel;
+	var dst = io.joinpath(targetFolder, rel);
+	
+	// 更新进度显示
+	bar.setProgress(math.round(i / total * 100), "正在处理: " + rel);
+	
+	var needCopy = true;
+	
+	// 如果目标文件存在，则对比修改时间
+	if(io.exist(dst)){
+		var fSrc = fsys.file(src, "rb");
+		var fDst = fsys.file(dst, "rb");
+		
+		if(fSrc && fDst){
+			var _, _, m1 = fSrc.getTime();
+			var _, _, m2 = fDst.getTime();
+			
+			var t1 = time();
+			if(m1) t1.fromFileTime(m1);
+			
+			var t2 = time();
+			if(m2) t2.fromFileTime(m2);
+			
+			// 如果源文件时间小于等于目标文件时间，则跳过
+			if(tonumber(t1) <= tonumber(t2)){
+				needCopy = false;
+			}
+		}
+		if(fSrc) fSrc.close();
+		if(fDst) fDst.close();
+	}
+	
+	if(needCopy){
+		var dstDir = fsys.getParentDir(dst);
+		if(!io.exist(dstDir)){
+			fsys.createDir(dstDir);
+		}
+		//console.log(src, des)
+		fsys.copy(src, dst);
+	}
+}
+
+// 清除进度条并打印完成信息
+bar.reset();
+console.log("同步完成！共扫描处理 " + total + " 个文件。");
+console.pause();

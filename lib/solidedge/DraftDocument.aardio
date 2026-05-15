@@ -420,7 +420,7 @@ namespace DraftDocument{
 
 	replaceNewTitleBlock = function(DFT){
 		import config
-		_tPath = ..io.joinpath(config.__templateLib, "Draft.dft");
+		_tPath = ..io.joinpath(config.qtip.templateLib, "Draft.dft");
 		DFT := owner;
 		var Sht = DFT.ActiveSheet;
 		var x,y = DFT.getTitleBlockOrigin(Sht);

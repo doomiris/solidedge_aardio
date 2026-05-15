@@ -533,7 +533,51 @@ getActiveAppName = function(){
      return title, exePath, hwnd; 
 }
 
+getTopSAPInstance = function(){
+	import web.script;
 
+	var topHwnd = win.find("SAP_FRONTEND_SESSION"); 
+	if(!topHwnd) return;
+
+	var vbsCode = /*
+Function GetSessionNumberByHwnd(topHwndStr)
+    GetSessionNumberByHwnd = 0
+    On Error Resume Next
+    Dim sapGuiAuto, app, conn, session, wnd
+    Set sapGuiAuto = GetObject("SAPGUI")
+    If sapGuiAuto Is Nothing Then Exit Function
+    Set app = sapGuiAuto.GetScriptingEngine()
+    If app Is Nothing Then Exit Function
+    
+    For Each conn In app.Children
+        For Each session In conn.Children
+            Set wnd = session.ActiveWindow
+            If Not (wnd Is Nothing) Then
+                ' 将句柄强制转为字符串比对, 避免 VBScript 出现长整型溢出错误
+                If CStr(wnd.Handle) = CStr(topHwndStr) Then
+                    GetSessionNumberByHwnd = session.Info.SessionNumber
+                    Exit Function
+                End If
+            End If
+        Next
+    Next
+End Function
+	*/
+
+	// 创建 VBScript 执行引擎
+	var vbs = web.script("VBScript");
+	vbs.AddCode(vbsCode);
+
+	// 执行函数，将 aardio 的句柄数值转为字符串后传入
+	var sessionNumber = vbs.script.GetSessionNumberByHwnd(tostring(topHwnd));
+	vbs.reset()
+	vbs = null
+	collectgarbage("collect");
+	if(sessionNumber && sessionNumber > 0){
+		return sessionNumber - 1; 
+	}
+	//中途如果关闭了一个窗口会报错
+}
 
 /**intellisense(domisoft)
 clearExcelCorpse( ) = 清理异常的excel进程

@@ -403,7 +403,7 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 				if !title return ;
     			import SAP.vm;
     			var vm = SAP.vm();
-				var kw = string.keywords(["组织级别","展开 BOM","使用位置","交货地点","库存概览","显示物料 BOM"]);
+				var kw = string.keywords(["组织级别","展开 BOM","使用位置清单：物料: 视图","交货地点","库存概览","显示物料 BOM","使用位置清单：物料：初始屏幕"]);
 				switch( kw.findOne(title), {  
 					[1]: λ () vm.addPlantCodeMM03();
 					[2]: λ () vm.addPlantCodeCS12();
@@ -411,6 +411,7 @@ hkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 					[4]: λ () vm.addReciptAddr();
 					[5]: λ () vm.addPlantCodeMMBE();
 					[6]: λ () vm.addPlantCodeCS03();
+					[7]: λ () vm.addDirectMatCS15();
 
 				})
 				

@@ -16,7 +16,7 @@ listview4={cls="listview";left=8;top=227;right=216;bottom=638;ah=1;aw=1;db=1;dt=
 listview_Characteristic_statement={cls="listview";left=537;top=440;right=993;bottom=728;ah=1;aw=1;db=1;dr=1;edge=1;fullRow=1;z=14};
 listview_Characteristic_value={cls="listview";left=536;top=88;right=992;bottom=431;ah=1;aw=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
 listview_Characteristics={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=2};
-listview_Classification={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;z=1};
+listview_Classification={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;multiSelect=false;z=1};
 splitter={cls="splitter";left=216;top=87;right=223;bottom=637;ah=1;db=1;dt=1;z=4};
 splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;z=5};
 splitter3={cls="splitter";left=8;top=218;right=216;bottom=225;aw=1;horz=1;z=13};
@@ -330,38 +330,56 @@ var product = function(arr){
 }
 winform.listview_Characteristic_statement.refresh = function(){
 	winform.listview_Characteristic_statement.clear(true);
-	
+
 	//获取用户选中的特性列表
 	var selectedCharacteristic = domisoft.getSelectedText(winform.listview_Characteristics);
-	
+
 	//根据特性列表分别查找特性值, 
 	var CharacteristicValues = {}
 	for (i=1; #selectedCharacteristic) //特性值列表保存在不同的键中
 		 CharacteristicValues[i] = searchOption(selectedCharacteristic[i]);
 
 	var statement = {};
+	var fields = {"语句"}; // 定义表头字段列表，首列为"语句"
+
 	for (i=1; #CharacteristicValues){
 		statement[i] = {};
-		for(j=1; #CharacteristicValues[i]) //把特性值生成语句格式
-			table.push(statement[i], { CharacteristicValues[i][j]["特性"] ++ " = '" ++ CharacteristicValues[i][j]["特性值"] ++ "'"})
-	
+		var charName;
+		for(j=1; #CharacteristicValues[i]){
+			charName = CharacteristicValues[i][j]["特性"];
+			// 把特性名和特性值单独存放，以便后期提取到独立列中
+			table.push(statement[i], { 
+				语句 = charName ++ " = '" ++ CharacteristicValues[i][j]["特性值"] ++ "'";
+				特性 = charName;
+				特性值 = CharacteristicValues[i][j]["特性值"];
+			});
+		}
+		// 将查找出的特性名称加入到列标题字段中
+		if(charName) table.push(fields, charName); 
 	}
+
 	if #statement>5 return ; //特性超过5个就不运算了, 结果太多会卡
 	if !statement return ; 
 	table.removeByValue(statement,null);
 	if !#statement return ;
+
 	var tab = product(statement);
-	
+	var resultTab = { fields = fields }; // 新的表，绑定了动态列标题
+
 	for (i=1; #tab){
 		if i>128 break; //语句超过128条就不运算了, 结果太多会卡
-		var x ={}
-		for(j=1; #tab[i])
-			table.push(x, table.unpack(tab[i][j]))
-		tab[i] = ["语句" : string.join(x, " AND ")	]
+		var stmtList = {};
+		var row = {};
+		for(j=1; #tab[i]){
+			table.push(stmtList, tab[i][j].语句);
+			// 动态增加列数据：键为特性名称，值为对应的特性值
+			row[ tab[i][j].特性 ] = tab[i][j].特性值; 
+		}
+		row["语句"] = string.join(stmtList, " AND ");
+		table.push(resultTab, row);
 	}
 
-	tab.fields = {"语句"}
-	winform.listview_Characteristic_statement.setTable(tab);
+	winform.listview_Characteristic_statement.setTable(resultTab);
 }
 winform.listview4.onSelChanged = function(selected,item,subItem,nmListView){
 	var c = owner.getItemText(item,1);
@@ -427,6 +445,84 @@ winform.listview_Characteristic_statement.onRightClick = function(item,subItem,n
 	pmenu.popup(x, y,true);
 	
 }
+/*
+# 给winform.listview_Characteristic_statement增加点击列标题可以排序的功能,左键点击切换正反序, 右键点击取消排序
+# 允许点击多列综合排序,
+*/
+/**
+var sortKeys = {};
+var sortData = function(){
+	var items = winform.listview_Characteristic_statement.items;
+	if(!items || !#items) return;
+	if(!#sortKeys) return;
+	
+	table.sort(items, function(b){
+		var a = owner;
+		for(i=1; #sortKeys){
+			var col = sortKeys[i].col;
+			var desc = sortKeys[i].desc;
+			var va = a[col];
+			var vb = b[col];
+			
+			var na = tonumber(va);
+			var nb = tonumber(vb);
+			if(na !== null && nb !== null){
+				if(na != nb) return desc ? na > nb : na < nb;
+			}else{
+				var sa = tostring(va) || "";
+				var sb = tostring(vb) || "";
+				if(sa != sb) return desc ? sa > sb : sa < sb;
+			}
+		}
+		return false;
+	});
+	winform.listview_Characteristic_statement.items = items;
+}
+
+winform.listview_Characteristic_statement.onColumnClick = function(column){
+	var exist = false;
+	for(i=1; #sortKeys){
+		if(sortKeys[i].col == column){
+			sortKeys[i].desc = !sortKeys[i].desc;
+			var item = table.remove(sortKeys, i);
+			table.insert(sortKeys, item, 1);
+			exist = true;
+			break;
+		}
+	}
+	if(!exist){
+		table.insert(sortKeys, {col=column, desc=false}, 1);
+	}
+	sortData();
+}
+
+var hwndHeader = ::SendMessage(winform.listview_Characteristic_statement.hwnd, 0x101F/*_LVM_GETHEADER*/, null, null);
+import win.subclass;
+win.subclass(hwndHeader, function(hwnd,message,wParam,lParam){
+	if(message == 0x204/*_WM_RBUTTONDOWN*/){
+		var x = ::LOWORD(lParam);
+		var y = ::HIWORD(lParam);
+		var hti = {
+			struct pt = ::POINT(x, y);
+			int flags;
+			int iItem;
+		}
+		::SendMessageByStruct(hwndHeader, 0x1206/*_HDM_HITTEST*/, 0, hti);
+		
+		if(hti.iItem >= 0){
+			var column = hti.iItem + 1;
+			for(i=1; #sortKeys){
+				if(sortKeys[i].col == column){
+					table.remove(sortKeys, i);
+					break;
+				}
+			}
+			if(#sortKeys) sortData();
+		}
+	}
+});
+**/
+
 winform.button.oncommand = function(id,event){
 			loadcodex("\forms\admin_only\BOM_OD_LIB.aardio");
 }

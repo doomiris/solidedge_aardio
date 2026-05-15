@@ -30,7 +30,7 @@ winform.frmReLoad = function(){
 			try{
 				var s = com.GetTypeInfo(object).GetDocumentation().name;
 				if s = "_Workbook"
-					if string.keywords('BOM|申请|BG').findOne(displayName)
+					if string.keywords('BOM|申请|BG|init').findOne(displayName)
 						winform.combobox2.add(displayName);
 			}
 		}
@@ -360,7 +360,7 @@ winform.button.oncommand = function(id,event){
 	) 
 
 	winform.button.disabledText = null;
-	winform.msgInfo(succ, 1000);
+	winform.msgInfo("检查完成", 500);
 	mylist = null;
 }
 

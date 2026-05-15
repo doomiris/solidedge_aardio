@@ -379,9 +379,9 @@ try{
     com.Release(excel_0)
 }
 
-	winform.msgInfo("完成",1000)
+	winform.msgInfo("检查完成", 500);
     collectgarbage("collect");
-	
+
 }
 
 /*点击定位{{*/

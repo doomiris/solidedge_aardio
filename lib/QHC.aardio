@@ -515,6 +515,25 @@ formatCostBom = function(sht){
 	var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
 
 
+/*
+	# 判断nwk是否正被Excel打开, 如果是打开状态则通过Excel弹出提示关闭
+*/
+	import win;
+	while( ..io.exist(nwk) ){
+		var file = ..io.file(nwk, "r+b");
+		if( file ){
+			file.close();
+			break;
+		}
+		
+		var hwnd = null;
+		try{ hwnd = wk.Application.Hwnd; }
+		
+		var res = win.msgbox("文件已被打开，请关闭该文件后再点击【确定】继续！" ++ '\r\n' ++ nwk, "文件被占用", 1 /*_MB_OKCANCEL*/ | 0x30 /*_MB_ICONWARNING*/, hwnd);
+		if(res == 2 /*_IDCANCEL*/){
+			return;
+		}
+	}
 	
 	wk.SaveAs(nwk, 51 /* xlWorkbookDefault */);
 	

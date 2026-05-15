@@ -1,0 +1,49 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="复制目录结构";right=759;bottom=469)
+winform.add(
+button={cls="button";text="复制目录结构";left=544;top=366;right=694;bottom=410;db=1;dr=1;z=3};
+sourcePath={cls="edit";left=41;top=52;right=697;bottom=99;dl=1;dr=1;dt=1;edge=1;multiline=1;z=1};
+targetPath={cls="edit";left=40;top=119;right=696;bottom=166;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
+)
+/*}}*/
+
+/*
+# 点击按钮后把soucePath指定的路径内所有子目录结构复制到 targetPath里
+# 只复制目标结构, 不复制文件
+
+*/
+winform.button.oncommand = function(id,event){
+	var src = string.trim(winform.sourcePath.text, '" ');
+	var dst = string.trim(winform.targetPath.text, '" ');
+	
+	if(!#src || !#dst){
+		return winform.msgboxErr("源路径或目标路径不能为空！");
+	}
+	
+	import fsys;
+	if(!fsys.isDir(src)){
+		return winform.msgboxErr("源路径不是有效的目录！");
+	}
+	
+	winform.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"};
+	
+	// 遍历源目录下的所有文件与子目录
+	fsys.enum( src, "*.*",
+		function(dirname,filename,fullpath,findData){ 
+			// filename 为 null 时表示当前遍历到的是目录
+			if(!filename){ 
+				var relPath = fsys.path.relative(fullpath,src);
+				if(relPath){
+					var newDir = io.joinpath(dst,relPath);
+					fsys.createDir(newDir);
+				}
+			}
+		} 
+	);
+	
+	winform.button.disabledText = null;
+	winform.msgbox("目录结构复制完成！");
+}
+winform.show();
+win.loopMessage();
