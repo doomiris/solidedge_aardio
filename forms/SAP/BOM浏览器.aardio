@@ -8,9 +8,9 @@ button={cls="button";text="搜索";left=162;top=8;right=225;bottom=40;dl=1;dt=1;
 chkFromServer={cls="checkbox";text="查看共享版本";left=743;top=33;right=931;bottom=51;dr=1;dt=1;z=9};
 custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;cp=1;dl=1;dr=1;dt=1;z=8};
 edit={cls="edit";left=801;top=5;right=1007;bottom=31;dr=1;dt=1;edge=1;z=4};
-edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hidesel=1;tabstop=1;z=6};
+edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hideSel=1;tabstop=1;z=6};
 listview={cls="listview";left=228;top=54;right=1012;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;vscroll=1;z=1};
-listview2={cls="listview";left=0;top=53;right=224;bottom=469;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;msel=false;vscroll=1;z=2};
+listview2={cls="listview";left=0;top=53;right=224;bottom=469;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;multiSelect=false;vscroll=1;z=2};
 splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;z=3};
 static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;align="right";dr=1;dt=1;transparent=1;z=5}
 )
@@ -30,6 +30,7 @@ import tarray;
 import win.inputBox;
 import QHC;
 import win.dlg.message;
+import key;
 
 winform.bindConfig( config.BOMExplorer,{
 	checkbox = checked	
@@ -56,52 +57,86 @@ grid2.reset = grid.reset;
 grid.onSortColumn = domisoft.listColSort;
 var tbar;
 var resetToolbar = function(){
-	if tbar tbar.close();
-	tbar = win.ui.toolbar(winform.custom);		
-	tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/);	
-	tbar.showLabel = true; //在按钮上显示文字
-	tbar.imageList = win.imageList(0,0).loadIcon(null); //隐藏图标
-	tbar.add("❌ 重置",
-		function(){
-			for (i=1; #tbar.buttons)
-				tbar.buttons[i].checked = false;
-			grid.reset()
-		}
-	)
+    if tbar tbar.close();
+    tbar = win.ui.toolbar(winform.custom);      
+    tbar.create( style = 0x1000/*_TBSTYLE_LIST*/ + 0x200/*_TBSTYLE_WRAPABLE*/); 
+    tbar.showLabel = true; 
+    tbar.imageList = win.imageList(0,0).loadIcon(null); 
+    tbar.add("❌ 重置",
+        function(){
+            for (i=1; #tbar.buttons)
+                tbar.buttons[i].checked = false;
+            grid.reset()
+        }
+    )
 }
-
 
 winform.frmReLoad = function(){
-	var db = refreshDB();
-	var t = db.getTable("SELECT DISTINCT 大类 FROM [lib]");
-	var selIndex = grid2.lastSelIndex;
-	grid2.source = t;
-	grid2.setTable(grid2.source);
-	db.close();
-	grid2.onClick (selIndex);
+    var db = refreshDB();
+    var t = db.getTable("SELECT DISTINCT 大类 FROM [lib]");
+    var selIndex = grid2.lastSelIndex;
+    grid2.source = t;
+    grid2.setTable(grid2.source);
+    db.close();
+    grid2.onClick (selIndex);
 }
 
+// 修改后的筛选函数（支持 CTRL 多选 / 平常单选）
 var filterTag = function(id){
-	var txt = tbar.getButtonById(id).text;
-	var st = table.filter(grid.source, λ(v) table.find(v, txt));
-	st.fields = grid.source.fields;
-	grid.clear();
-	grid.setTable(st);
+    var isCtrlPressed = key.getState("CTRL"); 
+
+    if (!isCtrlPressed) {
+        for (i=1; #tbar.buttons) {
+            var btn = tbar.buttons[i];
+            if (btn.id != id) {
+                btn.checked = false; 
+            }
+        }
+    }
+
+    var selectedTags = {};
+    for (i=1; #tbar.buttons) {
+        var btn = tbar.buttons[i];
+        if (btn.checked && btn.text != "❌ 重置") {
+            table.push(selectedTags, btn.text);
+        }
+    }
+
+    if (#selectedTags == 0) {
+        grid.reset();
+        return;
+    }
+
+    // AND 筛选：数据行必须包含所有 selectedTags
+    var st = table.filter(grid.source, function(row) {
+        for(i=1; #selectedTags) {
+            if(!table.find(row, selectedTags[i])) {
+                return false; 
+            }
+        }
+        return true; 
+    });
+
+    st.fields = grid.source.fields;
+    grid.clear();
+    grid.setTable(st);
 }
 
 var getTags = function(tab,fields){
-	var t= {};
-	for (i=1; #fields)
-		table.append(t, tarray.getCol(tab, fields[i]));
-		
-	t = table.unique(t);
-	table.removeByValue(t, "");
+    var t= {};
+    for (i=1; #fields)
+        table.append(t, tarray.getCol(tab, fields[i]));
 
-	resetToolbar();
-	
-	for (i=1; #t)
-		tbar.add(t[i], filterTag, /*img*/ , /* id */,2/*_TBSTYLE_CHECK*/ + 4/*_TBSTYLE_GROUP*/+ 0x10/*_TBSTYLE_AUTOSIZE*/)
+    t = table.unique(t);
+    table.removeByValue(t, "");
+
+    resetToolbar();
+
+    for (i=1; #t)
+        // 去掉了 4/*_TBSTYLE_GROUP*/
+        tbar.add(t[i], filterTag, /*img*/ , /* id */, 2/*_TBSTYLE_CHECK*/ + 0x10/*_TBSTYLE_AUTOSIZE*/)
 }
+
 winform.edit.onChange = function(){ 
 	if(owner.onModified)owner.onModified(true);
 	var txt = owner.text;
@@ -144,7 +179,12 @@ grid.onDoubleClick = function(item,subItem,nmListView){
 	else {
 		var excel = com.GetOrCreateObject("Excel.Application");
 		
-		var wb = excel.WorkBooks.Open(f /* filename */,false /* UpdateLinks */,true /* ReadOnly */);
+        // 检测是否按住了 CTRL 键 (0x11 为 _VK_CONTROL 的虚拟键码)
+        var isCtrlPressed = key.getState("CTRL"); 
+        // 如果按住了 CTRL，则 readOnly 为 false（允许编辑）；否则为 true（只读）
+        var readOnly = !isCtrlPressed;
+        
+		var wb = excel.WorkBooks.Open(f /* filename */,false /* UpdateLinks */, readOnly /* ReadOnly */);
 		
 		excel.ActiveWindow.DisplayRibbon = true; 
 

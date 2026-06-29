@@ -120,6 +120,17 @@ grid2.onDoubleClick = function(item,subItem,nmListView){
 
 
 }
+grid2.selInsert= function(position,itemData){	
+    var selIndex = position || owner.selIndex;
+	var tab = owner.items;
+	var newItem = itemData ? table.array(itemData) : table.array(owner.columnCount, " ");
+	table.insert(tab, newItem, selIndex+1);
+	owner.replaceItems(tab);
+	var newIndex = selIndex + 1;
+	owner.selIndex = newIndex;
+	owner.setFocus();
+	return newIndex; 
+}
 
 /*插入新内容{{*/
 winform.button2.oncommand = function(id,event){

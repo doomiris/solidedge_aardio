@@ -6,7 +6,7 @@ import win.ui.tabs;
 var winform = win.form(text="扩展中心";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 edit={cls="edit";left=4;top=18;right=339;bottom=39;dl=1;dt=1;z=2};
-listview={cls="listview";left=0;top=41;right=759;bottom=470;db=1;dl=1;dr=1;dt=1;edge=1;msel=false;z=1}
+listview={cls="listview";left=0;top=41;right=759;bottom=470;db=1;dl=1;dr=1;dt=1;edge=1;multiSelect=false;z=1}
 )
 /*}}*/
 
@@ -24,6 +24,7 @@ import SAP.vm;
 import config;
 import fsys;
 import process.popen;
+import environment;
 
 var list = {fields = {[1] = "name",[2]="filename"}};
 

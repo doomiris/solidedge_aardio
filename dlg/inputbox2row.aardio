@@ -11,7 +11,7 @@ edit2={cls="edit";left=26;top=193;right=392;bottom=219;db=1;dl=1;dr=1;dt=1;edge=
 
 winform.onCancel = λ () winform.endModal();
 winform.button2.oncommand = winform.onCancel;
-winform.onOk = λ ()winform.endModal([winform.edit.text, winform.edit2.text]);
+winform.onOk = λ ()winform.endModal([winform.edit.text:"", winform.edit2.text:""]);
 winform.button.oncommand = winform.onOk;
 
 winform.show();

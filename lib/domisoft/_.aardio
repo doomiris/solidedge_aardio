@@ -54,6 +54,57 @@ clearExcelCorpse = function(){
 		}
 	)
 }
+CleanHiddenExcel = function(){
+    // 线程环境是独立的，必须在线程内部重新导入用到的所有库
+//            import console;
+    import process;
+    import win;
+    import winex.mainWindows;
+
+    //console.log("已接收到通知，正在后台线程执行 EXCEL 清理...");
+
+    var count = 0;
+    for processEntry in process.each("excel\.exe") {
+        var pid = processEntry.th32ProcessID;
+        var mainWindows = winex.mainWindows(pid);
+
+        var isHidden = true;
+        var hasChild = false;
+
+        if(mainWindows){
+            var hwnd = mainWindows.hwnd; 
+
+            if( win.isVisible(hwnd) ){
+                isHidden = false;
+            }
+
+            if( win.findEx(hwnd, 0) ){
+                hasChild = true;
+            }
+        }
+
+        if( isHidden && !hasChild ){
+//                   console.log("检测到无显示且无子窗口的 EXCEL 进程 PID:", pid, "，正在清理...");
+
+            var prcs = process(pid);
+            if(prcs){
+                prcs.terminate(); 
+                prcs.free();      
+//                      console.log("-> 进程结束成功！");
+            }
+            else {
+//                      console.log("-> 结束进程失败，可能权限不足，请尝试以管理员身份运行。");
+            }
+
+            count++;
+        }
+    }
+
+    if(count == 0){
+//               console.log("未检测到符合条件的 EXCEL 进程");
+    }
+}
+
 getComAppPath = function(keyword){
 	import process;
 	import process.cache; 
@@ -124,10 +175,10 @@ getSelectedText = function(listCtrl){
 		table.unshift(t, text);
 	return t; 
 }
+
 copySelectedItem = function(ctrl){
 		if !ctrl	ctrl = owner;
-		var doNotCopyColumns = ctrl.doNotCopyColumns;
-		doNotCopyColumns := [/* 防null报错 */];
+		var doNotCopyColumns = ctrl.doNotCopyColumns : [/* 防null报错 */];
 		
 		table.sort(doNotCopyColumns);
 		//table.reverse(doNotCopyColumns);
@@ -174,6 +225,74 @@ copySelectedItem = function(ctrl){
 		cliphtml.write(html,true,false);
 		return hTab; 
 }
+
+/**
+copySelectedItem = function(ctrl){
+    if (!ctrl) ctrl = owner;
+
+    // 如果未定义，给个空数组
+    var doNotCopyColumns = ctrl.doNotCopyColumns : [];
+
+    // 方案优化：将需要排除的列存入字典（哈希表），判断速度快且不需要给 doNotCopyColumns 排序
+    var skipCols = {};
+    for (i=1; #doNotCopyColumns) {
+        skipCols[ doNotCopyColumns[i] ] = true;
+    }
+
+    import ..win.clip;
+    import ..win.clip.html;
+
+    ..thread.invoke(stopExcelCutCopyMode);
+
+    var selected = ctrl.selected;
+    var sourceTab = ctrl.getTable(true);
+    var fields = ..table.shift(sourceTab);
+    var items = sourceTab;
+
+    var selTab = [];
+    if (ctrl.copyWithHeaders) {
+        ..table.push(selTab, fields); 
+    }
+
+    for (i=1; #selected){
+        ..table.push(selTab, items[selected[i]]);
+    }
+
+    // 按照 1 到 列数 顺序安全剔除不需要的列，保持绝对的原有顺序
+    for (i=1; #selTab){
+        var cacheTab = [];
+        var row = selTab[i];
+
+        // 按原数组的实际长度顺序循环
+        for(colIndex=1; #row){
+            // 如果当前列索引不在要排除的字典中，则按顺序 push 进新数组
+            if( !skipCols[colIndex] ){
+                ..table.push(cacheTab, row[colIndex]);
+            }
+        }
+        selTab[i] = cacheTab; // 替换成处理好的纯数组
+    };
+
+    /* clip添加纯文本格式 */
+    var txtTab = [];
+    for (i=1; #selTab){
+        ..table.push(txtTab, ..string.join(selTab[i], '\t'));
+    }
+    ..win.clip.write(..string.join(txtTab, '\r\n'));
+
+    /* clip添加HTML格式 */
+    var hTab = [];
+    for (i=1; #selTab){
+        ..table.push(hTab, selTab[i]);
+    }
+    var html = ..table.toHTML(hTab);  
+    var cliphtml = ..win.clip.html();
+    html = cliphtml.stringify(html);
+    cliphtml.write(html, true, false);
+
+    return hTab; 
+}
+**/
 copyTable = function(tab, selectedIndex){
 		if !#tab return ; 
 		select type(selectedIndex) {
@@ -225,57 +344,83 @@ ctrlC = function(msg){
 
 
 readClipHcode = function(){
+    import win.clip;
+    import dotNet.ocr;
 
-	import win.clip;
-	import dotNet.ocr;
-	var ocr = dotNet.ocr();
-	ocr.language = "en-US"
-	var hBmp = win.clip.readBitmap()
-	if(!hBmp){
-		//winform.edit.print("剪贴板未读取到图像")
-		return;
-	}
-	
-	var bmp = ..gdip.bitmap(hBmp);
-	var ocrRet = ocr.detectBitmap(bmp);
-    // 【关键修复】识别完成后,立即释放 GDI+ 和 GDI 图像对象,防止内存泄漏！
-    bmp.delete();
+    var hBmp = win.clip.readBitmap()
+    if(!hBmp) return;
+
+    var bmp = ..gdip.bitmap(hBmp);
+
+    // ==========================================
+    // 【关键步骤 1】图像 2 倍高质量双立方放大预处理
+    // ==========================================
+    var width = bmp.width * 2;
+    var height = bmp.height * 2;
+    var bmpBig = ..gdip.bitmap(width, height);
+    var graphics = ..gdip.graphics(bmpBig);
+
+    // 设置插值模式为高质量双立方（能使放大后的文字边缘平滑不失真）
+    graphics.interpolationMode = 7/*_InterpolationModeHighQualityBicubic*/;
+    graphics.drawImageRect(bmp, 0, 0, width, height);
+    graphics.delete(); // 释放临时绘图画布
+    bmp.delete();      // 释放原小图
+    // ==========================================
+
+    var ocr = dotNet.ocr();
+    ocr.language = "en-US";
+    var ocrRet = ocr.detectBitmap(bmpBig);
+
+    // 【关键修复】放大后的临时图像和 GDI 句柄必须安全释放，防止 GDI 泄露
+    bmpBig.delete();
     ::DeleteObject(hBmp); 
-	var t = {};
-	if(ocrRet){  
-		//winform.edit.text = ocrRet.text;
-		//winform.edit.text = "";
-		
-		import web.json;
-		for i,block in table.eachIndex(ocrRet.blocks){
-			var s = trim(block.text);
-			if string.startWith(s, "008")
-				s = "H" ++ s;
-			//	return ; 
-			s = replace(s,",","");
-			s = replace(s,"O","0");
-			s = replace(s,"B","8");
-			s = replace(s,"g","9");
-			s = replace(s,"€","6");
-			s = replace(s,"t","6");
-			s = replace(s,"S","5");
-			s = replace(s,"/","7");
-			s = replace(s," ","");
-			
-			if string.startWith(s, "8008")
-				s = replace(s, "8008", "H008", 1);
-			if string.startWith(s, "'-1")
-				s = replace(s, "'-1", "H");
-			if string.startWith(s, "11008")
-				s = replace(s, "11008", "H008");
-			if string.startWith(s, "1-1")
-				s = replace(s, "1-1", "H");
-			if string.startWith(s, "1--1")
-				s = replace(s, "1--1", "H");
-			table.push(t,s);
-		}
-	}
-	return t; 
+
+    var t = {};
+    if(ocrRet){  
+        for i, block in table.eachIndex(ocrRet.blocks){
+            var s = string.upper(trim(block.text)); // 统一转大写处理
+            if(!#s) continue;
+
+            // 1. 过滤掉常见 OCR 杂质（如两侧多出来的单引号、空格、逗号等）
+            s = string.replace(s, "[\s,']", ""); 
+
+            // 2. 纠正首字符被误判为 11、1-1、8、I 等导致 H 丢失的问题
+            // 用非捕获组匹配所有长得像 "H008" 的开头
+            s = string.replace(s, "^<<11|1\-1|1\-\-1|8|I|L>008>", "H008");
+
+            // 3. 如果前缀识别正确（或者符合特殊匹配），强制进入特定纠错
+            if( string.startsWith(s, "H008") || string.startsWith(s, "008") ){
+
+                // 如果漏了 H，补上 H
+                if(string.startsWith(s, "008")) s = "H" ++ s;
+
+                // 提取首字符 'H' 之后的部分单独处理（防止误伤首字母）
+                var part2 = string.slice(s, 2);
+
+                // 将后半部分中被误识别成英文的字符强行修复回数字
+                part2 = string.replace(part2, "O", "0"); // 欧 -> 零
+                part2 = string.replace(part2, "D", "0"); // D -> 零
+                part2 = string.replace(part2, "U", "0"); // U -> 零
+                part2 = string.replace(part2, "I", "1"); // I -> 一
+                part2 = string.replace(part2, "L", "1"); // L -> 一
+                part2 = string.replace(part2, "Z", "2"); // Z -> 二
+                part2 = string.replace(part2, "S", "5"); // S -> 五
+                part2 = string.replace(part2, "G", "9"); // G -> 九
+                part2 = string.replace(part2, "B", "8"); // B -> 八
+                part2 = string.replace(part2, "€", "6"); // 欧元符号 -> 六
+                part2 = string.replace(part2, "T", "6"); // T -> 六
+                part2 = string.replace(part2, "/", "7"); // 斜杠 -> 七
+
+                s = "H" ++ part2;
+            }
+
+            // 4. 验证最终格式：只有符合 H + 10位数字（如 H0080859056）格式的才收录
+           // if( string.match(s, "^H\d{10}$") ){
+                table.push(t, s);
+           // }
+        }
+    }
+    return t; 
 }
 getContentFromHTTP = function(url, parseJson = false){
 	import inet.http;
@@ -356,70 +501,41 @@ getFileDate = function(filename, formatString = "%Y/%m/%d %H:%M:%S"){
 sendFileTo = function(fullname, dest){
 	
 }
-/*
 listColSort = function(column, desc){
-	var name = owner.source.fields[column];
-    // 1. 规范化数据
-    for (i=1; #owner.source) {
-        // 如果当前行本身就是空行(null),则跳过
-        if (owner.source[i] === null) {
-            continue;
-        }
-        var val = owner.source[i][name];
-        if (val === null || val === "") {
-            owner.source[i][name] = "";
-        }
-        else {
-            if (math.isNumber(val)) {
-                owner.source[i][name] = tonumber(val);
-            }
-            else {
-                owner.source[i][name] = tostring(val);
-            }
-        }
-            }
-	table.sort(
-		owner.source, 
-		desc ?
-			(λ (next) math.toNumber(owner[name]) > math.toNumber(next[name])) :
-			(λ (next) math.toNumber(owner[name]) < math.toNumber(next[name]))
-    );  
+    var fields = owner.source ? owner.source.fields;
+    if(!fields) return;
 
-    owner.setTable( owner.source );
-	return true; //返回 true 允许当前列排序	
-};
-*/
-listColSort = function(column, desc){
-    var name = owner.source.fields[column];
+    var name = fields[column];
     if(!name) return;
 
-    var data = owner.source;
+    // 1. 获取当前界面正在显示的数据（即筛选后的结果）
+    var currentData = owner.getTable(fields); 
 
     // 定义一个内部函数用于提取可比较的值
     var getSortableValue = function(val){
         if( val === null || val === "" ) return ""; // 空值排在最前/最后
 
-        // 1. 如果已经是数值或看起来像数字
+        // 如果已经是数值或看起来像数字
         if( type(val) == "number" || ..math.isNumber(val) ){
             return tonumber(val);
         }
 
-        // 2. 尝试识别日期格式 (例如 2023/01/01 或 2023-01-01)
-        // 匹配常见的日期模式
+        // 尝试识别日期格式 (例如 2023/01/01 或 2023-01-01)
         if( type(val) == "string" && ..string.match(val,"^\d({2,4})[\/\-\.]\d({1,2})[\/\-\.]\d{1,2}") ){
             var tm = ..time(val); // 尝试解析
             if(tm) return tonumber(tm); // 返回时间戳数值用于比较
         }
 
-        // 3. 否则作为字符串处理（统一转小写以实现不区分大小写排序）
+        // 否则作为字符串处理（统一转小写以实现不区分大小写排序）
         return ..string.lower(tostring(val));
     };
 
-    ..table.sort(data, function(next) {
+    // 提取统一的排序比较函数
+    var compareFunc = function(next) {
         var a = getSortableValue(owner[name]);
         var b = getSortableValue(next[name]);
 
-        // 如果类型不同（例如数字和字符串混在一起）,强制转为字符串比较,防止报错
+        // 如果类型不同（例如数字和字符串混在一起）, 强制转为字符串比较, 防止报错
         if( type(a) != type(b) ){
             a = tostring(a);
             b = tostring(b);
@@ -427,12 +543,20 @@ listColSort = function(column, desc){
 
         if(desc) return a > b;
         return a < b;
-    });
+    };
 
-    owner.setTable(data);
+    // 2. 对当前显示的数据进行排序
+    ..table.sort(currentData, compareFunc);
+
+    // 3. 同时对后台全量数据源排序（这样在下次筛选、或重置时能保持同样的顺序）
+    if(owner.source){
+        ..table.sort(owner.source, compareFunc);
+    }
+
+    // 4. 将排序后的当前筛选结果重新写回列表视图
+    owner.setTable(currentData);
     return true; 
 };
-
 getUserFolder = function(corp){
 
 	corp := "CCR"

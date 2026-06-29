@@ -1,0 +1,202 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="管理Excel窗口信息";right=759;bottom=469)
+winform.add(
+listview1={cls="listview";left=13;top=22;right=212;bottom=453;db=1;dl=1;dt=1;edge=1;fullRow=1;z=1};
+listview2={cls="listview";left=224;top=22;right=734;bottom=449;db=1;dr=1;dt=1;edge=1;fullRow=1;z=2};
+splitter={cls="splitter";left=214;top=25;right=220;bottom=451;frame=1;z=3}
+)
+/*}}*/
+
+import win.ui.grid;
+import win.ui.menu;
+import process;
+import com;
+import winex;
+import winex.mainWindows;
+winform.splitter.split(winform.listview1, winform.listview2);
+
+// 初始化数据网格
+var grid1 = win.ui.grid(winform.listview1);
+var grid2 = win.ui.grid(winform.listview2);
+
+
+/*
+# grid1 列出当前用户打开的所有excel进程
+# grid2 切换选中项时, 列出选中进程的Excel内所有打开的文档
+# grid2 可以批量选择打开的文档, 右键菜单: 关闭选中的文件(放弃修改), 关闭选中的文件(保存修改)
+# grid1 右键菜单: 结束此进程(放弃所有修改), 结束此进程(保存所有修改), 刷新Excel进程
+# 使用grid自带的onRightClick方法创建右键菜单
+
+*/
+
+// 导入额外需要的库
+import winex.key;
+
+// 全局变量存储当前 grid2 对应的工作簿信息
+var currentWorkbooks = {}
+
+// 获取所有 Excel 进程信息
+var getExcelProcesses = function(){
+    var processes = {}
+    for processEntry in process.each("EXCEL.EXE") {
+        var pid = processEntry.th32ProcessID
+        // 查找该进程的所有 XLMAIN 窗口
+        var firstHwnd, firstTitle
+        for hwnd,title in winex.each("XLMAIN",,pid) {
+            firstHwnd = hwnd
+            firstTitle = title
+            break // 只取第一个窗口作为代表
+        }
+        table.push(processes, {pid=pid; title=firstTitle or ""; hwnd=firstHwnd})
+    }
+    return processes
+}
+
+// 获取指定进程的所有工作簿窗口
+var getWorkbooks = function(pid){
+    var workbooks = {}
+    var mainWindow = winex.mainWindows(pid);
+    var mhwnd = mainWindow.hwnd;
+
+
+    for hwnd,title,threadId,processId in winex.each("", ,mhwnd) { 
+		if (!title || #title==0)continue;
+        table.push(workbooks, {
+            hwnd = mhwnd;
+            docName = title;
+
+        })
+    }
+    
+
+    return workbooks
+}
+
+// 关闭工作簿窗口（通过窗口句柄）
+var closeExcelWorkbook = function(hwnd, save){
+/*
+	# 通过com遍历所有excel进程,通过hwnd
+*/
+}
+
+// 刷新 grid1
+var refreshGrid1 = function(){
+    grid1.clear()
+    var processes = getExcelProcesses()
+    for(i,p in processes){
+        grid1.addItem({text = {tostring(p.pid), p.title}})
+    }
+}
+
+// 刷新 grid2
+var refreshGrid2 = function(pid){
+    currentWorkbooks = getWorkbooks(pid)
+    grid2.clear()
+    for(i,wb in currentWorkbooks){
+        var hwnd = wb.hwnd;
+        grid2.addItem({text = {wb.docName, hwnd}})
+    }
+}
+
+
+// 设置列标题
+grid1.columns = [["PID",60],["窗口标题",-1]]
+grid2.columns = [["文档名",-1],["hwnd",80]]
+
+
+refreshGrid1()
+
+
+// grid1 选中项变化时更新 grid2
+grid1.onSelChanged = function(selected, item, subItem, nmListView){
+    if(selected){
+        var pid = winform.listview1.getItemText(item, 1)
+        if(pid) refreshGrid2(tonumber(pid))
+    }
+}
+// grid1 右键菜单
+grid1.onRightClick = function(item, subItem, nmListView){
+    var popmenu = win.ui.popmenu(winform)
+    popmenu.add('结束此进程(放弃所有修改)', function(id){
+        var pid = winform.listview1.getItemText(item, 1)
+        if(pid){
+            process.kill(tonumber(pid))
+            refreshGrid1()
+        }
+    })
+    popmenu.add('结束此进程(保存所有修改)', function(id){
+        var pid = winform.listview1.getItemText(item, 1)
+        if(pid){
+            var workbooks = getWorkbooks(tonumber(pid))
+            for(i,wb in workbooks){
+                winex.key.send(wb.hwnd, "^s")
+                sleep(200)
+            }
+            sleep(500)
+            process.kill(tonumber(pid))
+            refreshGrid1()
+        }
+    })
+    popmenu.add('刷新Excel进程', function(id){
+        refreshGrid1()
+    })
+    popmenu.popup()
+}
+
+// grid2 右键菜单
+grid2.onRightClick = function(item, subItem, nmListView){
+    // 获取所有选中行的索引（纯数组）
+    var indices = winform.listview2.selected
+    // 若没有选中行，则只对右键点击的行操作
+    if(#indices == 0) indices = {item}
+
+    if(#indices > 0){
+        var popmenu = win.ui.popmenu(winform)
+
+        // 菜单项：放弃修改
+		popmenu.add('关闭选中的文件(放弃修改)', function(id){
+    		for(i=1;#indices){
+        		var rowIdx = indices[i]
+        		var wb = currentWorkbooks[rowIdx]
+        		if(!wb) continue
+				closeExcelWorkbook(wb.hwnd,false)
+
+    		}
+    		// 刷新 grid2
+    		var selIndex = winform.listview1.selIndex
+    		if(selIndex && selIndex > 0){
+        		var pid = winform.listview1.getItemText(selIndex, 1)
+        		if(pid) refreshGrid2(tonumber(pid))
+    		}
+		})
+
+        // 菜单项：保存修改
+        popmenu.add('关闭选中的文件(保存修改)', function(id){
+            for(i=1;#indices){
+                var rowIdx = indices[i]
+                var wb = currentWorkbooks[rowIdx]
+                if(!wb) continue
+                closeExcelWorkbook(wb.hwnd,true)
+
+            }
+            // 刷新 grid2
+            var selIndex = winform.listview1.selIndex
+            if(selIndex && selIndex > 0){
+                var pid = winform.listview1.getItemText(selIndex, 1)
+                if(pid) refreshGrid2(tonumber(pid))
+            }
+        })
+
+        popmenu.popup()
+    }
+}
+
+// 如果 grid1 有数据，默认选中第一行
+if(winform.listview1.count > 0){
+    winform.listview1.selIndex = 1;
+}
+
+
+winform.show();
+win.loopMessage();

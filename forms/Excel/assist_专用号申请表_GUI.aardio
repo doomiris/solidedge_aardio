@@ -16,7 +16,7 @@ import config;
 import fsys.table;
 import QHC;
 import domisoft;
-
+import win.dlg.message;
 var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
@@ -48,7 +48,7 @@ winform.combobox2.onDropDown = winform.frmReLoad;
 
 winform.button.oncommand = function(id,event){
 	if !#winform.combobox2.selText return ; 	
-
+	win.setTopmost(winform.hwnd); 
 	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText)
 	excel_2 = sht.Parent.Application;
 	
@@ -208,7 +208,7 @@ winform.button.oncommand = function(id,event){
 	}
 	
     collectgarbage("collect");
-	
+		win.setTopmost(winform.hwnd, false); 
 }
 
 /*点击定位{{*/
@@ -223,6 +223,7 @@ winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	excel_2.ActiveWindow.ScrollRow = row;
 	sht = null;
 	excel_2 = null;
+	collectgarbage("collect");
 }
 /*}}*/
 
@@ -259,5 +260,10 @@ if !winform.parent
 	win.setForeground(winform.hwnd);
 if !winform.parent
 	winform.frmReLoad();
+winform.onClose = function(hwnd,message,wParam,lParam){
+    publish("CleanHiddenExcel"); 
+}
+
+
 win.loopMessage();
 return winform;

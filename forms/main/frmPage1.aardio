@@ -46,7 +46,7 @@ static7={cls="static";text="重量";left=269;top=105;right=299;bottom=124;dr=1;d
 static8={cls="static";text="版本";left=15;top=149;right=45;bottom=168;dl=1;dt=1;transparent=1;z=26};
 static9={cls="static";text='\uF0E2';left=24;top=24;right=40;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');notify=1;transparent=1;z=33};
 version={cls="edit";left=48;top=144;right=72;bottom=170;align="center";dl=1;dt=1;font=LOGFONT(h=-13);z=7}
-)
+);
 /*}}*/
 
 winform.show();
@@ -109,7 +109,6 @@ var loadFromTab = function(_blk){
 	winform.cb_approver.text = _blk["批准"];
 	winform.cb_approve_date.text = _blk["批准日期"];
 
-
 }
 /*}}*/
 /*loadDefaults{{*/
@@ -129,47 +128,42 @@ var loadDefaults = function(){
 	if (winform.version.text == "") winform.version.text = "00";
 }
 /*}}*/
-/*loadLists{{*/
+/*loadLists - 优化为异步加载{{*/
 var loadPromptList = function(){
-	var dbpath = io.joinpath(config.dbServer.path, "tbm.db"); 
-	var dbRs = sqlite(dbpath,,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
-	winform.promTab = dbRs.getTable("select * from SE_TBM_Lists");
-	dbRs.close();
-	var getSuggest = function(tab, cType, keyword){
-		var t = table.filter(tab,function(v,index){
-			if v["ListName"] !== cType return ; 
-			return string.find(v["Title"], "@@"+keyword); 
-		})
-		return tarray.getCol(t, "Title");
-	}
-	var listTab = {};
-	for(name,ctrl in winform.eachControl() ){
-		if ctrl.cls !== "combobox" continue ; 		
-		var ctl = string.trimleft(name, "cb_");
-		listTab[ctl] =[];
-	}
-	for (i=1;#winform.promTab){
-		table.push(listTab[winform.promTab[i]["ListName"]], winform.promTab[i]["Title"])		
-	}
-	for(name,ctrl in winform.eachControl() ){
-		if ctrl.cls !== "combobox" continue ; 		
-		var ctl = string.trimleft(name, "cb_");
-		ctrl.items = listTab[ctl];
-		ctrl.onEditChange = win.debounce(function(){
-			var result;
-			if !owner.text || !#owner.items || owner.items[[1]] == owner.text
-				result =  getSuggest(owner.parent.promTab, ctl, "");
-			else
-				result =  getSuggest(owner.parent.promTab, ctl, owner.text);
-			result = table.slice(result,1,20);
-			owner.autoComplete(result);
-			return true; 
-		},200)
-		//ctrl.onDropDown = ctrl.onEditChange;
-	}
+    // 异步加载数据库，避免阻塞界面
+    import thread.command;
+    var cmd = thread.command();
+    cmd.updateLists = function(promTab) {
+        winform.promTab = promTab;
+        var listTab = {};
+        for (name, ctrl in winform.eachControl()) {
+            if (ctrl.cls !== "combobox") continue; 		
+            var ctl = string.trimleft(name, "cb_");
+            listTab[ctl] = [];
+        }
+        for (i = 1; #winform.promTab) {
+            table.push(listTab[winform.promTab[i]["ListName"]], winform.promTab[i]["Title"]);		
+        }
+        for (name, ctrl in winform.eachControl()) {
+            if (ctrl.cls !== "combobox") continue; 		
+            var ctl = string.trimleft(name, "cb_");
+            ctrl.items = listTab[ctl];
+        }
+    };
+
+    thread.invoke(
+        function() {
+            import sqlite;
+            import config;
+            var dbpath = io.joinpath(config.dbServer.path, "tbm.db"); 
+            var dbRs = sqlite(dbpath,,1);
+            var promTab = dbRs.getTable("select * from SE_TBM_Lists");
+            dbRs.close();
+            thread.command.updateLists(promTab);
+        }
+    );
 }
 /*}}*/
-
 
 /*其它基础函数{{*/
 var updateDate = function(){
@@ -186,7 +180,7 @@ var showTimeBtn = function(){
 		winform.cb_review_date.text == t
 		and 
 		winform.cb_approve_date.text == t
-	
+
 	) ? 1: 0;
 }
 var showSaveNameBtn = function(){
@@ -200,6 +194,10 @@ var showSaveNameBtn = function(){
 		and
 		winform.cb_approver.text == Default_Approver
 	) ? 1 : 0;
+
+    // 统一调整button5位置
+    winform.button5.top = winform.cb_designer.top - 1;
+    winform.button5.bottom = winform.cb_designer.bottom - 3;
 }
 var writeToDrw = function(Lbs){
 	if !Lbs return ; 
@@ -221,7 +219,7 @@ var iniFrmCTRL = function(){
 	var seBlk = seDFT.getTitleBlock(seDFT.ActiveSheet);
 	if !seBlk return ; 
 	winform.chkReplaceTB.hide = (seBlk.Block.Name == "Title 2020");
-	
+
 	select(seDFT.getSourcingType(seDFT.getFirstSheet())) {
     	case "P" {
     		winform.rd_M.checked = false;
@@ -239,7 +237,7 @@ var iniFrmCTRL = function(){
 }
 
 /*}}*/
-/*控件事件{{*/
+/*控件事件 - 优化{{*/
 winform.button3.oncommand = function(id,event){
     if mainForm mainForm.show(false); //隐藏窗口
     if seApp
@@ -269,7 +267,6 @@ var saveLists = function(winform){
     if(!#newUiItems){
         return;
     }
-    
 
     // 2. 使用 INSERT OR IGNORE 在一个事务中尝试插入所有新条目
 
@@ -280,7 +277,7 @@ var saveLists = function(winform){
         dbRs.exec("BEGIN TRANSACTION;");
 
         // 使用 INSERT OR IGNORE, 如果数据已存在(违反UNIQUE约束),则静默忽略本次插入
-        // 这就完美实现了“如果不存在则插入”的逻辑,且性能最高
+        // 这就完美实现了"如果不存在则插入"的逻辑,且性能最高
         var cmd = dbRs.prepare("INSERT OR IGNORE INTO SE_TBM_Lists (ListName, Title) VALUES (@ListName,@Title);" );
 
         // 遍历从UI收集到的新条目
@@ -308,10 +305,10 @@ winform.button2.oncommand = function(id,event){
     if mainForm mainForm.show(false); //隐藏窗口
     win.setForeground(seApp.hWnd);
 	win.setActive(seApp.hWnd);
-	
+
 	initDeclare();
 	thread.invoke( saveLists, winform);
-	
+
 	if (winform.chkReplaceTB.hide == 0){
 		if (winform.chkReplaceTB.checked){
 			seDFT.replaceNewTitleBlock();
@@ -325,15 +322,14 @@ winform.button2.oncommand = function(id,event){
 			if (winform.rd_P.checked == 1) blkObj["属性"].value = "P";
 			if (winform.rd_M.checked == 1) blkObj["属性"].value = "M";
 		}
-	
+
 	}
-	
+
     if !#config.tbm.Designer {
 		winform.button5.oncommand();    /* 智能保存常用姓名 */
     };
     if !winform.parent
     	winform.hide = true;
-    
 
 }
 winform.button.oncommand = function(id,event){
@@ -350,25 +346,24 @@ winform.button5.oncommand = function(id,event){
 	config.tbm.Approver = winform.cb_approver.text;
 	config.tbm.save();
 }
-winform.cb_designer.onEditChange= function(){ 
-	showSaveNameBtn();
-	winform.button5.top = winform.cb_designer.top - 1;
-	winform.button5.bottom = winform.cb_designer.bottom - 3;
-	
-}
-winform.cb_reviewer.onEditChange= function(){ 
-	showSaveNameBtn();
-	winform.button5.top = winform.cb_reviewer.top - 1;
-	winform.button5.bottom = winform.cb_reviewer.bottom - 3;
-}
-winform.cb_approver.onEditChange= function(){ 
-	showSaveNameBtn();
-	winform.button5.top = winform.cb_approver.top - 1;
-	winform.button5.bottom = winform.cb_approver.bottom - 3;
-}
+// 优化：使用 debounce 合并重复调用
+var debouncedSaveNameBtn = win.debounce(function() {
+    winform.disableRedraw(true);
+    showSaveNameBtn();
+    winform.disableRedraw(false);
+}, 50);
+
+winform.cb_designer.onEditChange = function() { 
+    debouncedSaveNameBtn();
+    winform.cb_reviewer.onEditChange = function() { 
+        debouncedSaveNameBtn();
+    };
+    winform.cb_approver.onEditChange = function() { 
+        debouncedSaveNameBtn();
+    };
+};
 
 /*}}*/
-
 
 winform.frmReLoad = function(){
     var initSucc = initDeclare();   
@@ -376,13 +371,13 @@ winform.frmReLoad = function(){
 	if !initSucc return ; 
 	var filename = io.splitpath(seDFT.FullName).file;
 	winform.seDocPath.text = filename;
-	
+
 	loadFromTab(seLbs);	//读取当前内容
 	loadDefaults();	//读取默认值(新图纸)
 	iniFrmCTRL();
 	showTimeBtn();
 	showSaveNameBtn();
-	
+
 }
 
 winform.seDocPath.oncommand = winform.frmReLoad;
@@ -391,8 +386,7 @@ winform.button6.oncommand = function(id,event){
     var pcode = seDFT ? string.match(seDFT.FullName,"\d+") : null;
 	loadcodex("\forms\main\check_QHC_Release.aardio", pcode);
 }
-//thread.invoke( loadPromptList, winform )
-
+// 优化：异步加载，不阻塞界面
 loadPromptList();	//读取提示清单
 
 winform.button7.oncommand = function(id,event){
@@ -400,7 +394,12 @@ winform.button7.oncommand = function(id,event){
 	if !seDFT.ModelLinks.Count return; 
 
 	var menu = win.ui.popmenu(winform);//创建弹出菜单
+    // 优化：限制遍历数量，避免长时间卡顿
+    var maxCount = 20;
+    var count = 0;
 	for index, item in com.each(seDFT.ModelLinks){
+		count+=1
+        if (count > maxCount) break;
 		var info = io.splitpath(item.FileName);
 		menu.add(
 			"["++ index ++"] " ++ info.file ,

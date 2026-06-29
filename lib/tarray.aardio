@@ -119,6 +119,7 @@ sliceCol0 = function(arr,a,b){
 }
 */
 sliceCol = function(arr,a,b){
+	if !arr return arr; 
 	var fields = arr.fields;
 	fields = slice(fields,a,b)	
 	arr = transpose0(arr);
@@ -132,6 +133,7 @@ spliceCol = function(arr,a,n =1){
 	return arr; 
 }
 uniqueCol = function(arr,col = 1){
+	if !arr return arr; 
 	var fields = arr.fields;
 	if arr.fields arr=serialize(arr);
 	var t={};

@@ -18,7 +18,7 @@ import fsys.table;
 import QHC;
 import domisoft;
 import inet.http;
-
+import win.dlg.message;
 winform.bindConfig( config.checkGUI, {	//绑定控件值
     checkbox = "checked";
 } );
@@ -59,10 +59,20 @@ var formRng;
 global.import("rules");
 winform.button.oncommand = function(id,event){
 	if !#winform.combobox2.selText return ; 	
-
+	win.setTopmost(winform.hwnd); 
 	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText)
 	excel_2 = sht.Parent.Application;
 	var workbook_name = sht.Parent.Name;
+/*
+# 把此时winform.combobox2.selText指定的excel窗口前置
+*/
+	excel_2.Visible = true;
+	sht.Parent.Activate();
+	var hwnd = excel_2.Hwnd;
+	if(hwnd) win.showForeground(hwnd);
+
+	
+	
 	var od_sht = sht.Parent.Sheets.Item("销售语句");
 	etab = (function(){
 			var fields = {
@@ -159,7 +169,7 @@ winform.button.oncommand = function(id,event){
     winform.msgInfo("检查完成", 500);
     collectgarbage("collect");
 
-	
+		win.setTopmost(winform.hwnd, false); 
 }
 
 /*点击定位{{*/
@@ -174,6 +184,7 @@ winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	excel_2.ActiveWindow.ScrollRow = row;
 	sht = null;
 	excel_2 = null;
+	collectgarbage("collect");
 }
 /*}}*/
 
@@ -212,5 +223,9 @@ if !winform.parent
 	win.setForeground(winform.hwnd);
 if !winform.parent
 	winform.frmReLoad();
+winform.onClose = function(hwnd,message,wParam,lParam){
+    publish("CleanHiddenExcel"); 
+}
+
 win.loopMessage();
 return winform;

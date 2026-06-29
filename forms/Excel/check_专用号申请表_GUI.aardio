@@ -77,10 +77,17 @@ var getParentIndex = function(current_index){
 
 winform.button.oncommand = function(id,event){
 	if !#winform.combobox2.selText return ; 	
-
+	win.setTopmost(winform.hwnd); 
 	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText)
 	excel_2 = sht.Parent.Application;
-	
+/*
+# 把此时winform.combobox2.selText指定的excel窗口前置
+*/
+	excel_2.Visible = true;
+	sht.Parent.Activate();
+	var hwnd = excel_2.Hwnd;
+	if(hwnd) win.showForeground(hwnd);
+		win.showForeground(winform.hwnd);
 	if sht.AutoFilterMode
 		sht.AutoFilterMode = false;
 	if sht.ListObjects.Count {
@@ -381,7 +388,7 @@ try{
 
 	winform.msgInfo("检查完成", 500);
     collectgarbage("collect");
-
+	win.setTopmost(winform.hwnd, false); 
 }
 
 /*点击定位{{*/
@@ -396,6 +403,7 @@ winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	excel_2.ActiveWindow.ScrollRow = row;
 	sht = null;
 	excel_2 = null;
+	collectgarbage("collect");
 }
 /*}}*/
 
@@ -434,5 +442,8 @@ if !winform.parent
 	win.setForeground(winform.hwnd);
 if !winform.parent
 	winform.frmReLoad();
+winform.onClose = function(hwnd,message,wParam,lParam){
+    publish("CleanHiddenExcel"); 
+}
 win.loopMessage();
 return winform;

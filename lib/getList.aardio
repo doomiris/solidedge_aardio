@@ -23,10 +23,8 @@ namespace getList{
 	}
 	saveFolderDB = function(){
 		import config;
-/*
 		import console
-		console.open()
-*/
+//		console.open()
 /*
 		_searchLoc := {
 			{"\\CCNSIA1A\SEParts\Cabinet\PDF图纸库",	"*.*"};

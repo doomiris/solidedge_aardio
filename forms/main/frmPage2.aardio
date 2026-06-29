@@ -84,12 +84,14 @@ var getSuggest = function(tab, cType, keyword){
 import config;
 winform.cb_desp.onEditChange = function(){
 	var txt = owner.text;
+/*
 	owner.autoComplete(
 		table.filter(
 			config.revmgr.desp,
 			λ(v) string.find(v,"@@"++txt)
 		)
 	)
+*/
 }
 winform.cb_desp.onDropDown = winform.cb_desp.onEditChange;
 

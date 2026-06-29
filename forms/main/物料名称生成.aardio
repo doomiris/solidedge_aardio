@@ -10,7 +10,7 @@ button6={cls="button";text="\/";left=276;top=46;right=301;bottom=69;dl=1;dt=1;z=
 button7={cls="button";text="-";left=276;top=75;right=300;bottom=98;dl=1;dt=1;z=10};
 button8={cls="button";text="+";left=276;top=104;right=300;bottom=127;dl=1;dt=1;z=9};
 button9={cls="button";text="清空";left=276;top=133;right=300;bottom=156;dl=1;dt=1;z=8};
-lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;db=1;dl=1;dt=1;edge=1;items={};msel=1;z=3};
+lb_clue={cls="listbox";left=0;top=236;right=277;bottom=792;db=1;dl=1;dt=1;edge=1;items={};multiSelect=1;z=3};
 listbox={cls="listbox";left=1;top=13;right=275;bottom=203;dl=1;dt=1;edge=1;items={};z=1};
 listview={cls="listview";left=310;top=11;right=928;bottom=793;db=1;dl=1;dr=1;dt=1;edge=1;z=2};
 splitter={cls="splitter";left=304;top=14;right=309;bottom=794;db=1;dt=1;frame=1;hide=1;z=4};
@@ -216,7 +216,19 @@ winform.lb_clue.wndproc = function(hwnd,message,wParam,lParam){
 		case 0x203/*_WM_LBUTTONDBLCLK*/ {
 			owner.sendClicked(winform.listbox);
 		}
-
+		case 0x100/*_WM_KEYDOWN*/ {
+            if( wParam == 0x2E/*_VK_DELETE*/ ){
+                // 获取所有选中项的行号索引数组
+                var selIndexes = owner.selected;
+                if(#selIndexes){
+                    // 必须倒序（从后往前）遍历删除，避免索引错乱
+                    for(i=#selIndexes; 1; -1){
+                        owner.delete(selIndexes[i]);
+                    }
+                }
+                return 0; // 返回 0 表示已处理并拦截该按键消息
+            }
+        }
 	}
 }
 

@@ -52,9 +52,19 @@ var getCurrentDftInfo = function(){
 	import solidedge.application;
 	var seApp = solidedge.application();
 	if seApp.ActiveDocumentType == 2 /*Draft Document Type*/		
-		return seApp.ActiveDocument.Name; 
+		return seApp.ActiveDocument.Name, seApp.ActiveDocument.path;
 }
-winform.edit2.text = thread.invokeAndWait(getCurrentDftInfo);
+var getCurrentDftFlatMdlInfo = function(){
+	import solidedge.application;
+	var seApp = solidedge.application();
+	var seDft, smDoc;
+	if seApp.ActiveDocumentType == 2 /*Draft Document Type*/
+		seDft = seApp.ActiveDocument;
+	if (seDft.ModelLinks.Item(1).ModelType == 0 /* igPartLink */)
+    	smDoc = seDft.ModelLinks.item(1).ModelDocument;
+	return smDoc.FullName;
+}
+winform.edit2.text, winform.combobox.text = thread.invokeAndWait(getCurrentDftInfo);
 
 var getColContent = function(keyword="专用号"){
 	import solidedge.application;
@@ -209,6 +219,20 @@ var getPsmFileList = function(pcode, path){
 	}
 	return ftab;
 }
+var addCurrentPsmFile = function(){
+	var path = thread.invokeAndWait(getCurrentDftFlatMdlInfo); 
+	var ftab = {};
+	ftab.fields = {[1] = "name"; [2] = "dir"};
+	var info = io.splitpath(path)
+	table.push(ftab, {
+		name = info.file;
+		dir = info.dir;
+		}
+	)
+	grid.setTable(ftab);
+	winform.listview.fillParent(1);
+}
+
 winform.button4.onHyperlinkClick = function(nmSysLink,url,id){
 	var path = winform.combobox.text;	
 	if !io.exist(path) return win.msgboxErr(path,"不存在的位置"); 
@@ -229,8 +253,10 @@ winform.button3.oncommand = function(id,event){
 
 winform.show();
 
+/*
 if #winform.combobox.items > 0
 	winform.combobox.selText = winform.combobox.items[1];
+*/
 
 import win.debounce;
 winform.edit.onChange = win.debounce(function(){
@@ -279,7 +305,8 @@ winform.onDropFiles = function(files){
 
 winform.edit2.oncommand = function(id,event){
 	if event !== 256 return ; 
-	winform.edit2.text = getCurrentDftInfo();
+	winform.edit2.text, winform.combobox.text = thread.invokeAndWait(getCurrentDftInfo);
+
 }
 
 winform.button5.oncommand = function(id,event){
@@ -294,7 +321,8 @@ winform.button5.oncommand = function(id,event){
 
 winform.edit.onChange();
 winform.frmReLoad = function(){
-	winform.edit2.text = getCurrentDftInfo();
+	winform.edit2.text, winform.combobox.text = thread.invokeAndWait(getCurrentDftInfo);
+	addCurrentPsmFile()
 }
-
+addCurrentPsmFile();
 win.loopMessage();

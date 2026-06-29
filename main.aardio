@@ -460,5 +460,12 @@ subscribe("status3", function(...){
 })
 /*}}*/
 
+/*收到通知后清理excel残留进程{{*/
+subscribe("CleanHiddenExcel", function(){
+    thread.invoke(domisoft.CleanHiddenExcel)
+})
+/*}}*/
+
+
 win.loopMessage();
 return mainForm;

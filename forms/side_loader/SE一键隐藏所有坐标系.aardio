@@ -1,0 +1,74 @@
+import console;
+
+/*
+# 隐藏solid edge 2025 里当前打开的装配时所有坐标系(含所有子装配,和子零件)
+*/
+import com;
+
+(function(){
+	var seApp = com.GetActiveObject("SolidEdge.Application");
+	if(!seApp){
+		console.log("未找到运行中的 Solid Edge，请先打开软件。");
+		return;
+	}
+
+	var activeDoc;
+	try {
+		activeDoc = seApp.ActiveDocument;
+	}
+	catch(e){}
+	
+	if(!activeDoc){
+		console.log("没有打开的文档！");
+		return;
+	}
+
+	if(activeDoc.Type != 3 /*igAssemblyDocument*/){
+		console.log("当前打开的文档不是装配文档！");
+		return;
+	}
+
+	console.showLoading("正在处理坐标系...");
+
+	var hideCoordinateSystems = function(doc){
+		try{
+			for index, cs in com.each(doc.CoordinateSystems) {
+				cs.Visible = false;
+			}
+		}
+		catch(e){}
+	}
+
+	// 1. 隐藏顶层装配的坐标系
+	hideCoordinateSystems(activeDoc);
+
+	// 2. 递归处理所有子装配和子零件
+	var processOccurrences;
+	processOccurrences = function(occs){
+		try{
+			for index, occ in com.each(occs) {
+				// 隐藏当前 occurrence 对应文档内的坐标系
+				try {
+					var occDoc = occ.OccurrenceDocument;
+					if(occDoc){
+						hideCoordinateSystems(occDoc);
+					}
+				}
+				catch(e){}
+				
+				// 如果还有子组件，则继续向下递归
+				if(occ.SubOccurrences){
+					processOccurrences(occ.SubOccurrences);
+				}
+			}
+		}
+		catch(e){}
+	}
+
+	if(activeDoc.Occurrences){
+		processOccurrences(activeDoc.Occurrences);
+	}
+
+	console.log("处理完成：已隐藏当前装配及所有子装配、子零件的坐标系！");
+})();
+console.pause();

@@ -1,0 +1,95 @@
+import console; 
+import web.script;
+var vbscript = web.script("VBScript");
+vbscript.script = /*
+If Not IsObject(application) Then
+   Set SapGuiAuto  = GetObject("SAPGUI")
+   Set application = SapGuiAuto.GetScriptingEngine
+End If
+If Not IsObject(connection) Then
+   Set connection = application.Children(0)
+End If
+If Not IsObject(session) Then
+   Set session    = connection.Children(0)
+End If
+If IsObject(WScript) Then
+   WScript.ConnectObject session,     "on"
+   WScript.ConnectObject application, "on"
+End If
+*/
+console.log(0)
+vbscript.script = /*
+'==========================
+' 1. 获取 ALV Grid 对象
+'==========================
+Set grid = session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[1]")
+
+grid.setFocus
+*/
+console.log(1)
+vbscript.script = /*
+'==========================
+' 2. 清空当前布局（隐藏全部列）
+'==========================
+Dim col, cols
+Set cols = grid.ColumnOrder()
+
+For Each col In cols
+    grid.SetColumnWidth col, 0   '隐藏列
+Next
+*/
+
+console.log(2)
+vbscript.script = /*
+'==========================
+' 3. 定义需要显示的列（技术字段名）
+'⚠️根据你系统实际字段调整
+'==========================
+Dim wantedCols
+wantedCols = Array("MATNR", "MATNRTEXT", "PREIS", "MENGE", "MEEHT", "EGROUP1", "EGROUP2", "EGROUP3", "VALUE_TOTAL")
+*/
+console.log(3)
+vbscript.script = /*
+'==========================
+' 4. 按顺序显示列
+'==========================
+Dim i
+For i = 0 To UBound(wantedCols)
+     col = wantedCols(i)
+
+    '显示列（设置合理宽度）
+    grid.SetColumnWidth col, 15
+
+    '设置列位置（顺序）
+    grid.MoveColumn col, "", i
+Next
+*/
+console.log(4)
+vbscript.script = /*
+'==========================
+' 5. 保存布局
+'==========================
+session.findById("wnd[0]/mbar/menu[3]/menu[1]").Select '设置布局
+
+'弹出对话框
+session.findById("wnd[1]/tbar[0]/btn[17]").Press '保存布局
+
+'输入布局名
+session.findById("wnd[2]/usr/ctxtVARIANT-REPORT").Text = "Z_COST_LAYOUT"
+session.findById("wnd[2]/usr/ctxtVARIANT-TEXT").Text = "成本核算默认布局"
+
+'设为默认布局
+session.findById("wnd[2]/usr/chkDEFAULT").Selected = True
+
+'保存
+session.findById("wnd[2]/tbar[0]/btn[11]").Press
+
+'关闭窗口
+session.findById("wnd[1]/tbar[0]/btn[0]").Press
+
+MsgBox "布局已创建并设置为默认!"
+
+
+*/
+console.log(5)
+console.pause();

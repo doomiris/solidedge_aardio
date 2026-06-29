@@ -50,6 +50,8 @@ for (i=1; #frms)
 
 if config.setbm.workingDir
 	winform.outpath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.setbm.workingDir);
+if !io.exist(config.setbm.workingDir)
+	fsys.createDir(config.setbm.workingDir, false);
 if  config.qtip.pdfLib
 	winform.pdfLibPath.text = string.replace(`<a href="URL">URL</a>`,"@URL", config.qtip.pdfLib);
 

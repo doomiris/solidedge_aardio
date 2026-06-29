@@ -177,6 +177,9 @@ console.open()
 	    	dim absline
 	    	dim lib_path
 	    	dim costFilename
+			dim priceDate
+			priceDate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
+			priceDate = Mid(priceDate,6,2) & right(priceDate,2)
 	 */
 	 vm.script.absline = absline;
 	 vm.script.lib_path = config.__sapDownload;
@@ -187,45 +190,47 @@ console.open()
     		pcode = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1," & i & "]").Text
     		pdesp = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[4," & i & "]").Text
     		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = True
-    		costFilename = "cost_" & trim(pcode) & "_" & trim(pdesp) & ".xls"
+    		costFilename = "cost" & priceDate & "_" & trim(pcode) & "_" & trim(pdesp) & ".xls"
 	*/
 	
 	vm.script.costFilename = domisoft.formatWindowsFileName(vm.script.costFilename);
-	
+	winform.edit3.print(vm.script.costFilename)
 	vm.script = /*
-	
+
     		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
 
     		set markcost = nothing 
     		on error resume next
     			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
+    			set useMark =session.findById("wnd[1]/usr/btnSPOP-VAROPTION1")
 			on error goto 0
 
-
-    		if not markcost is nothing then
-    				markcost.press
-    				on error resume next
-        			session.findById("wnd[1]/tbar[0]/btn[0]").press
-        			
-        			
-        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
-        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
-        			on error goto 0
-        			session.findById("wnd[0]/tbar[0]/btn[0]").press
+			if not markcost is nothing then
+				useMark.press
+    			'if not markcost is nothing then    				
+    				'markcost.press
+    				'on error resume next
+        			'session.findById("wnd[1]/tbar[0]/btn[0]").press        			
+        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
+        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
+        			'on error goto 0
+  
 			else 
-        		set tdstr = nothing
-        		on error resume next
-        			set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
-        		on error goto 0
-        		if not tdstr is nothing then
+        		'set tdstr = nothing
+        		'on error resume next
+        			'set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
+        		'on error goto 0
+        		'if not tdstr is nothing then
         			'msgbox(3)
-        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
-        			session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
-        			session.findById("wnd[0]/tbar[0]/btn[0]").press
-				end if
+        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
+        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
+        			
+				'end if
+				
     		end if
+			session.findById("wnd[0]/tbar[0]/btn[0]").press
 
-
+			
 			session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton "&PRINT_BACK"
 			session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem "&PRINT_PREV_ALL"
 
