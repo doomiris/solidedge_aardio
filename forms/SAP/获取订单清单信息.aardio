@@ -182,6 +182,7 @@ winform.grid.onRightClick = function(item,subItem,nmListView){
 	var mbom_file = string.join({"COOIS", t["SD 凭证"], t["项目(SD)"]}, "_");
 	mbom_file = io.joinpath(config.__sapDownload, mbom_file + ".xlsx") ;
 	menu.add("复制[SD 凭证]", λ() winform.grid.copyPartNo({"SD 凭证"}));
+	menu.add("复制[SD 凭证][项目]", λ() winform.grid.copyPartNo({"SD 凭证","项目(SD)"}));
 menu.add()
 	menu.add("复制[物料]", λ() winform.grid.copyPartNo({"物料"}));
 	menu.add("复制[物料][物料描述]", λ() winform.grid.copyPartNo({"物料","描述"}));

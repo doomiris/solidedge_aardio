@@ -37,6 +37,7 @@ namespace rules {
 		[23] = "替换子项缺少原子项"; 
 		[24] = "原材料单位是KG"; 
 		[25] = "更改用量:前后子项物料不同 (是否是想替换子项?)"; 
+		[26] = "粉末和定尺料不应在同一层级"; 	
 			
 
 		/* 此处增加规则需要在desp/rule/solver三处都添加子项 */
@@ -172,6 +173,18 @@ namespace rules {
 			if etab[i][["更改备注"]] == "更改用量"
 				return etab[i][["原子项"]] !== etab[i][["新子项"]] ;
 		}
+		
+		[26] = function(i, etab){
+			var metalTab = ["H0080154856-G","H0087500182-G","H0087500185-G","H0087500186-G","H0087500188-G","H0087500190-G","H0087500191-G","H0087500193-G","H0087500284-G"]
+			var paintNo = "H0088200085";
+			if i==1 return ; 
+			if !etab[i][["原父项"]] return ; 
+			if etab[i][["新子项"]] !== paintNo return; 
+			for(j=1; i-1){
+				if etab[j][["原父项"]] !== etab[i][["原父项"]] continue;
+				if table.indexOf(metalTab, etab[j][["新子项"]]) return true;
+			}
+		}	
 	};
 
     // 修复函数
@@ -264,6 +277,9 @@ namespace rules {
 		[25] = function(i, etab){
 			etab[i]["更改备注"] = "替换子项";		
 			return true; 
+		}
+		[26] = function(i, etab){
+			
 		}
 	};
 	top_rule_err = {//注意下方top_rule_solver项目数量要与此处一致

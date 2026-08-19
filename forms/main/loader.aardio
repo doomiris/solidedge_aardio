@@ -23,8 +23,12 @@ import domisoft;
 import SAP.vm;
 import config;
 import fsys;
+import fsys.table;
 import process.popen;
 import environment;
+import thread.table;
+import com.wmi; 
+
 
 var list = {fields = {[1] = "name",[2]="filename"}};
 

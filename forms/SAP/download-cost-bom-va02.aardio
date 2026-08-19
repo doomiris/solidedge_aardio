@@ -11,7 +11,7 @@ button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;
 button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;dl=1;dt=1;z=11};
 button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;dl=1;dt=1;z=12};
 button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;dr=1;dt=1;z=15};
-button9={cls="button";text="clear";left=433;top=234;right=506;bottom=248;dr=1;dt=1;z=16};
+button9={cls="button";text="clear";left=652;top=138;right=725;bottom=152;dr=1;dt=1;z=16};
 edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;dl=1;dt=1;edge=1;multiline=1;z=2};
 edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;dl=1;dt=1;edge=1;multiline=1;z=3};
 edit3={cls="edit";left=430;top=252;right=891;bottom=510;aw=1;db=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
@@ -200,33 +200,42 @@ console.open()
     		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
 
     		set markcost = nothing 
+    		popWinTitle=""
     		on error resume next
     			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
-    			set useMark =session.findById("wnd[1]/usr/btnSPOP-VAROPTION1")
+    			set useMark = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1")
+    			popWinTitle = session.findById("wnd[1]").Text
 			on error goto 0
 
-			if not markcost is nothing then
-				useMark.press
-    			'if not markcost is nothing then    				
-    				'markcost.press
-    				'on error resume next
-        			'session.findById("wnd[1]/tbar[0]/btn[0]").press        			
-        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
-        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
+
+			if right(popWinTitle,6)="成本核算方法" then
+					markcost.press
+					session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
+					session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"	
+			else
+				if not markcost is nothing then
+					useMark.press
+    				'if not markcost is nothing then    				
+    					'markcost.press
+    					'on error resume next
+        				'session.findById("wnd[1]/tbar[0]/btn[0]").press        			
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
+        				'on error goto 0
+  	
+				else 
+        			'set tdstr = nothing
+        			'on error resume next
+        				'set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
         			'on error goto 0
-  
-			else 
-        		'set tdstr = nothing
-        		'on error resume next
-        			'set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
-        		'on error goto 0
-        		'if not tdstr is nothing then
-        			'msgbox(3)
-        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
-        			'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
-        			
-				'end if
-				
+        			'if not tdstr is nothing then
+        				'msgbox(3)
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
+        				
+					'end if
+					
+    			end if
     		end if
 			session.findById("wnd[0]/tbar[0]/btn[0]").press
 

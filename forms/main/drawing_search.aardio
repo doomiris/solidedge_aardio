@@ -60,7 +60,7 @@ var reverseFileLibMap = function(fullpath){
 	var info = io.splitpath(fullpath);
 	var fileDir = io.joinpath(info.drive,info.path);
 	//console.log(fileDir)
-	var formatPath = string.replace(fullpath, "@" + info.dir, invertLibPathMaps[info.dir]);	
+	var formatPath = string.replace(fullpath, info.dir, invertLibPathMaps[info.dir]);	
 	return formatPath; 
 }
 /*查找图纸{{*/

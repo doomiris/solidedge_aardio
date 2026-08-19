@@ -7,11 +7,12 @@ namespace getList{
 	import global;
 	deepSearchFile = function(path, filter = "H*.dft"){
 		var t = {};
+		t@ = { _readonly = false };
 		fsys.enum( path, filter,
 			function(dirname,filename,fullpath,findData){
 				if(filename){
-					table.push(t,filename);
-					t[filename]=fullpath;
+					table.push(t, filename);
+					t[filename] = fullpath;
 				}
 			},
 			function(dirpath, dirname){ //忽略目录
@@ -23,8 +24,10 @@ namespace getList{
 	}
 	saveFolderDB = function(){
 		import config;
+/*
 		import console
-//		console.open()
+		console.open()
+*/
 /*
 		_searchLoc := {
 			{"\\CCNSIA1A\SEParts\Cabinet\PDF图纸库",	"*.*"};
@@ -66,9 +69,9 @@ namespace getList{
 				fullpath = io.splitpath(fullpath).dir;
 				
 				//替换成代号, 用户端解析, 否则其他人打开我的链接地址;
-				fullpath = string.replace(fullpath, "@" + _searchLoc[1][1],"{config.qtip.pdfLib}");
-				fullpath = string.replace(fullpath, "@" + _searchLoc[2][1],"{config.qtip.qhcLib}");
-				fullpath = string.replace(fullpath, "@" + _searchLoc[3][1],"{config.qtip.cabinetModelServer}");
+				fullpath = string.replace(fullpath,  _searchLoc[1][1],"{config.qtip.pdfLib}");
+				fullpath = string.replace(fullpath,  _searchLoc[2][1],"{config.qtip.qhcLib}");
+				fullpath = string.replace(fullpath,  _searchLoc[3][1],"{config.qtip.cabinetModelServer}");
 				
 				fullpath = string.trim(fullpath,"\");
 				

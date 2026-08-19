@@ -140,6 +140,27 @@ winform.button2.oncommand = function(id,event){
     if !seApp return ; 
   	
 	var vtab = getListViewTable(tbs[1].listview);
+/*
+	# 遍历vtab所有选中行,如果"材料"或"质量/体积"列的值等于"Error: No reference"或"错误: 缺少参考"时, 通过winform.msgAsk 询问发现此问题是否继续打印
+*/
+
+   var hasError = false;
+
+	for i, rowIdx in tbs[1].listview.checked {
+		var row = vtab[rowIdx];
+		if (row && (row["材料"] == "Error: No reference" or row["材料"] == "错误: 缺少参考" or row["质量/体积"] == "Error: No reference" or row["质量/体积"] == "错误: 缺少参考")) {
+    		hasError = true;
+    		break;
+		}
+	}
+   if (hasError) {
+       var ret = winform.msgAsk(`要打印的图纸标题栏内发现存在"Error: No reference"项，请处理后再继续打印`, "提示");
+      // if (ret != true) {
+           return;
+      // }
+   }
+	
+	
 	winform.progress.min = 0;
 	winform.progress.max = #tbs[1].listview.checked * #winform.listbox.selected;
 	winform.progress.pos = 1;

@@ -259,7 +259,7 @@ namespace vm{
 	addPlantCodeMM03 = function(code = "0841"){
 		var vm = owner;
 		vm.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
-		vm.findById("wnd[1]/tbar[0]/btn[0]").press();	
+		vm.findById("wnd[1]/tbar[0]/btn[0]").press();
 	};
 	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
 		var vm = owner;
@@ -295,6 +295,15 @@ namespace vm{
 		vm.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = code;
 		vm.exec();
 	};
+	createReserveMB21 = function(code = "0841",wnd = "0"){
+		var vm = owner;
+		vm.findById("wnd[0]/usr/ctxtRM07M-BWART").text = "201";
+		vm.findById("wnd[0]/usr/ctxtRM07M-WERKS").text = code;
+		vm.findById("wnd[0]/tbar[1]/btn[7]").press();
+		vm.findById("wnd[0]/usr/subBLOCK:SAPLKACB:1002/ctxtCOBL-KOSTL").text = "A10";
+		vm.findById("wnd[0]/usr/txtRKPF-WEMPF").text = "研发中心";
+	}
+	
 	addReciptAddr = function(code = "0841",wnd = "1"){
 		var vm = owner;
 		import config;

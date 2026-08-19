@@ -1,19 +1,37 @@
 import win.dlg.message;
+import win.dlg.message;
 import win.ui;
-import win.ui.menu; // 导入菜单支持库
+import win.ui.menu;
 import fonts.fontAwesome;
 import process.popen;
 import win.reg;
 import thread.table;
-import win.dlg.message;
+import win.ui.grid;
+import domisoft;
 /*DSG{{*/
 winform = win.form(text="SE许可证工具";right=751;bottom=599;bgcolor=0xFFFFFF)
 winform.add(
 btnQuery={cls="plus";text="立即查询所有服务器";left=16;top=13;right=216;bottom=53;align="left";bgcolor=0xB0B68F;dl=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF021';notify=1;textPadding={left=45};z=2};
-btnSwitch={cls="plus";text="切换服务器 (下拉选择)";left=488;top=15;right=730;bottom=55;align="left";bgcolor=0xB0B68F;dr=1;dt=1;font=LOGFONT(h=-14);iconStyle={align="left";font=LOGFONT(h=-15;name='FontAwesome');padding={left=15}};iconText='\uF0EC';notify=1;textPadding={left=45};z=3};
-editResult={cls="edit";left=20;top=72;right=730;bottom=580;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(name='Consolas');multiline=1;vscroll=1;z=1}
-)
+listviewResult={cls="listview";left=20;top=72;right=730;bottom=580;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1};
+radioServer1={cls="plus";text="上海 Office";left=410;top=13;right=570;bottom=53;align="left";dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=22};z=3};
+radioServer2={cls="plus";text="青岛 Office";left=575;top=13;right=735;bottom=53;align="left";dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=22};z=4}
+);
 /*}}*/
+
+winform.grid = win.ui.grid(winform.listviewResult);
+winform.grid.setReadonlyColumns(-1);
+winform.listviewResult.translateAccelerator = domisoft.ctrlC;
+
+// 配置 listview 标题列 (去除了 剩余/总计 文本)
+winform.grid.columns = [
+    ["服务器", 100],
+    ["编号", 50],
+    ["姓名", 200],
+    ["账户", 100],
+    ["计算机", 140],
+    ["借出剩余时间", -1]
+];
+winform.listviewResult.fillParent(3);
 
 // 配置信息
 var serverConfig = {
@@ -34,7 +52,64 @@ var btnSkin = {
     color={ default=0xFF333333; hover=0xFF000000; }
 }
 winform.btnQuery.skin(btnSkin);
-winform.btnSwitch.skin(btnSkin);
+
+// 【新增】配置单选框交互样式并应用
+var radioSkin = {
+    group = "ServerGroup"; // 分组名相同的单选框会自动实现单选互斥
+    color = {
+        default = 0xFF333333;
+        hover = 0xFF005A9E;
+        active = 0xFF0078D4;
+    };
+    iconColor = {
+        default = 0xFF999999;
+        hover = 0xFF005A9E;
+    };
+    checked = {
+        iconText = '\uF058'; // 选中时显示实心圆勾
+        iconColor = { default = 0xFF0078D4; };
+    }
+}
+winform.radioServer1.skin(radioSkin);
+winform.radioServer2.skin(radioSkin);
+
+// 【新增】动态设置包含额外服务器地址的多行文本
+winform.radioServer1.text = serverConfig.list[1].title ++  '\n' ++ serverConfig.list[1].addr;
+winform.radioServer2.text = serverConfig.list[2].title ++ '\n' ++ serverConfig.list[2].addr;
+
+// -------------------------------------------------------------
+// 初始化：查询当前环境变量，并默认选中系统当前服务器
+// -------------------------------------------------------------
+var initCurrentServer = function(){
+    var currentServer = "";
+
+    // 优先查询用户环境变量
+    var regUser = win.reg("HKEY_CURRENT_USER\Environment", true); 
+    if(regUser){
+        currentServer = regUser.queryValue("SE_LICENSE_SERVER") : "";
+        regUser.close();
+    }
+
+    // 若用户变量不存在，再查询系统环境变量
+    if(!#currentServer){
+        var regSys = win.reg("HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment", true);
+        if(regSys){
+            currentServer = regSys.queryValue("SE_LICENSE_SERVER") : "";
+            regSys.close();
+        }
+    }
+
+    // 依据查询结果勾选界面单选按钮 (利用 plus 控件的 checked 属性)
+    if(currentServer == serverConfig.list[1].addr){
+        winform.radioServer1.checked = true;
+    }
+    elseif(currentServer == serverConfig.list[2].addr){
+        winform.radioServer2.checked = true;
+    }
+}
+
+// 执行初始化检索
+initCurrentServer();
 
 // 统一的服务器切换函数
 var switchServer = function(addr, title){
@@ -48,19 +123,42 @@ var switchServer = function(addr, title){
         + "提示：请重启 Solid Edge 以加载新配置。", 3000);
 }
 
+// 单选按钮1 点击事件
+winform.radioServer1.oncommand = function(id,event){
+    if(owner.checked){
+        switchServer(serverConfig.list[1].addr, serverConfig.list[1].title);
+    }
+}
+
+// 单选按钮2 点击事件
+winform.radioServer2.oncommand = function(id,event){
+    if(owner.checked){
+        switchServer(serverConfig.list[2].addr, serverConfig.list[2].title);
+    }
+}
+
+// 查询所有服务器状态
 winform.btnQuery.oncommand = function(id,event){
     winform.btnQuery.disabledText = {'\uf110';'\uf111';'\uf112';'\uf113';'\uf114'};
-    winform.editResult.text = "正在同步查询所有服务器状态, 请稍候..." + '\r\n';
+    winform.text = "SE许可证工具 - 正在同步查询所有服务器状态, 请稍候...";
 
-    sharedAvailable.clear(); // 清空上次结果
+    // 清空上次结果
+    winform.grid.clear();
+    sharedAvailable.clear(); 
 
     thread.invoke( 
         function(winform, serverConfig){
             import process.popen;
             import thread.table;
+            import com.wmi; 
+            import fsys.table;
 
             var shared = thread.table("AVAILABLE_LICENSE_SERVERS");
-            var allDisplayTxt = {};
+            var allRows = {}; // 二维数组，存放准备填入 listview 的数据
+
+            var cachePath = io.joinpath(io.splitpath(serverConfig.lmutilPath).dir, "userCache.table");
+            var displayNameCache = fsys.table(cachePath); 
+            var cacheUpdated = false;
 
             for(i=1;#serverConfig.list;1){
                 var server = serverConfig.list[i];
@@ -71,101 +169,70 @@ winform.btnQuery.oncommand = function(id,event){
                     var result = prcs.readAll();
                     prcs.close();
 
-                    var totalLic = string.match(result, "Total of\s+(\d+)\s+licenses issued") : "0";
-                    var inUseLic = string.match(result, "Total of\s+(\d+)\s+licenses in use") : "0";
-                    var freeCount = tonumber(totalLic) - tonumber(inUseLic);
+                    var totalLic = tonumber(string.match(result, "Total of\s+(\d+)\s+licenses issued") : "0");
+                    var inUseLic = tonumber(string.match(result, "Total of\s+(\d+)\s+licenses in use") : "0");
+                    var freeCount = totalLic - inUseLic;
 
                     if(freeCount > 0) shared[server.addr] = server.title;
 
-                    var info = {
-                        "===== " + server.title + " (" + server.addr + ") =====",
-                        "状态: " + (freeCount > 0 ? "【有空闲】" : "【已满额】") + " (已用:" + inUseLic + "/总计:" + totalLic + " | 剩余:" + freeCount + ")",
-                        "--------------------------------------------------"
-                    };
-
+                    var usedList = {}; // 用于按顺序收集已被占用的许可证记录
                     for line in string.lines(result) {
                         if(!string.find(line, "\s+start\s+")) continue;
 
                         var user, pc = string.match(line, "^\s*(\S+)\s+(\S+)");
 
                         if(user && pc){
-                            var remainSeconds = string.match(line, "linger\:\s*(\d+)");
+                            if(!displayNameCache[user]){
+                                var userAccount = com.wmi.get("SELECT FullName FROM Win32_UserAccount WHERE Name=@name",{ name = user });
+                                displayNameCache[user] = (userAccount && userAccount.FullName) ? userAccount.FullName : user;
+                                cacheUpdated = true;
+                            }
 
-                            var userRow;
+                            var displayName = displayNameCache[user]; 
+                            var remainSeconds = string.match(line, "linger\:\s*(\d+)");
+                            var timeDesc = "";
+
                             if(remainSeconds){
                                 var s = tonumber(remainSeconds);
                                 var days = math.floor(s / 86400);
                                 var hours = math.floor((s % 86400) / 3600);
 
-                                var timeDesc = "";
                                 if(days > 0) timeDesc = days + "天" + (hours > 0 ? hours + "时" : "");
                                 else timeDesc = hours + "小时";
-
-                                userRow = string.format("  %-12s | %-12s | [借出] 剩余:%s", user, pc, timeDesc);
-                            }
-                            else {
-                                userRow = string.format("  %-12s | %-12s", user, pc);
                             }
 
-                            table.push(info, userRow);
+                            table.push(usedList, { displayName; user; pc; timeDesc });
                         }
                     }
 
-                    table.push(allDisplayTxt, string.join(info, '\r\n') + '\r\n');
+                    // 按照该服务器支持的总许可证数(totalLic)循环生成固定行数
+                    for(j=1; totalLic; 1){
+                        var usedInfo = usedList[j];
+                        if(usedInfo){
+                            // 如果有对应占用记录则填入真实信息
+                            table.push(allRows, { server.title; tostring(j); usedInfo[1]; usedInfo[2]; usedInfo[3]; usedInfo[4] });
+                        }
+                        else{
+                            // 否则此行显示为空闲状态
+                            table.push(allRows, { server.title; tostring(j); "空闲"; ""; ""; "" });
+                        }
+                    }
                 }
             }
 
-            winform.editResult.text = string.join(allDisplayTxt, '\r\n');
-            winform.editResult.print("查询完成：" + tostring(time()));
+            if(cacheUpdated){
+                displayNameCache.save();
+            }
+
+            // 更新到界面的 Listview 列表中
+            winform.grid.setTable(allRows);
+
+            // 恢复界面状态
+            winform.text = "SE许可证工具 - 查询完成：" + tostring(time());
             winform.btnQuery.disabledText = null;
-            winform.btnSwitch.disabled = false;
 
         }, winform, serverConfig
     )
-}
-
-// 按钮点击时，弹出下拉选择菜单
-winform.btnSwitch.oncommand = function(id,event){
-    // 创建弹出式菜单
-    var popmenu = win.ui.popmenu(winform);
-
-    // 1. 获取所有有空闲的服务器
-    var availableList = {};
-    for(i=1;#serverConfig.list;1){
-        var server = serverConfig.list[i];
-        if(sharedAvailable[server.addr]){
-            table.push(availableList, server);
-        }
-    }
-
-    // 2. 如果有空闲服务器，优先在菜单顶部显示“首选一键切换”
-    if(#availableList > 0){
-        popmenu.add(" 一键切换至首选可用: " + availableList[1].title, function(){
-            switchServer(availableList[1].addr, availableList[1].title);
-        });
-        popmenu.add(); // 添加分割线
-    }
-
-    // 3. 列出配置文件中所有的服务器（无论是否空闲）供手动强制切换
-    for(i=1;#serverConfig.list;1){
-        var server = serverConfig.list[i];
-        var isFree = sharedAvailable[server.addr];
-
-        // 菜单项文本，标明其状态
-        var menuText = string.format(" %s (%s) %s", 
-            server.title, 
-            server.addr, 
-            isFree ? "【有空闲 ⭐】" : "【满额或未检测】"
-        );
-
-        popmenu.add(menuText, function(){
-            switchServer(server.addr, server.title);
-        });
-    }
-
-    // 4. 在按钮正下方弹出下拉列表菜单
-    var x, y, cx, cy = winform.btnSwitch.getPos(); // 获取屏幕坐标
-    popmenu.popup(x, y + cy); 
 }
 
 winform.show();

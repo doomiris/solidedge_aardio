@@ -1,0 +1,7 @@
+﻿{
+templateLib="S:\Admin\Addons\form";
+cabinetModelServer="S:\Cabinet";
+qhcLib="S:\Cabinet\QHC图纸库";
+pdfLib="S:\Cabinet\PDF图纸库";
+dbServer="S:\Admin\SAP\db"
+}

@@ -25,12 +25,13 @@ math.toNumber = function(str){
     return tonumber(str) : 0;
 }
 table.toHTML = function(tab){
-    var html = "<table border=1>";
+    var html = `<table style="border-collapse: collapse; border:1px solid #ccc;">`;
     for (i = 1; #tab) {
         html += "<tr>";
         for (j = 1; #tab[i]) {
         	tab[i][[j]] := "";
-            html += "<td nowrap>" + tab[i][j] + "</td>";
+            // td 也要加边框
+            html += `<td nowrap style="border:1px solid #ccc; padding:2px;">` + tab[i][j] + "</td>";
         }
         html += "</tr>";
     }
@@ -578,15 +579,16 @@ getUserFolder = function(corp){
 		if getValueInKey(root_path ++businessKeys[i], "DisplayName" ) == corp {
 			var UserFolder = getValueInKey(root_path ++ businessKeys[i], "UserFolder" );
 			if UserFolder
-				return	string.replace(UserFolder,"@OneDrive - ","");
+				return	string.replace(UserFolder,"OneDrive - ","");
 		}
 	}
 	var OneDriveCommercial = string.getenv("OneDriveCommercial");
 	if OneDriveCommercial
-		return string.replace( OneDriveCommercial ,"@OneDrive - ","");
+		return string.replace( OneDriveCommercial ,"OneDrive - ","");
 	return null; 
 }
 envFix = function(str){
+
 	if !str return str; 
 	var outStr = str;
 	var matches = string.matches(str, "%%%");
@@ -595,9 +597,10 @@ envFix = function(str){
 		if #v
 			var envVar = getUserFolder(string.trim(v[1],"%"));
 		if envVar 
-			outStr = string.replace(outStr, "@"+v[1], envVar);
+			outStr = string.replace(outStr, v[1], envVar);
 	}
 	//outStr = string.replace(outStr,"@OneDrive - ","");	/*bugfix*/
+
 	return outStr;
 }
 isWorkingHour = function(startHour = 8, endHour = 18){

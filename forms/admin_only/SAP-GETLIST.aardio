@@ -5,18 +5,21 @@ import fsys;
 /*DSG{{*/
 var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="import MM60";left=72;top=80;right=184;bottom=112;dl=1;dt=1;z=1};
-button2={cls="button";text="import excel";left=72;top=112;right=184;bottom=144;dl=1;dt=1;z=3};
-button3={cls="button";text="Merge && Publish";left=72;top=144;right=184;bottom=176;dl=1;dt=1;z=4};
-button4={cls="button";text="分发";left=72;top=216;right=184;bottom=248;dl=1;dt=1;z=5};
+button={cls="button";text="import MM60";left=82;top=149;right=194;bottom=181;dl=1;dt=1;z=1};
+button2={cls="button";text="import excel";left=623;top=25;right=735;bottom=57;dr=1;dt=1;z=3};
+button3={cls="button";text="Merge && Publish";left=82;top=196;right=194;bottom=228;dl=1;dt=1;z=4};
+button4={cls="button";text="分发";left=617;top=249;right=729;bottom=281;dr=1;dt=1;z=5};
 button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
-button6={cls="button";text="xlsx";left=192;top=80;right=240;bottom=112;dl=1;dt=1;z=8};
-checkbox1={cls="checkbox";text="Checkbox1";left=65;top=299;right=560;bottom=318;db=1;dl=1;z=10};
-checkbox2={cls="checkbox";text="Checkbox2";left=65;top=323;right=560;bottom=342;db=1;dl=1;z=11};
-checkbox3={cls="checkbox";text="Checkbox3";left=65;top=348;right=560;bottom=367;db=1;dl=1;z=12};
+button6={cls="button";text="xlsx";left=202;top=149;right=250;bottom=181;dl=1;dt=1;z=8};
+button7={cls="button";text='\uF07C';left=574;top=79;right=606;bottom=111;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=14};
+button8={cls="button";text="import S4 excel";left=625;top=78;right=737;bottom=110;dr=1;dt=1;z=15};
+checkbox1={cls="checkbox";text="Checkbox1";left=66;top=381;right=561;bottom=400;db=1;dl=1;z=10};
+checkbox2={cls="checkbox";text="Checkbox2";left=66;top=405;right=561;bottom=424;db=1;dl=1;z=11};
+checkbox3={cls="checkbox";text="Checkbox3";left=66;top=430;right=561;bottom=449;db=1;dl=1;z=12};
 edit={cls="edit";left=72;top=24;right=568;bottom=56;dl=1;dr=1;dt=1;edge=1;z=6};
-edit2={cls="edit";left=8;top=437;right=343;bottom=458;db=1;dl=1;hidesel=1;readonly=1;z=9};
-log={cls="richedit";left=288;top=80;right=568;bottom=280;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
+edit2={cls="edit";left=8;top=437;right=343;bottom=458;db=1;dl=1;hideSel=1;readonly=1;z=9};
+edit3={cls="edit";left=70;top=79;right=566;bottom=111;dl=1;dr=1;dt=1;edge=1;z=13};
+log={cls="richedit";left=288;top=144;right=568;bottom=367;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
 )
 /*}}*/
 
@@ -254,6 +257,75 @@ import console
 	winform.log.print("写入完成qhc_export");
 	winform.button2.disabledText = null;
 }
+/*}}*/
+
+/*importFromQHCS4{{*/
+var importFromQHCS4 = function(winform, path){
+import console
+//console.open();
+
+	import access.oleDb;
+	var adb = access(path);
+	
+	var s4tab = adb.getTable(`
+	SELECT
+		[P11物料号] AS [物料], 
+		[S4物料]
+	FROM [新旧物料对应关系$]
+	WHERE
+		[P11物料号] <>''
+	`);
+
+	adb.close();
+
+	import sqlite
+	import config;
+	//var sdb = sqlite(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db");
+	var sdb = sqlite(io.joinpath(config.__sapDownload,"step_qhcsap.db"));
+	winform.log.print("修改allcost数据...");
+
+/*
+# 把s4tab内的数据写入sdb内的all_cost表
+# s4tab内的"物料" 对应all_cost表的"物料"列
+# 给all_cost添加一列:S4物料
+# 有约20万行数据, 所以注意效率问题;
+*/
+
+	if(!sdb.existsTable("all_cost")){
+		winform.log.print("错误：all_cost 表不存在，请先导入 excel !");
+		sdb.close();
+		return;
+	}
+
+	winform.log.print("为 all_cost 表添加 S4物料 列...");
+	try{
+		sdb.exec("ALTER TABLE [all_cost] ADD COLUMN [S4物料] TEXT;");
+	}
+	
+	winform.log.print("建立临时索引以提高海量数据更新效率...");
+	sdb.exec("CREATE INDEX IF NOT EXISTS idx_allcost_mat ON [all_cost](物料 collate nocase);");
+	
+	winform.log.print("正在循环写入 S4 物料数据，请稍候...");
+	sdb.beginTrans();
+	var cmd = sdb.prepare("UPDATE [all_cost] SET [S4物料]=@s4 WHERE [物料]=@mat;");
+	for (i=1; #s4tab){
+		var item = s4tab[i];
+		cmd.step(
+			s4 = item["S4物料"];
+			mat = item["物料"]
+		)
+	}
+	sdb.commitTrans();
+	s4tab = null;
+
+
+
+	sdb.close();
+	t = null;
+	winform.log.print("写入S4数据完成到allcost");
+	winform.button8.disabledText = null;
+}
+/*}}*/
 winform.button2.oncommand = function(id,event){
 
 	var path = winform.edit.text;
@@ -292,6 +364,7 @@ console.open();
 			all_cost.BUn, 
 			all_cost.价格, 
 			all_cost.PGr, 
+			all_cost.S4物料, 
 			qhc_export.禁用,
 			qhc_export.生产展平尺寸 
 		FROM all_cost
@@ -318,6 +391,7 @@ console.open();
 			BUn TEXT, 
 			价格 NUMERIC, 
 			PGr TEXT, 
+			S4物料 TEXT,
 			禁用 TEXT,
 			生产展平尺寸 TEXT,
 			PRIMARY KEY(物料)
@@ -412,7 +486,7 @@ winform.button4.oncommand = function(id,event){
 getXlsxDbPath = function(){
 	import fsys;
 	if !io.exist(config.admin.lastWorkingFolder) return null; 
-	var list = fsys.list(config.admin.lastWorkingFolder,,"SAP所有物料*.xlsx");
+	var list = fsys.list(/*config.admin.lastWorkingFolder*/"\\ccnqia05\temp-\SAP每周物料导出\",,"SAP所有物料*.xlsx");
 	if #list 
 		return list[list[#list]]; 
 }
@@ -426,7 +500,21 @@ winform.button6.oncommand = function(id,event){
 	thread.invoke(dealWithXlsx, winform);
 }
 
-winform.edit.text = getXlsxDbPath();
+winform.button7.oncommand = function(id,event){
+	import fsys.dlg;
+	winform.edit3.text = fsys.dlg.open('Excel文件|*.xlsx|Excel文件|*.xls||',"打开QHC导出的数据文件",config.admin.lastWorkingFolder,owner);
+}
+
+winform.button8.oncommand = function(id,event){
+	var path = winform.edit3.text;
+	if !io.exist(path) return ; 
+
+	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
+	winform.log.print("Accessing " ++ path );
+	thread.invoke(importFromQHCS4, winform, path);
+}
+
+winform.edit.text =  getXlsxDbPath();
 winform.show();
 win.loopMessage();
 return winform;

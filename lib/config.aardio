@@ -2,15 +2,19 @@
 
 import fsys.config;
 import fsys.ini;
+import string.ini;
 import fsys.knownFolder;
 import fsys.version;
 import domisoft;
-
+/*
+import console;
+console.open();
+*/
 config = fsys.config(io.appData("/domisoft/SETBM/"));
 
-var ini = fsys.ini(io.joinpath(_STUDIO_INVOKED ?  "\" : io._exedir, "TBM.ini"));
+import fsys.table
+var lib = fsys.table("\vtab.table");
 
-var lib = ini.getSection("lib");
 
 var table = ..table;
 var string = ..string;

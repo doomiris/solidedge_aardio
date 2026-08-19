@@ -10,7 +10,15 @@ progress={cls="progress";left=0;top=0;right=664;bottom=30;aw=1;dl=1;dr=1;dt=1;ma
 import win.ui.grid;
 winform.grid = win.ui.grid(winform.listview);//创建数据视图
 winform.seDfts = null;
+
 var getDftList = function(wform){
+/*
+	import console
+	console.open();
+*/
+	
+	import com;
+	
 	import solidedge.application;
 	import solidedge.DraftDocument;
 	import domisoft;
@@ -28,7 +36,8 @@ var getDftList = function(wform){
     		table.push(seDfts.seIndex, i);
     	}
     wform.seDfts = seDfts; //把dfts推送给上一层
-	vtab = table.create(,{fields = {"物料","版本","型号","名称","属性"}})
+    
+	vtab = table.create(,{fields = {"物料","版本","型号","名称","属性","材料","质量/体积"}})
 	wform.progress.min = 0;
 	wform.progress.max = #seDfts ;
 	wform.progress.hide = 0;
@@ -39,6 +48,17 @@ var getDftList = function(wform){
 		var tb = seDft.getTitleBlock(seDft.getFirstSheet());
 		if(tb){
 			var lbt = seDft.getLabelTable(tb);
+			var seLbs = tb.BlockLabelOccurrences;
+			
+			
+			for index,obj in com.each(seLbs) {
+				if obj.Name == "材料"
+					t["材料"] = string.trim(obj.DisplayedText);
+				if obj.Name == "质量/体积"
+					t["质量/体积"] = string.trim(obj.DisplayedText);
+
+			} 			
+
 			t.物料 = seDft.getFileName();
 			t.名称 = domisoft.formatWindowsFileName(lbt["零件名称"]);
 			t.型号 = domisoft.formatWindowsFileName(lbt["型号/项目名称"]);
@@ -48,8 +68,9 @@ var getDftList = function(wform){
 				t.属性 = blkObj["属性"].value;
 			else {
 				blkObj := seDft.getLabelObjectTable(seDft.getBlkByName("SRDC_Ver",seDft.getFirstSheet()));
-				t.属性 = blkObj ?  blkObj["阶段"].value : "";
+				t.属性 = blkObj ?  blkObj["阶段"].Value : "";
 			}
+
 			
 
 		}else{
@@ -58,6 +79,8 @@ var getDftList = function(wform){
 			t.型号 = "";
 			t.版本 = "";
 			t.属性 = "";
+			t.材料= "";
+			t["质量/体积"] ="";
 		}
 
 

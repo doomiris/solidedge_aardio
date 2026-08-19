@@ -287,7 +287,7 @@ console.open();
     	userinput=string.replace(userinput,"@*","%");
     	userinput=string.replace(userinput,"@?","_");
 		
-		userinput=string.replace(userinput,"@=","{等号}"); //先把等号换成制表符后面记得再换回来:P
+		userinput=string.replace(userinput,"=","{等号}"); //先把等号换成制表符后面记得再换回来:P
 		
 		var sqlstr;
 			
@@ -315,7 +315,7 @@ console.open();
 					`MTyp` AS `类型`,
 					`物料组`,
 					`价格`,
-					`PGr` AS `采购组`,
+					`S4物料`,
 					`禁用`,
 					`生产展平尺寸`
 			 	FROM
