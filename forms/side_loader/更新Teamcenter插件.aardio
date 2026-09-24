@@ -4,114 +4,277 @@ import win.ui;
 var winform_tc_plug = win.form(text="更新 - Teamcenter插件";right=759;bottom=279)
 winform_tc_plug.add(
 button2={cls="button";text='\uF0EE 更新';left=656;top=232;right=744;bottom=264;db=1;dr=1;font=LOGFONT(name='FontAwesome');z=2};
-checkIcon={cls="checkbox";text="安装图标";left=272;top=241;right=401;bottom=258;z=4};
 listview={cls="listview";left=0;top=32;right=760;bottom=224;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-static={cls="static";text="更新前需要关闭退出Teamcenter";left=24;top=240;right=304;bottom=264;color=0x0000FF;transparent=1;z=3}
-)
+radioQHC={cls="radiobutton";text="QHC office";left=180;top=6;right=280;bottom=26;dt=1;z=6};
+radioSH={cls="radiobutton";text="SH office";left=85;top=6;right=175;bottom=26;dt=1;group=1;z=5};
+static={cls="static";text="更新前需要关闭退出Teamcenter";left=24;top=240;right=264;bottom=264;color=0x0000FF;transparent=1;z=3};
+staticServer={cls="static";text="服务器：";left=16;top=8;right=80;bottom=26;dt=1;transparent=1;z=4}
+);
 /*}}*/
-
 import win.ui.grid;
 var grid = win.ui.grid(winform_tc_plug.listview);
 import fsys;
 import fsys.lnk;
-var tc_plugins = {
-	fields = {"名称", "当前版本", "目标版本", "当前文件", "目标文件" }
+import config;
+
+// 开启 ListView 复选框功能
+winform_tc_plug.listview.checkbox = true;
+
+// 1. 获取 Teamcenter 安装路径
+var _tc_install_path;
+var tcLnk = fsys.lnk.searchLnk(,"Teamcenter 13", 0 /*_CSIDL_DESKTOP*/);
+if(tcLnk){
+    _tc_install_path = string.match(tcLnk, "(.+?)\\portal\\portal\.bat");
 }
-_plugins_keywords := {
-	"com.teamcenter.rac.kailicode_*.jar",
-	"com.teamcenter.rac.kailireport4_*.jar",
-	"com.teamcenter.rac.query_*.jar",
-	"com.teamcenter.rac.write_*.jar",
-	"com.teamcenter.rac.kailiB2C_*.jar"
-}
-_plugins_parent := "com.teamcenter.rac.";
-_tc_install_path := string.trimright(fsys.lnk.searchLnk(,"Teamcenter 13", 0 /*_CSIDL_DESKTOP*/), "\portal\portal.bat");
 _tc_install_path := "C:\Program Files\Siemens\Teamcenter13";
-_plugins_folder := io.joinpath(_tc_install_path, "\portal\plugins");
-_plugins_server := "\\CCNSIA1A\SEPARTS\Admin\Software\TeamCenter_install\00-PLM二次开发安装包";
-_plugins_registry_cmd := io.joinpath(_tc_install_path, "\portal\registry\genregxml.bat");
 
-if !io.exist(_plugins_server) win.msgbox("目前不存在 " + '\r' + _plugins_server);
+var _plugins_folder = io.joinpath(_tc_install_path, "portal\plugins");
+var _plugins_registry_cmd = io.joinpath(_tc_install_path, "portal\registry\genregxml.bat");
 
-var nlist = fsys.list(_plugins_server,,_plugins_keywords);
-var flist = {};
-for (i=1; #_plugins_keywords){
-	var t = fsys.list(_plugins_folder,,_plugins_keywords[i]);
-	if #t>1
-		table.sort(t, lambda(a) tonumber(string.match(owner,"\.V(\d+)\.")) > tonumber(string.match(a,"\.V(\d+)\.")))
-	if #t>1
-		for (i=2;#t) io.remove(t[t[i]]);	//删除多余旧版本
-	table.push(flist, t[1]:"");
-}
-for (i=1; #nlist){
-	var t = {};
-	t.名称 = string.match(nlist[i], _plugins_parent ++ "(\w+)_\d");
-	t.当前版本 = string.match(flist[i],"\.(V\d+)\.")//#flist[i] ? string.match(flist[i],"\.(V\d+)\.") : null;
-	t.目标版本 = string.match(nlist[i],"\.(V\d+)\.");
-	t.当前文件 = flist[i];
-	t.目标文件 = nlist[i];
-	table.push(tc_plugins, t);
-}
+// 动态获取当前选中的服务器插件路径
+var getPluginServer = function(){
+    if(winform_tc_plug.radioSH.checked){
+        return "\\CCNSIA1A\SEPARTS\Admin\Software\TeamCenter_install\00-PLM二次开发安装包";
+    }
+    return "\\CCNQIA05\temp-\PLM相关\00-PLM\PLM二次开发程序更新安装包";
+};
 
-grid.setTable(tc_plugins);
+// 提取版本数字辅助函数（已修复 match 缺少参数的问题）
+var getVersionNumber = function(verStr){
+    if(!verStr) return 0;
+    var v = string.match(verStr, "V(\d+)");
+    if(!v) v = string.match(verStr, "_(\d+)");
+    if(!v) v = string.match(verStr, "^(\d+)$");
+    return tonumber(v) : 0;
+};
 
-/*调整列宽{{*/
-winform_tc_plug.listview.setColumn({cx=75;	fmt=0x0/*_LVCFMT_LEFT*/},	1);
-winform_tc_plug.listview.setColumn({cx=75;	fmt=0x0/*_LVCFMT_LEFT*/},	2);
-winform_tc_plug.listview.setColumn({cx=75;	fmt=0x0/*_LVCFMT_LEFT*/},	3);
-winform_tc_plug.listview.setColumn({cx=250;	fmt=0x0/*_LVCFMT_LEFT*/},	4);
-winform_tc_plug.listview.setColumn({cx=250;	fmt=0x0/*_LVCFMT_LEFT*/},	5);
-/*}}*/
+var tc_plugins = {};
 
-/*更新图标{{*/
+/*更新图标辅助函数{{*/
 var updateIcon = function(){
-	var ulist = {
-		[1] = {
-			sourceFile = _plugins_server ++ "\图标\customer.properties";
-			targetFolder = _plugins_folder ++ "\configuration_13000.1.0\";
-		},
-		[2] = {
-			sourceFile = _plugins_server ++ "\图标\Ob.png";
-			targetFolder = _plugins_folder ++ "\configuration_13000.1.0\images\";
-		}
-	}
-	//if !io.exist()
-	for (i=1;#ulist) {
-			io.remove(io.joinpath(ulist[i].targetFolder, io.splitpath(ulist[i].sourceFile).file));
-			fsys.copy(ulist[i].sourceFile,ulist[i].targetFolder,0x100/*_FOF_SIMPLEPROGRESS*/);
-	}
-}
-/*}}*/
-winform_tc_plug.button2.oncommand = function(id,event){
-	var succ = 0;
-	var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
-	var getV = function(a){
-		if !#a return 0; 
-		return tonumber(string.split(string.upper(a),"V")[2]);
-	}
-	var updatePlugin = function(n){
-		io.remove(io.joinpath(_plugins_folder, tc_plugins[n].当前文件 ));
-		fsys.copy(io.joinpath(_plugins_server, tc_plugins[n].目标文件), _plugins_folder, 0x100/*_FOF_SIMPLEPROGRESS*/);
-		succ += 1;
-	}
-	for (i=1; #tc_plugins){
-		if tc_plugins[i].当前版本 == tc_plugins[i].目标版本 continue;
-		if getV(tc_plugins[i].当前版本) < getV(tc_plugins[i].目标版本)
-			updatePlugin(i);
-	}
+    var _plugins_server = getPluginServer();
+    var ulist = {
+        [1] = {
+            sourceFile = io.joinpath(_plugins_server, "图标\customer.properties");
+            targetFolder = io.joinpath(_plugins_folder, "configuration_13000.1.0");
+        };
+        [2] = {
+            sourceFile = io.joinpath(_plugins_server, "图标\Ob.png");
+            targetFolder = io.joinpath(_plugins_folder, "configuration_13000.1.0\images");
+        };
+    };
 
-	if winform_tc_plug.checkIcon.checked {
-		updateIcon();
-		succ += 1;
-	}
-	
-	if succ || ctrl
-		raw.execute(_plugins_registry_cmd);
-	
-	
-	
-	winform_tc_plug.close();
+    var count = 0;
+    for(i=1; #ulist; 1){
+        if(io.exist(ulist[i].sourceFile)){
+            io.createDir(ulist[i].targetFolder);
+            var targetFile = io.joinpath(ulist[i].targetFolder, io.splitpath(ulist[i].sourceFile).file);
+            io.remove(targetFile);
+            fsys.copy(ulist[i].sourceFile, ulist[i].targetFolder, 0x100/*_FOF_SIMPLEPROGRESS*/);
+            count++;
+        }
+    }
+    return count > 0;
+};
+/*}}*/
+
+// 加载插件及图标配置列表逻辑
+var loadPlugins = function(){
+    var _plugins_server = getPluginServer();
+
+    tc_plugins = {
+        fields = {"名称", "当前版本", "目标版本", "当前文件", "目标文件"}
+    };
+
+    // 校验服务器目录
+    if(!io.exist(_plugins_server)){
+        grid.setTable(tc_plugins);
+        winform_tc_plug.msgboxErr("无法访问插件服务器目录：" + '\r\n' + _plugins_server);
+        return false;
+    }
+
+    // 1. 查询服务器根目录下所有 .jar 文件（不包含子目录）
+    var nlist = fsys.list(_plugins_server, , "*.jar") : {};
+
+    // 遍历服务器端插件，并动态与本地已安装版本匹配
+    for(i=1; #nlist; 1){
+        var serverFileName = nlist[i];
+
+        // 提取插件包标识（以下划线前的字符作为匹配基准）
+        var pluginPrefix = string.match(serverFileName, "^([^_]+)");
+        pluginPrefix := io.splitpath(serverFileName).name;
+
+        // 查找本地对应的已有版本文件
+        var localFiles = fsys.list(_plugins_folder, , pluginPrefix + "_*.jar") : {};
+
+        // 本地若存在多个版本，按版本倒序排序，第一个作为最新版本
+        if(#localFiles > 1){
+            table.sort(localFiles, function(next){
+                return getVersionNumber(owner) > getVersionNumber(next);
+            });
+        }
+
+        var curFile = localFiles[1] : "";
+        var curVer = string.match(curFile, "\.(V\d+)\.") : ( #curFile ? "已安装" : "未安装" );
+        var targetVer = string.match(serverFileName, "\.(V\d+)\.") 
+            : (string.match(serverFileName, "_(\d+)") : "新版本");
+
+        // 列表显示的插件简写名称
+        var pluginName = string.match(serverFileName, "<com\.teamcenter\.rac\.>?([^_]+)") 
+            : (string.match(serverFileName, "^([^_]+)") : serverFileName);
+
+        var item = {
+            名称 = pluginName;
+            当前版本 = curVer;
+            目标版本 = targetVer;
+            当前文件 = curFile;
+            目标文件 = serverFileName;
+            // 记录多余的历史旧版本，在更新时一同清理
+            extraOldFiles = #localFiles > 1 ? table.slice(localFiles, 2) : null;
+        };
+
+        table.push(tc_plugins, item);
+    }
+
+    // 2. 检测并将“安装图标与配置文件”加入列表
+    var iconSrc1 = io.joinpath(_plugins_server, "图标\customer.properties");
+    var iconSrc2 = io.joinpath(_plugins_server, "图标\Ob.png");
+    if(io.exist(iconSrc1) || io.exist(iconSrc2)){
+        var localIcon1 = io.joinpath(_plugins_folder, "configuration_13000.1.0\customer.properties");
+        var localIcon2 = io.joinpath(_plugins_folder, "configuration_13000.1.0\images\Ob.png");
+        var isIconInstalled = io.exist(localIcon1) && io.exist(localIcon2);
+
+        table.push(tc_plugins, {
+            名称 = "[配置] 客户端图标与配置";
+            当前版本 = isIconInstalled ? "已安装" : "未安装";
+            目标版本 = "最新文件";
+            当前文件 = "configuration_13000.1.0";
+            目标文件 = "图标 (customer.properties/Ob.png)";
+            isIcon = true; // 标识为图标更新项
+        });
+    }
+
+    if(!#tc_plugins){
+        grid.setTable(tc_plugins);
+        winform_tc_plug.msgboxErr("在服务器目录下未找到任何插件或图标配置！");
+        return false;
+    }
+
+    // 绑定数据到 Grid
+    grid.setTable(tc_plugins);
+
+    /*调整列宽{{*/
+    winform_tc_plug.listview.setColumn({cx=140; fmt=0x0/*_LVCFMT_LEFT*/}, 1);
+    winform_tc_plug.listview.setColumn({cx=70;  fmt=0x0/*_LVCFMT_LEFT*/}, 2);
+    winform_tc_plug.listview.setColumn({cx=70;  fmt=0x0/*_LVCFMT_LEFT*/}, 3);
+    winform_tc_plug.listview.setColumn({cx=230; fmt=0x0/*_LVCFMT_LEFT*/}, 4);
+    winform_tc_plug.listview.setColumn({cx=230; fmt=0x0/*_LVCFMT_LEFT*/}, 5);
+    /*}}*/
+
+    // 仅勾选需要更新的项，已是最新或已安装好的取消勾选
+    for(row=1; #tc_plugins; 1){
+        var item = tc_plugins[row];
+        var needUpdate = false;
+
+        if(item.isIcon){
+            needUpdate = (item.当前版本 != "已安装");
+        }
+        else {
+            var curV = getVersionNumber(item.当前版本);
+            var targetV = getVersionNumber(item.目标版本);
+            needUpdate = (!#item.当前文件) || (curV < targetV);
+        }
+
+        winform_tc_plug.listview.setChecked(row, needUpdate);
+    }
+    return true;
+};
+
+// 单选框切换事件：切换服务器时自动重新加载列表
+winform_tc_plug.radioSH.oncommand = function(id,event){
+    loadPlugins();
+};
+
+winform_tc_plug.radioQHC.oncommand = function(id,event){
+    loadPlugins();
+};
+
+// 根据原配置初始化单选框选中状态
+if(config[["settings"]][["cbb_serverIndex"]] == 2){
+    winform_tc_plug.radioQHC.checked = true;
 }
+else {
+    winform_tc_plug.radioSH.checked = true;
+}
+
+// 首次加载列表
+loadPlugins();
+
+// 点击更新按钮
+winform_tc_plug.button2.oncommand = function(id,event){
+    var _plugins_server = getPluginServer();
+    var succ = 0;
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) & 0x8000;
+
+    // 显示沙漏动画反馈
+    winform_tc_plug.button2.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'};
+
+    var updatePlugin = function(item){
+        // 1. 安全删除本地旧版本文件
+        if(#item.当前文件){
+            io.remove(io.joinpath(_plugins_folder, item.当前文件));
+        }
+        // 清理多余的历史旧版本
+        if(item.extraOldFiles){
+            for(k=1; #item.extraOldFiles; 1){
+                io.remove(io.joinpath(_plugins_folder, item.extraOldFiles[k]));
+            }
+        }
+
+        // 2. 复制新插件到本地
+        var srcPath = io.joinpath(_plugins_server, item.目标文件);
+        fsys.copy(srcPath, _plugins_folder, 0x100/*_FOF_SIMPLEPROGRESS*/);
+        succ++;
+    };
+
+    for(i=1; #tc_plugins; 1){
+        if(!winform_tc_plug.listview.getChecked(i)){
+            continue;
+        }
+
+        var item = tc_plugins[i];
+
+        // 处理图标/配置更新项
+        if(item.isIcon){
+            if(ctrl || (item.当前版本 != "已安装")){
+                if(updateIcon()) succ++;
+            }
+            continue;
+        }
+
+        // 处理普通插件更新项
+        var curV = getVersionNumber(item.当前版本);
+        var targetV = getVersionNumber(item.目标版本);
+
+        if(ctrl || (curV < targetV) || (!#item.当前文件)){
+            updatePlugin(item);
+        }
+    }
+
+    // 只要有更新或者按住 Ctrl 强制刷新，就重新生成注册配置
+    if(succ || ctrl){
+        if(io.exist(_plugins_registry_cmd)){
+            raw.execute(_plugins_registry_cmd);
+        }
+        winform_tc_plug.msgbox("更新完成！共更新 " + succ + " 项。");
+    }
+    else {
+        winform_tc_plug.msgbox("所选项均已是最新状态，无需更新。");
+    }
+
+    winform_tc_plug.button2.disabledText = null;
+    winform_tc_plug.close();
+};
 
 winform_tc_plug.show();
 win.loopMessage();

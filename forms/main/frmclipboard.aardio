@@ -1,3 +1,6 @@
+import win.dlg.message;
+import win.inputBox;
+
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
@@ -22,288 +25,238 @@ static={cls="static";left=412;top=1;right=756;bottom=15;align="right";aw=1;dl=0.
 
 import win.clip.viewer;
 import win.ui.grid;
-import win.ui.listEdit;
 import win.clip;
 import sqlite;
 import config;
-import domisoft;
 import tarray;
-import win.debounce;
-import win.inputBox;
-import win.dlg.message;
-import winex.editor;
-/*initDB{{*/
+
 var db_init = function(){
-	var db = sqlite(config.tbmclip.userDbPath);
-	if !db.existsTable("favClipTitle")
-		db.exec("CREATE TABLE favClipTitle( 
-			分类 TEXT,
-			排序 INTEGER
-			);"
-		)
-	
-	if !db.existsTable("favClipContent")
-		db.exec("CREATE TABLE favClipContent( 
-			分类 TEXT,
-			内容 TEXT,
-			标签 TEXT,
-			排序 INTEGER
-			);"
-		)	
+    var db = sqlite(config.tbmclip.userDbPath);
+    if (!db.existsTable("favClipTitle")){
+        db.exec("CREATE TABLE favClipTitle(分类 TEXT, 排序 INTEGER);");
+    }
+    if (!db.existsTable("favClipContent")){
+        db.exec("CREATE TABLE favClipContent(分类 TEXT, 内容 TEXT, 标签 TEXT, 排序 INTEGER);");
+    }
+    db.close();
 }
 db_init();
-/*}}*/
+
 var userFocus = ...;
-var titleTab;//保存分类
-var cTab; //保存全部内容
-var contentTitle;	//当前分类
-var contentTab;	//当前分类下的内容
-/*db_refresh{{*/
+var titleTab;        // 保存全部分类表
+var cTab;            // 保存所有内容 (仅加载用)
+var contentTitle;    // 当前选中的分类
+var contentTab = []; // 当前分类下的真实列表数据 (同步此表并覆写到数据库)
+
 var db_refresh = function(){
-	var db = sqlite( config.tbmclip.userDbPath,,1/*_SQLITE_OPEN_READONLY*/);
-	titleTab = db.getTable("SELECT 分类,排序 FROM [favClipTitle] ORDER BY 排序 ASC");
-	cTab = db.getTable("SELECT * FROM [favClipContent]");
-	db.close();	
+    var db = sqlite(config.tbmclip.userDbPath,, 1/*_SQLITE_OPEN_READONLY*/);
+    titleTab = db.getTable("SELECT 分类,排序 FROM [favClipTitle] ORDER BY 排序 ASC");
+    //cTab = db.getTable("SELECT * FROM [favClipContent] ORDER BY 排序 ASC");
+    db.close(); 
+    titleTab.fields = {"分类"};
 }
 db_refresh();
-/*}}*/
+
+// 核心函数：将内存中的 contentTab 数组完美同步并落盘到数据库（清空原分类+重新按序写入）
+var syncContentToDb = function(){
+    if(!contentTitle) return;
+    var db = sqlite(config.tbmclip.userDbPath);
+    db.beginTrans(); // 开启事务加速写入
+    db.exec("DELETE FROM favClipContent WHERE 分类=@title", { title = contentTitle });
+
+    var stmt = db.prepare("INSERT INTO favClipContent (分类, 内容, 标签, 排序) VALUES (@分类, @内容, @标签, @排序)");
+    for(i=1; #contentTab){
+        contentTab[i].排序 = i; 
+        stmt.step(contentTab[i]);
+    }
+    db.commitTrans();
+    db.close();
+}
+
 var refresh = function(){
-	var str = win.clip.read();	
-	winform.edit.text = str;
+    var str = win.clip.read();  
+    winform.edit.text = str : ""; // 如果为null则赋空字符串
 }
 var viewer = win.clip.viewer(winform);
-viewer.onDrawClipboard = function(){
-	refresh();
-}
-winform.edit2.setCueBannerText("点击右侧列表内项目可快速复制内容到剪切板")
+viewer.onDrawClipboard = refresh;
+winform.edit2.setCueBannerText("点击右侧列表内项目可快速复制内容到剪切板");
 
 winform.button.oncommand = function(id,event){
-	if event = 0/*_BN_CLICKED*/
-		win.clip.write()
+    if (event == 0/*_BN_CLICKED*/) win.clip.write(""); // clear
 }
 
 var grid = win.ui.grid(winform.listview);
 var grid2 = win.ui.grid(winform.listview2);
-
-titleTab.fields = {"分类"};
 grid.setTable(titleTab);
 
+// 分类切换
 grid.onItemChanged = function(item,subItem,nmListView){
-	contentTitle = titleTab[item]["分类"];
-	contentTab = table.filter(cTab, λ(v,index) v["分类"] == contentTitle );
-	table.sort(contentTab, λ (next) owner["排序"] < next["排序"] );
-	contentTab.fields = {[1] = "内容", [2] = "标签"};
-	grid2.setTable(contentTab);
-	grid2.setColumnWidth(100,2)
-	winform.listview2.fillParent(1);
+    if(!item) return;
+    contentTitle = titleTab[item]["分类"];
+    // 筛选出属于该分类的所有内容放入新数组，并应用列名以供 grid 提取
+    var db = sqlite(config.tbmclip.userDbPath,, 1/*_SQLITE_OPEN_READONLY*/);
+    contentTab = db.getTable("SELECT * FROM [favClipContent] WHERE 分类=@title ORDER BY 排序 ASC", { title = contentTitle });
+    db.close();
+
+    if(!contentTab) contentTab = {}; // 避免分类下没数据时报错
+    contentTab.fields = {"内容", "标签"};
+
+    grid2.setTable(contentTab);
+    grid2.setColumnWidth(100,2);
+    winform.listview2.fillParent(1);
 }
 
+// 左键单击立刻复制并上屏
 grid2.onItemChanged = function(item,subItem,nmListView){
-	var content = owner.items[item][1];
-	win.clip.write(content);
-	//winex.editor.sendStringByClip(content);
+    if(!item) return;
+    var content = contentTab[item]["内容"];
+    win.clip.write(content);
 }
+
+// 双击时隐藏自身并向宿主目标发送对应文本
 grid2.onDoubleClick = function(item,subItem,nmListView){
-	if !item return ; 
-	//grid2.onItemChanged(item) //已经触发不需要再触发了
-	winform.show(false);
-/*
-# 发送 CTRL+V 
-*/
-	import winex;
-	import key;	
-	
-	if userFocus 
-		if winex.attach(userFocus,true)
-			key.combine("CTRL","V");
-	
+    if(!item) return;
+    var content = contentTab[item]["内容"];
+    winform.show(false);
 
-
-}
-grid2.selInsert= function(position,itemData){	
-    var selIndex = position || owner.selIndex;
-	var tab = owner.items;
-	var newItem = itemData ? table.array(itemData) : table.array(owner.columnCount, " ");
-	table.insert(tab, newItem, selIndex+1);
-	owner.replaceItems(tab);
-	var newIndex = selIndex + 1;
-	owner.selIndex = newIndex;
-	owner.setFocus();
-	return newIndex; 
+    import winex.editor;
+    winex.editor.sendString(content); // 比模拟 Ctrl+V 更稳定且不依赖焦点前置
 }
 
-/*插入新内容{{*/
-winform.button2.oncommand = function(id,event){
-	if !contentTitle return winform.msgInfo("先选择分类",100); 
-	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio")
-	mdlfrm.text = "添加新内容";
-	var item =  mdlfrm.doModal();
-	if !item return ; 
-	var newIndex = grid2.selInsert(,item)	
-	var newItem = {
-		"分类" = contentTitle;
-		"内容" = item[1],
-		"标签" = item[2],
-		"排序" = newIndex;
-	};
-	grid2.newContent(newIndex,newItem)
-	table.push(cTab, newItem);
-}
-/*}}*/
-/*添加分类{{*/
-grid.addNewTitle = function(title){
-	db = sqlite( config.tbmclip.userDbPath);
-	db.exec("INSERT INTO `favClipTitle`(??) VALUES(?)",{{'分类', '排序'},{title, #titleTab + 1}});
-	db.close();
-}
-
+// ---------- 添加分类 ----------
 winform.button3.oncommand = function(id,event){
-	var newItem = winform.inputBox("请输入分类名称","添加分类",,"输入简短描述")
-	if !newItem return ; 
-	if tarray.findValue(titleTab, newItem) 
-		return winform.msgInfo("已经存在这个分类了: " + newItem, 1000);
-	grid.addNewTitle (newItem);
-	table.push(titleTab, {"分类" = newItem, "排序" = #titleTab + 1 });
-	winform.listview.addItem(newItem);
+    var newItem = winform.inputBox("请输入分类名称","添加分类",,"输入简短描述");
+    if(!newItem || !#newItem) return; 
+
+    if(table.find(titleTab, lambda(v) v.分类 == newItem)) {
+        return winform.msgInfo("已经存在这个分类了: " + newItem, 1000);
+    }
+
+    table.push(titleTab, {分类 = newItem, 排序 = #titleTab + 1});
+    var db = sqlite(config.tbmclip.userDbPath);
+    db.exec("INSERT INTO favClipTitle (分类,排序) VALUES (@分类, @排序)", { 分类=newItem; 排序=#titleTab });
+    db.close();
+    grid.setTable(titleTab);
 }
 
-/*}}*/
-/*内容修改按钮定义{{*/
-grid2.modifyContent = function(position,contentItem){
-	var selIndex = position || owner.selIndex;
-	var newItem = {
-		"分类" = contentTitle,
-		"内容" = contentItem[1],
-		"标签" = contentItem[2],
-		"排序" = selIndex
-	};
-	db = sqlite( config.tbmclip.userDbPath);
-	db.exec("UPDATE `favClipContent` SET ? WHERE ??",{ 
-		{
-			"内容" = contentItem[1],
-			"标签" = contentItem[2]
-		},
-		{
-			"分类" = contentTitle,
-			"排序" = selIndex
-		}
-	});
-	db.close();
-	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
-	cTab[i] = newItem;
-}
-grid2.newContent = function(position,contentItem){
-	var selIndex = position || owner.selIndex;
-	db = sqlite( config.tbmclip.userDbPath);
-	var sql = "INSERT INTO `favClipContent` (??) VALUES (?);"
-	sql = sqlite.format(sql,{
-		{"分类","内容","标签","排序"},
-		{
-			contentItem.分类,
-			contentItem.内容,
-			contentItem.标签,
-			contentItem.排序
-		}
-	})
-	//if !win.msgboxTest(sql) return ; 
-	db.exec(sql);
-	db.close();
-	var i, c = table.find(cTab, λ (v,k,rez)  v["分类"]==contentTitle and v["排序"] == selIndex); 
-	if i
-		cTab[i] = contentItem;
-}
-grid2.editItem = function(position){
-	var selIndex = position || owner.selIndex;
-	if !selIndex return ; 
-	var tab = owner.items;
-	var item = tab[selIndex];
-	var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio"); 
-	mdlfrm.edit.text = item[1];
-	mdlfrm.edit2.text = item[2];
-	var editedItem =  mdlfrm.doModal();
-	if !editedItem return ; 
-	tab[selIndex] = editedItem;
-	owner.replaceItems(tab);
-	grid2.modifyContent(selIndex, editedItem);
-}
-	//绑定到按钮
+// ---------- 添加内容 ----------
+winform.button2.oncommand = function(id,event){
+    if(!contentTitle) return winform.msgInfo("先选择分类", 500); 
+    var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio");
+    mdlfrm.text = "添加新内容";
+    var itemData = mdlfrm.doModal();
+    if(!itemData || !#itemData[1]) return; 
 
+    var selIndex = grid2.selIndex : #contentTab;
+    var newIdx = selIndex + 1;
 
-/*}}*/
+    // 直接操作 contentTab ，交给 sync 函数做数据库同步落地
+    table.insert(contentTab, {
+        分类 = contentTitle;
+        内容 = itemData[1];
+        标签 = itemData[2];
+        排序 = newIdx; 
+    }, newIdx);
 
-/*
-win.debounce(grid.onEditChanged);
-win.debounce(grid2.onEditChanged);
-win.debounce(grid.addNewTitle);
-win.debounce(grid2.modifyContent);
-*/
+    syncContentToDb();
+    grid2.setTable(contentTab);
+    grid2.selIndex = newIdx;
+}
+winform.button6.oncommand = winform.button2.oncommand; // 加号按钮同样绑定添加逻辑
+
+// ---------- 修改内容 ----------
+winform.button8.oncommand = function(){
+    var selIndex = grid2.selIndex;
+    if(!selIndex) return; 
+
+    var item = contentTab[selIndex];
+    var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio"); 
+    mdlfrm.edit.text = item["内容"];
+    mdlfrm.edit2.text = item["标签"];
+    var editedItem = mdlfrm.doModal();
+    if(!editedItem || !#editedItem[1]) return; 
+
+    item["内容"] = editedItem[1];
+    item["标签"] = editedItem[2];
+
+    syncContentToDb();
+    grid2.setTable(contentTab);
+    grid2.selIndex = selIndex;
+}
+
+// ---------- 删除内容 ----------
+winform.button7.oncommand = function(){
+    var selIndex = grid2.selIndex;
+    if(!selIndex) return;
+    if(!winform.msgboxTest("确定要删除选中的记录吗？")) return;
+
+    table.remove(contentTab, selIndex);
+    syncContentToDb();
+    grid2.setTable(contentTab);
+
+    if(selIndex > #contentTab) selIndex = #contentTab;
+    if(selIndex > 0) grid2.selIndex = selIndex;
+}
+
+// ---------- 上移 (button4) ----------
+winform.button4.oncommand = function(){
+    var idx = grid2.selIndex;
+    if(idx > 1){
+        contentTab[idx], contentTab[idx-1] = contentTab[idx-1], contentTab[idx];
+        syncContentToDb();
+        grid2.setTable(contentTab);
+        grid2.selIndex = idx - 1;
+    }
+}
+
+// ---------- 下移 (button5) ----------
+winform.button5.oncommand = function(){
+    var idx = grid2.selIndex;
+    if(idx && idx < #contentTab){
+        contentTab[idx], contentTab[idx+1] = contentTab[idx+1], contentTab[idx];
+        syncContentToDb();
+        grid2.setTable(contentTab);
+        grid2.selIndex = idx + 1;
+    }
+}
+
+// ---------- 填充 Excel ----------
+winform.button9.oncommand = function(id,event){
+    import com.excel;
+    var text = winform.edit.text;
+    if (!#text) return winform.msgInfo("剪贴板为空！", 500);
+
+    // 忽略最后的多余空白换行，避免产生尾部空元素
+    var items = string.splitEx(string.trimRight(text, '\r\n'), '\r\n');
+    if (!#items) return winform.msgInfo("剪贴板内容无效！", 500);
+
+    var excel = com.excel(false);
+    if (!excel) return winform.msgInfo("未检测到正在运行的 Excel！", 500);
+
+    var selection = excel.Selection;
+    if (!selection) return winform.msgInfo("未选中任何单元格！", 500);
+
+    var count = 1;
+    for i, cell in com.each(selection) {
+        if (cell.EntireRow.Hidden || cell.EntireColumn.Hidden) continue;
+        cell.Value2 = items[count];
+        count++;
+        if (count > #items) break;
+    }
+
+    winform.msgInfo("成功填写了 " + (count - 1) + " 个单元格！", 500);
+    winform.close(true);
+}
+
+if(userFocus){
+    import winex;
+    winform.static.text = winex.getText(userFocus); 
+}
+
 refresh();
 winform.show();
 win.showForeground(winform.hwnd);
-
-if userFocus {
-	import winex;
-	var title = winex.getText(userFocus);	
-	winform.static.text = title;
-}
-
-winform.button9.oncommand = function(id,event){
-/*
-# 把excel剪切板内复制的文字内容依次填写进当前选中的单元格内.
-# 注意当前选中的单元格是筛选后的显示内容
-# 填写时一写要填写进选中且可见的单元格内.隐藏掉的单元格不变;
-*/
-	import com.excel;
-	
-	var text = winform.edit.text;
-	if (!text) {
-		winform.msgInfo("剪贴板为空！",500);
-		return;
-	}
-	
-	// 去除末尾空行并按换行符分割
-	var items = string.splitEx(string.trimRight(text, "\r\n"), "\r\n");
-	if (!#items) {
-		winform.msgInfo("剪贴板内容无效！",500);
-		return;
-	}
-	
-	// 获取当前活动 Excel 实例
-	var excel = com.excel(false);
-	if (!excel) {
-		winform.msgInfo("未检测到正在运行的 Excel！",500);
-		return;
-	}
-	
-	var selection = excel.Selection;
-	if (!selection) {
-		winform.msgInfo("未选中任何单元格！",500);
-		return;
-	}
-	
-	var count = 1;
-	for i, cell in com.each(selection) {
-		// 忽略隐藏的行或列
-		if (cell.EntireRow.Hidden || cell.EntireColumn.Hidden) {
-			continue;
-		}
-		
-		// 写入数据
-		cell.Value2 = items[count];
-		count++;
-		
-		if (count > #items) {
-			break;
-		}
-	}
-	
-	winform.msgInfo("成功填写了 " ++ (count - 1) ++ " 个单元格！",500);
-	winform.close(true);
-}
-
-winform.button8.oncommand = λ () grid2.editItem();
-
-winform.setTimeout(grid.onItemChanged,,1);
+winform.setTimeout(grid.onItemChanged, 1);
 
 win.loopMessage();
 return winform;

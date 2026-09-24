@@ -178,122 +178,84 @@ getSelectedText = function(listCtrl){
 }
 
 copySelectedItem = function(ctrl){
-		if !ctrl	ctrl = owner;
-		var doNotCopyColumns = ctrl.doNotCopyColumns : [/* 防null报错 */];
-		
-		table.sort(doNotCopyColumns);
-		//table.reverse(doNotCopyColumns);
-
-        import win.clip;
-        import win.clip.html;
-        
-        ..thread.invoke(stopExcelCutCopyMode);
-        
-		var selected = ctrl.selected;
-		var sourceTab = ctrl.getTable(true);
-		var fields = table.shift(sourceTab)
-		var items = sourceTab;
-
-		var selTab = [];
-		if ctrl.copyWithHeaders
-			table.push(selTab, fields); 
-		for (i=1; #selected)
-				table.push(selTab, items[selected[i]]);
-				
-		for (i=1; #selTab){
-			for(j=1; #doNotCopyColumns)
-				selTab[i][doNotCopyColumns[j]] = null;
-			table.removeByValue(selTab[i], null);
-			var cacheTab = [];
-			for k, v in selTab[i] 
-				table.push(cacheTab,v); //处理稀疏数组问题, 顺序有乱的情况?
-			selTab[i] = cacheTab;
-		};
-
-		/* clip添加纯文本格式 */
-        var txtTab = [];
-        for (i=1; #selTab)
-            table.push(txtTab, string.join(selTab[i], '\t'));
-		win.clip.write(string.join(txtTab, '\r\n'));
-
-		/* clip添加HTML格式 */
-		var hTab = [];
-        for (i=1; #selTab)
-            table.push(hTab, selTab[i]);
-        var html = table.toHTML(hTab);  
- 		var cliphtml = win.clip.html();
-        html = cliphtml.stringify(html);
-		cliphtml.write(html,true,false);
-		return hTab; 
-}
-
-/**
-copySelectedItem = function(ctrl){
-    if (!ctrl) ctrl = owner;
-
-    // 如果未定义，给个空数组
-    var doNotCopyColumns = ctrl.doNotCopyColumns : [];
-
-    // 方案优化：将需要排除的列存入字典（哈希表），判断速度快且不需要给 doNotCopyColumns 排序
-    var skipCols = {};
-    for (i=1; #doNotCopyColumns) {
-        skipCols[ doNotCopyColumns[i] ] = true;
-    }
-
-    import ..win.clip;
-    import ..win.clip.html;
-
-    ..thread.invoke(stopExcelCutCopyMode);
+    if(!ctrl) ctrl = owner;
 
     var selected = ctrl.selected;
+    // 边界保护：若未选中任何行，直接退出，避免误清空系统剪贴板
+    if(!#selected) return;
+
+    import win.clip;
+    import win.clip.html;
+
+    // 异步停止 Excel 剪切复制虚线框
+    if(stopExcelCutCopyMode) {
+        ..thread.invoke(stopExcelCutCopyMode);
+    }
+
+    // 2. 提取数据
     var sourceTab = ctrl.getTable(true);
-    var fields = ..table.shift(sourceTab);
+    var fields = table.shift(sourceTab); // 提取表头
     var items = sourceTab;
 
-    var selTab = [];
-    if (ctrl.copyWithHeaders) {
-        ..table.push(selTab, fields); 
+    // 获取固定总列数（必须以表头字段数或控件列数为准，绝不能依赖每行的 #row）
+    var colCount = #fields;
+    if(!colCount && ctrl.columnCount) colCount = ctrl.columnCount;
+
+    // 1. 获取需要排除的列集合（转换为快速查找表，O(1) 复杂度）
+    var skipCols = {};
+    if(ctrl.doNotCopyColumns){
+        for(i=1; #ctrl.doNotCopyColumns){
+            skipCols[ctrl.doNotCopyColumns[i]] = true;
+        }
     }
 
-    for (i=1; #selected){
-        ..table.push(selTab, items[selected[i]]);
-    }
-
-    // 按照 1 到 列数 顺序安全剔除不需要的列，保持绝对的原有顺序
-    for (i=1; #selTab){
-        var cacheTab = [];
-        var row = selTab[i];
-
-        // 按原数组的实际长度顺序循环
-        for(colIndex=1; #row){
-            // 如果当前列索引不在要排除的字典中，则按顺序 push 进新数组
-            if( !skipCols[colIndex] ){
-                ..table.push(cacheTab, row[colIndex]);
+    // 辅助函数：行字段过滤与归一化
+    // 关键修复：以固定 colCount 遍历，并将 null/空值安全转换为 ""
+    var filterRow = function(row){
+        var newRow = [];
+        for(c=1; colCount; 1){
+            if(!skipCols[c]){
+                var val = row ? row[c] : null;
+                // null 值必须兜底转为 ""，确保数组稠密且 string.join 能正确生成制表符
+                table.push(newRow, (val !== null) ? tostring(val) : "");
             }
         }
-        selTab[i] = cacheTab; // 替换成处理好的纯数组
-    };
-
-    /* clip添加纯文本格式 */
-    var txtTab = [];
-    for (i=1; #selTab){
-        ..table.push(txtTab, ..string.join(selTab[i], '\t'));
+        return newRow;
     }
-    ..win.clip.write(..string.join(txtTab, '\r\n'));
 
-    /* clip添加HTML格式 */
-    var hTab = [];
-    for (i=1; #selTab){
-        ..table.push(hTab, selTab[i]);
+    var selTab = [];
+    if(ctrl.copyWithHeaders){
+        table.push(selTab, filterRow(fields)); 
     }
-    var html = ..table.toHTML(hTab);  
-    var cliphtml = ..win.clip.html();
-    html = cliphtml.stringify(html);
-    cliphtml.write(html, true, false);
 
-    return hTab; 
+    for(i=1; #selected; 1){
+        var rowData = items[selected[i]];
+        if(rowData){
+            table.push(selTab, filterRow(rowData));
+        }
+    }
+
+    if(!#selTab) return;
+
+    // 3. 构造纯文本并写入剪贴板（清空旧剪贴板）
+    var txtLines = [];
+    for(i=1; #selTab; 1){
+        table.push(txtLines, string.join(selTab[i], '\t'));
+    }
+    win.clip.write(string.join(txtLines, '\r\n'));
+
+    // 4. 追加 HTML 格式（不清空文本格式）
+    if(table.toHTML){
+        var html = table.toHTML(selTab);
+        var cliphtml = win.clip.html();
+        html = cliphtml.stringify(html);
+        cliphtml.write(html, true, false); // 第三个参数 false 表示不清空已有剪贴板内容
+    }
+
+    return selTab; 
 }
-**/
+
+
 copyTable = function(tab, selectedIndex){
 		if !#tab return ; 
 		select type(selectedIndex) {
@@ -324,25 +286,29 @@ copyTable = function(tab, selectedIndex){
 		return hTab; 
 }
 selectAll = function(ctrl){
-	if !ctrl ctrl = owner
-	var t = [];
-	for (i=1; ctrl.count) table.push(t, i); 
-	ctrl.selected = t; 
+    if(!ctrl) ctrl = owner;
+    if(!ctrl.count) return;
+    ctrl.setSelected(0, true);   // 2. 传 0 瞬间全选所有行（或写 ctrl.setItemState(0, 2, 2)）
 }
 
 ctrlC = function(msg){
-    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);
+    // 关键：必须限制只处理按键按下消息 (0x100/*_WM_KEYDOWN*/)，忽略抬起 (0x101/*_WM_KEYUP*/)
+    if( msg.message != 0x100/*_WM_KEYDOWN*/ ) return;
+
+    // GetKeyState 返回值的最高位为 1 (即 < 0) 表示该键正处于按下状态
+    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/) < 0;
     var vk = msg.wParam;    
-    if( ( vk == 'C'# ) && ctrl ){
-		copySelectedItem(owner);
+
+    if( vk == 'C'# && ctrl ){
+        copySelectedItem(owner);
         return true;
     }
-    if( ( vk == 'A'# ) && ctrl ){
-		selectAll(owner);
+
+    if( vk == 'A'# && ctrl ){
+        selectAll(owner);
         return true;
     }
 }
-
 
 readClipHcode = function(){
     import win.clip;

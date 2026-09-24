@@ -10,7 +10,7 @@ import fsys.file;
 import config;
 import process;
 import domisoft;
-//import godking.vlistEx;
+import thread.command;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=469)
 winform.add(
@@ -20,205 +20,246 @@ listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;e
 
 winform.grid = win.ui.grid(winform.listview);
 winform.grid.setReadonlyColumns(-1);
+
+winform.listview.enableDoubleBuffering();
+winform.grid._showMoreCols = null;
+
+// 高性能表格渲染
+winform.updateSearchResult = function(sapTab, showMoreCols){
+    if( winform.grid._showMoreCols !== showMoreCols ){
+        winform.grid.clear(true); 
+
+        if( showMoreCols ){
+            winform.grid.columns = [
+                ["物料", 90],
+                ["物料描述", 350],
+                ["单位", 60],
+                ["类型", 60],
+                ["物料组", 60],
+                ["价格", 50],
+                ["S4物料", 50],
+                ["禁用", 50],
+                ["生产展平尺寸", 120]
+            ];
+        } else {
+            winform.grid.columns = [
+                ["物料", 90],
+                ["物料描述", 350],
+                ["单位", 60],
+                ["类型", 60],
+                ["物料组", 60],
+                ["价格", 50]
+            ];
+        }
+
+        winform.listview.fillParent(2); 
+        winform.grid._showMoreCols = showMoreCols; 
+    }
+
+    winform.grid.setTable(sapTab);
+}
+
 var qtbs;
 if winform.parent
-	qtbs = winform.parent.parent.qtbs;
-	
+    qtbs = winform.parent.parent.qtbs;
+
 winform.grid.onSortColumn = domisoft.listColSort;
 
 winform.saveInput = function(str){
-	if !str return ; 
+    if !str return ; 
     if !(table.find(config.qTipLog, str)){
-    	table.unshift(config.qTipLog, str);
-    	if ( #config.qTipLog>15 ) table.pop(config.qTipLog);
-    	config.qTipLog.save();
+        table.unshift(config.qTipLog, str);
+        if ( #config.qTipLog>15 ) table.pop(config.qTipLog);
+        config.qTipLog.save();
     };
 }
+
 /*下载BOM{{*/
 var downloadbom = function(){
     var tab = [];
-    var source = winform.grid.source;
-    for (k, v in winform.listview.selected){
-        table.push(tab,  source[v]["物料"]);
+    for(k, v in winform.listview.selected){
+        var rowData = winform.grid.getItemData(v);
+        if(rowData[["物料"]]) table.push(tab, rowData["物料"]);
     } 
-    if !#tab return ;
+    if(!#tab) return;
     thread.invoke( 
-    	function(wform,tab){
-			import SAP;
-			SAP.downloadBOM(wform, tab);
-    	},winform,tab
-    )
+        function(wform,tab){
+            import SAP;
+            SAP.downloadBOM(wform, tab);
+        }, winform, tab
+    );
 };
+
 var copyPartNo = function(withDesp, separator = '\r\n'){
     var tab = [];
-    var source = winform.grid.source;
-    for (k, v in winform.listview.selected){
-    	var pcode = source[v]["物料"];
-    	var desp = source[v]["物料描述"];
-        if !withDesp
-            table.push(tab,  pcode);
+    for(k, v in winform.listview.selected){
+        var rowData = winform.grid.getItemData(v);
+        if(!rowData) continue;
+        var pcode = rowData["物料"];
+        var desp = rowData["物料描述"];
+        if(!withDesp)
+            table.push(tab, pcode);
         else
-        	table.push(tab,  pcode + '\t' + desp);        
+            table.push(tab, pcode ++ '\t' ++ (desp : ""));        
     }  
-    if #tab
-    	return string.join(tab, separator);
+    if(#tab) return string.join(tab, separator);
 }
+
 var copyBomFormat = function(){
     var tab = [];
-    var source = winform.grid.source;
-    for (k, v in winform.listview.selected){
+    for(k, v in winform.listview.selected){
+        var rowData = winform.grid.getItemData(v);
+        if(!rowData) continue;
         table.push(tab,
-        	string.join([
-        		source[v]["物料"],
-        		source[v]["物料描述"],
-        		1,
-        		source[v]["单位"],
-        		source[v]["类型"]
-        	],'\t')
-        )       
+            string.join([
+                rowData["物料"],
+                rowData["物料描述"],
+                1,
+                rowData["单位"],
+                rowData["类型"]
+            ], '\t')
+        );       
     }  
-    if #tab
-    	return string.join(tab, '\r\n');
+    if(#tab) return string.join(tab, '\r\n');
 }
-
 /*}}*/
+
 /*双击打开事件{{*/
 winform.listview.onDoubleClick = function(item,subItem,nmListView){
-	if !item return ; 
+    if(!item) return; 
+    var rowData = winform.grid.getItemData(item);
+    var pcode = rowData ? rowData["物料"] : winform.listview.getItemText(item, 1);
+    if(!#pcode) return;
+
     qtbs.selIndex = 4;
-    qtbs.forms[4].qtip_search(owner.source[item]["物料"]);
+    qtbs.forms[4].qtip_search(pcode);
 }
 /*}}*/
+
+
+
 /*右键菜单事件{{*/
 winform.listview.onRightClick = function(item,subItem,nmListView){
-	if !item return ; 
-    var pcode = owner.source[item]["物料"];
-    var desp = owner.source[item]["物料描述"];
-	var x,y = win.getMessagePos();
-	//var hItem,tvht = winform.listview.hitTest(x,y,true);
-	var menu = win.ui.popmenu(winform);			
+    if(!item) return; 
+    var rowData = winform.grid.getItemData(item);
+    var pcode = rowData ? rowData["物料"] : winform.listview.getItemText(item, 1);
+    var desp = rowData ? rowData["物料描述"] : winform.listview.getItemText(item, 2);
+    if(!#pcode) return;
 
-	menu.add("下载BOM...", downloadbom);				
-	var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
-	if #flist {
-		var fn = flist[flist[#flist]];
-		var fitem = fsys.file(fn);
-		var t = fitem.lastModified().local();
-		fitem.close(); //关闭句柄, 否则窗口打开期间文件一直是打开占用状态;
-		menu.add(
-			"打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
-			λ() process.execute(fn)
-		);
-		
-	}
-	//menu.add("TEST", λ() win.msgbox(domisoft.getSelectedText(winform.listview)));
-	menu.add()
-	menu.add("复制[专用号]", λ() win.clip.write(copyPartNo()));
-	menu.add("复制[专用号][物料描述]", λ() win.clip.write(copyPartNo(true)));
-	menu.add("复制[专用号][物料描述][1][单位][属性]", λ() win.clip.write(copyBomFormat()));
-	menu.add("复制[专用号](水平展开)", λ() win.clip.write(copyPartNo(false,'\t')));
-	menu.add()
-	menu.add("查询详细信息...", λ() qtbs.open(3,pcode));
-	menu.add()
-	menu.add("查找图纸...", λ() qtbs.open(4,pcode));
-	menu.add("查询图纸下发记录...", λ() qtbs.open(5,pcode));
-	menu.add("添加图号...",function(){
-		import domisoft;
-		var drawing_No = winform.inputBox("请给选中的零件输入图号","指定图号");
-		if !drawing_No return ; 
-		var prtLists = domisoft.getSelectedText(winform.listview);
-		if !#prtLists return ; 
-		thread.invoke(function(drawing_No, prtLists){
-			import getList;
-    		getList.appendDrawingMapFromTable(drawing_No, prtLists)			
-		}, drawing_No, prtLists)	
-	})
-	menu.add()
-    var fav = config.qtip.fav;
-	var favTab = {
-	    	[1] = "添加进收藏"; 
-	    	[2] = { 
-	    			[1] = {
-	    				"+ 新的收藏...",
-	    				function(id){
-	    				    var newFavName = winform.inputBox("请输入简短收藏名称","收藏夹");
-	    				    if !newFavName return ; 
-	    					table.push(fav,{
-	    						"title":newFavName;
-	    						"list": domisoft.getSelectedText(winform.listview);
-	    					});
-	    					config.qtip.save();	    					
-	    				};
-	        		};
-	        		[2] = {/* ---- */};
-	    	}
-	}
+    var x,y = win.getMessagePos();
+    var menu = win.ui.popmenu(winform);         
 
-	for (i=1; #fav)	{
-		if !fav[i] continue;
-		table.push(favTab[2], {	
-				fav[i]["title"],
-				function(id){
-					if !table.find(fav[i]["list"],pcode)
-    						table.push(fav[i]["list"],pcode);
-   				}
-    	})
+    menu.add("下载BOM...", downloadbom);              
+    var flist = fsys.list(config.__sapDownload,,pcode + "*.xlsx");
+    if(#flist){
+        var fn = flist[flist[#flist]];
+        var fitem = fsys.file(fn);
+        var t = fitem.lastModified().local();
+        fitem.close(); 
+        menu.add(
+            "打开缓存BOM: " + tostring(t,"%Y-%m-%d %H:%M:%S"),
+            lambda() process.execute(fn)
+        );
     }
-	menu.addTable({favTab});
-	menu.add("添加到BOM浏览器...",function(){
-		import domisoft;
-/*
-		import console
-		console.open();
-*/
-		var bomName = winform.inputBox("请给选中的成品输入分类名称,尽量简短,例如Mendos","指定大分类名称");
-		if !bomName return ; 
-		var prtLists = domisoft.getSelectedText(winform.listview);
-		if !#prtLists return ; 
-		thread.invoke(function(bomName, prtLists){
-			import sqlite;
-			//import console;			
-			import config;
-			import QHC;
-			var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
-			var db = sqlite(path);			
-			db.beginTrans();
-			for(i=1;#prtLists;1){
-				var qitem = QHC.getSapItem(prtLists[i]);
-				db.exec(
-					"INSERT OR IGNORE INTO `lib`
-						(
-							大类, 中类, 小类, 物料, 物料描述, 属性, 可选项分类, 喷粉分类, 温度等级
-						) 
-					VALUES
-						(
-							@bomName,@sort1,@sort2,@pcode,@pdesp,@roh,@kmat,@paint,@m2
-						)"
-					,{				
-						bomName = bomName;
-						sort1 = "";
-						sort2 = "";
-						pcode = prtLists[i];
-						pdesp = qitem.物料描述;
-						roh = qitem.物料组;
-						kmat = "";
-						paint = "";
-						m2 = "";
-						cacheDate = "";				
-					} 
-				)
-			}
-			db.commitTrans();
-			db.close();
-		}, bomName, prtLists)	
-	})
-	menu.popup(x,y,true);	
+    
+    menu.add();
+    menu.add("复制[专用号]", lambda() win.clip.write(copyPartNo()));
+    menu.add("复制[专用号][物料描述]", lambda() win.clip.write(copyPartNo(true)));
+    menu.add("复制[专用号][物料描述][1][单位][属性]", lambda() win.clip.write(copyBomFormat()));
+    menu.add("复制[专用号](水平展开)", lambda() win.clip.write(copyPartNo(false,'\t')));
+    menu.add();
+    menu.add("查询详细信息...", lambda() qtbs.open(3,pcode));
+    menu.add();
+    menu.add("查找图纸...", lambda() qtbs.open(4,pcode));
+    menu.add("查询图纸下发记录...", lambda() qtbs.open(5,pcode));
+    menu.add("添加图号...",function(){
+        import domisoft;
+        var drawing_No = winform.inputBox("请给选中的零件输入图号","指定图号");
+        if !drawing_No return ; 
+        var prtLists = domisoft.getSelectedText(winform.listview);
+        if !#prtLists return ; 
+        thread.invoke(function(drawing_No, prtLists){
+            import getList;
+            getList.appendDrawingMapFromTable(drawing_No, prtLists)         
+        }, drawing_No, prtLists)    
+    });
+    menu.add();
+    var fav = config.qtip.fav;
+    var favTab = {
+            [1] = "添加进收藏"; 
+            [2] = { 
+                    [1] = {
+                        "+ 新的收藏...",
+                        function(id){
+                            var newFavName = winform.inputBox("请输入简短收藏名称","收藏夹");
+                            if !newFavName return ; 
+                            table.push(fav,{
+                                "title":newFavName;
+                                "list": domisoft.getSelectedText(winform.listview);
+                            });
+                            config.qtip.save();                         
+                        };
+                    };
+                    [2] = {/* ---- */};
+            }
+    }
+
+    for (i=1; #fav) {
+        if !fav[i] continue;
+        table.push(favTab[2], { 
+                fav[i]["title"],
+                function(id){
+                    if !table.find(fav[i]["list"],pcode)
+                            table.push(fav[i]["list"],pcode);
+                }
+        })
+    }
+    menu.addTable({favTab});
+    menu.add("添加到BOM浏览器...",function(){
+        import domisoft;
+        var bomName = winform.inputBox("请给选中的成品输入分类名称,尽量简短,例如Mendos","指定大分类名称");
+        if !bomName return ; 
+        var prtLists = domisoft.getSelectedText(winform.listview);
+        if !#prtLists return ; 
+        thread.invoke(function(bomName, prtLists){
+            import sqlite;
+            import config;
+            import QHC;
+            var path = io.joinpath(config.dbServer.path,"BOM_LIB.db")
+            var db = sqlite(path);          
+            db.beginTrans();
+            for(i=1;#prtLists;1){
+                var qitem = QHC.getSapItem(prtLists[i]);
+                db.exec(
+                    "INSERT OR IGNORE INTO `lib`
+                        (
+                            大类, 中类, 小类, 物料, 物料描述, 属性, 可选项分类, 喷粉分类, 温度等级
+                        ) 
+                    VALUES
+                        (
+                            @bomName,@sort1,@sort2,@pcode,@pdesp,@roh,@kmat,@paint,@m2
+                        )"
+                    ,{              
+                        bomName = bomName;
+                        sort1 = "";
+                        sort2 = "";
+                        pcode = prtLists[i];
+                        pdesp = qitem.物料描述;
+                        roh = qitem.物料组;
+                        kmat = "";
+                        paint = "";
+                        m2 = "";
+                        cacheDate = "";             
+                    } 
+                )
+            }
+            db.commitTrans();
+            db.close();
+        }, bomName, prtLists)   
+    })
+    menu.popup(x,y,true);   
 }
 /*}}*/
-
-/*
-# winform.listview 当用户选择多行时, 把总行数用publish函数发布出来
-*/
 import win.debounce;
 winform.listview.onSelChanged = win.debounce(function(selected,item,subItem,nmListView){
     publish("status3", "选中了" + #winform.listview.selected + "条");
@@ -228,191 +269,135 @@ winform.listview.onSelChanged = win.debounce(function(selected,item,subItem,nmLi
 winform.listview.translateAccelerator = domisoft.ctrlC;
 /*}}*/
 
-/*searchSapDB{{*/
+/*searchSapDB 纯后台执行函数{{*/
+var searchSapDB = function(userinput, winform, filterOpts){
+    import config;
+    import sqlite;
+    import QHC;
+    import domisoft;
+    import tarray;
+    import thread.command;
 
-var searchSapDB = function(userinput, winform, filter_form){
-	import config
-	import sqlite;
-	import QHC;
-	import domisoft;
-	import tarray;
+    var showMoreCols = filterOpts.chkMoreCols;
+    var sapTab = {};
+    var db;
 
-/*
-import console
-console.open();
-*/
+    // 使用 call 保护核心流程，确保异常时也能恢复按钮状态并关闭连接
+    var ok, err = call(function(){
+        if(!#userinput) return;
 
-	var db = QHC.openDb(QHC.sap_db_path);
-	var sapTab;
-	//var fields //= QHC.getColDef();
-    if !#userinput return ; 
+        db = QHC.openDb(QHC.sap_db_path);
+        if(!db) return;
 
-    winform.listview.clear();
-    //winform.listview.insertColumn("正在搜索数据库, 请稍等...",300,1)
+        userinput = string.crlf(userinput, '\r\n');
+        for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} {
+            userinput = string.replace(userinput, v, '\r\n');
+        }
 
-    userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
-    
-    //分隔符号转换行
-	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} 
-		userinput = string.replace(userinput, v,'\r\n');    
+        var userinputArr = string.split(userinput, '\r\n');
+        if(filterOpts.chkHideDuplicate){
+            userinputArr = table.unique(userinputArr);
+        }
 
-    var userinputArr = string.split(userinput, '\r\n');
-    
-    if filter_form.chkHideDuplicate.checked
-		userinputArr = table.unique(userinputArr);
-    
-    if (#userinputArr == 1)
-    	winform.saveInput(userinputArr[1]);
+        if(filterOpts.chkAllowModelFuzzy){
+            userinputArr = QHC.findAndReplaceWithKeylistString(userinputArr);
+        }
 
-	if filter_form.chkAllowModelFuzzy.checked
-		userinputArr = QHC.findAndReplaceWithKeylistString(userinputArr);
-		
-	
- 	table.clear(sapTab);
-	sapTab={};
-	
-	//fields = tarray.replaceValue(fields, "MTyp", "类型");
-	//fields = tarray.replaceValue(fields, "BUn", "单位");
-	//fields = tarray.replaceValue(fields, "PGr", "采购组");
-	//console.dump(fields)
-    for (i=1; #userinputArr; 1){
-        if string.indexOf(userinputArr[i], '\t') userinputArr[i] = table.pop(string.split(userinputArr[i],'\t'));
-		userinput = string.trim(userinputArr[i]);
-		if !#userinput continue;
-		
-    	if (string.startWith(userinput,"008",true)) userinput="H" ++ userinput;
-    	userinput=string.replace(userinput, string.fromUnicode('\u00A0') /* NO-BREAK SPACE */,"");
-    	userinput=string.replace(userinput,"@%","\%");
-    	userinput=string.replace(userinput,"@_","\_");
-    	userinput=string.replace(userinput,"@*","%");
-    	userinput=string.replace(userinput,"@?","_");
-		
-		userinput=string.replace(userinput,"=","{等号}"); //先把等号换成制表符后面记得再换回来:P
-		
-		var sqlstr;
-			
-		if !filter_form.chkMoreCols.checked {
-			sqlstr = "
-				SELECT
-					`物料`,
-					`物料描述`,
-					`Bun` AS `单位`,
-					`MTyp` AS `类型`,
-					`物料组`,
-					`价格` 
-			 	FROM
-			 		`所有物料`
-			 	WHERE
-			 		??
-			 " ;
-			// fields = {"物料","物料描述","单位","类型","物料组","价格"};
-		}else{
-			sqlstr = "
-				SELECT
-					`物料`,
-					`物料描述`,
-					`Bun` AS `单位`,
-					`MTyp` AS `类型`,
-					`物料组`,
-					`价格`,
-					`S4物料`,
-					`禁用`,
-					`生产展平尺寸`
-			 	FROM
-			 		`所有物料`
-			 	WHERE
-			 		??
-			 " ;
-			// fields = {"物料","物料描述","单位","类型","物料组","价格","采购组","禁用","生产展平尺寸"};
-		}
-    	var searchField = {};	
-    	if (string.startWith(userinput,"H00",true) || string.startWith(userinput,"BG",true)) 
-			table.assign(searchField, {物料 = userinput});
-		else {
-			table.assign (searchField, {物料描述 = userinput});
+        for(i=1; #userinputArr; 1){
+            if(string.indexOf(userinputArr[i], '\t')){
+                userinputArr[i] = table.pop(string.split(userinputArr[i], '\t'));
+            }
 
-/*
-    	if (string.startWith(userinput,"BG",true) || table.indexOf(filter_form.clLegacyType.checked,"BG")){
-			sqlstr = sqlstr ++ " AND [MTyp] = 'FERT'" ++ " AND LENGTH([物料])=11"
-		}
-		
-*/
+            userinput = string.trim(userinputArr[i]);
+            if(!#userinput) continue;
 
-		//直接搜索物料时忽略filter
-			if #filter_form.clSapType.selected
-				table.assign(searchField, {物料组 = domisoft.getSelectedText(filter_form.clSapType)});
-			if #filter_form.clUnit.selected
-				table.assign(searchField, {单位 = domisoft.getSelectedText(filter_form.clUnit)});
-			if #filter_form.clOrderType.selected
-				table.assign(searchField, {类型 = domisoft.getSelectedText(filter_form.clOrderType)});
-		}		
-/*
-		if #winform.clLegacyType.checked
-			sqlstr +=  " AND [物料] LIKE `H008`";
-*/
-		sqlstr = sqlite.format(sqlstr, {searchField});
+            if(string.startsWith(userinput, "008", true)) userinput = "H" ++ userinput;
+            userinput = string.replace(userinput, '\u00A0', ""); // 编译期自动 UTF-8
+            userinput = string.replace(userinput, "@%", "\%");
+            userinput = string.replace(userinput, "@_", "\_");
+            userinput = string.replace(userinput, "@*", "%");
+            userinput = string.replace(userinput, "@?", "_");
+            userinput = string.replace(userinput, "=", "{等号}");
 
-		var quickSearch = !string.indexOf(userinput,"%");
-		if !quickSearch {
-			sqlstr = string.replace(sqlstr,"=","LIKE");
-		}
-		if (filter_form.chkDisabled.checked and !quickSearch)	sqlstr += " AND ifnull(`禁用`, '') = ''"; // 禁用列如果为空或null则是正常物料
-		
-		/*  预测用的-F物料已经全部禁用了
-		if table.indexOf(getSelectedText(filter_form.clOrderType),"FERT") sqlstr += " AND LENGTH(`物料`)=11"; 
-		*/
+            var sqlstr;
+            if(!filterOpts.chkMoreCols){
+                sqlstr = "SELECT `物料`, `物料描述`, `Bun` AS `单位`, `MTyp` AS `类型`, `物料组`, `价格` FROM `所有物料` WHERE ??";
+            } else {
+                sqlstr = "SELECT `物料`, `物料描述`, `Bun` AS `单位`, `MTyp` AS `类型`, `物料组`, `价格`, `S4物料`, `禁用`, `生产展平尺寸` FROM `所有物料` WHERE ??";
+            }
 
-		sqlstr = string.replace(sqlstr,"{等号}","=");
-		
-		if quickSearch
-			sqlstr = sqlstr + " LIMIT 1"
-		var t =  db.getTable(sqlstr);
+            var searchField = {};
+            if(string.startsWith(userinput, "H00", true) || string.startsWith(userinput, "BG", true)){
+                table.assign(searchField, {物料 = userinput});
+            } else {
+                table.assign(searchField, {物料描述 = userinput});
 
-		if !#t
-			if !filter_form.chkHideUnknown.checked
-				table.push(t, {物料=userinput;物料描述="1没找到SAP物料, 双击可继续查找图纸"/*;物料类型="";价格="";禁用=""*/});
+                if(#filterOpts.sapType) table.assign(searchField, {物料组 = filterOpts.sapType});
+                if(#filterOpts.unit) table.assign(searchField, {单位 = filterOpts.unit});
+                if(#filterOpts.orderType) table.assign(searchField, {类型 = filterOpts.orderType});
+            }
 
+            sqlstr = sqlite.format(sqlstr, {searchField});
 
-		if #t
-			sapTab = table.concat(sapTab, t);
+            var quickSearch = !string.indexOf(userinput, "%");
+            if(!quickSearch){
+                sqlstr = string.replace(sqlstr, "=", "LIKE");
+            }
+            if(filterOpts.chkDisabled && !quickSearch){
+                sqlstr += " AND ifnull(`禁用`, '') = ''";
+            }
 
-		//if #sapTab
-		//	if filter_form.chkHideDuplicate.checked
-		//		sapTab = tarray.uniqueByCol(sapTab, "物料");	//uniqueCol 需要有fields
-	}
-	
-	if !#sapTab {
-		if ( !filter_form.chkHideUnknown.checked) 
-			table.push(sapTab, {物料=userinputArr[1];物料描述="2没找到SAP物料, 双击可继续查找图纸";物料类型=""/*;禁用=""*/})
-	}
-	else {
+            sqlstr = string.replace(sqlstr, "{等号}", "=");
+            if(quickSearch) sqlstr += " LIMIT 1";
 
-	}
-	/*调整列宽*/
-	
-	var formatListView = function(lv){
-		winform.grid.clear();
-		winform.grid.setTable(winform.grid.source);
-		winform.grid.columnWidth := domisoft.setColumnWidth(winform.grid, {90,350,60,60,60,50,50,50,50,120})
-    	lv.fillParent(2);
-	}
-	//sapTab.fields = fields;
-	winform.grid.source = sapTab;
-	formatListView(winform.listview);
+            var t = db.getTable(sqlstr);
+
+            if(!#t && !filterOpts.chkHideUnknown){
+                table.push(t, {物料=userinput; 物料描述="1没找到SAP物料, 双击可继续查找图纸"});
+            }
+
+            if(#t) sapTab = table.concat(sapTab, t);
+        }
+
+        if(!#sapTab && !filterOpts.chkHideUnknown){
+            table.push(sapTab, {物料=userinputArr[1]; 物料描述="2没找到SAP物料, 双击可继续查找图纸"; 物料类型=""});
+        }
+
+        // 更新界面表格
+        winform.updateSearchResult(sapTab, showMoreCols);
+    });
+
+    // 必须释放数据库连接
+    if(db) db.close();
+
+    // 无论成功失败，必须通知主界面恢复按钮
+    thread.command.onSearchComplete();
 }
-/*}}*/
 
+/*}}*/
 
 winform.show();
 
 winform.qtip_search = function(txt) {
-	var filter_form = qtbs.forms[1];
-	if txt
-		thread.invoke( 
-			searchSapDB, txt, winform, filter_form
-		);
-}
+    if(!#txt) return;
+    var filter_form = qtbs.forms[1];
 
+    // 在界面主线程提前提取过滤条件为纯 Table 数据，避免工作线程跨线程访问控件
+    var filterOpts = {
+        chkMoreCols = !!filter_form.chkMoreCols.checked;
+        chkHideDuplicate = !!filter_form.chkHideDuplicate.checked;
+        chkAllowModelFuzzy = !!filter_form.chkAllowModelFuzzy.checked;
+        chkDisabled = !!filter_form.chkDisabled.checked;
+        chkHideUnknown = !!filter_form.chkHideUnknown.checked;
+        sapType = #filter_form.clSapType.selected ? domisoft.getSelectedText(filter_form.clSapType) : "";
+        unit = #filter_form.clUnit.selected ? domisoft.getSelectedText(filter_form.clUnit) : "";
+        orderType = #filter_form.clOrderType.selected ? domisoft.getSelectedText(filter_form.clOrderType) : "";
+    };
+
+    thread.invoke( 
+        searchSapDB, txt, winform, filterOpts
+    );
+}
 
 win.loopMessage();
 return winform;

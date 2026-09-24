@@ -6,13 +6,18 @@ button={cls="button";text="&OK";left=315;top=233;right=391;bottom=255;db=1;defau
 button2={cls="button";text="&Cancel";left=231;top=233;right=307;bottom=255;db=1;dr=1;z=4};
 edit={cls="edit";left=26;top=30;right=392;bottom=176;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=1};
 edit2={cls="edit";left=26;top=193;right=392;bottom=219;db=1;dl=1;dr=1;dt=1;edge=1;z=2}
-)
+);
 /*}}*/
 
-winform.onCancel = λ () winform.endModal();
+winform.onCancel = function(){ winform.endModal(); }
 winform.button2.oncommand = winform.onCancel;
-winform.onOk = λ ()winform.endModal([winform.edit.text:"", winform.edit2.text:""]);
+
+// 使用纯数组将输入框文本返回
+winform.onOk = function(){
+    winform.endModal([ winform.edit.text, winform.edit2.text ]);
+}
 winform.button.oncommand = winform.onOk;
 
 winform.show();
 win.loopMessage();
+return winform;

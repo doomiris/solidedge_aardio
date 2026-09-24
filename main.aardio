@@ -54,8 +54,10 @@ mainForm.onMinimize = function(lParam){
 	mainForm.show(false);
 	return true; 
 }
-	
+var isExiting = false;
 mainForm.onClose = function(hwnd,message,wParam,lParam){
+    // 如果点击了托盘的退出菜单，则放行，程序正常触发 onDestroy 和各个子窗口的销毁事件
+    if (isExiting) { return; } 
 	mainForm.onMinimize();
 /*
 	if _STUDIO_INVOKED
@@ -118,7 +120,11 @@ mainForm.popmenu2.add('SAP一键登入2', λ() quickTools.sap_quickLogin(2));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('剪切板工具', λ() loadcodex("\forms\main\frmclipboard.aardio"));
 mainForm.popmenu2.add();//分隔线
-mainForm.popmenu2.add('&Exit TBM', λ() win.quitMessage());
+mainForm.popmenu2.add('&Exit TBM', function(){
+    isExiting = true;    // 标记为允许退出
+    mainForm.close();    // 正常关闭主窗体（这会级联释放所有子窗口和 Tabs，避免报错）
+});
+
 /*}}*/
 /*分隔条设置{{*/
 mainForm.splitter.split(mainForm.listbox, mainForm.custom);
@@ -162,8 +168,9 @@ mainForm.mTabs.onSelchange = function(idx,tab,form){
 			break;
 		}
 	}
-	if form.frmReLoad
-		form.frmReLoad();
+    if (form[["frmReLoad"]]){
+        form.frmReLoad();
+    }
 }
 /*左侧导航按钮{{*/
 var loadfrmName, menuList, menuTheme = loadcodex("\menulist.aardio");
@@ -229,30 +236,33 @@ mainForm.mTabPopMenu.add("把此页标记为自启动",function(){
 })
 mainForm.mTabPopMenu.add()
 mainForm.mTabPopMenu.add("关闭此标签页",λ() mainForm.mTabs.deleteByTab(rSelTab))
+
+
 mainForm.listbox.addThisTab = function(navItem){
-	win.setTimeout(function(){
-		navItem := mainForm.listbox.getSelMenuInfo();
-		mainForm.mTabs.selIndex = mainForm.mTabs.add(
-				{
-					text = navItem.text;
-					iconText = navItem.ActiveIconText;
-					hasCloseButton = true
-				}, loadfrmName[navItem.index][navItem.subindex]
-		);
-		mainForm.mTabs.selTab.onRightMouseUp = function(wParam,lParam){
-		    var x,y = win.getMessagePos();
-		    rSelTab = mainForm.mTabs.hitTest(x,y)
-			mainForm.mTabPopMenu.popup(x,y,true);
-		}
-		if mainForm.mTabs.forms[mainForm.mTabs.selIndex].frmReLoad
-			mainForm.mTabs.forms[mainForm.mTabs.selIndex].frmReLoad();
-	})
+    navItem := mainForm.listbox.getSelMenuInfo();
+    if(!navItem) return;
+
+
+    mainForm.mTabs.selIndex = mainForm.mTabs.add({
+        text = navItem.text;
+        iconText = navItem.ActiveIconText;
+        hasCloseButton = true
+    }, loadfrmName[navItem.index][navItem.subindex]);   
+
+    var selTabBtn = mainForm.mTabs.tabList[mainForm.mTabs.selIndex];
+    if (selTabBtn) {
+        selTabBtn.onRightMouseUp = function(wParam,lParam){
+            var x,y = win.getMessagePos();
+            rSelTab = mainForm.mTabs.hitTest(x,y);
+            mainForm.mTabPopMenu.popup(x,y,true);
+        }
+    }
 }
+
+
 mainForm.listbox.openThisTabAsWindow = function(navItem){
-	win.setTimeout(function(){
 		navItem := mainForm.listbox.getSelMenuInfo();
 		mainForm.loadForm(loadfrmName[navItem.index][navItem.subindex]);
-	})
 }
 navlb.onClick = function(index,subindex,text){
 	if !subindex return ;
@@ -260,9 +270,11 @@ navlb.onClick = function(index,subindex,text){
 	if !checkIdx
 		mainForm.listbox.addThisTab();
 	else {
-		mainForm.mTabs.selIndex = checkIdx;
+		mainForm.mTabs.selIndex = checkIdx; // 这里给 selIndex 赋值也会自动触发 onSelchange 继而执行 frmReLoad
+/*
 		if mainForm.mTabs.forms[checkIdx].frmReLoad
 			mainForm.mTabs.forms[checkIdx].frmReLoad();
+*/
 	}
 		
 }

@@ -35,6 +35,8 @@ winform.checkbox3.text = _onedrive_db;
 winform.stepDBpath = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\", "step_qhcsap.db");
 winform.edit2.text = config.dbServer.path;
 
+
+
 import fsys.path;
 
 
@@ -174,11 +176,13 @@ winform.button.oncommand = function(id,event){
 /*importFromQHC{{*/
 var importFromQHC2 = function(winform, path){
 import console
-//console.open();
+console.open();
 
 	import access.oleDb;
 	var adb = access(path);
-	
+	if !adb.existsTable("Sheet1$")
+		winform.log.print("Sheet1$不存在...");
+	winform.log.print("开始查询物料...");
 	var t = adb.getTable(`
 	SELECT
 		[物料], 
@@ -188,26 +192,29 @@ import console
 	WHERE
 		[物料] <>''
 	`);
+	winform.log.print("开始查询是否禁用...");
 	var f = adb.getTable(`
 		SELECT
 			[物料]
-		FROM [sheet1$]
+		FROM [Sheet1$]
 		WHERE [是否禁用] = '禁用'
 	`)
+	winform.log.print("开始查询展平尺寸...");
 	var p = adb.getTable(`
 		SELECT
 			[物料],
 			[行业标准描述] AS [生产展平尺寸]
-		FROM [sheet1$]
+		FROM [Sheet1$]
 		WHERE [行业标准描述]<> ''
 	`)
 
-
+	winform.log.print("关闭数据库...");
 	adb.close();
 
 	import sqlite
 	import config;
 	//var sdb = sqlite(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/) ++ "\SAP\SAP GUI\" + "step_qhcsap.db");
+	winform.log.print("打开中转库...");
 	var sdb = sqlite(io.joinpath(config.__sapDownload,"step_qhcsap.db"));
 	winform.log.print("删除旧数据...");
 	if sdb.existsTable("qhc_export") sdb.exec("DROP table qhc_export");
@@ -508,13 +515,16 @@ winform.button7.oncommand = function(id,event){
 winform.button8.oncommand = function(id,event){
 	var path = winform.edit3.text;
 	if !io.exist(path) return ; 
-
+	config.admin.lastWorkingFolderS4 = path;
+	config.admin.save();
+	
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
 	winform.log.print("Accessing " ++ path );
 	thread.invoke(importFromQHCS4, winform, path);
 }
 
 winform.edit.text =  getXlsxDbPath();
+winform.edit3.text =  config.admin.lastWorkingFolderS4;
 winform.show();
 win.loopMessage();
 return winform;

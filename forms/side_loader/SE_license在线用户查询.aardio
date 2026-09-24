@@ -1,5 +1,4 @@
 import win.dlg.message;
-import win.dlg.message;
 import win.ui;
 import win.ui.menu;
 import fonts.fontAwesome;
@@ -15,7 +14,7 @@ btnQuery={cls="plus";text="立即查询所有服务器";left=16;top=13;right=216
 listviewResult={cls="listview";left=20;top=72;right=730;bottom=580;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1};
 radioServer1={cls="plus";text="上海 Office";left=410;top=13;right=570;bottom=53;align="left";dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=22};z=3};
 radioServer2={cls="plus";text="青岛 Office";left=575;top=13;right=735;bottom=53;align="left";dr=1;dt=1;font=LOGFONT(h=-13);iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF111 ';notify=1;textPadding={left=22};z=4}
-);
+)
 /*}}*/
 
 winform.grid = win.ui.grid(winform.listviewResult);
@@ -234,6 +233,54 @@ winform.btnQuery.oncommand = function(id,event){
         }, winform, serverConfig
     )
 }
+/*
+// 为 listview 增加右键菜单：强制收回 License, 需要在server上执行
+winform.listviewResult.onRightClick = function(row, col){
+    if(row <= 0) return;
+
+    // 获取当前选中行的数据
+    var item = winform.listviewResult.getItemText(row, 1); // 服务器
+    var user = winform.listviewResult.getItemText(row, 4); // 账户名
+    var pc   = winform.listviewResult.getItemText(row, 5); // 计算机名
+    var timeRemain = winform.listviewResult.getItemText(row, 6); // 借出剩余时间
+
+    if(user == "空闲" || !#user){
+        return;
+    }
+
+    if(#timeRemain){
+        winform.msgInfo("该许可证属于离线借出(Borrow)状态，无法强行收回，必须等待到期或客户端主动归还！", 4000);
+        return;
+    }
+
+    // 弹出右键菜单
+    var popMenu = win.ui.popmenu(winform);
+    popMenu.add("强制收回该 License (踢出)", function(){
+        if(!winform.msgAsk("确定要强制收回 " + user + " (" + pc + ") 的 License 吗？")){
+            return;
+        }
+
+        // 获取对应的服务器地址
+        var serverAddr = (item == serverConfig.list[1].title) ? serverConfig.list[1].addr : serverConfig.list[2].addr;
+
+        // 拼接 lmremove 命令 (通常 display 参数传入与 pc/host 相同即可，或从 lmstat 原始记录中提取)
+        var cmd = `"` + serverConfig.lmutilPath + `" lmremove -c ` + serverAddr 
+                + " " + serverConfig.featureName + " " + user + " " + pc + " " + pc;
+
+        var prcs = process.popen(cmd);
+        if(prcs){
+            var out = prcs.readAll();
+            prcs.close();
+
+            winform.msgInfo("命令执行结果：" + '\r\n' + (out : "无返回信息"));
+            // 自动刷新一下列表
+            winform.btnQuery.oncommand();
+        }
+    });
+
+    popMenu.popup();
+}
+*/
 
 winform.show();
 win.loopMessage();

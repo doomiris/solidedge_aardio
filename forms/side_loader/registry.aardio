@@ -1,131 +1,351 @@
 import win.ui;
-/*DSG{{*/
-var winform = win.form(text="注册表查看";right=741;bottom=429)
-winform.add(
-editPath={cls="edit";left=5;top=4;right=739;bottom=33;dl=1;dr=1;dt=1;edge=1;z=4};
-listview={cls="listview";left=307;top=37;right=738;bottom=417;db=1;dr=1;dt=1;edge=1;z=2};
-splitter={cls="splitter";left=297;top=35;right=302;bottom=417;db=1;dt=1;frame=1;z=3};
-treeview={cls="treeview";left=4;top=38;right=295;bottom=419;bgcolor=0xFFFFFF;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1}
-)
-/*}}*/
-
-winform.splitter.split(winform.treeview,winform.listview);
-
 import win.ui.menu;
 import win.reg;
 import win.ui.grid;
-import domisoft;
+import win.inputBox;
+import win.clip;
+import process;
+
+/*DSG{{*/
+var winform = win.form(text="当前用户注册表查看与编辑器";right=850;bottom=530)
+winform.add(
+editPath={cls="edit";left=5;top=4;right=845;bottom=30;dl=1;dr=1;dt=1;edge=1;z=4};
+listview={cls="listview";left=307;top=35;right=845;bottom=525;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
+splitter={cls="splitter";left=297;top=35;right=303;bottom=525;db=1;dt=1;frame=1;z=3};
+treeview={cls="treeview";left=5;top=35;right=295;bottom=525;bgcolor=0xFFFFFF;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1}
+);
+/*}}*/
+
+winform.splitter.split(winform.treeview, winform.listview);
+
+// 初始化表格（3 列：名称、类型、数据）
 var grid = win.ui.grid(winform.listview);
-grid.setColumns({"key";"value";}) //可选自定义显示列名
-grid.setReadonlyColumns(1)
+grid.setColumns({"名称", "类型", "数据"});
+grid.setReadonlyColumns(1, 2); // 第 1 列（名称）、第 2 列（类型）只读，仅允许编辑第 3 列（数据）
 
-var getChild = function(path, parent){
-	winform.treeview.clear(parent);
-	var reg = win.reg(path,true); 
-	if !reg return ;
-	var keys = reg.keys();	
-	winform.treeview.insertTable(keys, parent)
-	reg.close();
+// 注册表类型转名称
+var getRegTypeName = function(t){
+    select(t) {
+        case 1/*_REG_SZ*/ return "REG_SZ";
+        case 2/*_REG_EXPAND_SZ*/ return "REG_EXPAND_SZ";
+        case 3/*_REG_BINARY*/ return "REG_BINARY";
+        case 4/*_REG_DWORD*/ return "REG_DWORD";
+        case 7/*_REG_MULTI_SZ*/ return "REG_MULTI_SZ";
+        case 11/*_REG_QWORD*/ return "REG_QWORD";
+        else return "REG_UNKNOWN";
+    }
 }
 
-/*
-winform.listview.insertColumn("key",200);
-winform.listview.insertColumn("value",100);
-*/
+// 动态加载指定树节点的直接子键
+var loadSubKeys = function(hItem){
+    var path = winform.treeview.getItemPath(hItem);
+    if(!path) return;
 
-var root = winform.treeview.insertItem( {text = "HKEY_CURRENT_USER"; cChildren = 1});
-getChild("HKEY_CURRENT_USER", root);
-for hChild in winform.treeview.each(root){
-	var ctext = winform.treeview.getItemPath(hChild)
-	getChild(ctext, hChild)
+    var reg = win.reg(path, true); // 以只读方式安全打开
+    if(!reg) return;
+
+    winform.treeview.clear(hItem);
+    var subKeys = reg.keys();
+    reg.close();
+
+    if(subKeys && #subKeys){
+        for(i=1;#subKeys;1){
+            winform.treeview.insertItem({
+                text = subKeys[i];
+                cChildren = 1; // 标记存在子项（显示+号），实现懒加载
+            }, hItem);
+        }
+    }
 }
-winform.treeview.expand(root);
 
+// 加载指定路径下的键值列表
+var loadValues = function(hItem){
+    var path = winform.treeview.getItemPath(hItem);
+    if(!path) return;
 
-winform.treeview.onClick = function(hItem,data){
-	var text = winform.treeview.getItemPath(hItem)
-	getChild(text,hItem);
-	winform.treeview.expandPartial(hItem);
-	var reg = win.reg(winform.treeview.getItemPath(hItem));
-	if reg {		
-		winform.listview.clear();
-		var vt = reg.queryValueTable()
-		for k, v in vt
-			winform.listview.addItem({text = {k,v}});
-		reg.close();
-	}
+    winform.editPath.text = path;
+    winform.listview.clear();
 
-	for hChild in winform.treeview.each(hItem){
-		var ctext = winform.treeview.getItemPath(hChild)
-		getChild(ctext, hChild)
-	}
-	winform.editPath.text = reg.path;
+    var reg = win.reg(path, true);
+    if(!reg) return;
 
+    var items = {};
+    for(name, value, t in reg.eachValue()) {
+        var nameDisplay = (#name == 0) ? "(默认)" : name;
+        var typeDisplay = getRegTypeName(t);
+        var valDisplay = "";
+
+        if(t == 3/*_REG_BINARY*/ && type(value) == "string"){
+            valDisplay = string.hex(value, " "); // 二进制转 16 进制字符串显示
+        }
+        elseif(t == 7/*_REG_MULTI_SZ*/ && type(value) == "table"){
+            valDisplay = string.join(value, " ");
+        }
+        else {
+            valDisplay = tostring(value : "");
+        }
+
+        table.push(items, { nameDisplay, typeDisplay, valDisplay });
+    }
+    reg.close();
+
+    winform.listview.items = items;
 }
-winform.treeview.onnotify = function(id,code,ptr){
- 	 if( code = 0xFFFFFE3A/*_TVN_ITEMEXPANDINGW*/){  
- 	 	var nmtv = winform.treeview.getNotifyMessage(code,ptr) 
- 	 	if(nmtv.action & 2/*_TVE_EXPAND*/) { 
- 	 		winform.treeview.onClick(nmtv.itemNew.hItem)
-		}
- 	 }
+
+// 初始化仅关注当前用户
+var rootKeys = {
+    "HKEY_CURRENT_USER"
+};
+
+for(i=1;#rootKeys;1){
+    winform.treeview.insertItem({
+        text = rootKeys[i];
+        cChildren = 1;
+    });
 }
-winform.treeview.onRightClick = function(hItem,data){
+
+// 展开节点时按需动态加载（Lazy Loading）
+winform.treeview.onnotify = function(id, code, ptr){
+    if(code == 0xFFFFFE3A/*_TVN_ITEMEXPANDINGW*/){
+        var nmtv = winform.treeview.getNotifyMessage(code, ptr);
+        if(nmtv && (nmtv.action & 2/*_TVE_EXPAND*/)){
+            var hItem = nmtv.itemNew.hItem;
+            if(!winform.treeview.getChildItem(hItem)){
+                loadSubKeys(hItem);
+            }
+        }
+    }
+}
+
+// 选中树节点时刷新右侧键值列表
+winform.treeview.onSelChanged = function(hItem, data, nmTreeView){
+    if(hItem){
+        loadValues(hItem);
+    }
+}
+
+// 树节点右键菜单
+winform.treeview.onRightClick = function(hItem, data){
+    if(!hItem) return;
     winform.treeview.setSelected(hItem);
-    
-    var menu = win.ui.popmenu(winform)
-    menu.add("删除",
-        function(){ 
-            var reg = win.reg(winform.treeview.getItemPath(winform.treeview.getParentItem(hItem)));
-            if !reg return ; 
-            if win.msgboxTest("删除此项及所有子项?"+'\n'+winform.treeview.getItemPath(hItem),"确认",winform.hwnd)
-                if reg.delKeyTree(winform.treeview.getItemText(hItem))
-                	winform.treeview.delItem(hItem);
+
+    var x, y = win.getMessagePos();
+    var menu = win.ui.popmenu(winform);
+    var hParent = winform.treeview.getParentItem(hItem);
+    var currentPath = winform.treeview.getItemPath(hItem);
+
+    menu.add("新建子项...", function(){
+        var input = win.inputBox(winform);
+        var newKeyName = input.text("请输入新项名称:", "新建子项");
+        if(#newKeyName){
+            var reg = win.reg(currentPath);
+            if(reg){
+                var newReg = reg.createKey(newKeyName);
+                if(newReg){
+                    newReg.close();
+                    loadSubKeys(hItem);
+                    winform.treeview.expand(hItem);
+                }
+                reg.close();
+            }
+        }
+    });
+
+    menu.add(); // 分隔线
+
+    if(hParent){ // 非根节点允许删除
+        menu.add("删除此项", function(){
+            var parentPath = winform.treeview.getItemPath(hParent);
+            var itemName = winform.treeview.getItemText(hItem);
+
+            if(winform.msgboxTest("确定要删除此项及其所有子项吗？" + '\n' + currentPath, "确认删除")){
+                var reg = win.reg(parentPath);
+                if(reg){
+                    if(reg.delKeyTree(itemName)){
+                        winform.treeview.delItem(hItem);
+                        winform.listview.clear();
+                    }
+                    reg.close();
+                }
+            }
+        });
+    }
+
+    menu.add("复制完整路径", function(){
+        win.clip.write(currentPath);
+    });
+
+    menu.add("在系统注册表(Regedit)中定位", function(){
+        var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Applets\Regedit");
+        if(reg){
+            reg.setSzValue("LastKey", currentPath);
             reg.close();
+            process.execute("regedit.exe");
         }
-    )
+    });
 
-    menu.popup(x,y,true);
+    menu.add("刷新", function(){
+        loadSubKeys(hItem);
+        loadValues(hItem);
+        winform.treeview.expand(hItem);
+    });
+
+    menu.popup(x, y, true);
 }
 
-grid.onEditChanged = function(text,iItem,iSubItem){
-	var reg = win.reg(winform.treeview.getItemPath(winform.treeview.getSelection()));
-	if !reg return;
-	var keyname = winform.listview.getItemText(iItem,1);
-	reg.setValue(keyname, text);
-	reg.close();	
-}
-grid.onRightClick = function(item,subItem,nmListView){
-    var menu = win.ui.popmenu(winform)
-    menu.add("删除",
-        function(){ 
-            var reg = win.reg(winform.treeview.getItemPath(winform.treeview.getSelection()));
-            if !reg return ;
-            var keyname = winform.listview.getItemText(iItem,1);
-            if reg.delValue(keyname)
-                winform.listview.delItem(item)
-            reg.close();                	
+// 双击表格修改键值（根据类型安全写入）
+grid.onEditChanged = function(text, iItem, iSubItem){
+    var hSel = winform.treeview.getSelection();
+    if(!hSel) return;
+
+    var regPath = winform.treeview.getItemPath(hSel);
+    var reg = win.reg(regPath);
+    if(!reg) return;
+
+    var keyname = winform.listview.getItemText(iItem, 1);
+    if(keyname == "(默认)") keyname = "";
+
+    var keyType = winform.listview.getItemText(iItem, 2);
+
+    select(keyType) {
+        case "REG_DWORD" {
+            var num = tonumber(text, 10);
+            if(num !== null) reg.setDwValue(keyname, num);
+            else winform.msgboxErr("请输入合法的十进制整数！");
         }
-    )
-    menu.popup(x,y,true);
+        case "REG_BINARY" {
+            var bin = string.unhex(text, " ");
+            reg.setBinValue(keyname, bin : "");
+        }
+        case "REG_EXPAND_SZ" {
+            reg.setExpandSzValue(keyname, text);
+        }
+        else {
+            reg.setSzValue(keyname, text);
+        }
+    }
+    reg.close();
+    loadValues(hSel); // 重新加载以格式化显示
 }
 
-winform.editPath.onOk = function(ctrl,alt,shift){ 
-	var path = owner.text;
-	winform.treeview.findPath(path) 
-	return true;  	
+// 表格右键菜单（新建键值 / 删除键值）
+grid.onRightClick = function(item, subItem, nmListView){
+    var hSel = winform.treeview.getSelection();
+    if(!hSel) return;
+    var regPath = winform.treeview.getItemPath(hSel);
+
+    var x, y = win.getMessagePos();
+    var menu = win.ui.popmenu(winform);
+
+    menu.add("新建字符串值 (REG_SZ)...", function(){
+        var input = win.inputBox(winform);
+        var valName = input.text("请输入值名称:", "新建字符串值");
+        if(valName !== null){
+            var reg = win.reg(regPath);
+            if(reg){
+                reg.setSzValue(valName, "");
+                reg.close();
+                loadValues(hSel);
+            }
+        }
+    });
+
+    menu.add("新建 DWORD (32位) 值...", function(){
+        var input = win.inputBox(winform);
+        var valName = input.text("请输入值名称:", "新建 DWORD 值");
+        if(valName !== null){
+            var reg = win.reg(regPath);
+            if(reg){
+                reg.setDwValue(valName, 0);
+                reg.close();
+                loadValues(hSel);
+            }
+        }
+    });
+
+    if(item){
+        menu.add(); // 分隔线
+        menu.add("删除此值", function(){
+            var keyname = winform.listview.getItemText(item, 1);
+            if(keyname == "(默认)") keyname = "";
+
+            if(winform.msgboxTest("确定删除值 [" + (keyname ? keyname : "(默认)") + "] 吗？", "确认删除")){
+                var reg = win.reg(regPath);
+                if(reg){
+                    if(reg.delValue(keyname)){
+                        winform.listview.delItem(item);
+                    }
+                    reg.close();
+                }
+            }
+        });
+    }
+
+    menu.popup(x, y, true);
 }
-winform.listview.translateAccelerator = domisoft.ctrlC;
+
+// 支持懒加载的地址栏深度定位函数
+var navigateToPath = function(targetPath){
+    targetPath = string.trim(targetPath, " \\/");
+    var parts = string.split(targetPath, "\");
+    if(!#parts) return;
+
+    // 查找根节点
+    var hCur = null;
+    var hRoot = winform.treeview.getRootItem();
+    while(hRoot){
+        if(string.cmp(winform.treeview.getItemText(hRoot), parts[1]) == 0){
+            hCur = hRoot;
+            break;
+        }
+        hRoot = winform.treeview.getNextSiblingItem(hRoot);
+    }
+    if(!hCur) return;
+
+    // 逐级向下展开并查找
+    for(i=2;#parts;1){
+        if(!winform.treeview.getChildItem(hCur)){
+            loadSubKeys(hCur);
+        }
+        winform.treeview.expand(hCur);
+
+        var hChild = winform.treeview.getChildItem(hCur);
+        var found = null;
+        while(hChild){
+            if(string.cmp(winform.treeview.getItemText(hChild), parts[i]) == 0){
+                found = hChild;
+                break;
+            }
+            hChild = winform.treeview.getNextSiblingItem(hChild);
+        }
+        if(!found) break;
+        hCur = found;
+    }
+
+    winform.treeview.setSelected(hCur);
+    winform.treeview.ensureVisible(hCur);
+}
+
+// 地址栏回车定位
+winform.editPath.onOk = function(ctrl, alt, shift){
+    var path = string.trim(owner.text);
+    if(#path){
+        navigateToPath(path);
+    }
+    return true;
+}
+
+// 列表多列排序
 grid.onSortColumn = function(column, desc){
-	var fields = {"key","value"}
-	var tab = grid.getTable(fields);
-	var name = fields[column];
-	for (i=1; #tab)
-		if !tab[i][name]
-			tab[i][name]=""
-	table.sort(tab,desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));	
-	owner.setTable( tab );
-	return true; //返回 true 允许当前列排序	
+    var fields = {"name", "typ", "val"};
+    var tab = grid.getTable(fields);
+    var name = fields[column];
+    for(i=1;#tab;1){
+        if(!tab[i][name]) tab[i][name] = "";
+    }
+    table.sort(tab, desc ? (lambda(next) owner[name] > next[name]) : (lambda(next) owner[name] < next[name]));
+    owner.setTable(tab);
+    return true;
 };
 
 winform.show();

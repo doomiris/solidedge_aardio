@@ -1,7 +1,7 @@
 import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio form";right=759;bottom=766;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+var winform = win.form(text="Setting";right=759;bottom=766;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
 button={cls="button";text="Save";left=533;top=86;right=662;bottom=146;color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="保存配置";z=3};
 cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;clipch=1;dl=1;dt=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=21};
@@ -20,8 +20,8 @@ edit_SAP_client={cls="edit";text="220";left=50;top=348;right=197;bottom=371;dl=1
 edit_SAP_client2={cls="edit";text="220";left=271;top=347;right=418;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=15};
 edit_SAP_language={cls="edit";text="ZH";left=49;top=378;right=196;bottom=401;dl=1;dt=1;edge=1;tabstop=1;z=11};
 edit_SAP_language2={cls="edit";text="ZH";left=270;top=377;right=417;bottom=400;dl=1;dt=1;edge=1;tabstop=1;z=16};
-edit_SAP_pw={cls="edit";text="password";left=51;top=272;right=198;bottom=295;dl=1;dt=1;edge=1;tabstop=1;z=8};
-edit_SAP_pw2={cls="edit";text="password";left=272;top=271;right=419;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=13};
+edit_SAP_pw={cls="edit";text="password";left=50;top=272;right=197;bottom=295;dl=1;dt=1;edge=1;password=1;tabstop=1;z=8};
+edit_SAP_pw2={cls="edit";text="password";left=271;top=271;right=418;bottom=294;dl=1;dt=1;edge=1;password=1;tabstop=1;z=13};
 edit_SAP_system={cls="edit";text="P11";left=51;top=310;right=198;bottom=333;dl=1;dt=1;edge=1;tabstop=1;z=9};
 edit_SAP_system2={cls="edit";text="P11";left=272;top=309;right=419;bottom=332;dl=1;dt=1;edge=1;tabstop=1;z=14};
 edit_SAP_user={cls="edit";text="username";left=50;top=238;right=197;bottom=261;dl=1;dt=1;edge=1;group=1;tabstop=1;z=7};
@@ -150,6 +150,54 @@ grid.onRightClick = function(item,subItem,nmListView){
 	})
 	popm.popup()
 }
+
+// 在 edit 内部创建密码显隐按钮
+var setupPasswordReveal = function(editCtrl){
+
+    // 允许 edit 响应内部 addCtrl 子控件命令
+    editCtrl.translateCommand();
+
+	var btnEye = editCtrl.addCtrl(
+    	cls="plus";
+    	checked=true; // 初始密码隐藏
+    	width=20;
+    	height=16;
+    	marginTop=0.2;
+    	marginRight=4;
+    	iconText='\uF070';
+    	iconStyle={
+        	align="center";
+        	valign="center";
+        	font=LOGFONT(h=-14;name='FontAwesome');
+    	};
+	);
+	
+	btnEye.skin({
+    	color={
+        	default=0xC0888888;
+        	hover=0xFF0078D4;
+        	active=0xFF005A9E;
+    	};
+    	checked={
+        	iconText='\uF06E';
+        	color={
+            	default=0xFF0078D4;
+        	};
+    	};
+	});
+	
+	btnEye.onMouseClick = function(){
+    	// checked 是点击后的状态：
+    	// false = 显示明文，true = 隐藏密码
+    	editCtrl.passwordChar = owner.checked ? "*" : null;
+	};
+
+    return btnEye;
+};
+
+// 两个密码输入框分别添加内嵌按钮
+setupPasswordReveal(winform.edit_SAP_pw);
+setupPasswordReveal(winform.edit_SAP_pw2);
 
 
 winform.edit.text = config.qtip.pdfLib;

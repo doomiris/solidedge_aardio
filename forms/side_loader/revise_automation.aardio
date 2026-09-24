@@ -24,7 +24,7 @@ var revise = function(hwnd,str,reviseOnly = false){
 	//查找窗口，禁用模式匹配语法搜索窗口（首字符为 `@`）
 	var window = FlaUI.FindWindow("javaw.exe",,"Teamcenter 13",3000);
 	if !window {
-		winform.edit.print("未找到窗口");
+		winform.edit.print("未找到窗口,检查是否有多个javaw.exe进程");
 		return;
 	}
 /*
