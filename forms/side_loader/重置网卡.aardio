@@ -1,0 +1,52 @@
+//RUNAS
+import console; 
+
+/*
+# 重置网卡
+# 列出当前网卡列表, 等待用户输入编号
+# 禁用指定的网卡设备,5秒后重新启用
+*/
+import sys.networkCards;
+import process.devcon;
+
+var cards = {};
+for networkCard in sys.networkCards.each(){
+	if(networkCard.pnpInstanceId){
+		table.push(cards, networkCard);
+		var name = networkCard.netConnectionId : networkCard.description;
+		console.log(#cards + ". " + name, networkCard.hardwareId);
+	}
+}
+
+if(!#cards){
+	console.log("未找到网卡设备！");
+	return;
+}
+
+console.log("--------------------------------");
+console.log("请输入要重置的网卡编号，然后按回车：");
+var input = console.getText();
+var index = tonumber(input);
+
+if(index && cards[index]){
+	var card = cards[index];
+	var instanceId = "@" + card.pnpInstanceId;
+	var hardwareId = card.hardwareId;
+	var name = card.netConnectionId : card.description;
+	
+	console.log("正在禁用: " + hardwareId); 
+	//process.devcon.disable(
+	process.devcon.disable(hardwareId);
+	
+	console.log("已禁用，等待 5 秒...");
+	//sleep(5000);
+	
+	//console.log("正在启用: " + name);
+	//process.devcon.enable(instanceId);
+	
+	console.log("重置完成！");
+}
+else {
+	console.log("无效的编号！");
+}
+console.pause();

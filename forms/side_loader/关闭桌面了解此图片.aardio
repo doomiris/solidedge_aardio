@@ -1,0 +1,25 @@
+import console; 
+
+/*
+#在注册表内设置以下dword值为1;
+#位置: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel
+#新建: DWORD (32 位) 值。
+#将新建的值命名为：{2cc5ca98-6485-489a-920e-b3e88a6ccce3}
+#将数值数据设置为: 1
+*/
+
+import win.reg;
+
+var reg = win.reg("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel");
+if(reg){
+	reg.setDwValue("{2cc5ca98-6485-489a-920e-b3e88a6ccce3}", 1);
+	reg.close();
+	
+	//刷新桌面
+	::Shell32.SHChangeNotify(0x8000000/*_SHCNE_ASSOCCHANGED*/,0,0,0);
+	console.log("注册表设置成功，已刷新桌面！");
+}
+else {
+	console.log("打开注册表路径失败！");
+}
+console.pause();
