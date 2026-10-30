@@ -1,18 +1,18 @@
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="filter";right=367;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
+var winform = win.form(text="filter";right=762;bottom=579;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-chkAllowModelFuzzy={cls="checkbox";text="按型号模糊搜索";left=240;top=143;right=360;bottom=159;bgcolor=0xFFFFFF;dl=1;dt=1;z=11};
-chkDisabled={cls="checkbox";text="不显示禁用件";left=240;top=24;right=360;bottom=40;bgcolor=0xFFFFFF;checked=1;dl=1;dt=1;z=2};
-chkHideDuplicate={cls="checkbox";text="隐藏重复项";left=240;top=119;right=360;bottom=135;bgcolor=0xFFFFFF;checked=1;dl=1;dt=1;z=10};
-chkHideUnknown={cls="checkbox";text="不显示没查到的";left=240;top=88;right=360;bottom=104;bgcolor=0xFFFFFF;dl=1;dt=1;z=3};
-chkMoreCols={cls="checkbox";text="显示更多列";left=240;top=56;right=360;bottom=72;bgcolor=0xFFFFFF;dl=1;dt=1;z=1};
-clLegacyType={cls="listbox";left=8;top=24;right=64;bottom=360;clipch=1;cp=1;disabled=1;dl=1;dt=1;font=LOGFONT(h=-13);items={"BG","01","02","03","04","05","06","07","08","09","10","14","15","16","40","53","75"};msel=1;tabstop=1;z=4};
-clOrderType={cls="listbox";left=88;top=208;right=152;bottom=336;clipch=1;cp=1;dl=1;dt=1;font=LOGFONT(h=-13);items={"HALB","ROH","KMAT","FERT"};msel=1;tabstop=1;z=6};
-clSapType={cls="listbox";left=160;top=24;right=235;bottom=376;clipch=1;dl=1;dt=1;font=LOGFONT(h=-13);items={"SA","SB","SC","SD","SE","SG","SH","SI","R01","R02","R03","R04","R15","R05","R06","R07","R08","R10","R14","R40","FA01","FA02","FA03","FA04","FA05","FA06","FA07","FA08","FA09","FA11"};msel=1;tabstop=1;vscroll=1;z=7};
-clUnit={cls="listbox";left=88;top=24;right=144;bottom=152;clipch=1;cp=1;dl=1;dt=1;font=LOGFONT(h=-13);items={"ZA","KG","M","BOT","L"};msel=1;tabstop=1;z=5};
-editFilter={cls="edit";left=244;top=170;right=347;bottom=361;dl=1;dt=1;edge=1;multiline=1;z=9};
-syslink={cls="syslink";text="<a>清空选择</a>";left=104;top=8;right=208;bottom=24;dl=1;dt=1;notify=1;z=8}
+chkAllowModelFuzzy={cls="checkbox";text="按型号模糊搜索";left=631;top=135;right=751;bottom=151;anchors={left=1;top=1};bgcolor=0xFFFFFF;z=11};
+chkDisabled={cls="checkbox";text="不显示禁用件";left=631;top=16;right=751;bottom=32;anchors={left=1;top=1};bgcolor=0xFFFFFF;checked=1;z=2};
+chkHideDuplicate={cls="checkbox";text="隐藏重复项";left=631;top=111;right=751;bottom=127;anchors={left=1;top=1};bgcolor=0xFFFFFF;checked=1;z=10};
+chkHideUnknown={cls="checkbox";text="不显示没查到的";left=631;top=80;right=751;bottom=96;anchors={left=1;top=1};bgcolor=0xFFFFFF;z=3};
+chkMoreCols={cls="checkbox";text="显示更多列";left=631;top=48;right=751;bottom=64;anchors={left=1;top=1};bgcolor=0xFFFFFF;z=1};
+clLegacyType={cls="listbox";left=8;top=24;right=64;bottom=360;anchors={left=1;top=1};clipch=1;cp=1;disabled=1;font=LOGFONT(h=-13);items={"BG","01","02","03","04","05","06","07","08","09","10","14","15","16","40","53","75"};multiSelect=1;tabstop=1;z=4};
+clOrderType={cls="listbox";left=79;top=400;right=141;bottom=556;anchors={left=1;top=1};bgcolor=0xC0DCC0;clipch=1;cp=1;font=LOGFONT(h=-13);items={"FERT","HALB","KMAT","HIBE","UNBW","DIEN","ZIND","ZLAC"};multiSelect=1;tabstop=1;z=6};
+clSapType={cls="listbox";left=160;top=24;right=433;bottom=552;anchors={left=1;top=1};clipch=1;font=LOGFONT(h=-13);items={"FG00102","FG00103","FG00104","FG00109","FG00206","FG00207","FG00208","FG00209","FG00210","I00507","I00905","M00202","M00402","M00404","M00411","M00701","M00705","M00714","M00802","M01201","M01202","M01307","M01308","M01401","M01407","M01506","M01507","M01707","M01802","M01803","MS_AS","PM"};multiSelect=1;tabstop=1;vscroll=1;z=7};
+clUnit={cls="listbox";left=88;top=24;right=144;bottom=299;anchors={left=1;top=1};bgcolor=0xF0CAA6;clipch=1;cp=1;font=LOGFONT(h=-13);items={"ZA","BOT","G","KG","TO","CM","M","KM","M2","ML","L","M3","SZ","ROL","Q6"};multiSelect=1;tabstop=1;z=5};
+editFilter={cls="edit";left=633;top=380;right=736;bottom=571;anchors={left=1;top=1};edge=1;multiline=1;z=9};
+syslink={cls="syslink";text="<a>清空选择</a>";left=104;top=8;right=208;bottom=24;anchors={left=1;top=1};notify=1;z=8}
 )
 /*}}*/
 
@@ -44,6 +44,164 @@ winform.chkMoreCols.oncommand = function(id,event){
 	qtbs.forms[2].grid.columnWidth = null;
 	return true; 
 }
+
+//S4 物料组对应的辅助说明。
+//每项依次为：P11 物料组、描述、物料组备注、适用范围。
+var sapTypeHelp = {
+    FG00206 = ["FA01","整机柜","整机柜"];
+    FG00207 = ["FA02","分体柜","分体柜"];
+    FG00208 = ["FA03","并联机组","并联机组"];
+    FG00209 = ["FA04","其他机组（CDU）","其他机组（CDU）"];
+    FG00102 = ["FA05","冷风机","冷风机"];
+    FG00104 = ["FA06","冷凝器","冷凝器"];
+    M00705 = ["FA07","电控柜","电控柜"];
+    FG00103 = ["FA08","冷库","冷库"];
+    FG00210 = ["FA09","侧板","侧板"];
+
+    I00507 = [
+        "NPP",
+        "非直接生产物料",
+        "设备、维修设备用的备件、展会用印刷品、工装、叉车维修、计量工具、劳保用品"
+    ];
+
+    M01506 = [
+        "R01",
+        "金属类",
+        "钣金、铝合金、铸铁、铸铝、叶片、焊接件、非海尔物料采购不锈钢板等"
+    ];
+
+    M00714 = [
+        "R02",
+        "塑料类",
+        "PC、PVC、PS、PP、ABS、有机玻璃、夜帘等塑料件"
+    ];
+
+    M01407 = [
+        "R03",
+        "橡胶、辅料、化工类",
+        "粉末、胶带、发泡料、聚氨酯、制冷剂、压机油、保温管、焊条、密封胶、焊粉、酒精、上光蜡"
+    ];
+
+    M00701 = ["R04","电缆类","电缆线"];
+    M01307 = ["R05","包装印刷类","木端封、纸包装、其他包装物、印刷品"];
+    M00404 = ["R06","标准紧固类","标准螺钉、螺母"];
+    M00411 = ["R07","系统类","蒸发器、冷凝器、阀、压缩机、压力容器、铜管、钢管"];
+    M00402 = ["R08","系统、组件、部件类","玻璃门、多种材质组成组件"];
+    M00802 = ["R14","玻璃类","玻璃"];
+    M01308 = ["R15","实木板类","木包装"];
+
+    FG00109 = [
+        "R40",
+        "电器类",
+        "灯、加热管、控制器、风机、加热丝、线束、电控箱等电器件"
+    ];
+
+    M01202 = ["R99","Others（社返件&废料）","原材料其它"];
+    MS_AS = ["SA","Final Assembly","总装"];
+    M01707 = ["SB","钣金","钣金"];
+    M00202 = ["SC","喷粉","喷粉"];
+    M01401 = ["SD","发泡","发泡"];
+    M01802 = ["SE","Auxiliary Material Processing","辅料加工"];
+    M01803 = ["SG","Configuration Parts","配置类、特征类"];
+    M01507 = ["SH","焊接件","焊接件"];
+    I00905 = ["R10","外协类（外协加工费、劳保、熏蒸费）","加工费"];
+
+    //同一 S4 编码的多个用途分别显示。
+    M01201 = [
+        ["SI","半成品其它","半成品其它"],
+        ["FV50","HMTG-Refrigeration","半成品其它","香港、台湾专用"]
+    ];
+
+    PM = [
+        ["FA11","虚拟物料","虚拟物料"],
+        ["SP01","分包物料","成本/采购端","香港、台湾专用"],
+        ["SP02","服务物料","销售过程中收到的费用","香港、台湾专用"]
+    ];
+};
+
+//利用列表右侧的空白区域显示说明。
+//只读文本框可以选中文本、复制内容，长备注自动换行。
+winform.add(
+    editSapTypeHelp = {
+        cls = "edit";
+        left = 444; top = 24; right = 620; bottom = 552;
+        anchors = {left=1;top=1};
+        multiline = 1;
+        readonly = 1;
+        autohscroll = false;
+        vscroll = 1;
+        edge = 1;
+        bgcolor = 0xFFFFFF;
+        font = LOGFONT(h=-13);
+        text = "物料组说明";
+    }
+);
+
+var formatSapTypeHelp = function(info){
+    var text = "P11 物料组：" ++ info[1]
+        ++ '\r\n\r\n描述：\r\n' ++ info[2]
+        ++ '\r\n\r\n物料组备注：\r\n' ++ info[3];
+
+    if(info[4]){
+        text ++= '\r\n\r\n适用范围：\r\n' ++ info[4];
+    }
+
+    return text;
+};
+
+var updateSapTypeHelp = function(){
+    //多选列表使用当前焦点项显示说明，不改变已有多选状态。
+    //LB_GETCARETINDEX 返回原生的 0 基索引。
+    var caretIndex = ::User32.SendMessageW(
+        winform.clSapType.hwnd,
+        0x019F/*_LB_GETCARETINDEX*/,
+        0,0
+    );
+
+    if(caretIndex < 0){
+        winform.editSapTypeHelp.text = "请选择物料组以查看说明。";
+        return;
+    }
+
+    var code = winform.clSapType.items[caretIndex + 1];
+    if(!code) return;
+
+    var info = sapTypeHelp[code];
+    if(!info){
+        winform.editSapTypeHelp.text = code ++ '\r\n\r\n暂无辅助说明。';
+        return;
+    }
+
+    var parts = ["S4 物料组：" ++ code];
+
+    //多个用途时，info[1] 是数组；普通项目则是字符串。
+    if(table.isArray(info[1])){
+        for(i=1;#info){
+            table.push(parts,formatSapTypeHelp(info[i]));
+        }
+    }
+    else {
+        table.push(parts,formatSapTypeHelp(info));
+    }
+
+    winform.editSapTypeHelp.text = string.join(
+        parts,
+        '\r\n\r\n────────────\r\n\r\n'
+    );
+};
+
+//覆盖前面统一绑定的 oncommand，同时保留原来的颜色刷新。
+winform.clSapType.oncommand = function(id,event){
+    if(event == 1/*_LBN_SELCHANGE*/){
+        updateSapTypeHelp();
+    }
+
+    refreshColor();
+};
+
+//初始显示当前焦点项说明。
+updateSapTypeHelp();
+
 
 win.loopMessage();
 return winform;

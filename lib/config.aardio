@@ -2,7 +2,7 @@
 
 import fsys.config;
 import fsys.ini;
-import string.ini;
+
 import fsys.knownFolder;
 import fsys.version;
 import domisoft;
@@ -12,10 +12,15 @@ console.open();
 */
 config = fsys.config(io.appData("/domisoft/SETBM/"));
 
+/*
 import fsys.table
 var lib = fsys.table("\vtab.table");
 lib.enableAutoSave(false);
+*/
 
+var ini = fsys.ini("\tbm.ini") //参数 @2 为 true 则默认以 UTF-16 LE 创建新文件。
+//读取小节对象
+var lib = ini.getSection("lib") 
 
 
 var table = ..table;
@@ -32,17 +37,15 @@ namespace config {
 	__appDescription = "TBM";
 	__website = "https://github.com/doomiris/solidedge_aardio";
 	__sapDownload = io.joinpath(io.getSpecial(0x5/*_CSIDL_MYDOCUMENTS*/), "\SAP\SAP GUI\");
-/*
-	__pdfLib = domisoft.envFix(lib.pdfLib);
-	__qhcLib = domisoft.envFix(lib.qhcLib);
-	__cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
-	__templateLib = domisoft.envFix(lib.templateLib);
-*/
+	__pdfLib = lib.pdfLib;
+	__qhcLib = lib.qhcLib;
+	__cabinetModelServer = lib.cabinetModelServer;
+	__templateLib = lib.templateLib;
 }
 
 	
 if !config.dbServer.path
-	config.dbServer.path = domisoft.envFix(lib.dbServer);
+	config.dbServer.path = lib.dbServer;
 
 if !config.setbm.workingDir
 	config.setbm.workingDir = fsys.createDir("c:\workspaces\")
@@ -67,10 +70,12 @@ if !config.webview.lang
  config.tbmclip.userDbPath = io.joinpath(config.dbServer.path, "user",  "tbm." ++ string.getenv("username") ++ ".db");
  if !config.autoStart
  	config.autoStart = {};
- config.qtip.pdfLib = domisoft.envFix(lib.pdfLib);
- config.qtip.qhcLib = domisoft.envFix(lib.qhcLib);
- config.qtip.cabinetModelServer = domisoft.envFix(lib.cabinetModelServer);
- config.qtip.templateLib = domisoft.envFix(lib.templateLib);
+/*
+ config.qtip.pdfLib = lib.pdfLib;
+ config.qtip.qhcLib = lib.qhcLib;
+ config.qtip.cabinetModelServer = lib.cabinetModelServer;
+ config.qtip.templateLib = lib.templateLib;
+*/
 
 
 /**intellisense(config)
@@ -79,10 +84,10 @@ __appVersion = 应用程序内部版本号
 __appDescription = 程序说明
 __website = 官方网站
 __sapDownload = sap下载目录
-qtip.pdfLib = 研发PDF存档库
-qtip.qhcLib = 开发PDF存档库
-qtip.templateLib = 模版文件库位置
-qtip.cabinetModelServer = 3D模型库位置
+__pdfLib = 研发PDF存档库
+__qhcLib = 开发PDF存档库
+__templateLib = 模版文件库位置
+__cabinetModelServer = 3D模型库位置
 __formTemplateSharepointServer = sharepoint文档库位置
 dbServer.path = 数据库位置
 setbm.workingDir = 打印工作目录

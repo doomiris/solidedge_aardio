@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.794" ProductVersion="1.5.0.794" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
+<project ver="10" name="TBM" libEmbed="true" icon="res\tbm3.ico" ui="win" output="SE_TBM.exe" CompanyName="CCR" FileDescription="TBM" LegalCopyright="Copyright (C) CCR 2020" ProductName="TBM" InternalName="TBM" FileVersion="1.5.0.866" ProductVersion="1.5.0.866" publishDir="D:\Program Files (x86)\aardio\dist" dstrip="false" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="窗体" path="forms" comment="" embed="true" local="false" ignored="false">
 		<folder name="admin_only" path="forms\admin_only" comment="forms\admin_only" local="false" embed="false" ignored="true">
@@ -22,6 +22,7 @@
 			<file name="获取喷粉调研表.aardio" path="forms\admin_only\获取喷粉调研表.aardio" comment="forms\admin_only\获取喷粉调研表.aardio"/>
 			<file name="获取成品分类对应表.aardio" path="forms\admin_only\获取成品分类对应表.aardio" comment="forms\admin_only\获取成品分类对应表.aardio"/>
 			<file name="获取默认配置分类.aardio" path="forms\admin_only\获取默认配置分类.aardio" comment="forms\admin_only\获取默认配置分类.aardio"/>
+			<file name="改名.aardio" path="forms\admin_only\改名.aardio" comment="forms\admin_only\改名.aardio"/>
 		</folder>
 		<folder name="Excel" path="forms\Excel" comment="forms\Excel" local="false" embed="false" ignored="false">
 			<file name="add_H_by_column.aardio" path="forms\Excel\add_H_by_column.aardio" comment="forms\Excel\add_H_by_column.aardio"/>
@@ -38,6 +39,7 @@
 			<file name="从字符串中提取分类特性列表.aardio" path="forms\Excel\从字符串中提取分类特性列表.aardio" comment="forms\Excel\从字符串中提取分类特性列表.aardio"/>
 			<file name="可选项调研表增加下拉菜单.aardio" path="forms\Excel\可选项调研表增加下拉菜单.aardio" comment="forms\Excel\可选项调研表增加下拉菜单.aardio"/>
 			<file name="提取可选项特性值.aardio" path="forms\Excel\提取可选项特性值.aardio" comment="forms\Excel\提取可选项特性值.aardio"/>
+			<file name="原地更新Excel选中的旧号.aardio" path="forms\Excel\原地更新Excel选中的旧号.aardio" comment="forms\Excel\原地更新Excel选中的旧号.aardio"/>
 		</folder>
 		<folder name="login" path="forms\login" comment="forms\login" local="false" embed="false" ignored="false"/>
 		<folder name="main" path="forms\main" comment="forms\main" local="false" embed="false" ignored="false">
@@ -75,6 +77,7 @@
 		</folder>
 		<folder name="side_loader" path="forms\side_loader" comment="forms\side_loader" local="false" embed="false" ignored="true">
 			<file name="BOM_export.aardio" path="forms\side_loader\BOM_export.aardio" comment="forms\side_loader\BOM_export.aardio"/>
+			<file name="BOM浏览器更新S4物料号.aardio" path="forms\side_loader\BOM浏览器更新S4物料号.aardio" comment="forms\side_loader\BOM浏览器更新S4物料号.aardio"/>
 			<file name="BPM上传附件.aardio" path="forms\side_loader\BPM上传附件.aardio" comment="forms\side_loader\BPM上传附件.aardio"/>
 			<file name="clear_sys_temp_folder.aardio" path="forms\side_loader\clear_sys_temp_folder.aardio" comment="forms\side_loader\clear_sys_temp_folder.aardio"/>
 			<file name="excel插件安装删除.aardio" path="forms\side_loader\excel插件安装删除.aardio" comment="forms\side_loader\excel插件安装删除.aardio"/>
@@ -86,13 +89,14 @@
 			<file name="SE_license在线用户查询.aardio" path="forms\side_loader\SE_license在线用户查询.aardio" comment="forms\side_loader\SE_license在线用户查询.aardio"/>
 			<file name="SE一键隐藏所有坐标系.aardio" path="forms\side_loader\SE一键隐藏所有坐标系.aardio" comment="forms\side_loader\SE一键隐藏所有坐标系.aardio"/>
 			<file name="unlock_registry.aardio" path="forms\side_loader\unlock_registry.aardio" comment="forms\side_loader\unlock_registry.aardio"/>
+			<file name="从物料号申请进度窗口获取专用号清单.aardio" path="forms\side_loader\从物料号申请进度窗口获取专用号清单.aardio" comment="forms\side_loader\从物料号申请进度窗口获取专用号清单.aardio"/>
 			<file name="关闭代理.aardio" path="forms\side_loader\关闭代理.aardio" comment="forms\side_loader\关闭代理.aardio"/>
 			<file name="压缩S文件.aardio" path="forms\side_loader\压缩S文件.aardio" comment="forms\side_loader\压缩S文件.aardio"/>
 			<file name="填写收货地址.aardio" path="forms\side_loader\填写收货地址.aardio" comment="forms\side_loader\填写收货地址.aardio"/>
 			<file name="复制目录结构.aardio" path="forms\side_loader\复制目录结构.aardio" comment="forms\side_loader\复制目录结构.aardio"/>
 			<file name="将选中区域提取为一维字符串数组.aardio" path="forms\side_loader\将选中区域提取为一维字符串数组.aardio" comment="forms\side_loader\将选中区域提取为一维字符串数组.aardio"/>
+			<file name="把excel所选区域临时加进sapdb.aardio" path="forms\side_loader\把excel所选区域临时加进sapdb.aardio" comment="forms\side_loader\把excel所选区域临时加进sapdb.aardio"/>
 			<file name="新办公室.aardio" path="forms\side_loader\新办公室.aardio" comment="forms\side_loader\新办公室.aardio"/>
-			<file name="更新Teamcenter插件.aardio" path="forms\side_loader\更新Teamcenter插件.aardio" comment="forms\side_loader\更新Teamcenter插件.aardio"/>
 			<file name="查看系统图标.aardio" path="forms\side_loader\查看系统图标.aardio" comment="forms\side_loader\查看系统图标.aardio"/>
 			<file name="淘宝链接简化.aardio" path="forms\side_loader\淘宝链接简化.aardio" comment="forms\side_loader\淘宝链接简化.aardio"/>
 			<file name="清理后台无窗口Excel遗留进程.aardio" path="forms\side_loader\清理后台无窗口Excel遗留进程.aardio" comment="forms\side_loader\清理后台无窗口Excel遗留进程.aardio"/>
@@ -145,6 +149,7 @@
 	</folder>
 	<folder name="res" path="res" comment="res" local="false" embed="true" ignored="false">
 		<file name="ENGINE.ICO" path="res\ENGINE.ICO" comment="res\ENGINE.ICO"/>
+		<file name="menulist.aardio" path="res\menulist.aardio" comment="res\menulist.aardio"/>
 		<file name="tbm3.ico" path="res\tbm3.ico" comment="res\tbm3.ico"/>
 	</folder>
 	<folder name="dlg" path="dlg" comment="dlg" local="false" embed="true" ignored="false">

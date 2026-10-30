@@ -38,7 +38,7 @@ namespace getList{
 		_searchLoc := [
 			[config.qtip.pdfLib,	"*.*"],
 			[config.qtip.qhcLib,	"*.*"],
-			[config.qtip.cabinetModelServer,	"H*.dft"]
+			[config.qtip.cabinetModelServer,	"*.dft"]
 		]
 		import config;
 		import sqlite;

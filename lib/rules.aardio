@@ -12,7 +12,7 @@ var table = ..table;
 namespace rules {
     // 规则描述
 	rule_desp = {
-		[1] = "前后父项物料不匹配(不要改变原有模版公式)";
+		[1] = "前后父项物料不匹配";
 		[2] = "项目类别固定值:L";
 		[3] = "新增子项:子项需写在右侧";
 		[4] = "删除子项:子项需写在左侧";
@@ -29,15 +29,16 @@ namespace rules {
 		[15] = "缺少更改备注";
 		[16] = "操作KMAT请标记出是否有OD变更, 如OD不变可忽略";
 		[17] = "请移除多余空行(末尾空行可忽略)";
-		[18] = "替换子项前后无区别";
+		[18] = "变更子项前后无区别";
 		[19] = "已喷物料和未喷物料号码相隔太远(如特殊情况请确认是否可忽略)";
 		[20] = "删除子项:右侧新子项需要留空";
 		[21] = "子项物料与父项相同";
 		[22] = "可选项子项数量只能是1"; //K3规则SAP不再限制了
-		[23] = "替换子项缺少原子项"; 
+		[23] = "变更子项缺少原子项"; 
 		[24] = "原材料单位是KG"; 
 		[25] = "更改用量:前后子项物料不同 (是否是想替换子项?)"; 
-		[26] = "粉末和定尺料不应在同一层级"; 	
+		[26] = "粉末和定尺料不应在同一层级";
+		[27] = "[更改备注]和[更改标识]不匹配";
 			
 
 		/* 此处增加规则需要在desp/rule/solver三处都添加子项 */
@@ -51,12 +52,17 @@ namespace rules {
     // 错误检测函数
 	sapErr = {
 		[1] = function(i, etab){
-			if etab[i][["原父项"]]
+			if etab[i][["更改备注"]]=="变更子项" or etab[i][["更改备注"]]=="更改用量"
 				return etab[i][["原父项"]] !== etab[i][["新父项"]]; 
 		};
 		[2] = function(i, etab){
-			if etab[i].原父项
-				return etab[i][["项目类别"]] !== "L"; 
+			if etab[i][["新父项"]] {
+				if etab[i][["新子项"]] && etab[i][["新子项"]]=="ZCOLOR" {
+					return etab[i][["项目类别"]] !== "K"; 
+				}else{
+					return etab[i][["项目类别"]] !== "L"; 
+				}
+			}
 		};
 		[3] = function(i, etab){
 			if etab[i][["更改备注"]] == "新增子项" or etab[i][["更改备注"]] == "新增BOM"
@@ -80,19 +86,19 @@ namespace rules {
 		[7] = function(i, etab){
 			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return;
 			if etab[i][["新子项单位"]]  == "ZA"
-				if !string.indexOf(etab[i][["新子项描述"]]||"","胶带")
+				if !string.keywords("胶|带|线").findOne(etab[i][["新子项描述"]])
 						return !math.isInteger(tarray.cNum(etab[i][["新子项数量"]]));  
 		};
 		[8] = function(i, etab){
 			if etab[i][["更改备注"]] =="删除BOM" or etab[i][["更改备注"]] =="删除子项" return; 
 			if !etab[i][["新子项"]] return ; 
 			var item = QHC.getSapItem(etab[i][["新子项"]]);
-			return item[["MTyp"]] !== etab[i][["新子项类型"]] or item[["BUn"]] !== etab[i][["新子项单位"]]; 
+			return item[["物料类型"]] !== etab[i][["新子项类型"]] or item[["基本计量单位"]] !== etab[i][["新子项单位"]]; 
 		};
 		[9] = function(i, etab){
 			if etab[i][["更改备注"]] =="新增子项" or etab[i][["更改备注"]] =="新增BOM" {
 				var item = QHC.getSapItem(etab[i][["原父项"]]);
-				return item[["MTyp"]] == "ROH"; 
+				return item[["物料类型"]] == "ROH"; 
 			}
 		};
 		[10] = function(i, etab){
@@ -115,12 +121,12 @@ namespace rules {
 		};
 		[14] = function(i, etab){
 			if i==1 return ; 
-			if !etab[i][["原父项"]] return ; 
+
 			for(j=1; i-1){
 				if #etab[j][["原子项"]] and etab[j][["原父项"]] == etab[i][["原父项"]] and 
 					etab[j][["原子项"]] == etab[i][["原子项"]]
 							return true;
-				if #etab[j][["新子项"]] and etab[j][["原父项"]] == etab[i][["原父项"]] and 
+				if #etab[j][["新子项"]] and etab[j][["新父项"]] == etab[i][["新父项"]] and 
 						etab[j][["新子项"]] == etab[i][["新子项"]]
 							return true;
 			}
@@ -134,19 +140,22 @@ namespace rules {
 				return !etab[i][["是否有OD"]]; 
 		}
 		[17] = function(i, etab){
+/*
 			if i<#etab
 				if !etab[i][["原父项"]]
 					return !etab[i][["新父项"]] || etab[i][["新父项"]] ==0
+*/
 		}
 		[18] = function(i, etab){
-			if etab[i][["更改备注"]] == "替换子项"
+			if etab[i][["更改备注"]] == "变更子项"
 				return etab[i][["原子项"]] == etab[i][["新子项"]];
 	
 		}
 		[19] = function(i, etab){
 			if etab[i][["更改备注"]] == "新增BOM"
 				if etab[i][["新子项描述"]] and string.indexOf(etab[i][["新子项描述"]],"未喷")
-					return etab[i][["原父项"]] !== QHC.pcodeOffset(etab[i][["新子项"]]);
+					/* return etab[i][["原父项"]] !== QHC.pcodeOffset(etab[i][["新子项"]]); */
+					return !string.startsWith(etab[i][["新父项"]], etab[i][["新子项"]]) 
 		}
 		[20] = function(i, etab){
 			if etab[i][["更改备注"]] == "删除子项" or etab[i][["更改备注"]] == "删除BOM"
@@ -160,7 +169,7 @@ namespace rules {
 			/* K3规则SAP不再限制了*/
 		}
 		[23] = function(i, etab){
-			if etab[i][["更改备注"]] == "替换子项"
+			if etab[i][["更改备注"]] == "变更子项"
 				return !etab[i][["原子项"]] ;
 		}
 		[24] = function(i, etab){
@@ -184,7 +193,18 @@ namespace rules {
 				if etab[j][["原父项"]] !== etab[i][["原父项"]] continue;
 				if table.indexOf(metalTab, etab[j][["新子项"]]) return true;
 			}
-		}	
+		}
+		[27] = function(i, etab){
+			if !etab[i][["更改备注"]] return ; 
+			var syTab = {
+				"新增子项" = "A",
+				"更改用量" = "B",
+				"变更子项" = "C",
+				"删除子项" = "D",
+				"新增BOM" = "F"
+			}
+			return syTab[etab[i]["更改备注"]] !== etab[i][["更改标识"]] ;
+		}
 	};
 
     // 修复函数
@@ -275,10 +295,13 @@ namespace rules {
 			return true; 
 		}
 		[25] = function(i, etab){
-			etab[i]["更改备注"] = "替换子项";		
+			etab[i]["更改备注"] = "变更子项";		
 			return true; 
 		}
 		[26] = function(i, etab){
+			
+		}
+		[27] = function(i, etab){
 			
 		}
 	};
@@ -286,7 +309,7 @@ namespace rules {
 		[1] = function(od_sht, workbook_name){	
 			var col_c = od_sht.usedrange.columns("C").value2;
 			col_c = table.filter(col_c, λ(v, index) #v);			
-			var od_added = (#col_c !== 4)
+			var od_added = (#col_c !== 2)
 			return !string.indexOf(workbook_name,"-是-") == od_added;
 		}
 		[2] = function(od_sht, workbook_name){		

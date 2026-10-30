@@ -1,0 +1,76 @@
+import console; 
+
+import sqlite;
+import config;
+
+import QHC;
+var odb = QHC.openDb(QHC.sap_db_path);
+
+
+var path = io.joinpath(config.dbServer.path,"BOM_LIB.db");
+var bomlib_db =  sqlite(path);
+
+/*
+# 修改表bomlib_db库里的`lib`表, 
+# 先用其中`物料`值在odb中`所有物料`表查询`S4物料`的值 
+# 把表bomlib_db库里的`lib`表`物料`值原地修改为`S4物料`的值, 
+*/
+
+//先读取原始数据，按 rowid 更新，避免新旧物料号交叉时重复转换。
+var rows = bomlib_db.getTable("SELECT rowid AS sourceRowId, [物料] FROM [lib]");
+var mappingCache = {};
+var updates = [];
+var skipped = 0;
+
+if(rows){
+	for(i=1;#rows){
+		var row = rows[i];
+		var material = row.物料;
+
+		if(material !== null && material !== ""){
+			var cached = mappingCache[material];
+			if(cached === null){
+				var result = odb.stepQuery(
+					"SELECT DISTINCT [S4物料] FROM [所有物料] WHERE [物料]=@material AND [S4物料] IS NOT NULL AND [S4物料]<>''",
+					{material=material}
+				);
+				cached = {value=result[["S4物料"]]};
+				mappingCache[material] = cached;
+			}
+
+			if(cached.value !== null && cached.value !== ""){
+				if(cached.value !== material){
+					table.push(updates,{
+						rowId=row.sourceRowId;
+						oldMaterial=material;
+						newMaterial=cached.value
+					});
+				}
+			}
+			else{
+				skipped += 1;
+				console.log("未找到 S4物料，保留原值：",material);
+			}
+		}
+		else{
+			skipped += 1;
+		}
+	}
+
+	var cmd = bomlib_db.prepare(
+		"UPDATE [lib] SET [物料]=@newMaterial WHERE rowid=@rowId AND [物料]=@oldMaterial"
+	);
+
+	for(i=1;#updates){
+		cmd.step(updates[i]);
+	}
+
+	cmd.finalize();
+	console.log("已执行物料转换：",#updates,"条；跳过：",skipped,"条。");
+}
+else{
+	console.error("读取 lib 表失败，未执行修改。");
+}
+
+
+console.pause();

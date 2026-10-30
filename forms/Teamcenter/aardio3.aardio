@@ -3,14 +3,17 @@ import win.ui;
 var winform = win.form(text="WebView2";right=966;bottom=622)
 winform.add()
 /*}}*/
+
 import console; 
 import win.dlg.message;
 var loginUrl = "http://ccnqif03:3000/tc/JsonRestServices/Core-2011-06-Session/login"
 var baseUrl = "http://ccnqif03:3000/"
 import inet;
 import web.rest.jsonClient;
+
 var session = web.rest.jsonClient(); // 创建 HTTP 客户端,它会自动管理 Cookie
-session@.login = function(){
+
+session.login = function(){
 	var http = owner;
 	//http.setCookie(wb);
 
@@ -72,51 +75,8 @@ session@.login = function(){
     }
 
 }
-session@.getPdf = function(){
-	// 2. 获取图纸 Item 信息 (替换 DRAWING_ITEM_UID)
-	var http = owner;
-	itemResponse = http.get(baseUrl + "/data/Item/DRAWING_ITEM_UID");
-	if (itemResponse.statusCode != 200) {
-    	error("获取图纸 Item 失败: " + itemResponse.statusCode);
-	}
-	
-	// 3. 获取关联的 Dataset
-	datasetsResponse = http.get(baseUrl + "/data/Item/DRAWING_ITEM_UID/datasets");
-	if (datasetsResponse.statusCode != 200) {
-    	error("获取 Dataset 失败: " + datasetsResponse.statusCode);
-	}
-	datasets = web.rest.json.parse(datasetsResponse.readAll());
-	datasetUid = datasets[1]["uid"]; // Aardio 数组索引从 1 开始
-	
-	// 4. 获取 Named References (查找 PDF)
-	namedRefsResponse = http.get(baseUrl + "/data/Dataset/" + datasetUid + "/namedreferences");
-	if (namedRefsResponse.statusCode != 200) {
-    	error("获取 Named References 失败: " + namedRefsResponse.statusCode);
-	}
-	namedRefs = web.rest.json.parse(namedRefsResponse.readAll());
-	
-	// 查找 PDF 类型的 Named Reference
-	pdfRefUid = null;
-	for(i = 1; #namedRefs; 1) {
-    	if (string.lower(namedRefs[i]["type"]) == "pdf") {
-        	pdfRefUid = namedRefs[i]["uid"];
-        	break;
-    	}
-	}
-	if (!pdfRefUid) {
-    	error("未找到 PDF 类型的 Named Reference");
-	}
-	
-	// 5. 下载 PDF
-	pdfUrl = baseUrl + "/data/Dataset/" + datasetUid + "/namedreferences/" + pdfRefUid + "/download";
 
-	pdfData = http.get(pdfUrl).readAll();
-	
-	// 保存 PDF 文件
-	fsys.file("d:\temp\drawing.pdf").write(pdfData);
-	
 
-}
 
 session.login();
 

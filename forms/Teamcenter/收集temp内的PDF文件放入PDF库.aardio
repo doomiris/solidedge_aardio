@@ -7,7 +7,7 @@ _path = io.appData("Temp");
 /*
 _toFolder = "\\CCNSIA1A\SEParts\Cabinet\QHC图纸库"
 */
-_toFolder = config.qtip.qhcLib;
+_toFolder = config.__qhcLib;
 fsys.enum( _path , "tc_*",
 	function(dir,filename,fullpath,findData){ 
 		if(filename){ 

@@ -8,21 +8,21 @@ import win.debounce;
 /*DSG{{*/
 var winform = win.form(text="分类和特性查询";right=999;bottom=751;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;color=0x0000FF;db=1;dl=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
-button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;db=1;dl=1;z=9};
-edit={cls="edit";left=8;top=32;right=216;bottom=64;dl=1;dt=1;edge=1;z=6};
-edit2={cls="edit";left=232;top=32;right=528;bottom=64;dl=1;dt=1;edge=1;z=8};
-listview4={cls="listview";left=8;top=227;right=216;bottom=638;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=12};
-listview_Characteristic_statement={cls="listview";left=537;top=440;right=993;bottom=728;ah=1;aw=1;db=1;dr=1;edge=1;fullRow=1;z=14};
-listview_Characteristic_value={cls="listview";left=536;top=88;right=992;bottom=431;ah=1;aw=1;dr=1;dt=1;edge=1;fullRow=1;z=3};
-listview_Characteristics={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;aw=1;db=1;dt=1;edge=1;fullRow=1;z=2};
-listview_Classification={cls="listview";left=8;top=88;right=216;bottom=216;aw=1;dl=1;dt=1;edge=1;fullRow=1;multiSelect=false;z=1};
-splitter={cls="splitter";left=216;top=87;right=223;bottom=637;ah=1;db=1;dt=1;z=4};
-splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;db=1;dt=1;z=5};
+button={cls="button";text='\uF0E2';left=8;top=688;right=40;bottom=720;anchors={left=1;bottom=1};color=0x0000FF;font=LOGFONT(h=-16;name='FontAwesome');z=7};
+button2={cls="button";text="可选项调研表增加下拉菜单";left=8;top=640;right=216;bottom=672;anchors={left=1;bottom=1};z=9};
+edit={cls="edit";left=8;top=32;right=216;bottom=64;anchors={left=1;top=1};edge=1;z=6};
+edit2={cls="edit";left=232;top=32;right=528;bottom=64;anchors={left=1;top=1};edge=1;z=8};
+listview4={cls="listview";left=8;top=227;right=216;bottom=638;ah=1;anchors={top=1;bottom=1};aw=1;edge=1;fullRow=1;z=12};
+listview_Characteristic_statement={cls="listview";left=537;top=440;right=993;bottom=728;ah=1;anchors={right=1;bottom=1};aw=1;edge=1;fullRow=1;z=14};
+listview_Characteristic_value={cls="listview";left=536;top=88;right=992;bottom=431;ah=1;anchors={top=1;right=1};aw=1;edge=1;fullRow=1;z=3};
+listview_Characteristics={cls="listview";left=224;top=88;right=528;bottom=728;ah=1;anchors={top=1;bottom=1};aw=1;edge=1;fullRow=1;z=2};
+listview_Classification={cls="listview";left=8;top=88;right=216;bottom=216;anchors={left=1;top=1};aw=1;edge=1;fullRow=1;multiSelect=false;z=1};
+splitter={cls="splitter";left=216;top=87;right=223;bottom=637;ah=1;anchors={top=1;bottom=1};z=4};
+splitter2={cls="splitter";left=528;top=88;right=536;bottom=728;ah=1;anchors={top=1;bottom=1};z=5};
 splitter3={cls="splitter";left=8;top=218;right=216;bottom=225;aw=1;horz=1;z=13};
 splitter4={cls="splitter";left=539;top=431;right=988;bottom=437;aw=1;horz=1;z=15};
-static={cls="static";text="查询分类/成品编码/喷粉类";left=10;top=10;right=210;bottom=24;dl=1;dt=1;transparent=1;z=10};
-static2={cls="static";text="查询特性";left=236;top=8;right=316;bottom=24;dl=1;dt=1;transparent=1;z=11}
+static={cls="static";text="查询分类/成品编码/喷粉类";left=10;top=10;right=210;bottom=24;anchors={left=1;top=1};transparent=1;z=10};
+static2={cls="static";text="查询特性";left=236;top=8;right=316;bottom=24;anchors={left=1;top=1};transparent=1;z=11}
 )
 /*}}*/
 
@@ -229,6 +229,7 @@ var keepBG = function(hcode){
 	if !hcode return ;  
 	if tarray.findValue(bgTab, hcode) return ; 
 	var hitem = QHC.getSapItem(hcode);
+	if !hitem return ; 
 	table.push(bgTab, {
 			"物料" : hitem.物料;
 			"物料描述" : hitem.物料描述

@@ -282,7 +282,8 @@ cNum = function(str){
 }
 clearEmptyRows = function(arr){
 	return  table.filter(arr, function(v,index){
-		return table.count(v); // 如果没有[1]键,#操作不能识别数组, 但是count操作包含fields等非数字键
+		//return table.count(v); // 如果没有[1]键,#操作不能识别数组, 但是count操作包含fields等非数字键
+		return string.len(string.join(v)); 
 	})
 }
 countNumKey = function(arr){

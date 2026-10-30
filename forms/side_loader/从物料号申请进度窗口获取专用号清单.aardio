@@ -1,0 +1,69 @@
+import console;
+import FlaUI.UIA3;
+import winex.ctrl.listview;
+
+//查找窗口，禁用模式匹配语法搜索窗口（首字符为 `@`）
+var window = FlaUI.FindWindow("javaw.exe","@#32770","@物料号申请进度查询");
+if(!window) error("未找到窗口");
+
+//查找 List 控件
+var ctrl = window.FindFirstByXPath(`/List`);
+if(!ctrl) error("未找到 List 控件");
+
+//尝试获取原生窗口句柄
+var hwnd = ctrl.Properties.NativeWindowHandle.ValueOrDefault;
+if(!hwnd) error("该控件没有原生句柄，请改用方案二的纯 FlaUI 方式");
+
+//绑定为 listview 对象
+var lv = winex.ctrl.listview(hwnd);
+
+// 1. 查找“料号”和“料号描述”所在的列号（1 起始索引）
+var colItem, colDesc;
+for(col = 1; lv.columnCount){
+    var colText = string.trim(lv.getColumnText(col) : "");
+    if(colText == "料号") colItem = col;
+    elseif(colText == "料号描述") colDesc = col;
+}
+
+if(!colItem || !colDesc){
+    error("未找到对应的列名，请检查表头名称是否完全一致");
+}
+import domisoft;
+lv.translateAccelerator = domisoft.ctrlC;
+// 2. 遍历所有行提取指定列数据
+var result = [];
+for(row = 1; lv.count){
+    table.push(result, [ lv.getItemText(row, colItem), lv.getItemText(row, colDesc)] )
+}
+console.dumpTable(result)
+
+
+//写入db
+
+
+import config;
+import sqlite;
+
+var db = sqlite(io.joinpath(config.dbServer.path,"qhcsap.db"));
+	
+var cmd = db.prepare(`REPLACE INTO [所有物料] (物料, 物料描述, 物料类型, 基本计量单位) VALUES (?, ?, "HALB", "ZA")`);
+for (i=1; #result)
+	cmd.step(result[i])
+cmd.finalize();
+
+db.close();
+
+console.log("已写入sapdb")
+
+
+import win.clip;
+
+
+var txtTab = [];
+for (i=1; #result)
+    table.push(txtTab,string.join(result[i],'\t'));
+var hd = win.clip.write(string.join(txtTab,'\n'));	
+
+if hd
+	console.log("已写入剪切板")
+console.pause(true);

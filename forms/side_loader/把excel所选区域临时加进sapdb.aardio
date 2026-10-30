@@ -1,0 +1,34 @@
+import console; 
+
+import config;
+import sqlite;
+
+var db = sqlite(io.joinpath(config.dbServer.path,"qhcsap.db"));
+	
+	
+import com.excel;
+var excel = com.excel( false );
+
+var selRng = excel.Selection.value2;
+
+
+for (i=1; #selRng)
+	for(j=1; #selRng[i]) {
+		var v = selRng[i][j];
+		if (v !== null)
+			selRng[i][j] = string.trim(tostring(v:""))
+	}
+
+
+console.dumpTable(selRng);
+
+console.pause()
+
+var cmd = db.prepare(`REPLACE INTO [所有物料] (物料, 物料描述, 物料类型, 基本计量单位) VALUES (?, ?, "HALB", "ZA")`);
+for (i=1; #selRng)
+	cmd.step(selRng[i])
+cmd.finalize();
+
+db.close();
+console.clearScreen()
+console.pause("完成");

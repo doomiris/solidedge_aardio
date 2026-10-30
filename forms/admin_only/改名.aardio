@@ -1,0 +1,103 @@
+import console; 
+import config;
+import sqlite;
+
+var db_path = io.joinpath(config.dbServer.path, "QHCSAP.db");
+var db = sqlite(db_path);
+
+var targetFolder = "S:\Cabinet\test"
+var includeSubfolders = true;
+
+/*
+# 遍历指定文件夹内所有 H*.dft 文件
+# 从文件名提取旧物料号
+# 旧物料号名称规则: 1. H008开头; 2.长度11位
+# 类似"H0080167520-LL-DB 临时.dft"这样的文件名也需要处理
+# 在数据库内查询旧物料号对应的新的`物料`值
+# 查询方法参考以下语句:
+# var t = db.stepQuery("SELECT 物料 FROM [所有物料]", {旧物料号:old_Pnumber})
+# 原地修改文件名
+# 查询不到的保持不变
+# 控制台输出变更记录
+# 在targetFolder下生成日志文件
+*/
+import fsys;
+
+var files = [];
+var renamedCount,notFoundCount,failedCount = 0,0,0;
+
+//先收集文件，避免重命名影响正在进行的目录枚举。
+fsys.enum(targetFolder,"H*.dft",
+	function(dirname,filename,fullpath,findData){
+		if(!filename) return;
+		if(string.cmp(io.splitpath(filename).ext,".dft") != 0) return;
+
+		//H008 + 7 位数字，共 11 位；后面不能紧接数字。
+		var oldNumber = string.match(filename,"^(H008\d{7})\d?!");
+		if(!oldNumber) return;
+
+		table.push(files,{
+			path = fullpath;
+			name = filename;
+			oldNumber = oldNumber;
+		});
+	},includeSubfolders
+);
+
+for(i=1;#files){
+	var item = files[i];
+	var row = db.stepQuery(
+		"SELECT [物料] FROM [所有物料] WHERE [旧物料号] = @oldNumber",
+		{oldNumber = item.oldNumber}
+	);
+
+	if(!row || row.物料 === null){
+		notFoundCount++;
+		console.log("未找到对应物料，保持不变：",item.path);
+		continue;
+	}
+
+	var newNumber = string.trim(tostring(row.物料));
+	if(!#newNumber){
+		notFoundCount++;
+		console.log("对应物料为空，保持不变：",item.path);
+		continue;
+	}
+
+	if(newNumber === item.oldNumber) continue;
+
+	//只替换文件名开头的旧号，保留其后的说明文字与扩展名。
+	var newName = newNumber ++ string.slice(item.name,12);
+	var newPath = io.joinpath(io.splitpath(item.path).dir,newName);
+
+	if(string.find(newNumber,`[\\/\:*?\"<>|]`)){
+		failedCount++;
+		console.log("新物料号包含非法文件名字符，跳过：",item.oldNumber,newNumber);
+		continue;
+	}
+
+	if(io.exist(newPath)){
+		failedCount++;
+		console.log("目标文件已存在，跳过：",item.path,"→",newPath);
+		continue;
+	}
+
+	var ok,err = fsys.rename(item.path,newPath);
+	if(ok){
+		renamedCount++;
+		console.success("已改名：",item.path,"→",newPath);
+	}
+	else{
+		failedCount++;
+		console.fail("改名失败：",item.path,"→",newPath,err);
+	}
+}
+
+console.log(
+	"处理完成。符合规则：",#files,
+	"成功改名：",renamedCount,
+	"无有效对应物料：",notFoundCount,
+	"失败或跳过：",failedCount
+);
+db.close();
+console.pause();

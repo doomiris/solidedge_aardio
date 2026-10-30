@@ -1,7 +1,7 @@
 ﻿//DraftDocument 常用函数
 import domisoft;
 import solidedge.application;
-
+import config;
 var table = ..table;
 var string = ..string;
 var math = ..math;
@@ -24,7 +24,7 @@ class DraftDocument{
 namespace DraftDocument{
   import solidedge.application;
   import util.metaProperty; 
-  _titleBlockNames = {"Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC", "SRDC-Title"};
+  _titleBlockNames = {"Title 2026","Title 2020", "Title", "Title-SRDC_V1", "Title-SRDC", "SRDC-Title"};
   _metaProperty = util.metaProperty( 
 	get = function(k){
 		return owner.seDFT[k];
@@ -109,15 +109,20 @@ namespace DraftDocument{
     	}
 		return tar; 
 	};
-	getBlkByName = function(blkName, seSht){
+	getBlkOcByName = function(blkName, seSht){
         for (i = 1;  seSht.BlockOccurrences.Count )  //获取Titleblock
         	if seSht.BlockOccurrences.Item(i).Block.Name == blkName 
             	return seSht.BlockOccurrences.Item(i);
         return null; 
 	}
-	
+	getBlkByName = function(blkName){
+        for (i = 1;  owner.Blocks.Count )
+        	if owner.Blocks.Item(i).Name == blkName 
+            	return owner.Blocks.Item(i);
+        return null; 
+	}
 	getSourcingType = function(seSht){
-        var vblk = owner.getBlkByName("Version_CCR 2020",seSht);
+        var vblk = owner.getBlkOcByName("Version_CCR 2020",seSht);
         return owner.getValueFromBlk(vblk, "属性");
 	}
 	
@@ -212,12 +217,16 @@ namespace DraftDocument{
 		return qhc_ver;
 	};
 	getFileName = function(){
-		var p_number = io.splitpath(owner.Name).name;
-		if string.startsWith(p_number,"H", true)	
-        	p_number = "H" ++ string.right(p_number, #p_number -1 ); //H大写
-		return p_number; 
-	};
+    	var p_number = io.splitpath(owner.Name).name;
+    	if(!p_number) return "";
 	
+    	// 正确函数名为 string.startWith，忽略大小写判断
+    	if( string.startsWith(p_number, "H", true) ){
+        	p_number = "H" ++ string.slice(p_number, 2); // slice 从第 2 个字节截取到末尾
+    	}
+    	return p_number; 
+	};
+
 	/* ====================== */
 	name_cn = {
 		_get = function(){
@@ -419,8 +428,8 @@ namespace DraftDocument{
 	/* 优化代码 : 不太理想,现在必须打开DFT才能用*/
 
 	replaceNewTitleBlock = function(DFT){
-		import config
-		_tPath = ..io.joinpath(config.qtip.templateLib, "Draft.dft");
+
+		_tPath = ..io.joinpath(..config.__templateLib, "Draft.dft");
 		DFT := owner;
 		var Sht = DFT.ActiveSheet;
 		var x,y = DFT.getTitleBlockOrigin(Sht);
@@ -448,7 +457,7 @@ namespace DraftDocument{
 			}
 			//..table.push(oLbsTab, oLbs);
 			
-			var neBlk = sesht.BlockOccurrences.Add("Title 2020", x, y); // 插入新Title Block
+			var neBlk = sesht.BlockOccurrences.Add("Title 2026", x, y); // 插入新Title Block
 			//..table.push(neBlkTab, neBlk);
 			//解决名称合并后有多行的显示问题, TODO: 对齐方式改进
 			if oLbs{

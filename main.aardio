@@ -11,23 +11,55 @@ import sqlite;
 import process;
 import config;
 import domisoft;
+import domisoft.localUpdate;
 import quickTools;
 import godking.listboxEx;
 import fsys.table;
 /*DSG{{*/
 mainForm = win.form(text="TBM";right=750;bottom=550;bgcolor=0xF0FBFF)
 mainForm.add(
-closeAll={cls="plus";left=715;top=10;right=747;bottom=35;align="left";color=0x3C3C3C;dr=1;dt=1;font=LOGFONT(h=-16);iconStyle={font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF05C';notify=1;z=8};
-custom={cls="custom";left=140;top=40;right=750;bottom=520;ah=1;aw=1;bgcolor=0xFFFFFF;db=1;dl=1;dr=1;dt=1;z=2};
-foldchk={cls="plus";left=8;top=8;right=32;bottom=32;align="left";color=0x800000;dl=1;dt=1;font=LOGFONT(h=-27);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome')};iconText='\uF03B';notify=1;textPadding={left=15};z=3};
-listbox={cls="listbox";left=0;top=40;right=140;bottom=520;ah=1;bgcolor=0xAB4700;color=0xFFFFFF;db=1;dl=1;dt=1;font=LOGFONT(h=-13;name='FontAwesome');items={};ownerDraw=1;vscroll=1;z=4};
-splitter={cls="splitter";left=139;top=40;right=144;bottom=550;db=1;dt=1;z=5};
-stripTab1={cls="plus";text="tab1";left=145;top=16;right=245;bottom=40;dl=1;dt=1;font=LOGFONT(name='FontAwesome');iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=6};
-stripTab2={cls="plus";text="tab2";left=245;top=16;right=345;bottom=40;dl=1;dt=1;iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=7};
-titleBar={cls="bkplus";left=0;top=0;right=750;bottom=40;bgcolor=0xAB4700;dl=1;dr=1;dt=1;forecolor=0xFFFFFF;linearGradient=180;z=1}
+closeAll={cls="plus";left=715;top=10;right=747;bottom=35;align="left";anchors={top=1;right=1};color=0x3C3C3C;font=LOGFONT(h=-16);iconStyle={font=LOGFONT(h=-16;name='FontAwesome')};iconText='\uF05C';notify=1;z=8};
+custom={cls="custom";left=140;top=40;right=750;bottom=520;ah=1;anchors={left=1;top=1;right=1;bottom=1};aw=1;bgcolor=0xFFFFFF;z=2};
+foldchk={cls="plus";left=8;top=8;right=32;bottom=32;align="left";anchors={left=1;top=1};color=0x800000;font=LOGFONT(h=-27);iconStyle={align="left";font=LOGFONT(h=-27;name='FontAwesome')};iconText='\uF03B';notify=1;textPadding={left=15};z=3};
+listbox={cls="listbox";left=0;top=40;right=140;bottom=520;ah=1;anchors={left=1;top=1;bottom=1};bgcolor=0xAB4700;color=0xFFFFFF;font=LOGFONT(h=-13;name='FontAwesome');items={};ownerDraw=1;vscroll=1;z=4};
+splitter={cls="splitter";left=139;top=40;right=144;bottom=550;anchors={top=1;bottom=1};z=5};
+stripTab1={cls="plus";text="tab1";left=145;top=16;right=245;bottom=40;anchors={left=1;top=1};font=LOGFONT(name='FontAwesome');iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=6};
+stripTab2={cls="plus";text="tab2";left=245;top=16;right=345;bottom=40;anchors={left=1;top=1};iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF0AD';z=7};
+syslink={cls="syslink";text="有更新";left=482;top=526;right=741;bottom=546;align="right";anchors={right=1;bottom=1};hide=1;transparent=1;z=9};
+titleBar={cls="bkplus";left=0;top=0;right=750;bottom=40;anchors={left=1;top=1;right=1};bgcolor=0xAB4700;forecolor=0xFFFFFF;linearGradient=180;z=1}
 )
 /*}}*/
 
+/*状态栏{{*/
+import win.ui.statusbar; 
+// 一分块
+var statusbar = win.ui.statusbar( mainForm );
+statusbar.addItem("主程序: " + tostring(config.__appVersion), 120/*宽度*/);
+statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
+//二分块
+var lastUpdate = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
+if lastUpdate statusbar.addItem("主数据库: " + lastUpdate, 200/*宽度*/);
+//三分块显示统计数据
+statusbar.addItem("", 200/*宽度*/);
+//剩余块
+statusbar.addItem("", -1/*自动填充剩余宽度，方便右侧放置更新超链接*/);
+//监听变化
+subscribe("status2", function(){
+	var lastUpdate = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
+	if lastUpdate statusbar.setText("主数据库: " + lastUpdate, 2 /*第几个分块*/);
+})
+
+subscribe("status3", function(...){
+		statusbar.setText(tostring(...) , 3 /*第几个分块*/);
+})
+/*}}*/
+
+
+import domisoft.localUpdate;
+
+if(domisoft.localUpdate.run(mainForm)){
+    return; // 网络安装模式已完成或取消，直接退出不显示主界面
+}
 /*只允许一个实例{{*/
 var atom, tbm_hwnd = mainForm.atom("domisoft.aardio.tbm");
 if(!atom and !_STUDIO_INVOKED){ 
@@ -37,27 +69,21 @@ if(!atom and !_STUDIO_INVOKED){
 	return;
 }
 /*}}*/
-//win.ui.simpleWindow( mainForm );
-/*dpi改变时分隔条保存的位置我不会计算{{*/
-import gdi;
-var dpix, dpiy = gdi.getDpiScale();
-if dpix == 1 {
-	mainForm.bindConfig( config.mainForm,{
-		splitter = "left";
-		listbox = "width";
-	} );
-}
-/*}}*/
+/*
+import win.ui.simpleWindow;
+win.ui.simpleWindow( mainForm );
+*/
+
 /*托盘图标{{*/
 mainForm.tray = win.util.tray(mainForm);
 mainForm.onMinimize = function(lParam){
 	mainForm.show(false);
 	return true; 
 }
-var isExiting = false;
+mainForm.isExiting = false;
 mainForm.onClose = function(hwnd,message,wParam,lParam){
     // 如果点击了托盘的退出菜单，则放行，程序正常触发 onDestroy 和各个子窗口的销毁事件
-    if (isExiting) { return; } 
+    if (mainForm.isExiting) { return; } 
 	mainForm.onMinimize();
 /*
 	if _STUDIO_INVOKED
@@ -65,11 +91,34 @@ mainForm.onClose = function(hwnd,message,wParam,lParam){
 */
 	return false; // 返回 false 阻止窗口真正关闭并销毁
 }
+/*}}*/
+
+
+/*恢复分隔条与左侧列表宽度{{*/
+//（自适应任意 DPI）
+// 1. 读取保存的 100% 逻辑宽度（未保存过则默认为设计时的 140）
+var logicalWidth = config.mainForm.listboxLogicalWidth : 140;
+
+// 2. 使用 dpiScale() 方法换算为当前屏幕的实际物理宽度
+var actualWidth = mainForm.dpiScale(logicalWidth);
+mainForm.listbox.width = actualWidth;
+mainForm.splitter.left = mainForm.listbox.right;
+mainForm.custom.left = mainForm.splitter.right;
+
+// 3. 在窗口关闭前保存逻辑宽度到配置文件
 mainForm.onDestroy = function(){
-	if(mainForm.tray){
-		mainForm.tray.delete()
-	}
+    var scaleX = mainForm.dpiScaleX : 1;
+    config.mainForm.listboxLogicalWidth = mainForm.listbox.width / scaleX;
+    config.mainForm.save();
+
+    if(mainForm.tray){
+        mainForm.tray.delete();
+    }
 }
+
+/*}}*/
+
+/*任务栏进度条{{*/
 import com.interface.ITaskbarList3;
 mainForm.wndproc =  function(hwnd,message,wParam,lParam){
  		select(message) {
@@ -121,14 +170,14 @@ mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('剪切板工具', λ() loadcodex("\forms\main\frmclipboard.aardio"));
 mainForm.popmenu2.add();//分隔线
 mainForm.popmenu2.add('&Exit TBM', function(){
-    isExiting = true;    // 标记为允许退出
+    mainForm.isExiting = true;    // 标记为允许退出
     mainForm.close();    // 正常关闭主窗体（这会级联释放所有子窗口和 Tabs，避免报错）
 });
 
 /*}}*/
 /*分隔条设置{{*/
 mainForm.splitter.split(mainForm.listbox, mainForm.custom);
-if dpix == 1 {
+if mainForm.dpiScaleX == 1 {
 	var tWidth = mainForm.stripTab1.width;
 	mainForm.stripTab1.left = mainForm.listbox.width;
 	mainForm.stripTab1.width = tWidth;	
@@ -173,7 +222,7 @@ mainForm.mTabs.onSelchange = function(idx,tab,form){
     }
 }
 /*左侧导航按钮{{*/
-var loadfrmName, menuList, menuTheme = loadcodex("\menulist.aardio");
+var loadfrmName, menuList, menuTheme = loadcodex("\res\menulist.aardio");
 var navlb = godking.listboxEx(
 	mainForm.listbox/*列表框组件*/,
 	menuList/*菜单列表*/,
@@ -315,7 +364,7 @@ win.setTimeout(
 				mainForm.listbox.addThisTab(v);
 			}
 		}
-		
+		domisoft.localUpdate.run(mainForm);
 	}
 )
 if !config.settings.startupMinimized or !config.settings.closeToTray
@@ -452,33 +501,12 @@ clipHkId = mainForm.reghotkey(  /*回调函数,控制键,虚拟键码*/
 );
 
 /*}}*/
-/*状态栏{{*/
-import win.ui.statusbar; 
-// 一分块
-var statusbar = win.ui.statusbar( mainForm );
-statusbar.addItem("主程序: " + tostring(config.__appVersion), 100/*宽度*/);
-statusbar.setMinHeight(30);//设置最小高度（含上下边框宽度）
-//二分块
-var lastUpdate = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
-if lastUpdate statusbar.addItem("主数据库: " + lastUpdate, 200/*宽度*/);
-//三分块
-statusbar.addItem("", 200/*宽度*/);
-//监听变化
-subscribe("status2", function(){
-	var lastUpdate = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
-	if lastUpdate statusbar.setText("主数据库: " + lastUpdate, 2 /*第几个分块*/);
-})
-subscribe("status3", function(...){
-		statusbar.setText(tostring(...) , 3 /*第几个分块*/);
-})
-/*}}*/
 
 /*收到通知后清理excel残留进程{{*/
 subscribe("CleanHiddenExcel", function(){
     thread.invoke(domisoft.CleanHiddenExcel)
 })
 /*}}*/
-
 
 win.loopMessage();
 return mainForm;

@@ -1,14 +1,16 @@
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="tools";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=73;dl=1;dr=1;dt=1;z=1};
-edit={cls="edit";left=2;top=77;right=441;bottom=98;autohscroll=false;autovscroll=false;dl=1;dt=1;z=3};
-listview={cls="listview";left=0;top=94;right=455;bottom=470;clip=1;db=1;dl=1;dt=1;fullRow=1;multiSelect=false;z=2}
-);
+custom={cls="custom";text="自定义控件";left=-3;top=1;right=758;bottom=73;anchors={left=1;top=1;right=1};z=1};
+listview={cls="listview";left=0;top=94;right=455;bottom=470;anchors={left=1;top=1;bottom=1};clip=1;fullRow=1;multiSelect=false;z=2};
+plus={cls="plus";left=3;top=77;right=436;bottom=94;align="right";anchors={left=1;top=1};editable=1;iconStyle={align="left";font=LOGFONT(name='FontAwesome')};iconText='\uF114';z=3}
+)
 /*}}*/
 
-winform.edit.setCueBannerText("双击新建常用表格...")
+winform.plus.setCueBannerText("双击新建常用表格...");
+
 import win.ui.menu;
 import win.ui.toolbar;
 import win.debounce;
@@ -256,6 +258,8 @@ winform.listview.modifyStyle(, 0x4000/*_LVS_NOCOLUMNHEADER*/);
 import fsys.info;
 for(i=1; #tlist; 1){
     var fullPath = io.joinpath(config[["qtip"]][["templateLib"]]:"", tlist[i]);
+    if !io.exist(fullPath)
+    	return winform.msgErr("路径错误" ++ '\n' ++ fullPath);
     var info = fsys.info.get(fullPath, 0x100/*_SHGFI_ICON*/ | 0x80/*_SHGFI_USEFILEATTRIBUTES*/);
     var iconIndex = info ? info.iIcon : -1;
 

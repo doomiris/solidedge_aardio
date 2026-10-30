@@ -2,8 +2,8 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="DFT_LIST";right=663;bottom=471)
 winform.add(
-listview={cls="listview";left=0;top=0;right=664;bottom=472;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;z=1};
-progress={cls="progress";left=0;top=0;right=664;bottom=30;aw=1;dl=1;dr=1;dt=1;max=100;min=0;z=2}
+listview={cls="listview";left=0;top=0;right=664;bottom=472;ah=1;anchors={left=1;top=1;right=1;bottom=1};aw=1;edge=1;z=1};
+progress={cls="progress";left=0;top=0;right=664;bottom=30;anchors={left=1;top=1;right=1};aw=1;max=100;min=0;z=2}
 )
 /*}}*/
 
@@ -37,7 +37,7 @@ var getDftList = function(wform){
     	}
     wform.seDfts = seDfts; //把dfts推送给上一层
     
-	vtab = table.create(,{fields = {"物料","版本","型号","名称","属性","材料","质量/体积"}})
+	vtab = table.create(,{fields = {"物料","版本","型号","名称","属性","材料","质量/体积","LOGO"}})
 	wform.progress.min = 0;
 	wform.progress.max = #seDfts ;
 	wform.progress.hide = 0;
@@ -63,15 +63,26 @@ var getDftList = function(wform){
 			t.名称 = domisoft.formatWindowsFileName(lbt["零件名称"]);
 			t.型号 = domisoft.formatWindowsFileName(lbt["型号/项目名称"]);
 			t.版本 = seDft.getDftVer();
-			var blkObj = seDft.getLabelObjectTable(seDft.getBlkByName("Version_CCR 2020",seDft.getFirstSheet()));
+			var blkObj = seDft.getLabelObjectTable(seDft.getBlkOcByName("Version_CCR 2020",seDft.getFirstSheet()));
 			if blkObj
 				t.属性 = blkObj["属性"].value;
 			else {
-				blkObj := seDft.getLabelObjectTable(seDft.getBlkByName("SRDC_Ver",seDft.getFirstSheet()));
+				blkObj := seDft.getLabelObjectTable(seDft.getBlkOcByName("SRDC_Ver",seDft.getFirstSheet()));
 				t.属性 = blkObj ?  blkObj["阶段"].Value : "";
 			}
-
 			
+			var CarrierLogo = seDft.getBlkByName("Carrier Logo Blue 2020") && tb ;
+			var CCR_Logo = seDft.getBlkByName("CCR") && tb ;
+			
+			if CarrierLogo and !CCR_Logo
+				t["LOGO"] = "Carrier";
+			if !CarrierLogo and CCR_Logo
+				t["LOGO"] = "CCR";
+			if !CarrierLogo and !CCR_Logo
+				t["LOGO"] = "X";
+			if CarrierLogo and CCR_Logo{
+				t["LOGO"] = "";
+			}
 
 		}else{
 			t.物料 = seDft.getFileName();
@@ -81,6 +92,8 @@ var getDftList = function(wform){
 			t.属性 = "";
 			t.材料= "";
 			t["质量/体积"] ="";
+			t["LOGO"] = "";
+			
 		}
 
 

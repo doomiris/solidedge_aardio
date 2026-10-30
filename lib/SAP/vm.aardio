@@ -256,12 +256,12 @@ namespace vm{
 		vm.goBack();
 		winform.publish("dok_list", ftab);
 	};
-	addPlantCodeMM03 = function(code = "0841"){
+	addPlantCodeMM03 = function(code = "CN10"){
 		var vm = owner;
 		vm.findById("wnd[1]/usr/ctxtRMMG1-WERKS").text = code;
 		vm.findById("wnd[1]/tbar[0]/btn[0]").press();
 	};
-	addPlantCodeCS12 = function(code = "0841",wnd = "0"){
+	addPlantCodeCS12 = function(code = "CN10",wnd = "0"){
 		var vm = owner;
 
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
@@ -270,19 +270,19 @@ namespace vm{
 		if txt and string.len(txt)
 			vm.exec();	
 	};
-	addPlantCodeCS03 = function(code = "0841",wnd = "0"){
+	addPlantCodeCS03 = function(code = "CN10",wnd = "0"){
 		var vm = owner;
 
 		vm.findById("wnd[0]/usr/ctxtRC29N-WERKS").text = code;
 		vm.findById("wnd[0]/usr/ctxtRC29N-STLAN").text = "1";
 		vm.exec1();	
 	};
-	addPlantCodeCS15 = function(code = "0841",wnd = "0"){
+	addPlantCodeCS15 = function(code = "CN10",wnd = "0"){
 		var vm = owner;
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
 		vm.exec();
 	};
-	addDirectMatCS15= function(code = "0841",wnd = "0"){
+	addDirectMatCS15= function(code = "CN10",wnd = "0"){
 		var vm = owner;
 		vm.findById("wnd[0]/usr/chkRC29L-DIRKT").selected = true
 		vm.findById("wnd[0]/usr/chkRC29L-MATTP").selected = true
@@ -290,12 +290,12 @@ namespace vm{
 		vm.findById("wnd[0]/usr/ctxtRC29L-WERKS").text = code;
 		vm.exec();
 	};
-	addPlantCodeMMBE = function(code = "0841",wnd = "0"){
+	addPlantCodeMMBE = function(code = "CN10",wnd = "0"){
 		var vm = owner;
 		vm.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = code;
 		vm.exec();
 	};
-	createReserveMB21 = function(code = "0841",wnd = "0"){
+	createReserveMB21 = function(code = "CN10",wnd = "0"){
 		var vm = owner;
 		vm.findById("wnd[0]/usr/ctxtRM07M-BWART").text = "201";
 		vm.findById("wnd[0]/usr/ctxtRM07M-WERKS").text = code;
@@ -304,7 +304,7 @@ namespace vm{
 		vm.findById("wnd[0]/usr/txtRKPF-WEMPF").text = "研发中心";
 	}
 	
-	addReciptAddr = function(code = "0841",wnd = "1"){
+	addReciptAddr = function(code = "CN10",wnd = "1"){
 		var vm = owner;
 		import config;
 		var settings = config.settings;

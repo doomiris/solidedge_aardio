@@ -2,11 +2,11 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="检查BOM更改单";right=759;bottom=400;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;default=1;dl=1;dt=1;tabstop=1;z=1};
-checkbox={cls="checkbox";text="自动修复部分简单错误";left=593;top=41;right=744;bottom=59;color=0xFF0000;dr=1;dt=1;tabstop=1;transparent=1;z=5};
-combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";tabstop=1;z=3};
-listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
-progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4}
+button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;anchors={left=1;top=1};default=1;tabstop=1;z=1};
+checkbox={cls="checkbox";text="自动修复部分简单错误";left=593;top=41;right=744;bottom=59;anchors={top=1;right=1};color=0xFF0000;tabstop=1;transparent=1;z=5};
+combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;anchors={left=1;top=1;right=1};edge=1;items={};mode="dropdownlist";tabstop=1;z=3};
+listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;anchors={left=1;top=1;right=1;bottom=1};edge=1;fullRow=1;gridLines=1;z=2};
+progress={cls="progress";left=0;top=370;right=760;bottom=400;anchors={left=1;right=1;bottom=1};edge=1;max=100;min=0;z=4}
 )
 /*}}*/
 
@@ -19,6 +19,29 @@ import QHC;
 import domisoft;
 import inet.http;
 import win.dlg.message;
+
+global.onError = function( err,over ){ 
+   // # 把err信息按行拆分输出显示到 winform.listview
+    
+    var errorRows = {};
+	errorRows.fields = {"行";"相关物料号";"错误描述";"自动纠正"};
+
+	var lines = string.splitEx(tostring(err));
+	for i,line in lines {
+		table.push(errorRows, {
+			["行"] = "";
+			["相关物料号"] = "";
+			["错误描述"] = line;
+			["自动纠正"] = ""
+		});
+	}
+
+	winform.listview.setTable(errorRows);
+	winform.listview.setColumn({cx=30;fmt=0x2/*_LVCFMT_CENTER*/},1);
+	winform.listview.setColumn({cx=120;fmt=0x2/*_LVCFMT_CENTER*/},2);
+	winform.listview.fillParent(3);
+}
+
 winform.bindConfig( config.checkGUI, {	//绑定控件值
     checkbox = "checked";
 } );
@@ -30,33 +53,55 @@ var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
 winform.frmReLoad = function(){
-	winform.combobox2.clear();
-	com.enumRunning( 
-		function(displayName,object){
-			try{
-				var s = com.GetTypeInfo(object).GetDocumentation().name;
-				if s = "_Workbook"
-					if string.keywords('更改|BOM|变更').findOne(displayName)
-						winform.combobox2.add(displayName);
-			}
-		}
-	)
-	if winform.combobox2.count {
-		var findActiveWB;
-		excel_0 = com.excel(false);
-		if excel_0.ActiveWorkbook
-			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
-	}
+    var activeName;
+    var itemList = {};
+    var targetIndex = 1;
+
+    com.enumRunning( 
+        function(displayName,object){
+            try{
+                var s = com.GetTypeInfo(object).GetDocumentation().name;
+                if(s == "_Workbook"){
+                    // 直接从当前运行的 Workbook 获取激活工作簿名称，准确且不会连错进程
+                    if(!activeName && object.Application && object.Application.ActiveWorkbook){
+                        activeName = object.Application.ActiveWorkbook.Name;
+                    }
+                    if(string.keywords('更改|BOM').findOne(displayName)){
+                        table.push(itemList, displayName);
+                        // 兼容 displayName 是完整路径或纯文件名的情况
+                        if(activeName && (displayName == activeName || io.splitpath(displayName).file == activeName)){
+                            targetIndex = #itemList;
+                        }
+                    }
+                }
+            }
+        }
+    )
+
+    // 直接整体赋值 items，避免 clear + 逐个 add 引起的多次重绘
+    winform.combobox2.items = itemList;
+    if(#itemList){
+        winform.combobox2.selIndex = targetIndex;
+    }
 }
 winform.frmReLoad();
-winform.combobox2.onDropDown = winform.frmReLoad;
+
+winform.combobox2.onDropDown = function(){
+    winform.frmReLoad();
+    // 关键：在 onDropDown 中动态刷新列表后，延迟到下拉列表展开完成后再同步一次选中项
+    winform.setTimeout(function(){
+        if(winform.combobox2.count && !winform.combobox2.selIndex){
+            winform.combobox2.selIndex = 1;
+        }
+    }, 10);
+}
 
 
 var etab = {};
 var sht;
 var formRng;
-global.import("rules");
+import rules;
+
 winform.button.oncommand = function(id,event){
 	if !#winform.combobox2.selText return ; 	
 	win.setTopmost(winform.hwnd); 
@@ -73,31 +118,31 @@ winform.button.oncommand = function(id,event){
 
 	
 	
-	var od_sht = sht.Parent.Sheets.Item("销售语句");
+	var od_sht = sht.Parent.Sheets.Item("2.特性和分类");
 	etab = (function(){
 			var fields = {
-				"原父项"; "原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"; "更改备注";
+				"原父项"; "原子项"; "原子项描述"; "原子项数量"; "原子项单位"; "原子项类型"; "更改备注";"更改标识";
 				"新父项"; "BOM项目"; "项目类别"; "新子项"; "新子项描述"; "新子项数量"; "新子项单位"; "新子项类型";
 				"是否继承";	"继承生效日期";	"是否有OD";
 	
 			};
 	
 			var etr = function(){
-				var f = sht.usedrange.find("B2907F02");
-				return f.row - 1; 
+				var f = sht.UsedRange.Rows.Count;
+				return f; 
 			};
 			
 			if !etr() return error("找不到边界");
 			
 			var tab = {};
-			formRng = sht.Range("$B$9:$S$" ++ etr());
+			formRng = sht.Range("$B$9:$T$" ++ etr());
 			var eArr = formRng.value2;
 			for(i=1; #eArr){    
 	    		var d = table.array();
 	    		for (j=1;#fields){
 	    		    if eArr[i][j]
 	    		    	if string.len(eArr[i][j])
-	    					d[fields[j]] = eArr[i][j];
+	    					d[fields[j]] = string.trim(tostring(eArr[i][j]));
 				}		
 				table.push(tab,d);
 			}
@@ -181,7 +226,12 @@ winform.listview.onSelChanged = function(selected,item,subItem,nmListView){
 	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText);
 	if !sht return ; 
 	excel_2 = sht.Parent.Application;
-	excel_2.ActiveWindow.ScrollRow = row;
+	try{
+		excel_2.ActiveWindow.ScrollRow = row;
+	}
+	catch(e){
+			
+	}
 	sht = null;
 	excel_2 = null;
 	collectgarbage("collect");

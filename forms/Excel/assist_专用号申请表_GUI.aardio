@@ -2,10 +2,10 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="填写专用号申请表";right=759;bottom=400;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1};
-combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
-listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
-progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4}
+button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;anchors={left=1;top=1};z=1};
+combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;anchors={left=1;top=1;right=1};edge=1;items={};mode="dropdownlist";z=3};
+listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;anchors={left=1;top=1;right=1;bottom=1};edge=1;fullRow=1;gridLines=1;z=2};
+progress={cls="progress";left=0;top=370;right=760;bottom=400;anchors={left=1;right=1;bottom=1};max=100;min=0;z=4}
 )
 /*}}*/
 
@@ -21,194 +21,328 @@ var excel_0 = com.excel(false);
 var excel_2;
 var getErr = {};
 var etab = {};
+import etip;
+var rowNames = "序号;销售组织;长度检查;外部物料号;申请人;申请日期;物料描述;已喷未喷对应关系;基本计量单位;产品大类;物料类型;采购类型;P11物料组;SAP颜色分组;属性;物料分类明细;材质分类;用途;SAP展开尺寸;是否关键部件;毛重;净重;S4物料组;"
+var fieldName = string.splitLiteral(rowNames,";");
+var findCol = function(colName){
+	return table.find(fieldName,colName); 
+}
+
+
+
+import com;
 
 winform.frmReLoad = function(){
-	winform.combobox2.clear();
-	com.enumRunning( 
-		function(displayName,object){
-			try{
-				var s = com.GetTypeInfo(object).GetDocumentation().name;
-				if s = "_Workbook"
-					if string.keywords('新增|专用号|申请').findOne(displayName)
-						winform.combobox2.add(displayName);
-			}
-		}
-	)
-	
-	if winform.combobox2.count {
-		var findActiveWB;
-		excel_0 = com.excel(false);
-		if excel_0.ActiveWorkbook
-			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
-	}
+    var activeName;
+    var itemList = {};
+    var targetIndex = 1;
+
+    com.enumRunning( 
+        function(displayName,object){
+            try{
+                var s = com.GetTypeInfo(object).GetDocumentation().name;
+                if(s == "_Workbook"){
+                    // 直接从当前运行的 Workbook 获取激活工作簿名称，准确且不会连错进程
+                    if(!activeName && object.Application && object.Application.ActiveWorkbook){
+                        activeName = object.Application.ActiveWorkbook.Name;
+                    }
+                    if(string.keywords('新增|专用号|申请').findOne(displayName)){
+                        table.push(itemList, displayName);
+                        // 兼容 displayName 是完整路径或纯文件名的情况
+                        if(activeName && (displayName == activeName || io.splitpath(displayName).file == activeName)){
+                            targetIndex = #itemList;
+                        }
+                    }
+                }
+            }
+        }
+    )
+
+    // 直接整体赋值 items，避免 clear + 逐个 add 引起的多次重绘
+    winform.combobox2.items = itemList;
+    if(#itemList){
+        winform.combobox2.selIndex = targetIndex;
+    }
 }
 winform.frmReLoad();
-winform.combobox2.onDropDown = winform.frmReLoad;
+
+winform.combobox2.onDropDown = function(){
+    winform.frmReLoad();
+    // 关键：在 onDropDown 中动态刷新列表后，延迟到下拉列表展开完成后再同步一次选中项
+    winform.setTimeout(function(){
+        if(winform.combobox2.count && !winform.combobox2.selIndex){
+            winform.combobox2.selIndex = 1;
+        }
+    }, 10);
+}
+
+
 
 winform.button.oncommand = function(id,event){
-	if !#winform.combobox2.selText return ; 	
-	win.setTopmost(winform.hwnd); 
-	sht = domisoft.getRunningWorkSheet(winform.combobox2.selText)
-	excel_2 = sht.Parent.Application;
-	
-	if sht.AutoFilterMode
-		sht.AutoFilterMode = false;
-	if sht.ListObjects.Count {
-		for (i=1;sht.ListObjects.Count){			
-			select(sht.ListObjects.item(i).Name) {
-				case "Table1","表1" {
-					sht.ListObjects.item(i).AutoFilter.ShowAllData();
-					break;
-				}
-			}
+    var selWorkbookName = winform.combobox2.selText;
+    if !#selWorkbookName return; 
 
-		}
-	}
-	
-	if !sht.Rows("2:2").find("物料描述") return error("专用号申请表格式错误"); 
-	if !sht.Rows("2:2").find("产品大类") return error("不是最新版专用号申请表"); 
+    // 1. 首次使用输入姓名（放在禁用按钮前，避免模态框与置顶冲突）
+    import config;
+    import win.inputBox;
+    config.tbm.Designer := winform.inputBox("这是第一次使用, 请先输入姓名:", "姓名");
+    config.tbm.save();
+    var username = config.tbm.Designer;
 
+    // 2. 开启按钮等待动画，置顶窗口
+    winform.button.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"; text = "处理中"};
+    win.setTopmost(winform.hwnd);
 
-	//物料描述列???
-	var etr = function(){
-		return  sht.usedrange.rows[sht.usedrange.rows.count].row;
-	}
-	
-	var tRng = sht.Range("A3:V" ++ etr());
+    // 定义统一的收尾恢复函数（无论成功还是中途报错都能恢复按钮状态）
+    var cleanUp = function(statusText){
+        if excel_0 excel_0.alerts = true;
+        if excel_2 excel_2.alerts = true;
+        sht = null;
+        try{
+            com.Release(sht);
+            com.Release(excel_2);
+            com.Release(excel_0);
+        }
+        collectgarbage("collect");
+        win.setTopmost(winform.hwnd, false);
+        winform.button.disabledText = null; // 停止动画并恢复按钮
+        if(statusText) winform.progress.text = statusText;
+    }
 
-	var etab = tRng.value;
-	var etab_count = #etab;
-	
-	var bar = winform.progress;
-	bar.min = 0;
-	bar.max = etab_count;
-	
-	var str_today = function(separator){
-		var tm = time.now();
-		tm.format = string.join({"%Y";"%m";"%d"},separator);
-		return tostring(tm);
-	}
-	
-	import config;
-	import win.inputBox;
-	
-	config.tbm.Designer :=  winform.inputBox("这是第一次使用, 请先输入姓名:", "姓名") ;
-	config.tbm.save();
-	
-	var username = config.tbm.Designer;
-	
-	import string.keywords;
-	
-	_plastics = 'PC|PVC|PS|PP|ABS|夜帘|橡胶';
-	_glass = '玻璃|钢化玻璃|有机玻璃';
-	_glass_sys = '钢化玻璃|钢化玻璃|有机玻璃';
-	_metal_sys = '铝合金|不锈钢板|焊接件|焊接件';
-	_metal = '铝合金|不锈钢|焊接件|铆接件';
-	_cooper = '管|TP2M|蒸发器|冷凝器|阀';
-	_cooper_sys = '铜管|铜管|蒸发器|冷凝器|阀';
-	
-	winform.listview.clear(true);
-	winform.listview.addItem(sht.parent.name);
-	
-	for(i=1; #etab){
-    	bar.pos = i;
-    	
-		for(j=1; 22 /* V */)
-			if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
-		if !string.len(etab[i][5 /* E 物料描述 */]) continue;
-		etab[i][1] = i;
-		etab[i][2] = "=len(E" ++ (i+2) ++ ")";
-		
-		if !#etab[i][3] etab[i][3] = username;
-		if !#etab[i][4] etab[i][4] = str_today("/");
-		if !#etab[i][7] etab[i][6 /* F */] = "ZA";
-		if !#etab[i][9] etab[i][8 /* H */] = "柜体";
-		if !#etab[i][13] etab[i][13 /* M */] = "新品BOM";
-		if !#etab[i][19] etab[i][19 /* S */] = table.shift(string.split(etab[i][5 /* E */]," "));
-		
-		var str = etab[i][5 /* E */];
-		
-		var ePush = function(val, index){
-			index := {7 /* G */,9 /* I */,10 /* J */,11 /* K */,12 /* L */, 22 /* V */};
-			for(k=1; #index)
-				if !#etab[i][index[k]] etab[i][index[k]] = val[k];
-			//TODO: 根据已经填写的信息计算空白内容
-		}	
-	
-		
-		if string.keywords('可选项').findOne(str)
-			ePush({"SG","KMAT","配置","09","可选项","否"});
-			
-		elseif string.keywords('总装|组装').findOne(str)
-			ePush({"SG","HALB","配置","08","总装","否"});
-			
-		elseif string.keywords('组件').findOne(str)	
-			ePush({"SA","HALB","非配置","08","总装","否"});
-			
-		elseif string.keywords('已喷').findOne(str)	
-			ePush({"SC","HALB","非配置","11","喷粉件","否"});
-			
-		elseif string.keywords('玻璃门').findOne(str)	
-			ePush({"R08","ROH","非配置","08","玻璃门","否"});		
-				
-		elseif string.keywords(_plastics).findOne(str)
-			ePush({"R02","ROH","非配置","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)],"否"});
-	
-		elseif string.keywords('亚克力|EPS|尼龙|GFRP|GFK').findOne(str)
-			ePush({"R02","ROH","非配置","02","其他塑料件","否"});
-	
-		elseif string.keywords('底箱体|发泡板|发泡箱体').findOne(str)
-			ePush({"SD","HALB","非配置","08","发泡","否"});
-			
-		elseif string.keywords(_glass).findOne(str)		
-			ePush({"R14","ROH","非配置","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)],"否"});
-			
-		elseif string.keywords('点焊').findOne(str)
-			ePush({"SH","HALB","非配置","11","焊接件","否"});
-			
-		elseif string.keywords(_metal).findOne(str)
-			ePush({"R01","ROH","非配置","11", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
-			
-		elseif string.keywords('木包装').findOne(str)
-			ePush({"R15","ROH","非配置","16","木包装","否"});
-			
-		elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
-			ePush({"SB","HALB","非配置","11","钣金","否"});
-			
-		elseif string.keywords(_cooper).findOne(str)
-			ePush({"R07","ROH","非配置","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)],"否"});
-	
-	}
-	//table.sort(etab, lambda(b) owner[12]>b[12]);
-	sht.Columns(9 /* I */).ColumnWidth = #etab[1][9 /* I */] + 2.75;
-	sht.Columns(19 /* S */).ColumnWidth = #etab[1][19 /* S */] + 2.75;
-		tRng.value2 = etab;
-	
-	var filename = sht.parent.name;
-	filename = string.replace(filename, "姓名", username);
-	if etab[1][19 /* S */]
-		filename = string.replace(filename, "型号", etab[1][19 /* S */]);
-	filename = string.replace(filename, "日期", str_today("."));
-	
-	import win.clip
-	win.clip.write(string.left(filename,#filename-1))
-	
-   	if excel_0 excel_0.alerts = true;    //防止意外关闭后Excel假死
-   	if excel_2 excel_2.alerts = true;    //防止意外关闭后Excel假死
-    sht = null;
-/*
-    excel_2 = null;
-    excel_0 = null;
-*/
-	try{
-		com.Release(sht);
-    	com.Release(excel_2);
-    	com.Release(excel_0);
-	}
-	
-    collectgarbage("collect");
-		win.setTopmost(winform.hwnd, false); 
+    sht = domisoft.getRunningWorkSheet(selWorkbookName);
+    if(!sht){
+        cleanUp("获取工作表失败");
+        return;
+    }
+    excel_2 = sht.Parent.Application;
+
+    if sht.AutoFilterMode
+        sht.AutoFilterMode = false;
+    if sht.ListObjects.Count {
+        for (i=1;sht.ListObjects.Count){            
+            select(sht.ListObjects.item(i).Name) {
+                case "Table1","表1" {
+                    sht.ListObjects.item(i).AutoFilter.ShowAllData();
+                    break;
+                }
+            }
+        }
+    }
+
+    if !sht.Rows("2:2").find("物料描述") {
+        cleanUp("格式错误：缺少[物料描述]");
+        return error("专用号申请表格式错误"); 
+    }
+    if !sht.Rows("2:2").find("销售组织") {
+        cleanUp("版本错误：缺少[销售组织]");
+        return error("不是最新版专用号申请表"); 
+    }
+
+    var etr = function(){
+        return sht.usedrange.rows[sht.usedrange.rows.count].row;
+    }
+
+    var lastRow = etr();
+    var maxCol = findCol("S4物料组");
+    var tRng = sht.Range("A3:" ++ etip.toColName(maxCol) ++ lastRow);
+
+    var etab = tRng.value;
+    var etab_count = #etab;
+
+    // 3. 初始化进度条范围 (预留20%给Excel写入阶段)
+    var bar = winform.progress;
+
+    var writeSteps = math.max(5, math.floor(etab_count * 0.25));
+    var totalSteps = etab_count + writeSteps;
+    bar.setRange(0, totalSteps);
+    bar.pos = 0;
+    bar.text = "正在读取并分析数据...";
+
+	import time.ole;
+
+    var str_today = function(separator){
+        var tm = time.now();
+        tm.format = string.join({"%Y";"%m";"%d"},separator);
+        return tostring(tm);
+    }
+
+    // 新增：将日期字符串、time对象或Excel日期统一转换为 Excel 标准日期序列值(OLE Date数值)
+    var toExcelDate = function(v){
+        if(!v || v === "") return tonumber(time.ole(time.now())); // 为空则默认取今天
+        if(type(v) == "number") return v; // 已经是 Excel 日期序列值则直接返回
+        if(time.istime(v)) return tonumber(time.ole(v));
+
+        var s = string.trim(tostring(v));
+        if(!#s) return tonumber(time.ole(time.now()));
+
+        // 兼容 "2026.10.20"、"2026-10-20"、"2026/10/20" 等常见填写格式
+        s = string.replace(s, "[\.\-]", "/");
+        var ok, tm = call(time, null, s, "%Y/%m/%d");
+        if(ok && tm) return tonumber(time.ole(tm));
+
+        return v; // 无法解析的特殊文本原样保留
+    }
+
+    import string.keywords;
+    _plastics = 'PC|PVC|PS|PP|ABS|夜帘|橡胶';
+    _glass = '玻璃|钢化玻璃|有机玻璃';
+    _glass_sys = '钢化玻璃|钢化玻璃|有机玻璃';
+    _metal_sys = '铝合金|不锈钢板|焊接件|焊接件';
+    _metal = '铝合金|不锈钢|焊接件|铆接件';
+    _cooper = '管|TP2M|蒸发器|冷凝器|阀';
+    _cooper_sys = '铜管|铜管|蒸发器|冷凝器|阀';
+
+    winform.listview.clear(true);
+    winform.listview.addItem(sht.parent.name);
+
+    // ================= 阶段一：逐行分析与填充数据 =================
+    for(i=1; etab_count){
+        bar.pos = i;
+        // 每隔 15 行刷新一次进度文本并让出界面消息泵，既保证界面绝对流畅，又不拖慢循环速度
+        if(i % 15 == 0 || i == etab_count){
+            bar.text = string.format("正在分析物料数据: %d / %d (%d%%)", i, etab_count, bar.pos);
+            win.delay(1);
+        }
+
+        for(j=1; maxCol)
+            if !etab[i][j] etab[i][j] = "";  // EXCEL SAFE ARRAY
+        if !string.len(etab[i][findCol("物料描述")]) continue;
+
+        if !#etab[i][findCol("销售组织")] etab[i][findCol("销售组织")] = "CN10";
+        if !#etab[i][findCol("申请人")] etab[i][findCol("申请人")] = username;
+        // 修改这里：无论原本是否为空，统一转换为 Excel 标准日期数值
+        etab[i][findCol("申请日期")] = toExcelDate(etab[i][findCol("申请日期")]);
+        if !#etab[i][findCol("基本计量单位")] etab[i][findCol("基本计量单位")] = "ZA";
+        if !#etab[i][findCol("产品大类")] etab[i][findCol("产品大类")] = "柜体";
+        if !#etab[i][findCol("用途")] etab[i][findCol("用途")] = "新品BOM";
+
+        var str = etab[i][findCol("物料描述")];
+
+        var ePush = function(val, index){
+            index := {findCol("物料类型"),findCol("采购类型"),findCol("P11物料组"),findCol("物料分类明细"),findCol("材质分类"), findCol("是否关键部件")};
+            for(k=1; #index)
+                if !#etab[i][index[k]] etab[i][index[k]] = val[k];
+        }   
+
+        if string.keywords('可选项').findOne(str)
+            ePush({"KMAT","E","SG","09","可选项","否"});
+        elseif string.keywords('总装|组装').findOne(str)
+            ePush({"HALB","E","SG","08","总装","否"});
+        elseif string.keywords('组件').findOne(str)   
+            ePush({"HALB","E","SA","08","总装","否"});
+        elseif string.keywords('已喷').findOne(str)   
+            ePush({"HALB","E","SC","11","喷粉件","否"});
+        elseif string.keywords('玻璃门').findOne(str)    
+            ePush({"HALB","F","R08","08","玻璃门","否"});       
+        elseif string.keywords(_plastics).findOne(str)
+            ePush({"HALB","F","R02","02", string.split(_plastics,"|")[string.keywords(_plastics).findOne(str)],"否"});
+        elseif string.keywords('亚克力|EPS|尼龙|GFRP|GFK').findOne(str)
+            ePush({"HALB","F","R02","02","其他塑料件","否"});
+        elseif string.keywords('底箱体|发泡板|发泡箱体|发泡预装').findOne(str)
+            ePush({"HALB","E","SD","08","发泡","否"});
+        elseif string.keywords(_glass).findOne(str)     
+            ePush({"HALB","F","R14","14", string.split(_glass_sys,"|")[string.keywords(_glass).findOne(str)],"否"});
+        elseif string.keywords('点焊').findOne(str)
+            ePush({"HALB","E","SH","11","焊接件","否"});
+        elseif string.keywords(_metal).findOne(str)
+            ePush({"HALB","F","R01","11", string.split(_metal_sys,"|")[string.keywords(_metal).findOne(str)],"否"});
+        elseif string.keywords('木包装').findOne(str)
+            ePush({"HALB","F","R15","16","木包装","否"});
+        elseif string.keywords('板|连接件|支撑|未喷').findOne(str)
+            ePush({"HALB","E","SB","11","钣金","否"});
+        elseif string.keywords(_cooper).findOne(str)
+            ePush({"HALB","F","R07","07",string.split(_cooper_sys,"|")[string.keywords(_cooper).findOne(str)],"否"});
+    }
+
+    // ================= 阶段二：已喷未喷对应关系分组 =================
+    bar.text = "正在计算已喷/未喷对应关系分组...";
+    win.delay(1);
+
+    var colDesc = findCol("物料描述");
+    var colSpray = findCol("已喷未喷对应关系");
+    var sprayGroups = {};
+    var sprayOrder = {};
+
+    for(i = 1; etab_count) {
+        var desc = etab[i][colDesc];
+        if(!#desc) continue;
+
+        var isSprayed = string.indexOf(desc, "已喷");
+        var isUnsprayed = string.indexOf(desc, "未喷");
+
+        if(isSprayed || isUnsprayed) {
+            var baseKey = string.replace(desc, "<已喷>|<未喷>.*$", "");
+            baseKey = string.trim(baseKey, ' \t-_()/（）');
+
+            if(#baseKey) {
+                if(!sprayGroups[baseKey]) {
+                    sprayGroups[baseKey] = { rows = {}; hasSprayed = false; hasUnsprayed = false };
+                    table.push(sprayOrder, baseKey);
+                }
+                table.push(sprayGroups[baseKey].rows, i);
+                if(isSprayed) sprayGroups[baseKey].hasSprayed = true;
+                if(isUnsprayed) sprayGroups[baseKey].hasUnsprayed = true;
+            }
+        }
+    }
+
+    var groupId = 0;
+    for(k = 1; #sprayOrder) {
+        var key = sprayOrder[k];
+        var grp = sprayGroups[key];
+        if(grp.hasSprayed && grp.hasUnsprayed) {
+            groupId++;
+            for( _, rowIdx in grp.rows) {
+                if(!#tostring(etab[rowIdx][colSpray])) {
+                    etab[rowIdx][colSpray] = groupId;
+                }
+            }
+        }
+    }
+
+    // ================= 阶段三：按列回写 Excel =================
+    var skipCols = ["序号", "长度检查", "属性", "S4物料组"];
+
+    // 写入期间暂时关闭 Excel 屏幕刷新与公式自动重算，速度提升数倍且不会闪烁
+    excel_2.ScreenUpdating = false;
+
+    for(col = 1; maxCol) {
+        var colName = fieldName[col];
+        if(table.find(skipCols, colName)) continue;
+
+        // 更新进度条与实时列名称状态
+        bar.pos = etab_count + math.floor((col / maxCol) * writeSteps);
+        bar.text = string.format("正在写入列 [%s] (%d%%)...", colName, bar.pos);
+        win.delay(1); // 保持按钮旋转动画与界面响应
+
+        var colData = {};
+        for(row = 1; etab_count) {
+            colData[row] = [ etab[row][col] ];
+        }
+
+        var colLetter = etip.toColName(col);
+        var targetRng = sht.Range(colLetter ++ "3:" ++ colLetter ++ lastRow);
+        targetRng.Value2 = colData;
+
+        // 新增：如果是申请日期列，设置为标准的 Excel 日期显示格式
+        if(colName == "申请日期"){
+            targetRng.NumberFormatLocal = "yyyy/m/d"; // 也可按需改为 "yyyy-mm-dd"
+        }
+    }
+
+    excel_2.ScreenUpdating = true;
+    bar.pos = totalSteps;
+
+    // 复制处理后的文件名到剪贴板
+    var filename = sht.parent.name;
+    filename = string.replace(filename, "姓名", username);
+    filename = string.replace(filename, "日期", str_today("."));
+
+    import win.clip;
+    win.clip.write(string.left(filename,#filename-1));
+
+    // 恢复按钮与窗口状态
+    cleanUp(string.format("✓ 处理完成！共处理 %d 行，已喷/未喷配对 %d 组", etab_count, groupId));
 }
 
 /*点击定位{{*/

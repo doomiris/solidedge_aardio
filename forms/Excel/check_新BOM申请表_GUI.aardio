@@ -2,10 +2,10 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="检查BOM申请表";right=759;bottom=400;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;dl=1;dt=1;z=1};
-combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;dl=1;dr=1;dt=1;edge=1;items={};mode="dropdownlist";z=3};
-listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=2};
-progress={cls="progress";left=0;top=370;right=760;bottom=400;db=1;dl=1;dr=1;edge=1;max=100;min=0;z=4}
+button={cls="button";text="开始";left=9;top=6;right=137;bottom=47;anchors={left=1;top=1};z=1};
+combobox2={cls="combobox";left=146;top=16;right=749;bottom=42;anchors={left=1;top=1;right=1};edge=1;items={};mode="dropdownlist";z=3};
+listview={cls="listview";left=0;top=60;right=760;bottom=369;ah=1;anchors={left=1;top=1;right=1;bottom=1};edge=1;fullRow=1;gridLines=1;z=2};
+progress={cls="progress";left=0;top=370;right=760;bottom=400;anchors={left=1;right=1;bottom=1};edge=1;max=100;min=0;z=4}
 )
 /*}}*/
 
@@ -24,28 +24,48 @@ import win.dlg.message;
 var mylist;
 var excel_0 = com.excel(false);
 winform.frmReLoad = function(){
-	winform.combobox2.clear();
-	com.enumRunning( 
-		function(displayName,object){
-			try{
-				var s = com.GetTypeInfo(object).GetDocumentation().name;
-				if s = "_Workbook"
-					if string.keywords('BOM|申请|BG|init').findOne(displayName)
-						winform.combobox2.add(displayName);
-			}
-		}
-	)
-	
-	if winform.combobox2.count {
-		var findActiveWB;
-		excel_0 = com.excel(false);
-		if excel_0.ActiveWorkbook
-			findActiveWB = table.indexOf(winform.combobox2.items, excel_0.ActiveWorkbook.Name)
-		winform.combobox2.selIndex = findActiveWB ? findActiveWB : 1;
-	}
+    var activeName;
+    var itemList = {};
+    var targetIndex = 1;
+
+    com.enumRunning( 
+        function(displayName,object){
+            try{
+                var s = com.GetTypeInfo(object).GetDocumentation().name;
+                if(s == "_Workbook"){
+                    // 直接从当前运行的 Workbook 获取激活工作簿名称，准确且不会连错进程
+                    if(!activeName && object.Application && object.Application.ActiveWorkbook){
+                        activeName = object.Application.ActiveWorkbook.Name;
+                    }
+                    if(string.keywords('BOM|init|申请').findOne(displayName)){
+                        table.push(itemList, displayName);
+                        // 兼容 displayName 是完整路径或纯文件名的情况
+                        if(activeName && (displayName == activeName || io.splitpath(displayName).file == activeName)){
+                            targetIndex = #itemList;
+                        }
+                    }
+                }
+            }
+        }
+    )
+
+    // 直接整体赋值 items，避免 clear + 逐个 add 引起的多次重绘
+    winform.combobox2.items = itemList;
+    if(#itemList){
+        winform.combobox2.selIndex = targetIndex;
+    }
 }
 winform.frmReLoad();
-winform.combobox2.onDropDown = winform.frmReLoad;
+
+winform.combobox2.onDropDown = function(){
+    winform.frmReLoad();
+    // 关键：在 onDropDown 中动态刷新列表后，延迟到下拉列表展开完成后再同步一次选中项
+    winform.setTimeout(function(){
+        if(winform.combobox2.count && !winform.combobox2.selIndex){
+            winform.combobox2.selIndex = 1;
+        }
+    }, 10);
+}
 
 var excel_2;
 
@@ -249,7 +269,7 @@ winform.button.oncommand = function(id,event){
 				}
 				[12] = function(i){
 					if etab[i].单位  == "ZA"
-						if !string.indexOf(etab[i].物料描述||"","胶带")
+						if !string.keywords('胶|带|线').findOne(etab[i].物料描述||"")						
 							return !math.isInteger(tonumber(etab[i].单位用量));  
 				}
 				[13] = function(i){
@@ -280,8 +300,8 @@ winform.button.oncommand = function(id,event){
 				[16] = function(i){
 					var sapItem = QHC.getSapItem(etab[i].物料号);
 					if !sapItem return; 
-					if etab[i].单位 !== sapItem.BUn return true;
-					if etab[i].物料类型 !== sapItem.MTyp return true;
+					if etab[i].单位 !== sapItem.基本计量单位 return true;
+					if etab[i].物料类型 !== sapItem.物料类型 return true;
 				}
 				[17] = function(i){
 					if etab[i].物料号 !== "H0080300487" return;

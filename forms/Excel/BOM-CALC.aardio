@@ -2,20 +2,20 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="原材料用量计算 (ctrl复制板材料用量, alt复制粉末用量, ctrl+alt同时复制, 选择多行时用\分隔) 价格仅供参考";right=1215;bottom=575;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="计算";left=80;top=8;right=150;bottom=52;dl=1;dt=1;z=5};
-checkbox={cls="checkbox";text="去除重复项";left=160;top=37;right=255;bottom=54;dl=1;dt=1;z=8};
-edit={cls="edit";left=8;top=56;right=152;bottom=568;ah=1;db=1;dl=1;dt=1;edge=1;font=LOGFONT(h=-16);multiline=1;vscroll=1;z=3};
-groupbox={cls="groupbox";text="钣材选择";left=285;top=4;right=843;bottom=57;dl=1;dt=1;edge=1;z=2};
-groupbox2={cls="groupbox";text="喷粉面数";left=878;top=4;right=1096;bottom=57;dl=1;dt=1;edge=1;z=1};
-listview={cls="listview";left=160;top=59;right=1208;bottom=568;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;font=LOGFONT(h=-13);z=4};
-radiobutton={cls="radiobutton";text="热锌板";left=443;top=26;right=504;bottom=43;dl=1;dt=1;group=1;z=9};
-radiobutton2={cls="radiobutton";text="不锈钢";left=510;top=26;right=575;bottom=43;dl=1;dt=1;z=10};
-radiobutton3={cls="radiobutton";text="双面喷粉";left=908;top=26;right=984;bottom=43;checked=1;dl=1;dt=1;group=1;z=12};
-radiobutton4={cls="radiobutton";text="单面喷粉";left=1000;top=26;right=1079;bottom=43;dl=1;dt=1;z=13};
-radiobutton5={cls="radiobutton";text="根据主数据自动选择";left=293;top=26;right=434;bottom=43;checked=1;dl=1;dt=1;z=11};
-radiobutton6={cls="radiobutton";text="塑料板";left=581;top=26;right=646;bottom=43;dl=1;dt=1;z=14};
-static={cls="syslink";text="清空列表";left=9;top=38;right=65;bottom=54;dl=1;dt=1;transparent=1;z=6};
-static2={cls="syslink";text="copyall";left=1148;top=37;right=1204;bottom=53;align="right";dr=1;dt=1;transparent=1;z=7}
+button={cls="button";text="计算";left=80;top=8;right=150;bottom=52;anchors={left=1;top=1};z=5};
+checkbox={cls="checkbox";text="去除重复项";left=160;top=37;right=255;bottom=54;anchors={left=1;top=1};z=8};
+edit={cls="edit";left=8;top=56;right=152;bottom=568;ah=1;anchors={left=1;top=1;bottom=1};edge=1;font=LOGFONT(h=-16);multiline=1;vscroll=1;z=3};
+groupbox={cls="groupbox";text="钣材选择";left=285;top=4;right=843;bottom=57;anchors={left=1;top=1};edge=1;z=2};
+groupbox2={cls="groupbox";text="喷粉面数";left=878;top=4;right=1096;bottom=57;anchors={left=1;top=1};edge=1;z=1};
+listview={cls="listview";left=160;top=59;right=1208;bottom=568;ah=1;anchors={left=1;top=1;right=1;bottom=1};aw=1;edge=1;font=LOGFONT(h=-13);z=4};
+radiobutton={cls="radiobutton";text="热锌板";left=443;top=26;right=504;bottom=43;anchors={left=1;top=1};group=1;z=9};
+radiobutton2={cls="radiobutton";text="不锈钢";left=510;top=26;right=575;bottom=43;anchors={left=1;top=1};z=10};
+radiobutton3={cls="radiobutton";text="双面喷粉";left=908;top=26;right=984;bottom=43;anchors={left=1;top=1};checked=1;group=1;z=12};
+radiobutton4={cls="radiobutton";text="单面喷粉";left=1000;top=26;right=1079;bottom=43;anchors={left=1;top=1};z=13};
+radiobutton5={cls="radiobutton";text="根据主数据自动选择";left=293;top=26;right=434;bottom=43;anchors={left=1;top=1};checked=1;z=11};
+radiobutton6={cls="radiobutton";text="塑料板";left=581;top=26;right=646;bottom=43;anchors={left=1;top=1};z=14};
+static={cls="syslink";text="清空列表";left=9;top=38;right=65;bottom=54;anchors={left=1;top=1};transparent=1;z=6};
+static2={cls="syslink";text="copyall";left=1148;top=37;right=1204;bottom=53;align="right";anchors={top=1;right=1};transparent=1;z=7}
 )
 /*}}*/
 
@@ -188,14 +188,14 @@ grid.onRightClick = function(item,subItem,nmListView){
 			grid.source[selectedIndex[i]].原材料描述,
 			grid.source[selectedIndex[i]].钣金用量,
 			"KG",
-			"ROH",
+			"HALB",
 		})
 		table.push(粉末tab, {
-			"H0088200085",
+			"8001",
 			"标准白色",
 			grid.source[selectedIndex[i]].粉末用量,
 			"KG",
-			"ROH",
+			"ZLAC",
 		})		
 	}
 

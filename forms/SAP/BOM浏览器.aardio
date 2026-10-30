@@ -4,15 +4,15 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="BOM浏览器";right=1012;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="搜索";left=162;top=8;right=225;bottom=40;dl=1;dt=1;z=7};
-chkFromServer={cls="checkbox";text="查看共享版本";left=743;top=33;right=931;bottom=51;dr=1;dt=1;z=9};
-custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;cp=1;dl=1;dr=1;dt=1;z=8};
-edit={cls="edit";left=801;top=5;right=1007;bottom=31;dr=1;dt=1;edge=1;z=4};
-edit2={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hideSel=1;tabstop=1;z=6};
-listview={cls="listview";left=228;top=54;right=1012;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;vscroll=1;z=1};
-listview2={cls="listview";left=0;top=53;right=224;bottom=469;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;multiSelect=false;vscroll=1;z=2};
-splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;z=3};
-static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;align="right";dr=1;dt=1;transparent=1;z=5}
+button={cls="button";text="搜索";left=162;top=8;right=225;bottom=40;anchors={left=1;top=1};z=7};
+chkFromServer={cls="checkbox";text="查看共享版本";left=743;top=33;right=931;bottom=51;anchors={top=1;right=1};z=9};
+custom={cls="custom";text="自定义控件";left=232;top=3;right=731;bottom=52;anchors={left=1;top=1;right=1};cp=1;z=8};
+edit={cls="edit";left=801;top=5;right=1007;bottom=31;anchors={top=1;right=1};edge=1;z=4};
+edit2={cls="edit";left=11;top=8;right=155;bottom=40;anchors={left=1;top=1};edge=1;hideSel=1;tabstop=1;z=6};
+listview={cls="listview";left=228;top=54;right=1012;bottom=468;anchors={top=1;right=1;bottom=1};aw=1;edge=1;vscroll=1;z=1};
+listview2={cls="listview";left=0;top=53;right=224;bottom=469;anchors={left=1;top=1;bottom=1};aw=1;edge=1;fullRow=1;multiSelect=false;vscroll=1;z=2};
+splitter={cls="splitter";left=223;top=53;right=228;bottom=464;anchors={top=1;bottom=1};z=3};
+static={cls="static";text="筛选[描述]";left=734;top=6;right=797;bottom=28;align="right";anchors={top=1;right=1};transparent=1;z=5}
 )
 /*}}*/
 

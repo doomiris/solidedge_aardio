@@ -3,25 +3,26 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="下载成本BOM";right=890;bottom=519;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="开始下载成本BOM";left=88;top=70;right=212;bottom=110;dl=1;dt=1;z=1};
-button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;color=0xD77800;dl=1;dt=1;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
-button3={cls="button";text="打开下载目录";left=259;top=139;right=365;bottom=165;dl=1;dt=1;z=7};
-button4={cls="button";text="连续确认";left=812;top=138;right=874;bottom=152;dr=1;dt=1;z=14};
-button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=10};
-button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;dl=1;dt=1;z=11};
-button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;dl=1;dt=1;z=12};
-button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;dr=1;dt=1;z=15};
-button9={cls="button";text="clear";left=652;top=138;right=725;bottom=152;dr=1;dt=1;z=16};
-edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;dl=1;dt=1;edge=1;multiline=1;z=2};
-edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;dl=1;dt=1;edge=1;multiline=1;z=3};
-edit3={cls="edit";left=430;top=252;right=891;bottom=510;aw=1;db=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=8};
-listview={cls="listview";left=5;top=174;right=422;bottom=514;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=13};
-progress={cls="progress";left=16;top=122;right=875;bottom=132;aw=1;dl=1;dt=1;edge=1;max=100;min=0;z=6};
+button={cls="button";text="开始下载成本BOM";left=88;top=70;right=212;bottom=110;anchors={left=1;top=1};z=1};
+button2={cls="button";text="创建虚拟订单";left=17;top=9;right=292;bottom=57;anchors={left=1;top=1};color=0xD77800;font=LOGFONT(h=-14);note="(退出不要保存)";z=9};
+button3={cls="button";text="打开下载目录";left=259;top=139;right=365;bottom=165;anchors={left=1;top=1};z=7};
+button4={cls="button";text="连续确认";left=812;top=138;right=874;bottom=152;anchors={top=1;right=1};z=14};
+button5={cls="button";text="查找错误";left=594;top=187;right=885;bottom=243;anchors={top=1;right=1};color=0xD77800;font=LOGFONT(h=-14);note="(查找选中行卷算错误)";z=10};
+button6={cls="button";text="批量格式化";left=15;top=138;right=109;bottom=166;anchors={left=1;top=1};z=11};
+button7={cls="button";text="批量获取清单";left=113;top=138;right=254;bottom=167;anchors={left=1;top=1};z=12};
+button8={cls="button";text="删除所有行";left=732;top=138;right=805;bottom=152;anchors={top=1;right=1};z=15};
+button9={cls="button";text="clear";left=652;top=138;right=725;bottom=152;anchors={top=1;right=1};z=16};
+edit={cls="edit";text="0";left=473;top=71;right=513;bottom=103;anchors={left=1;top=1};edge=1;multiline=1;z=2};
+edit2={cls="edit";text="1-17";left=16;top=72;right=87;bottom=112;anchors={left=1;top=1};edge=1;multiline=1;z=3};
+edit3={cls="edit";left=5;top=367;right=426;bottom=513;anchors={left=1;bottom=1};aw=1;edge=1;multiline=1;vscroll=1;z=8};
+listview={cls="listview";left=5;top=174;right=422;bottom=363;ah=1;anchors={left=1;top=1;bottom=1};aw=1;edge=1;fullRow=1;vscroll=1;z=13};
+listview2={cls="listview";left=432;top=245;right=874;bottom=512;anchors={top=1;right=1;bottom=1};aw=1;edge=1;fullRow=1;gridLines=1;vscroll=1;z=17};
+progress={cls="progress";left=16;top=122;right=875;bottom=132;anchors={left=1;top=1};aw=1;edge=1;max=100;min=0;z=6};
 static={cls="static";text="输入要下载成本BOM的(开始,结尾)
 的所在行数(仅限当前屏幕, 不可超出屏幕)
- (不是项目编号)";left=224;top=65;right=474;bottom=113;dl=1;dt=1;transparent=1;z=4};
+ (不是项目编号)";left=224;top=65;right=474;bottom=113;anchors={left=1;top=1};transparent=1;z=4};
 static2={cls="static";text="校正行数 (当前屏幕页首行, 首页0,
- 下页12) 此处 +12 表示从13行";left=527;top=68;right=764;bottom=103;dl=1;dt=1;transparent=1;z=5}
+ 下页12) 此处 +12 表示从13行";left=527;top=68;right=764;bottom=103;anchors={left=1;top=1};transparent=1;z=5}
 )
 /*}}*/
 
@@ -70,21 +71,20 @@ var createOrder = function(wform){
 	vm.script = /*
 		session.findById("wnd[0]/tbar[0]/okcd").text = "VA01"
 		session.findById("wnd[0]").sendVKey 0
-		session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "Y001"
-		session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "0841"
+		session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "ZQH2"
+		session.findById("wnd[0]/usr/ctxtVBAK-VKORG").text = "CN10"
 		session.findById("wnd[0]/usr/ctxtVBAK-VTWEG").text = "10"
-		session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = "10"
+		session.findById("wnd[0]/usr/ctxtVBAK-SPART").text = "00"
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
-		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN").text = "TBM6666"
-		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "20010"
-		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "20010"
+
+
+		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "IPCN00"
+		session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "IPCN00"
 		session.findById("wnd[0]").sendVKey 0
-		if session.findById("wnd[0]/sbar/pane[0]").Text = "编号为 TBM6666 的凭证已经存在" then
-			session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/ctxtVBAK-VBELN").text = "TBM6667"
-			session.findById("wnd[0]").sendVKey 0
-		end if
+
     */
     wform.button2.disabledText = null;
+    return "orderCreated"; 
 }
 
 var filterRed = function(wform){
@@ -106,35 +106,107 @@ var filterRed = function(wform){
    			WScript.ConnectObject session,     "on"
    			WScript.ConnectObject application, "on"
 		End If
-
-
-		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
+	*/
+	vm.script = /*
+		dim guiTable, currentRow, pLine, pCode, pDesp
+		Set guiTable = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG")
+		currentRow = guiTable.CurrentRow 
+		'msgbox currentRow
+		If currentRow<0 Then
+			guiTable.GetAbsoluteRow(0).Selected = True
+			currentRow = 0
+		End If
+		pLine = guiTable.GetCell(CurrentRow,0).Text
+		pCode = guiTable.GetCell(CurrentRow,1).Text
+		pDesp = guiTable.GetCell(CurrentRow,2).Text
+	*/
+	wform.edit3.print(">>",vm.script.pLine,vm.script.pCode,vm.script.pDesp)
+	vm.script = /*
+			session.findById("wnd[0]/mbar/menu[3]/menu[4]").Select
 		
-		'处理销售订单重估问题
-		on error resume next
-		set reobj = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
-		if not reobj is nothing then
-			reobj.press	
-			session.findById("wnd[1]/tbar[0]/btn[0]").press
-		end if
-		on error goto 0
+    		set markcost = nothing 
+    		popWinTitle=""
+    		on error resume next
+    			set markcost = session.findById("wnd[1]/usr/btnSPOP-VAROPTION2")
+    			set useMark = session.findById("wnd[1]/usr/btnSPOP-VAROPTION1")
+    			popWinTitle = session.findById("wnd[1]").Text
+			on error goto 0
+
+'=====================
+			if right(popWinTitle,6)="成本核算方法" then
+					markcost.press
+					session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
+					session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"	
+			else
+				if not markcost is nothing then
+					useMark.press
+    				'if not markcost is nothing then    				
+    					'markcost.press
+    					'on error resume next
+        				'session.findById("wnd[1]/tbar[0]/btn[0]").press        			
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-KLVAR").text = "PPC4"
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpALLG/ssubALLGEMEIN:SAPLCKDI:4612/ctxtCKI64A-UEBID").text = "PC03"
+        				'on error goto 0
+  	
+				else 
+        			'set tdstr = nothing
+        			'on error resume next
+        				'set tdstr = session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-KADAT")
+        			'on error goto 0
+        			'if not tdstr is nothing then
+        				'msgbox(3)
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-ALDAT").Text = tdstr.Text
+        				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
+        				
+					'end if
+					session.findById("wnd[0]/tbar[0]/btn[0]").press
+					
+    			end if
+    		end if
+			session.findById("wnd[0]/tbar[0]/btn[0]").press
+'=====================
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
+		
 		session.findById("wnd[0]/tbar[1]/btn[20]").press
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "CMF_LIGHTS"
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell/shellcont[1]/shell").selectColumn "CMF_LIGHTS"
 		session.findById("wnd[0]/tbar[1]/btn[38]").press
 		session.findById("wnd[1]/usr/chkP_RED").selected = true
-		session.findById("wnd[1]/tbar[0]/btn[0]").press
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "MATNR"
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectColumn "CMF_TEXT"
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").SelectContextMenuItemByPosition "0"
-		'加入clipboard
+		session.findById("wnd[1]/tbar[0]/btn[0]").press		
+		
+		Dim grid, resultArray()
+		Dim rowCount, i, col3Name, col7Name
+		
+		' 1. 获取 GridView 对象
+		Set grid = session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell/shellcont[1]/shell")
+		
+		' 2. 替换为实际列名（需自行查找确认，不能用 "3" 或 "7"）
+		col3Name = "MATNR"  ' 请替换为实际第3列的技术字段名
+		col7Name = "CMF_TEXT"  ' 请替换为实际第7列的技术字段名
+		
+		rowCount = grid.RowCount
+		If rowCount = 0 Then
+    		ReDim resultArray(0, 1)
+		Else
+    		ReDim resultArray(rowCount - 1, 1) ' 二维数组：行数 x 2列
+    		
+    		For i = 0 To rowCount - 1
+        		' 关键：确保当前行可见，否则 GetCellValue 可能抛异常或返回空
+        		If i < grid.firstVisibleRow Or i >= grid.firstVisibleRow + grid.VisibleRowCount Then
+            		grid.firstVisibleRow = i
+        		End If
+        		
+        		resultArray(i, 0) = grid.GetCellValue(i, col3Name)
+        		resultArray(i, 1) = grid.GetCellValue(i, col7Name)
+    		Next
+		End If
 		
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
 		session.findById("wnd[0]/tbar[0]/btn[12]").press
+		
+
     */	
-    wform.button5.disabledText = null;	
-    
+
+    return vm.script.resultArray; 
 }
 
 
@@ -143,11 +215,13 @@ var dcb = function(winform, absline, HT){
 import console
 console.open()
 */
+
 	import io;
 	import config;
 	import domisoft;
     import web.script;
     var vm = web.script("VBScript") ;
+    var costFiles = [];
 
     var h = string.indexOf(HT, "-") ? string.split(HT, "-")[[1]] - 1 : tonumber(HT) - 1;
     var t = string.indexOf(HT, "-") ? string.split(HT, "-")[[2]] - 1 : tonumber(HT) - 1;
@@ -178,6 +252,9 @@ console.open()
 	    	dim lib_path
 	    	dim costFilename
 			dim priceDate
+			dim costFileExist
+			dim guiTable
+			costFileExist = False
 			priceDate = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/ssubHEADER_FRAME:SAPMV45A:4440/ctxtVBKD-PRSDT").text
 			priceDate = Mid(priceDate,6,2) & right(priceDate,2)
 	 */
@@ -187,17 +264,20 @@ console.open()
 	 	vm.script.i = i
 	 	
 	vm.script = /*
-    		pcode = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/ctxtRV45A-MABNR[1," & i & "]").Text
-    		pdesp = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG/txtVBAP-ARKTX[4," & i & "]").Text
-    		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = True
-    		costFilename = "cost" & priceDate & "_" & trim(pcode) & "_" & trim(pdesp) & ".xls"
+			Set guiTable = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG")
+			pcode = guiTable.GetCell(i,1).Text
+			pdesp = guiTable.GetCell(i,2).Text
+    		guiTable.GetAbsoluteRow(i  +  absline ).Selected = True    		
+    		costFilename = "cost" & priceDate & "_" & trim(pcode) & "_" & trim(pdesp) & ".xlsx"
 	*/
-	
-	vm.script.costFilename = domisoft.formatWindowsFileName(vm.script.costFilename);
-	winform.edit3.print(vm.script.costFilename)
-	vm.script = /*
 
-    		session.findById("wnd[0]/mbar/menu[3]/menu[7]").Select
+	vm.script.costFilename = domisoft.formatWindowsFileName(vm.script.costFilename);
+	vm.script.costFileExist = !!io.exist(io.joinpath(vm.script.lib_path,vm.script.costFilename));
+
+	winform.edit3.print(vm.script.costFilename)
+	table.push(costFiles, io.joinpath(vm.script.lib_path,vm.script.costFilename));
+	vm.script = /*
+    		session.findById("wnd[0]/mbar/menu[3]/menu[4]").Select
 
     		set markcost = nothing 
     		popWinTitle=""
@@ -234,6 +314,7 @@ console.open()
         				'session.findById("wnd[0]/usr/subALL:SAPLCKDI:4611/tabsREITER/tabpTERM/ssubTERM:SAPLCKDI:4614/ctxtCKI64A-BWDAT").Text = tdstr.Text
         				
 					'end if
+					session.findById("wnd[0]/tbar[0]/btn[0]").press
 					
     			end if
     		end if
@@ -243,14 +324,21 @@ console.open()
 			session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").pressContextButton "&PRINT_BACK"
 			session.findById("wnd[0]/shellcont[0]/shell/shellcont[1]/shell[0]").selectContextMenuItem "&PRINT_PREV_ALL"
 
-    		session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[1]").Select
-    		session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").Select
-    		session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[1,0]").SetFocus
-    		session.findById("wnd[1]/tbar[0]/btn[0]").press
+			session.findById("wnd[0]/mbar/menu[3]/menu[5]/menu[2]/menu[2]").select
+			session.findById("wnd[1]/usr/subSUBSCREEN_STEPLOOP:SAPLSPO5:0150/sub:SAPLSPO5:0150/radSPOPLI-SELFLAG[2,0]").select
+
+			session.findById("wnd[1]/tbar[0]/btn[0]").press
+			session.findById("wnd[1]/tbar[0]/btn[20]").press
+			
     		session.findById("wnd[1]/usr/ctxtDY_PATH").text = lib_path
     		session.findById("wnd[1]/usr/ctxtDY_FILENAME").Text = costFilename
 
-    		session.findById("wnd[1]/tbar[0]/btn[11]").press
+			If costFileExist=True then
+				session.findById("wnd[1]/tbar[0]/btn[11]").press
+			Else
+				session.findById("wnd[1]/tbar[0]/btn[0]").press
+			End If
+
     		session.findById("wnd[0]/tbar[0]/btn[12]").press
     		session.findById("wnd[0]/tbar[0]/btn[12]").press
     		session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG").getAbsoluteRow( i  +  absline ).Selected = false
@@ -258,16 +346,32 @@ console.open()
 			winform.progress.pos = i
 	}
 	winform.button.disabledText = null;
+	return costFiles; 
 
 }
 
 winform.button.oncommand = function(id,event){
+	win.setTopmost(winform.hwnd); 
 	var absline = winform.edit.text;
 	if !#absline return ; 
 	var HT = winform.edit2.text;
 	if !#HT return ;
-	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "downloading..."};
-	thread.invoke(dcb, winform, absline, HT);
+	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text = "downloading..."};	
+	var costFiles = thread.invokeAndWait(dcb, winform, absline, HT);
+	win.setTopmost(winform.hwnd, false);
+	if !costFiles return ; 
+	if !#costFiles return ; 
+	win.delay(500);
+	//winform.button6.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="working..."};
+	import QHC;
+	var t = thread.invokeAndWait(QHC.formatAllCostBom,winform,costFiles);
+	
+	if t and #t {
+			winform.listview.setTable(t);
+	}
+	//winform.button6.disabledText = null;
+	
+
 }
 
 winform.button3.oncommand = function(id,event){
@@ -282,28 +386,96 @@ winform.button2.oncommand = function(id,event){
 		return winform.msgInfo("还没启动SAPGUI",500);
 	}
 */
+    var mdlfrm = winform.loadForm("\dlg\inputbox2row.aardio");
+    mdlfrm.text = "添加要卷算的成品编号";
+    var itemData = mdlfrm.doModal();
+
+    mdlfrm.edit2.setCueBannerText("请粘贴成品清单",true);  
+
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="creating..."};
-	thread.invoke(createOrder, winform);
+	var orderCreated = thread.invokeAndWait(createOrder, winform);
+	if !orderCreated return ; 
+  	if!itemData return ;  
+  	
+	var userinput = itemData[1];
+    userinput = string.crlf(userinput,'\r\n' /* 默认值 */);
+    //分隔符号转换行
+	for k, v in {`、`, `，`, `;`, `；`, `,`, `|`,'\t'} 
+		userinput = string.replace(userinput, v,'\r\n');	
+    var userinputArr = string.split(userinput, '\r\n');
+	userinputArr =  table.filter(userinputArr, function(v,index){
+		return string.len(string.trim(v)); 
+	})
+	thread.invoke(function(txt){
+    	import web.script;
+    	var vm = web.script("VBScript");
+    	vm.script = /*
+			If Not IsObject(application) Then
+   				Set SapGuiAuto  = GetObject("SAPGUI")
+   				Set application = SapGuiAuto.GetScriptingEngine
+			End If
+			If Not IsObject(connection) Then
+   				Set connection = application.Children(0)
+			End If
+			If Not IsObject(session) Then
+   				Set session    = connection.Children(0)
+			End If
+			If IsObject(WScript) Then
+   				WScript.ConnectObject session,     "on"
+   				WScript.ConnectObject application, "on"
+			End If		
+    	*/    	
+    	vm.script = /*
+    		Set tabCtrl = session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\01/ssubSUBSCREEN_BODY:SAPMV45A:4400/subSUBSCREEN_TC:SAPMV45A:4900/tblSAPMV45ATCTRL_U_ERF_AUFTRAG")
+			Dim i
+			i = 1
+			dim txt
+		*/
+		for (i=1; #txt) {
+			vm.script.i = i;
+			vm.script.txt = txt[i];
+			vm.script = /*			
+				tabCtrl.Columns.item(1).item(i-1).Text = txt
+				tabCtrl.Columns.item(3).item(i-1).Text = "1"
+			*/
+		}
+	}, userinputArr)
 }
 
 
 
 winform.button5.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="working..."};
-	thread.invokeAndWait(filterRed, winform);
+	var sss = thread.invokeAndWait(filterRed, winform);
+	owner.disabledText = null;	
+	if !sss or !#sss return ; 
+/*
 	import win.clip
 	var sss = win.clip.read();
 	sss ?= string.trimright(sss, '\n');
-	winform.edit3.print(sss);
+*/
+	var tab = table.concat(winform.listview2.items, sss);
+	winform.listview2.setTable(tab);
+
+/*
+	winform.edit3.dump(sss)
 	winform.edit3.print('\n');
+*/
 	
 }
+winform.listview2.setColumns([
+		["相关物料", 100],
+		["错误描述", 400]
+])
+winform.listview2.translateAccelerator = domisoft.ctrlC;
+
 winform.button6.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="working..."};
 	thread.invoke( 
 		function(wform){
 			import QHC;
-			QHC.formatAllCostBom();
+			var t = QHC.formatAllCostBom();
+			wform.listview.setTable(t);
 			wform.button6.disabledText = null;
 		}, winform
 	)
@@ -316,7 +488,9 @@ winform.button7.oncommand = function(id,event){
 		function(wform){
 			import QHC;
 			var t = QHC.getPriceList();
-			wform.listview.setTable(t);
+			if t and #t { 
+				wform.listview.setTable(t);
+			}
 			wform.button7.disabledText = null;
 		}, winform
 	)
@@ -392,6 +566,7 @@ winform.button8.oncommand = function(id,event){
 
 winform.button9.oncommand = function(id,event){
 	winform.edit3.text="";
+	winform.listview2.clear();
 }
 
 import domisoft;

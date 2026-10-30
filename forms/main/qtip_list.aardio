@@ -14,7 +14,7 @@ import thread.command;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=759;bottom=469)
 winform.add(
-listview={cls="listview";left=0;top=0;right=760;bottom=472;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
+listview={cls="listview";left=0;top=0;right=760;bottom=472;anchors={left=1;top=1;right=1;bottom=1};edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
 
@@ -22,11 +22,12 @@ winform.grid = win.ui.grid(winform.listview);
 winform.grid.setReadonlyColumns(-1);
 
 winform.listview.enableDoubleBuffering();
-winform.grid._showMoreCols = null;
+winform.grid.showMoreCols = null;
 
 // 高性能表格渲染
 winform.updateSearchResult = function(sapTab, showMoreCols){
-    if( winform.grid._showMoreCols !== showMoreCols ){
+
+    if( winform.grid.showMoreCols !== showMoreCols ){
         winform.grid.clear(true); 
 
         if( showMoreCols ){
@@ -37,7 +38,7 @@ winform.updateSearchResult = function(sapTab, showMoreCols){
                 ["类型", 60],
                 ["物料组", 60],
                 ["价格", 50],
-                ["S4物料", 50],
+                ["旧物料号", 90],
                 ["禁用", 50],
                 ["生产展平尺寸", 120]
             ];
@@ -53,7 +54,7 @@ winform.updateSearchResult = function(sapTab, showMoreCols){
         }
 
         winform.listview.fillParent(2); 
-        winform.grid._showMoreCols = showMoreCols; 
+        winform.grid.showMoreCols = showMoreCols; 
     }
 
     winform.grid.setTable(sapTab);
@@ -104,7 +105,20 @@ var copyPartNo = function(withDesp, separator = '\r\n'){
     }  
     if(#tab) return string.join(tab, separator);
 }
-
+var copyP11PartNo = function(withDesp, separator = '\r\n'){
+    var tab = [];
+    for(k, v in winform.listview.selected){
+        var rowData = winform.grid.getItemData(v);
+        if(!rowData) continue;
+        var pcode = rowData["旧物料号"];
+        var desp = rowData["物料描述"];
+        if(!withDesp)
+            table.push(tab, pcode);
+        else
+            table.push(tab, pcode ++ '\t' ++ (desp : ""));        
+    }  
+    if(#tab) return string.join(tab, separator);
+}
 var copyBomFormat = function(){
     var tab = [];
     for(k, v in winform.listview.selected){
@@ -163,10 +177,11 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
     }
     
     menu.add();
-    menu.add("复制[专用号]", lambda() win.clip.write(copyPartNo()));
-    menu.add("复制[专用号][物料描述]", lambda() win.clip.write(copyPartNo(true)));
-    menu.add("复制[专用号][物料描述][1][单位][属性]", lambda() win.clip.write(copyBomFormat()));
-    menu.add("复制[专用号](水平展开)", lambda() win.clip.write(copyPartNo(false,'\t')));
+    menu.add("复制[物料]", lambda() win.clip.write(copyPartNo()));
+    menu.add("复制[旧物料号]", lambda() win.clip.write(copyP11PartNo()));
+    menu.add("复制[物料][物料描述]", lambda() win.clip.write(copyPartNo(true)));
+    menu.add("复制[物料][物料描述][1][单位][属性]", lambda() win.clip.write(copyBomFormat()));
+    menu.add("复制[物料](水平展开)", lambda() win.clip.write(copyPartNo(false,'\t')));
     menu.add();
     menu.add("查询详细信息...", lambda() qtbs.open(3,pcode));
     menu.add();
@@ -311,7 +326,7 @@ var searchSapDB = function(userinput, winform, filterOpts){
             userinput = string.trim(userinputArr[i]);
             if(!#userinput) continue;
 
-            if(string.startsWith(userinput, "008", true)) userinput = "H" ++ userinput;
+
             userinput = string.replace(userinput, '\u00A0', ""); // 编译期自动 UTF-8
             userinput = string.replace(userinput, "@%", "\%");
             userinput = string.replace(userinput, "@_", "\_");
@@ -321,15 +336,21 @@ var searchSapDB = function(userinput, winform, filterOpts){
 
             var sqlstr;
             if(!filterOpts.chkMoreCols){
-                sqlstr = "SELECT `物料`, `物料描述`, `Bun` AS `单位`, `MTyp` AS `类型`, `物料组`, `价格` FROM `所有物料` WHERE ??";
+                sqlstr = "SELECT `物料`, `物料描述`, `基本计量单位` AS `单位`, `物料类型` AS `类型`, `物料组`, `价格` FROM `所有物料` WHERE ??";
             } else {
-                sqlstr = "SELECT `物料`, `物料描述`, `Bun` AS `单位`, `MTyp` AS `类型`, `物料组`, `价格`, `S4物料`, `禁用`, `生产展平尺寸` FROM `所有物料` WHERE ??";
+                sqlstr = "SELECT `物料`, `物料描述`, `基本计量单位` AS `单位`, `物料类型` AS `类型`, `物料组`, `价格`,`旧物料号`, `禁用`, `生产展平尺寸` FROM `所有物料` WHERE ??";
             }
 
             var searchField = {};
-            if(string.startsWith(userinput, "H00", true) || string.startsWith(userinput, "BG", true)){
+            if(string.startsWith(userinput, "5", true) and string.len(userinput)==7){
                 table.assign(searchField, {物料 = userinput});
-            } else {
+            }elseif(string.startsWith(userinput, "5", true) and string.len(userinput)==12 and string.indexOf(userinput,"-")==8){
+                table.assign(searchField, {物料 = userinput});
+            }elseif(string.startsWith(userinput, "8", true) and string.len(userinput)==4){
+                table.assign(searchField, {物料 = userinput});
+            }elseif( string.startsWith(userinput, "H008", true) || string.startsWith(userinput, "BG", true)) {
+                table.assign(searchField, {旧物料号 = userinput});
+            }else {
                 table.assign(searchField, {物料描述 = userinput});
 
                 if(#filterOpts.sapType) table.assign(searchField, {物料组 = filterOpts.sapType});

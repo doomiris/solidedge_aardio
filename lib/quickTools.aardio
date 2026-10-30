@@ -53,7 +53,7 @@ excel_formatBom = function(ftab){
 	import config;
 	import QHC;
 	var sht = domisoft.getRunningWorkSheet(ftab);
-	QHC.formatBOM(sht);
+	QHC.formatBOM(sht,  true,  false, true);
 	import fsys;
 	var destPath = ..io.joinpath(config.dbServer.path,"\xl_lib\");
 	if sht.ParentPath !== destPath

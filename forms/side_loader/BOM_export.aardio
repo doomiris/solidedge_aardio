@@ -4,7 +4,25 @@ import config;
 import console;
 console.open();
 
+var templatePath = io.joinpath(config.qtip.templateLib,  "S4新产品BOM申请单-姓名-日期-20261009.xlsx")
+if !io.exist(templatePath) return "不存在 "++templatePath ; 
+var templateSheetName = "1.BOM";
+
+
 var excel = com.excel(false) ;
+global.onError = function( err,over ){ 
+/*
+    if(!over){
+        import debug;
+        var stack = debug.traceback(,"调用栈",3);
+    }
+    
+    if( _STUDIO_INVOKED ) return err; 
+*/
+    excel.Alerts = true;
+    console.log(err)
+    console.pause()
+}
 var osht = excel.ActiveWorkbook.ActiveSheet;
 if osht.cells(1,1).value2 !== "展开层" error("格式错误");
 
@@ -19,6 +37,25 @@ import console.progress;
 var progress = console.progress();
 
 var etab = osht.UsedRange.value2;
+// 遍历二维数组，将所有非空值转为字符串格式
+/*
+for i, row in table.eachIndex(etab) {
+    for j, val in table.eachIndex(row) {
+        if(val !== null){
+            row[j] = tostring(val); // 如果需要把空白格也变为空字符串 ""，可去掉 if 判断写为: row[j] = tostring(val : "")
+        }
+        
+    }
+}
+*/
+for (i=1; #etab)
+	for(j=1; #etab[i]) {
+		var v = etab[i][j];
+		if (v !== null)
+			etab[i][j] = string.trim(tostring(v))
+	}
+
+
 var ts_count = #etab;
  if etab[3][1 /* A */] == ".1" etab[3][1 /* A */] = "'.1"; //阻止识别为0.1
 //console.dump(etab);
@@ -26,8 +63,9 @@ var ts_count = #etab;
 excel.Application.CutCopyMode = false;
 
 _start_col = 9 /* I */;
-
-_col_count = console.getNumber( "从I列开始, 共有几列需要导出?");
+console.log("workbook:", excel.ActiveWorkbook.Name)
+console.log("worksheet:", osht.Name)
+_col_count = console.getNumber( "从I列开始, 共有几列需要导出? 请输入数字: ");
 
 //是否导出为单一文件
 _save_as_single_bom_file = true;
@@ -35,23 +73,22 @@ _save_as_single_bom_file = true;
 var tbk, tsht, tsht_tab;
 if _save_as_single_bom_file {
 	 tbk = excel.WorkBooks.Add(
-    	io.joinpath(config.qtip.templateLib,  "新产品BOM申请单模板-姓名-日期.xlsx")
+    	templatePath
 	);
 	
-	 tsht = tbk.Sheets(1);
+	 tsht = tbk.Sheets(templateSheetName);
 	
 	 tsht_tab = {};
 }
 excel.alerts = false;
 for(j = _start_col; _start_col + _col_count - 1 ){
-    if !#etab[2][j] continue;
+	if !etab[2][j] continue;
+    //if !#etab[2][j] continue;
 
 	if !_save_as_single_bom_file {
-		 tbk = excel.WorkBooks.Add(
-    		io.joinpath(config.qtip.templateLib,  "新产品BOM申请单模板-姓名-日期.xlsx")
-		);
+		 tbk = excel.WorkBooks.Add(templatePath);
 		
-		 tsht = tbk.Sheets(1);
+		 tsht = tbk.Sheets(templateSheetName);
 		
 		 tsht_tab = {};
 	}
@@ -63,8 +100,12 @@ for(j = _start_col; _start_col + _col_count - 1 ){
 
         if !#etab[i][1 /* A */] continue; //跳过层级为空的行
        
-        
-        if #etab[i][j] and string.len(string.trim(etab[i][j])) == 1
+		var val = etab[i][j];
+/*
+		if type(val)=="number"
+			val = tostring(val);
+*/
+        if val and string.len(val) == 1
         	if string.cmpMatch(etab[i][j], "X") continue;	// 跳过X标记, 也会跳过含X的专用号
 
     	var bun = etab[i][4 /* D */]; 
@@ -102,11 +143,7 @@ for(j = _start_col; _start_col + _col_count - 1 ){
     	//if !parent_bun or parent_bun=="0" continue; //跳过数量为0的行
     	
         var tar={};
-        
-       	table.push(tar, etab[i][1 /* A */])	//列名:层级
-       	table.push(tar, "","L")	//列名:BOM项目,项目类别
-       	
-    	var hcode = etab[i][j]; 
+        var hcode = etab[i][j]; 
     	if !hcode hcode = etab[i][2 /* B */];   	
     	if !hcode continue;	//如果还是没有物料则跳过， 目标文件内不显示描述等信息， 此种情况不可下发导入．
     	
@@ -115,15 +152,20 @@ for(j = _start_col; _start_col + _col_count - 1 ){
     	//Non-breaking space
     	hcode = string.replace(hcode,'\u00A0',"");
     	
+        
+       	table.push(tar, etab[i][1 /* A */])	//列名:层级
+       	table.push(tar, "")	//列名: BOM项目       	
+       	table.push(tar, (hcode == "ZCOLOR")?"K":"L")	//列名: 项目类别       	
+
       	table.push(tar, hcode);	//列名:物料号
       	
 		var hitem = QHC.getSapItem(hcode);
 		
       	table.push(tar, hitem ? hitem.物料描述 : "");	//列名:物料描述
       	table.push(tar, bun);			//列名:单位用量
-      	table.push(tar, hitem ? hitem.BUn : etab[i][[5] /* E */]);	//列名： 单位
+      	table.push(tar, hitem ? hitem.基本计量单位 : etab[i][[5] /* E */]);	//列名： 单位
       	table.push(tar, "");	//列名:排序文本
-      	table.push(tar, hitem ? hitem.MTyp : etab[i][[6] /* F */]); //列名:物料类型
+      	table.push(tar, hitem ? hitem.物料类型 : etab[i][[6] /* F */]); //列名:物料类型
       	table.push(tar, #etab[i][7 /* G */]  ?  etab[i][7 /* G */] : ""); //列名: 相关性语句
       	
       	if !#tar[1 /* A */] or !#tar[4 /* D */] continue; //跳过 无层级 和 无专用号的行
@@ -134,18 +176,22 @@ for(j = _start_col; _start_col + _col_count - 1 ){
     
 	if !_save_as_single_bom_file {
 		var tar_end_row = #tsht_tab + 4 ;
-		tsht.Range("6:"++ tar_end_row).EntireRow.insert();
+		tsht.Range("5:"++ tar_end_row).EntireRow.insert();
 		tsht.range("A" ++ 5 ++ ":J" ++ tar_end_row).value2 = tsht_tab;
 		tsht.Activate();
 		
 		
-		excel.alerts = false;	
-		tbk.SaveAs(
-    		io.joinpath(
+		excel.alerts = false;
+
+		var filename = io.joinpath(
     			config.setbm.workingDir,
     			"init_" ++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
     		)
-		);
+		var testWb = domisoft.getWorkbookByFileName(excel, filename);
+		if testWb
+			testWb.Close(false);
+		
+		tbk.SaveAs( filename	);
 		QHC.formatBOM(tsht);
 		tbk.close();
 	}
@@ -159,12 +205,14 @@ if _save_as_single_bom_file {
 	
 	
 	excel.alerts = false;	
-	tbk.SaveAs(
-    	io.joinpath(
+	var filename = io.joinpath(
     		config.setbm.workingDir,
     		"init_" ++ tsht.Cells(5,"D").Text ++ "_" ++ tsht.Cells(5,"E").Text ++ ".xlsx"
     	)
-	);
+	var testWb = domisoft.getWorkbookByFileName(excel, filename);
+	if testWb
+		testWb.Close(false);
+	tbk.SaveAs(filename);
 	QHC.formatBOM(tsht);
 	tbk.close();
 }

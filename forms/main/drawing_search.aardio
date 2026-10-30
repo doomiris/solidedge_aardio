@@ -2,8 +2,8 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio form";right=639;bottom=359;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-edit2={cls="edit";left=56;top=12;right=176;bottom=36;aw=1;dl=1;dt=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=2};
-listview={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;aw=1;db=1;dl=1;dr=1;dt=1;edge=1;fullRow=1;gridLines=1;z=1}
+edit2={cls="edit";left=56;top=12;right=176;bottom=36;anchors={left=1;top=1};aw=1;font=LOGFONT(h=-13);hide=1;readonly=1;z=2};
+listview={cls="listview";left=0;top=40;right=640;bottom=360;ah=1;anchors={left=1;top=1;right=1;bottom=1};aw=1;edge=1;fullRow=1;gridLines=1;z=1}
 )
 /*}}*/
 
@@ -40,9 +40,9 @@ var fileLibMap = function(fullpath){
 	if !fullpath return ; 
 	import config;
 	var libPathMaps = {
-		"{config.qtip.pdfLib}" = config.qtip.pdfLib,
-		"{config.qtip.qhcLib}" = config.qtip.qhcLib,
-		"{config.qtip.cabinetModelServer}" = config.qtip.cabinetModelServer
+		"{config.qtip.pdfLib}" = config.__pdfLib,
+		"{config.qtip.qhcLib}" = config.__qhcLib,
+		"{config.qtip.cabinetModelServer}" = config.__cabinetModelServer
 	}
 	fullpath = string.replace(fullpath,'%{}', libPathMaps)
 	return fullpath; 
@@ -51,9 +51,9 @@ var reverseFileLibMap = function(fullpath){
 	if !fullpath return ; 
 	import config;
 	var libPathMaps = {
-		"{config.qtip.pdfLib}" = io.joinpath(config.qtip.pdfLib),
-		"{config.qtip.qhcLib}" = io.joinpath(config.qtip.qhcLib),
-		"{config.qtip.cabinetModelServer}" = io.joinpath(config.qtip.cabinetModelServer)
+		"{config.qtip.pdfLib}" = io.joinpath(config.__pdfLib),
+		"{config.qtip.qhcLib}" = io.joinpath(config.__qhcLib),
+		"{config.qtip.cabinetModelServer}" = io.joinpath(config.__cabinetModelServer)
 	}
 	var invertLibPathMaps = table.invert(libPathMaps);
 	//console.dumpTable(invertLibPathMaps)
@@ -66,11 +66,14 @@ var reverseFileLibMap = function(fullpath){
 /*查找图纸{{*/
 var searchDocument = function (filenumber){
     //filenumber :=  winform.editUser0.text;
-/*sqliteDB{{*/
+
 	import sqlite;
 	import config;
 	var flistDB = sqlite(io.joinpath(config.dbServer.path,"drawing_lists.db"),,1/*_SQLITE_OPEN_READONLY*/);	//打开数据库连接
-/*}}*/
+	var sap_db_path = io.joinpath(config.dbServer.path, "QHCSAP.db");
+	var sap_db = sqlite(sap_db_path);
+
+
 	winform.edit2.text = "";
 
     winform.listview.clear();
@@ -88,8 +91,16 @@ var searchDocument = function (filenumber){
 	filenumber = table.shift(userinputArr);
   
     //winform.listview.insertColumn("正在查找图纸, 请稍等...",300,1);
-	var searchFor = string.trimleft(filenumber,"H");
+	var searchFor = string.trimLeft(filenumber,"H");
 
+	if string.indexOf(searchFor, "-")
+		searchFor = table.shift(string.split(searchFor,"-"))
+	if string.startsWith(searchFor,"5") and string.len(searchFor)==7 {
+			var t = sap_db.stepQuery("SELECT [旧物料号] FROM [所有物料]", {物料: searchFor});
+			if t
+				searchFor = string.trimLeft(t["旧物料号"],"H");	
+			sap_db.close();
+	}
 	var fileTab = table.create(,{fields={[2]="文件名";[3]="路径";[1]="类型";[4]="版本"}});
 
 	var sql = "SELECT `文件名`, `路径` FROM `Lib` WHERE ??";
@@ -177,6 +188,7 @@ winform.listview.onRightClick = function(item,subItem,nmListView){
 	var x,y = win.getMessagePos();
 	var menu = win.ui.popmenu(winform);
 	menu.add("打开文件...", λ() process.execute(fullName));
+	menu.add("打开文件所在位置...", λ() process.explore(fullName,"/select"));
 	menu.add("删除文件...", function(){
 		winform.listview.delItem(item);
 		deleteDrawingFile(fullName);

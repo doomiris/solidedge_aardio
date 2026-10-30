@@ -3,45 +3,37 @@ import win.ui;
 /*DSG{{*/
 var winform = win.form(text="Setting";right=759;bottom=766;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="Save";left=533;top=86;right=662;bottom=146;color=0xD77800;dr=1;dt=1;font=LOGFONT(h=-14);note="保存配置";z=3};
-cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;clipch=1;dl=1;dt=1;items={"SRDC","QHC","Local Disk"};mode="dropdownlist";transparent=1;z=21};
-closeToTray={cls="checkbox";text="close to &tray";left=42;top=79;right=178;bottom=111;dl=1;dt=1;group=1;tabstop=1;z=4};
-createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=207;top=113;right=448;bottom=130;dl=1;dt=1;z=17};
-edit={cls="edit";left=244;top=454;right=686;bottom=492;dl=1;dr=1;dt=1;edge=1;vscroll=1;z=32};
-edit2={cls="edit";left=242;top=516;right=684;bottom=554;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=34};
-edit3={cls="edit";left=242;top=582;right=684;bottom=620;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=36};
-edit4={cls="edit";left=240;top=649;right=682;bottom=687;dl=1;dr=1;dt=1;edge=1;multiline=1;vscroll=1;z=38};
-editCity={cls="edit";text="上海市";left=494;top=376;right=641;bottom=399;dl=1;dt=1;edge=1;tabstop=1;z=29};
-editDistict={cls="edit";text="浦东新区";left=495;top=347;right=642;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=28};
-editMobile={cls="edit";text="手机";left=495;top=271;right=642;bottom=294;dl=1;dt=1;edge=1;tabstop=1;z=26};
-editRec={cls="edit";text="收货人";left=494;top=237;right=641;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=25};
-editRoad={cls="edit";text="路名门牌号";left=495;top=308;right=642;bottom=331;dl=1;dt=1;edge=1;tabstop=1;z=27};
-edit_SAP_client={cls="edit";text="220";left=50;top=348;right=197;bottom=371;dl=1;dt=1;edge=1;tabstop=1;z=10};
-edit_SAP_client2={cls="edit";text="220";left=271;top=347;right=418;bottom=370;dl=1;dt=1;edge=1;tabstop=1;z=15};
-edit_SAP_language={cls="edit";text="ZH";left=49;top=378;right=196;bottom=401;dl=1;dt=1;edge=1;tabstop=1;z=11};
-edit_SAP_language2={cls="edit";text="ZH";left=270;top=377;right=417;bottom=400;dl=1;dt=1;edge=1;tabstop=1;z=16};
-edit_SAP_pw={cls="edit";text="password";left=50;top=272;right=197;bottom=295;dl=1;dt=1;edge=1;password=1;tabstop=1;z=8};
-edit_SAP_pw2={cls="edit";text="password";left=271;top=271;right=418;bottom=294;dl=1;dt=1;edge=1;password=1;tabstop=1;z=13};
-edit_SAP_system={cls="edit";text="P11";left=51;top=310;right=198;bottom=333;dl=1;dt=1;edge=1;tabstop=1;z=9};
-edit_SAP_system2={cls="edit";text="P11";left=272;top=309;right=419;bottom=332;dl=1;dt=1;edge=1;tabstop=1;z=14};
-edit_SAP_user={cls="edit";text="username";left=50;top=238;right=197;bottom=261;dl=1;dt=1;edge=1;group=1;tabstop=1;z=7};
-edit_SAP_user2={cls="edit";text="username";left=271;top=237;right=418;bottom=260;dl=1;dt=1;edge=1;group=1;tabstop=1;z=12};
-groupbox={cls="groupbox";text="SAP一键登入1";left=28;top=220;right=245;bottom=412;dl=1;dt=1;edge=1;z=2};
-groupbox2={cls="groupbox";text="SAP一键登入2";left=247;top=220;right=467;bottom=412;dl=1;dt=1;edge=1;z=1};
-groupbox3={cls="groupbox";text="选项";left=31;top=47;right=470;bottom=194;dl=1;dt=1;edge=1;z=30};
-groupbox4={cls="groupbox";text="SAP订单收货";left=470;top=220;right=690;bottom=412;dl=1;dt=1;edge=1;z=24};
-hotkey={cls="hotkey";left=670;top=9;right=739;bottom=29;dr=1;dt=1;edge=1;z=19};
-keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=206;top=141;right=447;bottom=158;dl=1;dt=1;z=18};
-listview={cls="listview";left=28;top=439;right=220;bottom=684;db=1;dl=1;dt=1;edge=1;z=31};
-simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=42;top=143;right=178;bottom=175;dl=1;dt=1;tabstop=1;z=6};
-startupMinimized={cls="checkbox";text="startup &minimized";left=42;top=111;right=178;bottom=143;dl=1;dt=1;tabstop=1;z=5};
-static={cls="static";text="唤醒键";left=610;top=13;right=656;bottom=27;dr=1;dt=1;transparent=1;z=20};
-static2={cls="static";text="PDF Lib";left=245;top=438;right=407;bottom=450;dl=1;dr=1;dt=1;transparent=1;z=33};
-static3={cls="static";left=188;top=11;right=300;bottom=27;center=1;dl=1;dt=1;notify=1;transparent=1;z=23};
-static4={cls="static";text="QHC Lib";left=243;top=500;right=405;bottom=512;dl=1;dr=1;dt=1;transparent=1;z=35};
-static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";dl=1;dt=1;font=LOGFONT(name='FontAwesome');transparent=1;z=22};
-static6={cls="static";text="Team Workspace";left=243;top=566;right=405;bottom=578;dl=1;dr=1;dt=1;transparent=1;z=37};
-static7={cls="static";text="Templates";left=241;top=633;right=403;bottom=645;dl=1;dr=1;dt=1;transparent=1;z=39}
+button={cls="button";text="Save";left=533;top=86;right=662;bottom=146;anchors={top=1;right=1};color=0xD77800;font=LOGFONT(h=-14);note="保存配置";z=3};
+cbb_serverIndex={cls="combobox";left=94;top=11;right=177;bottom=31;anchors={left=1;top=1};clipch=1;items={"Shanghai","Qingdao","Local Disk"};mode="dropdownlist";transparent=1;z=21};
+closeToTray={cls="checkbox";text="close to &tray";left=42;top=79;right=178;bottom=111;anchors={left=1;top=1};group=1;tabstop=1;z=4};
+createNewFormsFromSharepoint={cls="checkbox";text="createNewFormsFromSharepoint";left=207;top=113;right=448;bottom=130;anchors={left=1;top=1};z=17};
+editCity={cls="edit";text="上海市";left=494;top=376;right=641;bottom=399;anchors={left=1;top=1};edge=1;tabstop=1;z=29};
+editDistict={cls="edit";text="浦东新区";left=495;top=347;right=642;bottom=370;anchors={left=1;top=1};edge=1;tabstop=1;z=28};
+editMobile={cls="edit";text="手机";left=495;top=271;right=642;bottom=294;anchors={left=1;top=1};edge=1;tabstop=1;z=26};
+editRec={cls="edit";text="收货人";left=494;top=237;right=641;bottom=260;anchors={left=1;top=1};edge=1;group=1;tabstop=1;z=25};
+editRoad={cls="edit";text="路名门牌号";left=495;top=308;right=642;bottom=331;anchors={left=1;top=1};edge=1;tabstop=1;z=27};
+edit_SAP_client={cls="edit";text="500";left=50;top=348;right=197;bottom=371;anchors={left=1;top=1};edge=1;tabstop=1;z=10};
+edit_SAP_client2={cls="edit";text="220";left=271;top=347;right=418;bottom=370;anchors={left=1;top=1};edge=1;tabstop=1;z=15};
+edit_SAP_language={cls="edit";text="ZH";left=49;top=378;right=196;bottom=401;anchors={left=1;top=1};edge=1;tabstop=1;z=11};
+edit_SAP_language2={cls="edit";text="ZH";left=270;top=377;right=417;bottom=400;anchors={left=1;top=1};edge=1;tabstop=1;z=16};
+edit_SAP_pw={cls="edit";text="password";left=50;top=272;right=197;bottom=295;anchors={left=1;top=1};edge=1;password=1;tabstop=1;z=8};
+edit_SAP_pw2={cls="edit";text="password";left=271;top=271;right=418;bottom=294;anchors={left=1;top=1};edge=1;password=1;tabstop=1;z=13};
+edit_SAP_system={cls="edit";text="C0P";left=51;top=310;right=198;bottom=333;anchors={left=1;top=1};edge=1;tabstop=1;z=9};
+edit_SAP_system2={cls="edit";text="P11";left=272;top=309;right=419;bottom=332;anchors={left=1;top=1};edge=1;tabstop=1;z=14};
+edit_SAP_user={cls="edit";text="username";left=50;top=238;right=197;bottom=261;anchors={left=1;top=1};edge=1;group=1;tabstop=1;z=7};
+edit_SAP_user2={cls="edit";text="username";left=271;top=237;right=418;bottom=260;anchors={left=1;top=1};edge=1;group=1;tabstop=1;z=12};
+groupbox={cls="groupbox";text="SAP一键登入1";left=28;top=220;right=245;bottom=412;anchors={left=1;top=1};edge=1;z=2};
+groupbox2={cls="groupbox";text="SAP一键登入2";left=247;top=220;right=467;bottom=412;anchors={left=1;top=1};edge=1;z=1};
+groupbox3={cls="groupbox";text="选项";left=31;top=47;right=470;bottom=194;anchors={left=1;top=1};edge=1;z=30};
+groupbox4={cls="groupbox";text="SAP订单收货";left=470;top=220;right=690;bottom=412;anchors={left=1;top=1};edge=1;z=24};
+hotkey={cls="hotkey";left=670;top=9;right=739;bottom=29;anchors={top=1;right=1};edge=1;z=19};
+keepRefreshSAPGUI={cls="checkbox";text="keepRefreshSAPGUI";left=206;top=141;right=447;bottom=158;anchors={left=1;top=1};z=18};
+listview={cls="listview";left=28;top=439;right=220;bottom=684;anchors={left=1;top=1;bottom=1};edge=1;z=31};
+simpleSAPmode={cls="checkbox";text="&simple SAP mode";left=42;top=143;right=178;bottom=175;anchors={left=1;top=1};tabstop=1;z=6};
+startupMinimized={cls="checkbox";text="startup &minimized";left=42;top=111;right=178;bottom=143;anchors={left=1;top=1};tabstop=1;z=5};
+static={cls="static";text="唤醒键";left=610;top=13;right=656;bottom=27;anchors={top=1;right=1};transparent=1;z=20};
+static3={cls="static";left=188;top=11;right=300;bottom=27;anchors={left=1;top=1};center=1;notify=1;transparent=1;z=23};
+static5={cls="static";text='\uF216  服务器:';left=19;top=14;right=89;bottom=33;align="right";anchors={left=1;top=1};font=LOGFONT(name='FontAwesome');transparent=1;z=22}
 )
 /*}}*/
 
@@ -72,10 +64,12 @@ winform.button.oncommand = function(id,event){
 	var oldKey = config.setbm.wakeUpKey; 
 	config.setbm.wakeUpKey = winform.hotkey.value;
 	
+/*
 	config.qtip.pdfLib = winform.edit.text;
 	config.qtip.qhcLib = winform.edit2.text;
 	config.qtip.cabinetModelServer = winform.edit3.text;
 	config.qtip.templateLib = winform.edit4.text;
+*/
 
 	config.setbm.save();
 	config.settings.save();
@@ -90,24 +84,40 @@ winform.button.oncommand = function(id,event){
 }
 
 
+import fsys.dlg;
+import JSON;
+
 winform.cbb_serverIndex.onSelChange = function(){ 
-	select(owner.selIndex) {
-		case 1 {
-			config.dbServer.path = "\\ccnsia1a\separts\Admin\SAP\db\";
-		}
-		case 2 {
-			config.dbServer.path = "\\CCNQIA05\temp-\LGP\_db\";
-		}
-		case 3 {
-			import fsys.dlg.dir;
-			var path = fsys.dlg.dir(,winform,"指定DB所在目录");
-			if !path return ; 
-			config.dbServer.path = io.joinpath(path,"\");
-		}
-	}
-	config.dbServer.save();
-	winform.static3.refresh();
+    var serverName;
+    select(owner.selIndex) {
+        case 1 {
+            config.dbServer.path = "\\ccnsia1a\separts\Admin\SAP\db\";
+            serverName = "shanghai";
+        }
+        case 2 {
+            config.dbServer.path = "\\CCNQIA05\temp-\LGP\_db\";
+            serverName = "qingdao";
+        }
+        case 3 {
+            import fsys.dlg.dir;
+            var path = fsys.dlg.dir(,winform,"指定DB所在目录");
+            if !path return ; 
+            config.dbServer.path = io.joinpath(path,"\");
+            serverName = "local"; //本地磁盘对应的值，可按需改成 "localdisk" 等
+        }
+    }
+    config.dbServer.save();
+
+    //更新 TBM.update.json（与 EXE 同目录）
+    if( serverName ){
+        var updateInfo = JSON.load("~\TBM.update.json") : {};
+        updateInfo.server = serverName;
+        JSON.save("~\TBM.update.json",updateInfo);
+    }
+
+    winform.static3.refresh();
 }
+
 
 winform.static3.refresh = function(id,event){
 	owner.text = thread.invokeAndWait(quickTools.getMainDbModifiedDate);
@@ -200,11 +210,13 @@ setupPasswordReveal(winform.edit_SAP_pw);
 setupPasswordReveal(winform.edit_SAP_pw2);
 
 
+/*
 winform.edit.text = config.qtip.pdfLib;
 winform.edit2.text = config.qtip.qhcLib;
 winform.edit3.text = config.qtip.cabinetModelServer;
 winform.edit4.text = config.qtip.templateLib;
 
+*/
 
 
 winform.show();

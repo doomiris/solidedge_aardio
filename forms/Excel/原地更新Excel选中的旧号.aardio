@@ -1,0 +1,92 @@
+import com;
+import console; 
+
+console.open();
+import domisoft;
+import config
+import QHC;
+import sqlite;
+var db = QHC.openDb(QHC.sap_db_path);
+
+/*
+# 获取当前Active Sheet里选中内容,
+# 只要是BG开头或H008开头的字串就认为是pnumber
+# 用类似以下语句查询名为:S4物料 的值
+# db.stepQuery("SELECT S4物料 FROM [所有物料]", {物料:pnumber} )
+# 原地替换为新的S4物料
+*/
+import com.excel;
+
+var excel = com.excel(false);
+if(!excel){
+    console.log("未检测到运行中的 Excel 实例！");
+    return;
+}
+
+if(!db){
+    console.log("数据库未成功连接！");
+    return;
+}
+
+var selection = excel.Selection;
+if(!selection){
+    console.log("当前未选中文档内容！");
+    return;
+}
+
+// 1. 创建内存缓存字典
+var matCache = {}; 
+
+var replaceCount = 0;
+var cacheHitCount = 0; // 统计缓存命中次数
+
+// 2. 临时关闭 Excel 屏幕更新与弹窗，大幅提升遍历写入速度
+excel.Application.ScreenUpdating = false;
+excel.alerts = false;
+
+import console.progress;
+var bar = console.progress()
+console.clearScreen();
+
+var count = selection.Count;
+for(i=1;count;1){
+    var cell = selection.Item(i);
+    var pnumber = cell.Value2 ? tostring(cell.Value2) : "";
+
+    if(string.startsWith(pnumber, "BG") || string.startsWith(pnumber, "H008")){
+        var s4Number = matCache[pnumber];
+
+        // 缓存未命中（尚未查询过该物料）
+        if(s4Number === null){
+            var result = db.stepQuery("SELECT 物料 FROM [所有物料]", {旧物料号 = pnumber});
+            if(result && result["物料"]){
+                s4Number = result["物料"];
+            }
+            else {
+                s4Number = false; // 标记未查到，防止后续对相同无效料号重复查库
+            }
+            matCache[pnumber] = s4Number; // 写入缓存
+        }
+        else {
+            cacheHitCount++; // 命中缓存
+        } 
+
+        // 如果存在对应的 S4 物料号则替换
+        if(s4Number){
+            cell.Value2 = s4Number;
+            replaceCount++;
+           // console.log("替换成功:", pnumber, "->", s4Number);
+        }
+        bar.setProgress(math.round(i*100/count), math.round(i*100/count) +"% processing ......");
+    }
+}
+
+// 3. 恢复 Excel 屏幕更新
+excel.Application.ScreenUpdating = true;
+excel.alerts = true;
+
+console.log("-----------------------------------------");
+console.log("处理完成！共替换:", replaceCount, "项");
+console.log("内存缓存命中:", cacheHitCount, "次");
+
+console.pause(true);

@@ -5,21 +5,21 @@ import fsys;
 /*DSG{{*/
 var winform = win.form(text="admin数据库刷新工具";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="import MM60";left=82;top=149;right=194;bottom=181;dl=1;dt=1;z=1};
-button2={cls="button";text="import excel";left=623;top=25;right=735;bottom=57;dr=1;dt=1;z=3};
-button3={cls="button";text="Merge && Publish";left=82;top=196;right=194;bottom=228;dl=1;dt=1;z=4};
-button4={cls="button";text="分发";left=617;top=249;right=729;bottom=281;dr=1;dt=1;z=5};
-button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=7};
-button6={cls="button";text="xlsx";left=202;top=149;right=250;bottom=181;dl=1;dt=1;z=8};
-button7={cls="button";text='\uF07C';left=574;top=79;right=606;bottom=111;dr=1;dt=1;font=LOGFONT(h=-16;name='FontAwesome');z=14};
-button8={cls="button";text="import S4 excel";left=625;top=78;right=737;bottom=110;dr=1;dt=1;z=15};
-checkbox1={cls="checkbox";text="Checkbox1";left=66;top=381;right=561;bottom=400;db=1;dl=1;z=10};
-checkbox2={cls="checkbox";text="Checkbox2";left=66;top=405;right=561;bottom=424;db=1;dl=1;z=11};
-checkbox3={cls="checkbox";text="Checkbox3";left=66;top=430;right=561;bottom=449;db=1;dl=1;z=12};
-edit={cls="edit";left=72;top=24;right=568;bottom=56;dl=1;dr=1;dt=1;edge=1;z=6};
-edit2={cls="edit";left=8;top=437;right=343;bottom=458;db=1;dl=1;hideSel=1;readonly=1;z=9};
-edit3={cls="edit";left=70;top=79;right=566;bottom=111;dl=1;dr=1;dt=1;edge=1;z=13};
-log={cls="richedit";left=288;top=144;right=568;bottom=367;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
+button={cls="button";text="import MM60";left=82;top=149;right=194;bottom=181;anchors={left=1;top=1};z=1};
+button2={cls="button";text="import excel";left=623;top=25;right=735;bottom=57;anchors={top=1;right=1};z=3};
+button3={cls="button";text="Merge && Publish";left=82;top=196;right=194;bottom=228;anchors={left=1;top=1};z=4};
+button4={cls="button";text="分发";left=617;top=249;right=729;bottom=281;anchors={top=1;right=1};z=5};
+button5={cls="button";text='\uF07C';left=576;top=24;right=608;bottom=56;anchors={top=1;right=1};font=LOGFONT(h=-16;name='FontAwesome');z=7};
+button6={cls="button";text="xlsx";left=202;top=149;right=250;bottom=181;anchors={left=1;top=1};z=8};
+button7={cls="button";text='\uF07C';left=574;top=79;right=606;bottom=111;anchors={top=1;right=1};font=LOGFONT(h=-16;name='FontAwesome');hide=1;z=14};
+button8={cls="button";text="import S4 excel";left=625;top=78;right=737;bottom=110;anchors={top=1;right=1};hide=1;z=15};
+checkbox1={cls="checkbox";text="Checkbox1";left=66;top=381;right=561;bottom=400;anchors={left=1;bottom=1};z=10};
+checkbox2={cls="checkbox";text="Checkbox2";left=66;top=405;right=561;bottom=424;anchors={left=1;bottom=1};z=11};
+checkbox3={cls="checkbox";text="Checkbox3";left=66;top=430;right=561;bottom=449;anchors={left=1;bottom=1};z=12};
+edit={cls="edit";left=72;top=24;right=568;bottom=56;anchors={left=1;top=1;right=1};edge=1;z=6};
+edit2={cls="edit";left=8;top=437;right=343;bottom=458;anchors={left=1;bottom=1};hideSel=1;readonly=1;z=9};
+edit3={cls="edit";left=70;top=79;right=566;bottom=111;anchors={left=1;top=1;right=1};edge=1;hide=1;z=13};
+log={cls="richedit";left=288;top=144;right=568;bottom=367;anchors={left=1;top=1;right=1;bottom=1};edge=1;multiline=1;z=2}
 )
 /*}}*/
 
@@ -92,23 +92,26 @@ var getFromSAP = function(winform){
 		session.findById("wnd[0]/tbar[0]/okcd").text = "mm60"
 		session.findById("wnd[0]/tbar[0]/btn[0]").press
 		session.findById("wnd[0]/usr/chkBEWFLG").selected = False
-		session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = "*"
-		session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "0841"
+		session.findById("wnd[0]/usr/ctxtMS_MATNR-LOW").text = ""
+		session.findById("wnd[0]/usr/ctxtMS_WERKS-LOW").text = "CN10"
 		session.findById("wnd[0]/tbar[1]/btn[8]").press
 		
 
 	*/
 		winform.log.print("开始下载清单...");
 	vm.script = /*
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").contextMenu
-		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").selectContextMenuItem "&XXL"
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").contextMenu
+		session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell/shellcont[1]/shell").selectContextMenuItem "&XXL"
+
+		session.findById("wnd[1]/usr/ssubSUB_CONFIGURATION:SAPLSALV_GUI_CUL_EXPORT_AS:0512/txtGS_EXPORT-FILE_NAME").text = "allcost"
+		session.findById("wnd[1]/tbar[0]/btn[20]").press		
+		
+		session.findById("wnd[1]/usr/ctxtDY_PATH").text = "D:\users\CCL100100\Work_Documents\SAP\SAP GUI"
+
 		
 		session.findById("wnd[1]/tbar[0]/btn[0]").press
-		session.findById("wnd[1]/usr/ctxtDY_FILENAME").text = "allcost.XLSX"
-		
 		session.findById("wnd[1]/tbar[0]/btn[11]").press
-		session.findById("wnd[0]/tbar[0]/btn[12]").press
-		session.findById("wnd[0]/tbar[0]/btn[12]").press
+		session.EndTransaction()
 	*/
 	winform.publish("getFromSAP",true);
 }
@@ -133,11 +136,11 @@ var dealWithXlsx = function(winform){
 	winform.log.print("删除旧数据 ...");
 	if db.existsTable("all_cost") db.exec("DROP table all_cost;");
 	db.exec("VACUUM");
-	db.exec("CREATE TABLE [all_cost](物料 TEXT collate nocase,物料描述 TEXT collate nocase,MTyp TEXT,物料组 TEXT,BUn TEXT,价格 NUMERIC,PGr TEXT);")  
+	db.exec("CREATE TABLE [all_cost](物料 TEXT collate nocase,物料描述 TEXT collate nocase,物料类型 TEXT,物料组 TEXT,基本计量单位 TEXT,价格 NUMERIC);")  
 	winform.log.print("写入新数据 ...");
 	db.beginTrans();
 	for (i=2; #rng) {
-		var cmd = db.prepare("INSERT INTO [all_cost] VALUES(@pcode,@textDesp,@mtype,@mgroup,@bun,@price,@pgr);");
+		var cmd = db.prepare("INSERT INTO [all_cost] VALUES(@pcode,@textDesp,@mtype,@mgroup,@bun,@price);");
 		var nl = rng[i];
 		cmd.step(
 			pcode = nl[1];
@@ -146,12 +149,10 @@ var dealWithXlsx = function(winform){
 			mgroup = nl[4];
 			bun = nl[5];
 			price = tonumber(..string.replace(nl[6],",",""));
-			pgr = nl[7]
 		)
 	}
-	db.commitTrans();
-	
-	db.exec("UPDATE `all_cost` SET PGr = null WHERE PGr = '';");
+	db.commitTrans();	
+
 	db.exec("UPDATE `all_cost` SET 价格 = null WHERE 价格 = 0;");
 	
 	winform.log.print("完成, 关闭数据库");
@@ -165,7 +166,7 @@ var dealWithXlsx = function(winform){
 /*}}*/
 subscribe("getFromSAP",function(...){
 	thread.invoke(dealWithXlsx, winform)
-} )
+})
 
 winform.button.oncommand = function(id,event){
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷";text="等待进程执行..."}
@@ -180,15 +181,16 @@ console.open();
 
 	import access.oleDb;
 	var adb = access(path);
-	if !adb.existsTable("Sheet1$")
-		winform.log.print("Sheet1$不存在...");
+	if !adb.existsTable("Data$")
+		winform.log.print("Data$不存在...");
 	winform.log.print("开始查询物料...");
 	var t = adb.getTable(`
 	SELECT
 		[物料], 
-		[是否禁用] AS [禁用],
-		[行业标准描述] AS [生产展平尺寸]
-	FROM [Sheet1$]
+		[旧物料号],
+		[工厂物料状态] AS [禁用],
+		[展开尺寸] AS [生产展平尺寸]
+	FROM [Data$]
 	WHERE
 		[物料] <>''
 	`);
@@ -196,16 +198,16 @@ console.open();
 	var f = adb.getTable(`
 		SELECT
 			[物料]
-		FROM [Sheet1$]
-		WHERE [是否禁用] = '禁用'
+		FROM [Data$]
+		WHERE [工厂物料状态] = '禁用'
 	`)
 	winform.log.print("开始查询展平尺寸...");
 	var p = adb.getTable(`
 		SELECT
 			[物料],
-			[行业标准描述] AS [生产展平尺寸]
-		FROM [Sheet1$]
-		WHERE [行业标准描述]<> ''
+			[展开尺寸] AS [生产展平尺寸]
+		FROM [Data$]
+		WHERE [展开尺寸]<> ''
 	`)
 
 	winform.log.print("关闭数据库...");
@@ -220,18 +222,20 @@ console.open();
 	if sdb.existsTable("qhc_export") sdb.exec("DROP table qhc_export");
 	sdb.exec("CREATE TABLE qhc_export( 
 		[物料] TEXT,
+		[旧物料号] TEXT,
 		[禁用] TEXT, 
 		[生产展平尺寸] TEXT,
 		UNIQUE (物料) 
 		);"
 	)
 	winform.log.print("添加新数据...");
-	var cmd = sdb.prepare("INSERT INTO [qhc_export] VALUES (?,?,?);");
+	var cmd = sdb.prepare("INSERT INTO [qhc_export] VALUES (?,?,?,?);");
 	
 	sdb.beginTrans();
 	for (i=1; #t){
 		cmd.step({
-			t[i]["物料"]
+			t[i]["物料"],
+			t[i]["旧物料号"]
 		})
 	}
 	
@@ -268,19 +272,16 @@ console.open();
 
 /*importFromQHCS4{{*/
 var importFromQHCS4 = function(winform, path){
-import console
-//console.open();
-
 	import access.oleDb;
 	var adb = access(path);
 	
 	var s4tab = adb.getTable(`
-	SELECT
-		[P11物料号] AS [物料], 
-		[S4物料]
-	FROM [新旧物料对应关系$]
+	SELECT		
+		[物料] AS [物料],
+		[旧物料号]
+	FROM [Data$]
 	WHERE
-		[P11物料号] <>''
+		[物料] <>''
 	`);
 
 	adb.close();
@@ -294,36 +295,86 @@ import console
 /*
 # 把s4tab内的数据写入sdb内的all_cost表
 # s4tab内的"物料" 对应all_cost表的"物料"列
-# 给all_cost添加一列:S4物料
+# 给all_cost添加一列:旧物料号
 # 有约20万行数据, 所以注意效率问题;
 */
 
-	if(!sdb.existsTable("all_cost")){
-		winform.log.print("错误：all_cost 表不存在，请先导入 excel !");
-		sdb.close();
-		return;
-	}
-
-	winform.log.print("为 all_cost 表添加 S4物料 列...");
-	try{
-		sdb.exec("ALTER TABLE [all_cost] ADD COLUMN [S4物料] TEXT;");
-	}
-	
-	winform.log.print("建立临时索引以提高海量数据更新效率...");
-	sdb.exec("CREATE INDEX IF NOT EXISTS idx_allcost_mat ON [all_cost](物料 collate nocase);");
-	
-	winform.log.print("正在循环写入 S4 物料数据，请稍候...");
-	sdb.beginTrans();
-	var cmd = sdb.prepare("UPDATE [all_cost] SET [S4物料]=@s4 WHERE [物料]=@mat;");
-	for (i=1; #s4tab){
-		var item = s4tab[i];
-		cmd.step(
-			s4 = item["S4物料"];
-			mat = item["物料"]
-		)
-	}
-	sdb.commitTrans();
-	s4tab = null;
+		//检查列是否存在，不要依靠 try 忽略 ALTER TABLE 错误
+		var hasOldMaterial = false;
+		var columns = sdb.getTable("PRAGMA table_info([all_cost]);");
+		
+		for i,col in columns {
+    		if(col.name === "旧物料号"){
+        		hasOldMaterial = true;
+        		break;
+    		}
+		}
+		
+		if(!hasOldMaterial){
+    		sdb.exec("ALTER TABLE [all_cost] ADD COLUMN [旧物料号] TEXT;");
+		}
+		
+		//临时表仅在当前连接中存在，不写入正式数据库结构
+		sdb.exec(`
+    		CREATE TEMP TABLE [s4_material_map](
+        		[物料] TEXT COLLATE NOCASE PRIMARY KEY,
+        		[旧物料号] TEXT
+    		);
+		`);
+		
+		winform.log.print("写入临时物料对应表...");
+		var started = time.tick();
+		
+		sdb.beginTrans();
+		
+		var cmd = sdb.prepare(`
+    		INSERT OR REPLACE INTO temp.[s4_material_map]
+        		([物料], [旧物料号])
+    		VALUES (@mat, @oldMat);
+		`);
+		
+		for(i=1; #s4tab){
+    		var item = s4tab[i];
+		
+    		cmd.step(
+        		mat = item["物料"];
+        		oldMat = item["旧物料号"]
+    		);
+		}
+		
+		sdb.commitTrans();
+		
+		winform.log.print(
+    		"临时表写入完成：",time.tick()-started,"毫秒"
+		);
+		
+		s4tab = null;
+		
+		winform.log.print("批量更新 all_cost...");
+		started = time.tick();
+		
+		sdb.beginTrans();
+		
+		sdb.exec(`
+    		UPDATE [all_cost]
+    		SET [旧物料号] = (
+        		SELECT m.[旧物料号]
+        		FROM temp.[s4_material_map] AS m
+        		WHERE m.[物料] = [all_cost].[物料]
+    		)
+    		WHERE EXISTS (
+        		SELECT 1
+        		FROM temp.[s4_material_map] AS m
+        		WHERE m.[物料] = [all_cost].[物料]
+    		);
+		`);
+		
+		sdb.commitTrans();		
+		winform.log.print(
+    		"批量更新完成：",time.tick()-started,"毫秒"
+		);
+		
+		sdb.exec("DROP TABLE temp.[s4_material_map];");
 
 
 
@@ -351,10 +402,8 @@ var mergeDb = function(winform){
 	import win;
 	import config;
 	import sqlite;
-/*
 import console
 console.open();
-*/
 	var step_db = sqlite(winform.stepDBpath);
 
 	
@@ -366,12 +415,11 @@ console.open();
 		SELECT
 			all_cost.物料,
 			all_cost.物料描述, 
-			all_cost.MTyp, 
+			all_cost.物料类型, 
 			all_cost.物料组, 
-			all_cost.BUn, 
+			all_cost.基本计量单位, 
 			all_cost.价格, 
-			all_cost.PGr, 
-			all_cost.S4物料, 
+			qhc_export.旧物料号, 
 			qhc_export.禁用,
 			qhc_export.生产展平尺寸 
 		FROM all_cost
@@ -393,12 +441,11 @@ console.open();
 		CREATE TABLE 所有物料 (
 			物料 TEXT UNIQUE COLLATE NOCASE,
 			物料描述 TEXT COLLATE NOCASE,
-			MTyp TEXT, 
+			物料类型 TEXT, 
 			物料组 TEXT, 
-			BUn TEXT, 
+			基本计量单位 TEXT, 
 			价格 NUMERIC, 
-			PGr TEXT, 
-			S4物料 TEXT,
+			旧物料号 TEXT,
 			禁用 TEXT,
 			生产展平尺寸 TEXT,
 			PRIMARY KEY(物料)
@@ -429,17 +476,19 @@ console.open();
 	var x = tarray.transpose(t)
 	if table.find(x,"物料"){
 		db.exec("REINDEX 物料;")
+		db.exec("REINDEX 旧物料号;")
 		db.exec("REINDEX 物料描述;")
-		db.exec("REINDEX MTyp;")
+		db.exec("REINDEX 物料类型;")
 		db.exec("REINDEX 物料组;")
-		db.exec("REINDEX BUn;")
+		db.exec("REINDEX 基本计量单位;")
 	//	db.exec("REINDEX 禁用;")
 	}else{
 		db.exec("CREATE UNIQUE INDEX 物料 on 所有物料 (物料 collate nocase);")
+		db.exec("CREATE INDEX 旧物料号 on 所有物料 (旧物料号 collate nocase);")
 		db.exec("CREATE INDEX 物料描述 on 所有物料 (物料描述 collate nocase);")
-		db.exec("CREATE INDEX MTyp on 所有物料 (MTyp);")
+		db.exec("CREATE INDEX 物料类型 on 所有物料 (物料类型);")
 		db.exec("CREATE INDEX 物料组 on 所有物料 (物料组);")
-		db.exec("CREATE INDEX BUn on 所有物料 (BUn);")
+		db.exec("CREATE INDEX 基本计量单位 on 所有物料 (基本计量单位);")
 	//	db.exec("CREATE INDEX 禁用 on 所有物料 (禁用);")
 	}
 	
@@ -460,8 +509,6 @@ winform.button3.oncommand = function(id,event){
 }
 
 winform.button4.oncommand = function(id,event){
-
-
 	var fileList = {
 		"qhc_product_info_lib.db", 
 		"drawing_lists.db", 
@@ -493,7 +540,8 @@ winform.button4.oncommand = function(id,event){
 getXlsxDbPath = function(){
 	import fsys;
 	if !io.exist(config.admin.lastWorkingFolder) return null; 
-	var list = fsys.list(/*config.admin.lastWorkingFolder*/"\\ccnqia05\temp-\SAP每周物料导出\",,"SAP所有物料*.xlsx");
+	var list = fsys.list(config.admin.lastWorkingFolder,,"SAP所有物料*.xlsx");
+	config.admin.save();
 	if #list 
 		return list[list[#list]]; 
 }

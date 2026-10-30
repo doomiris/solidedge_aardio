@@ -1,0 +1,951 @@
+﻿import fsys.dlg;
+import fsys;
+import fsys.lnk;
+import fsys.dlg.dir;
+import fsys.version;
+import win.ui;
+import win.dlg.message;
+import fonts.fontAwesome;
+import process;
+import crypt;
+import JSON;
+
+namespace domisoft.localUpdate{
+
+    // 服务器标识会保存到本地，不直接从配置文件执行任意路径。
+    var servers = {
+        shanghai = {
+            name = "Shanghai Office";
+            dir = "\\ccnsia1a\separts\Admin\Addons\update";
+        };
+        qingdao = {
+            name = "Qingdao Office";
+            dir = "\\CCNQIA05\temp-\LGP\TBM\update";
+        };
+    }
+
+    // 需要从服务器 update 上一层目录（..\）自动同步到本地 EXE 同级的文件夹列表
+    // 后续如需增加其它文件夹（例如 "res", "plugins" 等），直接在此数组中添加名称即可
+    var syncFolderNames = [
+        "lib",
+        "ext"
+    ];
+
+    // 独立于 TBM.ini，正常更新不会覆盖。
+    var configFileName = "TBM.update.json";
+
+    // 判断 EXE 是否位于 UNC 共享或映射网络盘。
+    var isNetworkPath = function(path){
+        if(..string.left(path,2) === "\\"){
+            return true;
+        }
+
+        var rootPath = ..string.left(path,3);
+
+        return ::Kernel32.GetDriveTypeW(rootPath)
+            == 4/*_DRIVE_REMOTE*/;
+    }
+
+    // 静默创建桌面快捷方式，如果已存在则按新路径重新创建
+    var ensureDesktopShortcut = function(targetPath){
+        var desktopDir = ..io.getSpecial(0/*_CSIDL_DESKTOP*/);
+        var lnkPath = ..io.joinpath(desktopDir, "TBM.lnk");
+        if(..io.exist(lnkPath)){
+            ..io.remove(lnkPath);
+        }
+        lnkPath = ..io.joinpath(desktopDir, "SE_TBM.lnk");
+        if(..io.exist(lnkPath)){
+            ..io.remove(lnkPath);
+        }
+        var lnk = ..fsys.lnk();
+        lnk.filename = "SE_TBM.lnk";
+        lnk.path = targetPath;
+        lnk.workDir = ..io.splitpath(targetPath).dir;
+        lnk.description = "domisoft SE_TBM tool";
+        lnk.setIcon(targetPath, 0);
+        lnk.pinToDesktop(true);
+    }
+
+    /*
+    【窗口 1】：选择服务器与安装目录弹窗（上海 / 青岛 / 更改目录）
+    - 当传入 defaultTargetDir 时（安装模式）：显示本地安装目录，并在左下角提供「更改目录...」按钮
+    */
+    var selectServer = function(winform, defaultTargetDir){
+        
+        var targetDir = defaultTargetDir;
+        var targetPath = ..io.joinpath(targetDir, "SE_TBM.exe");
+        var isInstall = (targetDir != null);
+        var dlgH = isInstall ? 265 : 195;
+
+        var dlg = ..win.form(
+            text = isInstall ? "安装 TBM 到本地硬盘" : "选择 TBM 更新服务器";
+            right = 490; bottom = dlgH;
+            border = "dialog frame"; max = false; min = false;
+            parent = winform; bgcolor = 0xFFFFFF
+        );
+
+        var buildPromptText = function(){
+            var prefix = "";
+            if(targetDir){
+                prefix = '当前程序从网络共享启动，必须先安装到本地硬盘才能运行。\r\n'
+                    ++ '安装路径：' ++ ..io.joinpath(targetDir, "SE_TBM.exe") ++ '\r\n'
+                    ++ '（如果本地 TBM 正在运行，请先关闭它）\r\n\r\n';
+            }
+            return prefix
+                ++ '请选择 TBM 的安装及后续更新服务器：\r\n\r\n'
+                ++ '【Shanghai】' ++ servers.shanghai.dir ++ '\r\n'
+                ++ '【Qingdao】 ' ++ servers.qingdao.dir ++ '\r\n\r\n'
+                ++ '所选服务器会自动保存，后续更新使用同一服务器。';
+        }
+
+        // 只保留选择服务器与更改目录相关的控件
+        dlg.add(
+            lblIcon = {
+                cls="plus";left=20;top=18;right=56;bottom=54;
+                color=0xD47800;
+                font=LOGFONT(h=-28;name='FontAwesome');
+                iconText='\uF05A';valign="top";z=1
+            };
+            lblPrompt = {
+                cls="static";text=buildPromptText();
+                left=62;top=20;right=470;bottom=dlgH - 60;
+                color=0x333333;font=LOGFONT(h=-13);transparent=1;z=2
+            };
+            btnBrowse = {
+                cls="plus";text="更改目录...";
+                left=20;top=dlgH - 48;right=135;bottom=dlgH - 14;
+                align="left";textPadding={left=32};
+                iconText='\uF07C';
+                iconStyle={align="left";font=LOGFONT(h=-14;name='FontAwesome');padding={left=12}};
+                bgcolor=0xF0F0F0;color=0x333333;
+                border={radius=4;color=0xCCCCCC;width=1};
+                font=LOGFONT(h=-13); hide = !isInstall; notify=1;z=3
+            };
+            btnQingdao = {
+                cls="plus";text="Qingdao";
+                left=232;top=dlgH - 48;right=347;bottom=dlgH - 14;
+                align="left";textPadding={left=34};
+                iconText='\uF1AD';
+                iconStyle={align="left";font=LOGFONT(h=-14;name='FontAwesome');padding={left=12}};
+                bgcolor=0xD47800;color=0xFFFFFF;
+                border={radius=4};font=LOGFONT(h=-13);notify=1;z=4
+            };
+            btnShanghai = {
+                cls="plus";text="Shanghai";
+                left=359;top=dlgH - 48;right=474;bottom=dlgH - 14;
+                align="left";textPadding={left=34};
+                iconText='\uF1AD';
+                iconStyle={align="left";font=LOGFONT(h=-14;name='FontAwesome');padding={left=12}};
+                bgcolor=0xD47800;color=0xFFFFFF;
+                border={radius=4};font=LOGFONT(h=-13);notify=1;z=5
+            }
+            lblIcon = {
+                cls="plus";left=24;top=22;right=64;bottom=62;
+                color=0x2EA043;
+                font=LOGFONT(h=-32;name='FontAwesome');
+                iconText='\uF058';valign="top";z=1
+            };
+
+);
+
+        var serverBtnSkin = {
+            background = { default = 0xFF0078D4; hover = 0xFF1084D9; active = 0xFF005A9E };
+            color = { default = 0xFFFFFFFF }
+        };
+        dlg.btnShanghai.skin(serverBtnSkin);
+        dlg.btnQingdao.skin(serverBtnSkin);
+
+        if(isInstall){
+            dlg.btnBrowse.skin({
+                background = { default = 0xFFF0F0F0; hover = 0xFFE0EEF9; active = 0xFFCDE4F7 };
+                color = { default = 0xFF333333; hover = 0xFF0067B8; active = 0xFF004578 }
+            });
+
+            dlg.btnBrowse.oncommand = function(){
+                var newDir = ..fsys.dlg.dir(targetDir, dlg, "请选择 TBM 本地安装目录");
+                if(newDir){
+                    if(isNetworkPath(newDir)){
+                        ..win.dlg.message(dlg).err("不能选择网络共享盘，请选择本地硬盘目录！");
+                        return;
+                    }
+                    targetDir = newDir;
+                    dlg.lblPrompt.text = buildPromptText();
+                }
+            }
+        }
+
+        var choice = null;
+        dlg.btnShanghai.oncommand = function(){
+            choice = "shanghai";
+            dlg.endModal();
+        }
+        dlg.btnQingdao.oncommand = function(){
+            choice = "qingdao";
+            dlg.endModal();
+        }
+
+        dlg.center(winform);
+        dlg.doModal();
+        return choice, targetDir;
+    }
+
+    /*
+    【窗口 2】：安装成功弹窗
+    - 拥有独立的 dlg.add()
+    - 包含默认勾选的复选框「立即运行 TBM 程序」
+    - 点击「确定」按钮返回复选框的状态 (true/false)
+    */
+    var showInstallSuccess = function(winform, targetPath){
+        var dlg = ..win.form(
+            text = "安装成功";
+            right = 420; bottom = 200;
+            border = "dialog frame"; max = false; min = false;
+            parent = winform; bgcolor = 0xFFFFFF
+        );
+        dlg.add(
+            lblTitle = {
+                cls="static";text="TBM 已成功安装到本地硬盘！";
+                left=72;top=24;right=400;bottom=48;
+                color=0x222222;font=LOGFONT(h=-15;weight=600);transparent=1;z=2
+            };
+            lblPath = {
+                cls="static";text="安装位置：" ++ targetPath;
+                left=72;top=52;right=400;bottom=90;
+                color=0x666666;font=LOGFONT(h=-12);transparent=1;z=3
+            };
+            chkLaunch = {
+                cls="plus";text="立即运行 TBM 程序";
+                left=130;top=100;right=310;bottom=130;
+                align="left";textPadding={left=26};
+                font=LOGFONT(h=-14);
+                iconStyle={align="left";font=LOGFONT(h=-16;name='FontAwesome')};
+                iconText='\uF0C8';
+                notify=1;z=4
+            };
+            btnOk = {
+                cls="plus";text="确定";
+                left=305;top=150;right=396;bottom=182;
+                bgcolor=0xD47800;color=0xFFFFFF;
+                border={radius=4};font=LOGFONT(h=-13);notify=1;z=5
+            }
+        )
+
+        dlg.chkLaunch.skin({
+            color = {
+                default = 0xFF333333;
+                hover = 0xFF0078D4;
+                active = 0xFF005A9E;
+            };
+            iconColor = {
+                default = 0xFF666666;
+                hover = 0xFF0078D4;
+            };
+            checked = {
+                iconText = '\uF14A';
+                iconColor = {
+                    default = 0xFF0078D4;
+                    hover = 0xFF1084D9;
+                }
+            }
+        });
+
+        dlg.chkLaunch.checked = true;
+
+        dlg.btnOk.skin({
+            background = { default = 0xFF0078D4; hover = 0xFF1084D9; active = 0xFF005A9E };
+            color = { default = 0xFFFFFFFF }
+        });
+
+        var runNow = false;
+        dlg.btnOk.oncommand = function(){
+            runNow = dlg.chkLaunch.checked;
+            dlg.endModal();
+        }
+
+        dlg.center(winform);
+        dlg.doModal();
+        return runNow;
+    }
+
+    // 保存到 EXE 同目录。
+    var saveServer = function(configPath,serverKey){
+        return ..string.save(
+            configPath,
+            ..JSON.stringify({
+                server = serverKey;
+            })
+        );
+    }
+
+    // 删除本程序创建的独立临时目录。
+    var cleanupStage = function(stagePath){
+        if(!stagePath) return;
+
+        var stageDir = ..io.splitpath(stagePath).dir;
+        if(..io.exist(stageDir)){
+            ..fsys.delete(stageDir);
+        }
+    }
+
+    /*
+    工作线程函数：
+    - 无外部局部变量、闭包依赖。
+    - 每次执行时，自动将服务器 update 上一层的所有指定目录（如 lib, ext 等）直接增量同步到本地目录（含子目录与清理多余文件）。
+    - 检查四段文件版本。
+    - 将 EXE 复制到独立临时目录。
+    - 仅安装时复制服务器同目录下的 TBM.ini。
+    */
+    var prepareUpdate = function(sourcePath,currentPath,installMode,targetDir,folderList){
+        import fsys;
+        import ..fsys.version;
+        import ..fsys.path;
+
+        // 获取文件特征（大小 + 修改时间秒数），用于增量比对
+        var getFileMeta = function(findData){
+            var tm = ..time();
+            tm.fromFileTime(findData.ftLastWriteTime);
+            return {
+                sizeHigh = findData.nFileSizeHigh;
+                sizeLow = findData.nFileSizeLow;
+                mtime = tonumber(tm);
+            };
+        }
+
+        // 内部函数：同步单个目录（服务器 ..\folderName -> 本地 destBaseDir\folderName）
+        var syncSingleFolder = function(serverParentDir, destBaseDir, folderName){
+            var serverFolder = ..fsys.path.canonicalize(..io.joinpath(serverParentDir, folderName));
+            if(!..fsys.isDir(serverFolder)) return true; // 服务器上不存在该目录则直接跳过
+
+            var localFolder = ..io.joinpath(destBaseDir, folderName);
+            ..io.createDir(localFolder);
+
+            // 1. 扫描本地现有的目录结构与文件特征
+            var localFiles = {};
+            var localDirs = {};
+            if(..fsys.isDir(localFolder)){
+                ..fsys.enum(localFolder, "*.*", function(dirname, filename, fullpath, findData){
+                    var relPath = ..fsys.path.relative(fullpath, localFolder, false);
+                    if(!relPath) return;
+                    var key = ..string.lower(relPath);
+                    if(filename){
+                        var meta = getFileMeta(findData);
+                        meta.relPath = relPath;
+                        localFiles[key] = meta;
+                    }
+                    else {
+                        localDirs[key] = relPath;
+                    }
+                }, true);
+            }
+
+            // 2. 扫描服务器目录，直接将新增或变更的文件复制到本地
+            var serverFiles = {};
+            var serverDirs = {};
+            var syncOk = true;
+            var syncErr = null;
+
+            ..fsys.enum(serverFolder, "*.*", function(dirname, filename, fullpath, findData){
+                var relPath = ..fsys.path.relative(fullpath, serverFolder, false);
+                if(!relPath) return;
+                var key = ..string.lower(relPath);
+
+                if(filename){
+                    serverFiles[key] = true;
+                    var sMeta = getFileMeta(findData);
+                    var lMeta = localFiles[key];
+
+                    // 判断文件是否不存在、大小不一致或修改时间相差超过 2 秒
+                    var needCopy = false;
+                    if(!lMeta){
+                        needCopy = true;
+                    }
+                    elseif(lMeta.sizeHigh != sMeta.sizeHigh || lMeta.sizeLow != sMeta.sizeLow){
+                        needCopy = true;
+                    }
+                    elseif(..math.abs((lMeta.mtime : 0) - (sMeta.mtime : 0)) > 2){
+                        needCopy = true;
+                    }
+
+                    if(needCopy){
+                        var destFile = ..io.joinpath(localFolder, relPath);
+                        ..io.createDir(..io.splitpath(destFile).dir);
+                        var ok, cpErr = ..fsys.copy(fullpath, destFile);
+                        if(!ok && installMode){
+                            syncOk = false;
+                            syncErr = "无法同步目录 [" ++ folderName ++ "] 下的文件：" ++ relPath ++ '\r\n' ++ tostring(cpErr);
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    serverDirs[key] = true;
+                    ..io.createDir(..io.joinpath(localFolder, relPath));
+                }
+            }, true);
+
+            if(!syncOk) return false, syncErr;
+
+            // 3. 清理本地存在但服务器上已删除的多余文件与目录
+            for k, v in localFiles {
+                if(!serverFiles[k]){
+                    var delFile = ..io.joinpath(localFolder, v.relPath);
+                    if(..io.exist(delFile)) ..fsys.delete(delFile);
+                }
+            }
+
+            var removeDirs = [];
+            for k, relPath in localDirs {
+                if(!serverDirs[k]){
+                    ..table.push(removeDirs, relPath);
+                }
+            }
+            // 按路径长度降序排列，确保先删深层子目录
+            ..table.sort(removeDirs, lambda(next) #owner > #next);
+            for(i=1; #removeDirs){
+                var delDir = ..io.joinpath(localFolder, removeDirs[i]);
+                if(..io.exist(delDir)) ..fsys.delete(delDir);
+            }
+
+            return true;
+        }
+
+        // 批量同步 folderList 中配置的所有文件夹（如 lib, ext 等）
+        var syncAllFolders = function(srcExePath, destBaseDir, folders){
+            if(!#folders) return true;
+            var sourceDir = ..io.splitpath(srcExePath).dir;
+            var serverParentDir = ..fsys.path.canonicalize(..io.joinpath(sourceDir, ".."));
+
+            for(i=1; #folders){
+                var folderName = folders[i];
+                if(#folderName){
+                    var ok, err = syncSingleFolder(serverParentDir, destBaseDir, folderName);
+                    if(!ok) return false, err;
+                }
+            }
+            return true;
+        }
+
+        // 确定本地基础目录（安装模式用 targetDir，本地检查模式用当前 EXE 所在目录）
+        var localBaseDir = targetDir : ..io.splitpath(currentPath).dir;
+
+        // 后台检查更新时，直接自动同步所有配置的文件夹（无需等待用户手动点击更新 EXE）
+        if(!installMode){
+            syncAllFolders(sourcePath, localBaseDir, folderList);
+        }
+
+        var getVersion = function(path){
+            var info = ..fsys.version.getInfo(path);
+            var version = info[["fileVersion"]];
+
+            if(!version){
+                return null,"无法读取文件版本：" ++ path;
+            }
+
+            if(!version.valid()){
+                return null,"文件版本无效：" ++ path;
+            }
+
+            return version;
+        }
+
+        var sourceVersion,err = getVersion(sourcePath);
+        if(!sourceVersion) return "failed",err;
+
+        var fields = ["major","minor","build","revision"];
+
+        if(!installMode){
+            var currentVersion,currentErr = getVersion(currentPath);
+            if(!currentVersion) return "failed",currentErr;
+
+            var comparison = 0;
+
+            for(i=1;#fields){
+                var field = fields[i];
+
+                if(sourceVersion[field] > currentVersion[field]){
+                    comparison = 1;
+                    break;
+                }
+                elseif(sourceVersion[field] < currentVersion[field]){
+                    comparison = -1;
+                    break;
+                }
+            }
+
+            if(comparison <= 0) return "latest";
+        }
+
+        var stageDir,dirErr = ..io.createDir(
+            ..io.joinpath(..io.getSpecial(0x1c/*_CSIDL_LOCAL_APPDATA*/), "domisoft\SETBM\update")
+        );
+        if(!stageDir) return "failed",dirErr;
+
+        var stagePath = ..io.joinpath(stageDir,"SE_TBM.exe");
+
+        var copied,copyErr = ..fsys.copy(sourcePath,stagePath);
+        if(!copied){
+            ..fsys.delete(stageDir);
+            return "failed",copyErr;
+        }
+
+        var stagedVersion,versionErr = getVersion(stagePath);
+        if(!stagedVersion){
+            ..fsys.delete(stageDir);
+            return "failed",versionErr;
+        }
+
+        for(i=1;#fields){
+            var field = fields[i];
+
+            if(stagedVersion[field] != sourceVersion[field]){
+                ..fsys.delete(stageDir);
+
+                return "failed",
+                    "复制期间服务器程序版本发生变化，请稍后重试。";
+            }
+        }
+
+        var stageIniPath;
+
+        if(installMode){
+            var sourceDir = ..io.splitpath(sourcePath).dir;
+            var sourceIniPath = ..io.joinpath(sourceDir,"TBM.ini");
+
+            stageIniPath = ..io.joinpath(stageDir,"TBM.ini");
+
+            var iniCopied,iniErr = ..fsys.copy(
+                sourceIniPath,stageIniPath
+            );
+
+            if(!iniCopied){
+                ..fsys.delete(stageDir);
+
+                return "failed",
+                    "无法复制服务器配置文件：" ++ sourceIniPath
+                        ++ '\r\n' ++ tostring(iniErr);
+            }
+
+            // 安装模式下：同时将服务器 ..\ 下的配置文件夹（lib, ext 等）同步到目标安装目录
+            var syncOk, syncErr = syncAllFolders(sourcePath, localBaseDir, folderList);
+            if(!syncOk){
+                ..fsys.delete(stageDir);
+                return "failed", syncErr;
+            }
+        }
+
+        return "ready",
+            tostring(stagedVersion,"%d.%d.%d.%d"),
+            stagePath,
+            stageIniPath;
+    }
+
+    var psQuote = function(value){
+        return "'" ++ ..string.replaceLiteral(
+            value,"'","''"
+        ) ++ "'";
+    }
+
+    /*
+    启动独立更新进程：
+    等待当前进程退出，替换 EXE，然后启动新版。
+    */
+    var startUpdater = function(stagePath,targetPath,pid){
+        var script = /**
+$ErrorActionPreference = 'Stop'
+
+function Show-UpdateError([string] $message) {
+    Add-Type -AssemblyName System.Windows.Forms
+    [System.Windows.Forms.MessageBox]::Show(
+        $message,
+        'TBM 更新失败'
+    ) | Out-Null
+}
+
+try {
+    $deadline = (Get-Date).AddSeconds(60)
+
+    while (Get-Process -Id $oldPid -ErrorAction SilentlyContinue) {
+        if ((Get-Date) -gt $deadline) {
+            throw '主程序未能退出，请关闭 TBM 后重新检查更新。'
+        }
+
+        Start-Sleep -Milliseconds 300
+    }
+
+    $targetDir = [System.IO.Path]::GetDirectoryName($target)
+
+    # 中间文件保持 SE_TBM.exe 这个名字，只是放在不同目录
+    $incomingDir = Join-Path $targetDir 'SE_TBM_update'
+    $backupDir   = Join-Path $targetDir 'SE_TBM_backup'
+
+    $incoming = Join-Path $incomingDir 'SE_TBM.exe'
+    $backup   = Join-Path $backupDir   'SE_TBM.exe'
+
+    # 准备 incoming 目录
+    if (Test-Path -LiteralPath $incomingDir) {
+        Remove-Item -LiteralPath $incomingDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    New-Item -ItemType Directory -Path $incomingDir -Force | Out-Null
+
+    # 准备 backup 目录
+    if (Test-Path -LiteralPath $backupDir) {
+        Remove-Item -LiteralPath $backupDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+
+    # 复制新版到 incoming（文件名仍是 SE_TBM.exe）
+    [System.IO.File]::Copy($stage, $incoming, $true)
+
+    $replaced = $false
+    $lastError = ''
+
+    for ($i = 0; $i -lt 20; $i++) {
+        try {
+            # 用 Move 替换：先把旧版移到 backup，再把新版移到位
+            # 这样目标位置始终是 SE_TBM.exe
+            if (Test-Path -LiteralPath $target) {
+                [System.IO.File]::Replace($incoming, $target, $backup)
+            }
+            else {
+                [System.IO.File]::Move($incoming, $target)
+            }
+            $replaced = $true
+            break
+        }
+        catch {
+            $lastError = $_.Exception.Message
+            Start-Sleep -Milliseconds 500
+        }
+    }
+
+    if (-not $replaced) {
+        throw ('无法替换程序文件：' + $lastError)
+    }
+
+    try {
+        Start-Process -FilePath $target -WorkingDirectory $targetDir
+    }
+    catch {
+        $launchError = $_.Exception.Message
+        $restoreError = ''
+
+        try {
+            [System.IO.File]::Copy($backup, $target, $true)
+        }
+        catch {
+            $restoreError = $_.Exception.Message
+        }
+
+        if ($restoreError) {
+            throw (
+                '新版启动失败：' + $launchError +
+                "`r`n恢复旧版失败：" + $restoreError +
+                "`r`n旧版备份：" + $backup
+            )
+        }
+
+        throw (
+            '新版启动失败，已恢复旧版程序：' + $launchError +
+            "`r`n请手动重新启动 TBM。"
+        )
+    }
+
+    # 清理备份目录与临时目录
+    Remove-Item -LiteralPath $incomingDir -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $backupDir -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath ([System.IO.Path]::GetDirectoryName($stage)) `
+        -Recurse -Force -ErrorAction SilentlyContinue
+}
+catch {
+    Show-UpdateError (
+        $_.Exception.Message +
+        "`r`n`r`n更新文件保留在：" + $stage
+    )
+}
+**/;
+
+        script = "$stage = " ++ psQuote(stagePath) ++ '\r\n'
+            ++ "$target = " ++ psQuote(targetPath) ++ '\r\n'
+            ++ "$oldPid = " ++ tostring(pid) ++ '\r\n'
+            ++ script;
+
+        var encoded = ..crypt.encodeBin(
+            ..string.fromto(script,65001,1200)
+        );
+
+        var powershellPath = ..string.expand(
+            "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
+        );
+
+        return ..process.shell(
+            powershellPath,
+            "-NoProfile -NonInteractive -WindowStyle Hidden -EncodedCommand "
+                ++ encoded
+        );
+    }
+
+    // 内部状态：缓存已准备好的更新包信息与状态栏超链接控件
+    var pendingUpdate = null;
+    var checkingUpdate = false;
+    var updateLinkCtrl = null;
+
+    // 供用户点击超链接或直接调用以完成重启更新
+    applyPendingUpdate = function(winform){
+        if(!pendingUpdate) return false;
+
+        var msgDlg = ..win.dlg.message(winform);
+        if(!msgDlg.ask(
+            "服务器：" ++ pendingUpdate.serverName
+                ++ '\r\n发现新版本：' ++ pendingUpdate.version
+                ++ '\r\n\r\n新版已准备就绪，是否现在重启 TBM 完成更新？'
+        )){
+            return false;
+        }
+
+        var currentPath = ..io._exepath;
+        var currentPid = ::Kernel32.GetCurrentProcessId();
+
+        var updater = startUpdater(
+            pendingUpdate.stagePath, currentPath, currentPid
+        );
+
+        if(!updater){
+            msgDlg.err("无法启动更新进程，将继续运行当前程序。");
+            return false;
+        }
+
+        // 已移交独立更新进程，清空引用避免在 onDestroy 中被误删
+        pendingUpdate = null;
+        winform.isExiting = true;  
+        winform.close();
+        return true;
+    }
+
+    // 直接复用主窗口已有的 syslink 控件显示更新提示
+    var showUpdateLink = function(winform, version, serverName){
+        var linkCtrl = winform.syslink;
+        if(!linkCtrl) return;
+
+        // 取消隐藏并修改文本（syslink 用 <a> 标签显示超链接）
+        linkCtrl.hide = false;
+        linkCtrl.text = '发现新版本 v' ++ version ++ ' <a href="update">[点击更新]</a>';
+
+        // 只绑定一次点击事件
+        if(!updateLinkCtrl){
+            updateLinkCtrl = linkCtrl;
+            linkCtrl.onHyperlinkClick = function(nmSysLink,url,id,index){
+                applyPendingUpdate(winform);
+            }
+        }
+    }
+
+    // 异步后台检查更新（不阻塞界面，同时在后台自动同步配置的文件夹列表）
+    checkAsync = function(winform, server){
+        if(checkingUpdate) return;
+        checkingUpdate = true;
+
+        var sourcePath = ..io.joinpath(server.dir, "SE_TBM.exe");
+        var currentPath = ..io._exepath;
+
+        ..thread.invoke(
+            function(winform, prepareUpdate, sourcePath, currentPath, serverName, folderList){
+                var status, detail, stagePath = prepareUpdate(sourcePath, currentPath, false, null, folderList);
+                if(winform && winform.onUpdateCheckComplete){
+                    winform.onUpdateCheckComplete(status, detail, stagePath, serverName);
+                }
+            },
+            winform, prepareUpdate, sourcePath, currentPath, server.name, syncFolderNames
+        );
+    }
+
+    /*
+    必须在 main.aardio 的界面线程调用。
+    - 如果是从网络共享启动（强制安装模式）：通知并允许自定义本地安装位置，无论成功或取消都返回 true（主程序应当退出，禁止在网络共享上直接运行）。
+    - 如果是本地启动（更新模式）：立即返回 false（不卡主界面），并在后台启动检查 + 定时检查。
+    */
+    run = function(winform){
+        if(_STUDIO_INVOKED){
+            return false;
+        }
+
+        var msgDlg = ..win.dlg.message(winform);
+        var currentPath = ..io._exepath;
+        var currentDir = ..io.splitpath(currentPath).dir;
+
+        var installMode = isNetworkPath(currentPath);
+
+        // 1. 网络共享启动：必须安装到本地硬盘再运行
+        if(installMode){
+            var defaultTargetDir = ..io.appData("domisoft");
+
+            // 弹窗 1：通知安装位置（支持点击「更改目录...」自定义）并选择服务器
+            var serverKey, targetDir = selectServer(winform, defaultTargetDir);
+            if(!serverKey || !targetDir){
+                // 取消安装，返回 true 让调用方直接退出当前共享进程
+                return true;
+            }
+
+            var targetPath = ..io.joinpath(targetDir, "SE_TBM.exe");
+            var targetIniPath = ..io.joinpath(targetDir, "TBM.ini");
+            var configPath = ..io.joinpath(targetDir, configFileName);
+
+            var server = servers[serverKey];
+            var sourcePath = ..io.joinpath(server.dir, "SE_TBM.exe");
+
+            var dir,dirErr = ..io.createDir(targetDir);
+            if(!dir){
+                msgDlg.err('无法创建安装目录：\r\n' ++ tostring(dirErr));
+                return true;
+            }
+
+            // prepareUpdate 内部会同时将服务器 ..\ 下的 syncFolderNames（lib, ext 等）完整同步到 targetDir
+            var status,detail,stagePath,stageIniPath = ..thread.invokeAndWait(
+                prepareUpdate, sourcePath, currentPath, true, targetDir, syncFolderNames
+            );
+
+            if(status != "ready"){
+                msgDlg.err(
+                    "无法准备安装：" ++ tostring(detail)
+                        ++ '\r\n\r\n服务器：' ++ server.name
+                        ++ '\r\n' ++ server.dir
+                );
+                return true;
+            }
+
+            var copied,copyErr = ..fsys.copy(stagePath, targetPath);
+            if(!copied){
+                cleanupStage(stagePath);
+                msgDlg.err(
+                    "无法安装到本地：" ++ tostring(copyErr)
+                        ++ '\r\n\r\n如果本地 TBM 正在运行，请先关闭它。'
+                );
+                return true;
+            }
+
+            var iniCopied,iniErr = ..fsys.copy(stageIniPath, targetIniPath);
+            if(!iniCopied){
+                msgDlg.err(
+                    "程序文件已复制，但 TBM.ini 安装失败："
+                        ++ tostring(iniErr)
+                        ++ '\r\n\r\n临时配置文件保留在：'
+                        ++ stageIniPath
+                );
+                return true;
+            }
+
+            var saved,saveErr = saveServer(configPath, serverKey);
+            if(!saved){
+                msgDlg.err(
+                    "程序文件已复制，但无法保存更新服务器："
+                        ++ tostring(saveErr)
+                        ++ '\r\n\r\n' ++ configPath
+                        ++ '\r\n\r\n本地程序尚未启动，请重新安装。'
+                );
+                return true;
+            }
+
+            // 静默创建桌面快捷方式
+            ensureDesktopShortcut(targetPath);
+
+            // 清理安装临时目录
+            cleanupStage(stagePath);
+
+            // 弹窗 2：显示安装成功窗口；如果用户勾选「立即运行 TBM 程序」并确定，则启动安装后的程序
+            if(showInstallSuccess(winform, targetPath)){
+                var prcs = ..process.shell(targetPath);
+                if(!prcs){
+                    msgDlg.err(
+                        '安装文件已复制，但未能启动本地程序。\r\n\r\n请手动启动：'
+                            ++ targetPath
+                    );
+                }
+            }
+
+            return true;
+        }
+
+        // 2. 本地运行模式：读取或初始化服务器配置
+        var configPath = ..io.joinpath(currentDir, configFileName);
+        var serverKey;
+
+        if(..io.exist(configPath)){
+            var config = ..JSON.load(configPath);
+            serverKey = config[["server"]];
+
+            if(!servers[[serverKey]]){
+                msgDlg.err(
+                    '更新服务器记录无效，请重新选择服务器。\r\n\r\n' ++ configPath
+                );
+                serverKey = null;
+            }
+        }
+
+        if(!serverKey){
+            serverKey = selectServer(winform);
+            if(!serverKey) return false;
+
+            var saved,saveErr = saveServer(configPath, serverKey);
+            if(!saved){
+                msgDlg.err(
+                    "无法保存更新服务器记录："
+                        ++ tostring(saveErr)
+                        ++ '\r\n\r\n' ++ configPath
+                        ++ '\r\n\r\n将继续运行当前程序。'
+                );
+                return false;
+            }
+        }
+
+        var server = servers[serverKey];
+
+        // 接收工作线程检查结果的回调
+        winform.onUpdateCheckComplete = function(status, detail, stagePath, serverName){
+            checkingUpdate = false;
+
+            if(status == "ready"){
+                // 如果之前已经有未安装的旧临时包，先清理掉
+                if(pendingUpdate && pendingUpdate.stagePath != stagePath){
+                    cleanupStage(pendingUpdate.stagePath);
+                }
+
+                pendingUpdate = {
+                    version = detail;
+                    stagePath = stagePath;
+                    serverName = serverName;
+                };
+
+                // 首次发现新版本（链接尚处于隐藏状态）时弹窗询问是否立即更新
+                if(winform.syslink && winform.syslink.hide){
+                    if(applyPendingUpdate(winform)){
+                        return;
+                    }
+                }
+                // 在主窗口显示超链接提示        
+                showUpdateLink(winform, detail, serverName);
+            }
+        }
+
+        // 如果用户未点击更新直接关闭了主程序，自动清理已下载的临时目录
+        var oldOnDestroy = winform.onDestroy;
+        winform.onDestroy = function(){
+            if(pendingUpdate){
+                cleanupStage(pendingUpdate.stagePath);
+                pendingUpdate = null;
+            }
+            if(oldOnDestroy) oldOnDestroy();
+        }
+
+        // 启动时立即在后台检查一次更新（同时自动静默同步配置的文件夹列表）
+        checkAsync(winform, server);
+
+        // 每 1 小时（60 * 60 * 1000 毫秒）定时检查一次更新（同时自动静默同步配置的文件夹列表）
+        winform.setInterval(
+            function(){
+                checkAsync(winform, server);
+            },
+            60 * 60 * 1000
+        );
+
+        return false;
+    }
+}

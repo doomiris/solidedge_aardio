@@ -17,28 +17,28 @@ product_info_path = io.joinpath(config.dbServer.path, "qhc_product_info_lib.db")
 
 var rawTab = {
 	["热锌板"] = {
-		[1] =	{["厚度"]=0.5; ["物料"] = "H0087500182-G"; ["物料描述"] = "定尺料组 热锌板 0.5*1250*C"; ["价格"] = 6.5};
-		[2] =	{["厚度"]=0.6; ["物料"] = "H0087500185-G"; ["物料描述"] = "定尺料组 热锌板 0.6*1250*C"; ["价格"] = 6.5};
-		[3] =	{["厚度"]=0.7; ["物料"] = "H0087500186-G"; ["物料描述"] = "定尺料组 热锌板 0.7*1250*C"; ["价格"] = 6.5};
-		[4] =	{["厚度"]=0.8; ["物料"] = "H0087500191-G"; ["物料描述"] = "定尺料组 热锌板 0.8*1250*C"; ["价格"] = 6.5};
-		[5] =	{["厚度"]=1.0; ["物料"] = "H0087500284-G"; ["物料描述"] = "定尺料组 热锌板 1.0*1250*C"; ["价格"] = 6.5};
-		[6] =	{["厚度"]=1.2; ["物料"] = "H0087500193-G"; ["物料描述"] = "定尺料组 热锌板 1.2*1250*C"; ["价格"] = 6.5};
-		[7] =	{["厚度"]=1.5; ["物料"] = "H0087500188-G"; ["物料描述"] = "定尺料组 热锌板 1.5*1250*C"; ["价格"] = 6.5};
-		[8] =	{["厚度"]=2.0; ["物料"] = "H0087500190-G"; ["物料描述"] = "定尺料组 热锌板 2.0*1250*C"; ["价格"] = 6.5};
-		[9] =	{["厚度"]=0.4; ["物料"] = "H0080154856-G"; ["物料描述"] = "定尺料组 热锌板 0.4*1250*C"; ["价格"] = 6.5};
+		[1] =	{["厚度"]=0.5; ["物料"] = "5100081"; ["物料描述"] = "定尺料组 热锌板 0.5*1250*C"; ["价格"] = 4.77};
+		[2] =	{["厚度"]=0.6; ["物料"] = "5100132"; ["物料描述"] = "定尺料组 热锌板 0.6*1250*C"; ["价格"] = 4.61};
+		[3] =	{["厚度"]=0.7; ["物料"] = "5100230"; ["物料描述"] = "定尺料组 热锌板 0.7*1250*C"; ["价格"] = 4.43};
+		[4] =	{["厚度"]=0.8; ["物料"] = "5100309"; ["物料描述"] = "定尺料组 热锌板 0.8*1250*C"; ["价格"] = 4.38};
+		[5] =	{["厚度"]=1.0; ["物料"] = "5100126"; ["物料描述"] = "定尺料组 热锌板 1.0*1250*C"; ["价格"] = 4.33};
+		[6] =	{["厚度"]=1.2; ["物料"] = "5100148"; ["物料描述"] = "定尺料组 热锌板 1.2*1250*C"; ["价格"] = 4.33};
+		[7] =	{["厚度"]=1.5; ["物料"] = "5100406"; ["物料描述"] = "定尺料组 热锌板 1.5*1250*C"; ["价格"] = 4.33};
+		[8] =	{["厚度"]=2.0; ["物料"] = "5101272"; ["物料描述"] = "定尺料组 热锌板 2.0*1250*C"; ["价格"] = 4.33};
+		[9] =	{["厚度"]=0.4; ["物料"] = "5100084"; ["物料描述"] = "定尺料组 热锌板 0.4*1250*C"; ["价格"] = 5.17};
 	};
 	["不锈钢"] = {
-		[1] =	{["厚度"]=0.5; ["物料"] = "H0080156255"; ["物料描述"] = "不锈钢定尺料 3789*1219*0.5"; ["价格"] = 17.5};
-		[2] =	{["厚度"]=0.6; ["物料"] = "H0080160198"; ["物料描述"] = "麻纹不锈钢板 1219*3756*0.6"; ["价格"] = 17.5};
-		[3] =	{["厚度"]=0.7; ["物料"] = "H0080153180"; ["物料描述"] = "镜面不锈钢304 精磨8K 2000*1220*0.7"; ["价格"] = 17.5};
-		[4] =	{["厚度"]=0.8; ["物料"] = "H0080160199"; ["物料描述"] = "麻纹不锈钢板 1219*3756*0.8"; ["价格"] = 17.5};
+		[1] =	{["厚度"]=0.5; ["物料"] = "5104685"; ["物料描述"] = "不锈钢定尺料 3789*1219*0.5"; ["价格"] = 17.1};
+		[2] =	{["厚度"]=0.6; ["物料"] = "5102779"; ["物料描述"] = "麻纹不锈钢板 1219*3756*0.6"; ["价格"] = 16.9};
+		[3] =	{["厚度"]=0.7; ["物料"] = "5131014"; ["物料描述"] = "镜面不锈钢304 精磨8K 2000*1220*0.7"; ["价格"] = 54.91};
+		[4] =	{["厚度"]=0.8; ["物料"] = "5100349"; ["物料描述"] = "麻纹不锈钢板 1219*3756*0.8"; ["价格"] = 16.9};
 	};
 	["塑料板"] = {
-		[1] =	{["厚度"]=1.5; ["物料"] = "H0080200156"; ["物料描述"] = "PS板 2000*1100*1.5"; ["价格"] = 15};
-		[2] =	{["厚度"]=2.5; ["物料"] = "H0082100028"; ["物料描述"] = "ABS板 1120*2120*2.5"; ["价格"] = 18};
+		[1] =	{["厚度"]=1.5; ["物料"] = "5101340"; ["物料描述"] = "PS板 2000*1100*1.5"; ["价格"] = 46.24};
+		[2] =	{["厚度"]=2.5; ["物料"] = "5222144"; ["物料描述"] = "ABS板 1120*2120*2.5"; ["价格"] = 18.37};
 	};	
 	["X"] =	{ ["物料"] = ""; ["物料描述"] = "厂内无此规格"; ["价格"] = 7};
-	["白色"] =	{["物料"] = "H0088200085"; ["物料描述"] = "标准白色"; ["价格"] = 14.88}
+	["白色"] =	{["物料"] = "8001"; ["物料描述"] = "标准白色"; ["价格"] = 12.28}
 }
 
 class 下料尺寸{
@@ -80,7 +80,6 @@ class 下料尺寸{
 		*/
 		/* 工时成本 */
 		// labour = 114.5 /* 元/小时 */
-		
 		this.powder = (m<0.001) ? 0.001 : math.round(m, precision);
 		this.powderItem =  rawTab["白色"] ;
 		/* 
@@ -143,8 +142,8 @@ class 发泡料用量{
 		this.black = math.round( this.mass * this.proportion / (1 + this.proportion), precision );
 
 		this.raw =  {
-			white = "H0080300487";
-			black = "H0088200013";
+			white = "5100095";
+			black = "5100100";
 		};
 	};
 }
@@ -190,10 +189,19 @@ getSapItem = function(hcode){
 	//console.log(sap_db_path, hcode)
 	var db,err = openDb(sap_db_path);
 	if !hcode return null;
-	if type(hcode)!=="string" return null; 
-    if string.len(hcode) > 11
-    	hcode = string.trim(hcode);
-	var t = db.stepQuery("SELECT * FROM [所有物料]", { 物料 : hcode } )
+	hcode = tostring(hcode);
+    hcode = string.trim(hcode);
+    var t = null;
+    
+    if(string.startsWith(hcode, "5", true) and string.len(hcode)==7){
+        t = db.stepQuery("SELECT * FROM [所有物料]", { 物料 : hcode } )
+    }elseif(string.startsWith(hcode, "5", true) and string.len(hcode)==12 and string.indexOf(hcode,"-")==8){
+        t = db.stepQuery("SELECT * FROM [所有物料]", { 物料 : hcode } )
+    }elseif(string.startsWith(hcode, "8", true) and string.len(hcode)==4){
+		t = db.stepQuery("SELECT * FROM [所有物料]", { 物料 : hcode } )
+    }elseif( string.startsWith(hcode, "H008", true) || string.startsWith(hcode, "BG", true)) {
+        t = db.stepQuery("SELECT * FROM [所有物料]", { 旧物料号 : hcode } )
+    }
 	return t; 
 };
 getProductInfo = function(hcode){
@@ -236,7 +244,7 @@ class ColDefType{
 		rowArr = table.pop(rowArr);
 		this.LvlCol = cell.col;
 		this.codeCol = table.find(rowArr, string.keywords("子项物料代码|专用号|物料代码|对象标识|子项物料|物料号|物料").findOne);
-		this.DespCol = table.find(rowArr, string.keywords("物料名称|物料描述|对象描述").findOne);
+		this.DespCol = table.find(rowArr, string.keywords("物料名称|物料描述|对象描述|描述").findOne);
 		this.TypeCol = table.find(rowArr, string.keywords("物料属性|属性|物料类型|类型").findOne);
 		this.QtyCol = table.find(rowArr, string.keywords("单位|组件单位").findOne);
 		this.UnitCol = table.find(rowArr, string.keywords( "数量|单位用量|用量|组件数量|组件数量(CUn)").findOne);
@@ -276,8 +284,76 @@ formatColor = function(UsedRange, light){
 		addCond("=($A1=""....4"")",{235, 241, 222});
 	}
 }
+arrangeWorkbookColumns = function(sht){
+	if !sht return; 
+	var excel = sht.parent.Application;
+    var raw_Cols = "项目编号;展开层;对象标识;对象描述;组件数量(CUn);组件单位;物料类型;排序字符串;物料是可配置的;相关性名称;OD 行;BIN2 data element for SYST;相关性代码;工厂;替代BOM;BOM行项目;项目类别;跨工厂物料状态;采购类型;特殊采购类型;";
+    var keep_Cols = "展开层;对象标识;对象描述;组件数量(CUn);组件单位;物料类型;采购类型;物料是可配置的;相关性代码;";
+    var rawCols = [];
+    var keepCols = [];
+    var keepSet = {};
 
-formatBOM = function(sht,savechanges = true, light=false){
+    for i,name in (string.splitLiteral(raw_Cols,";")){
+        if(#name) table.push(rawCols,name);
+    }
+
+    for i,name in (string.splitLiteral(keep_Cols,";")){
+        if(#name){
+            if(keepSet[name]){
+                return null,"保留列名重复：" ++ name;
+            }
+            keepSet[name] = true;
+            table.push(keepCols,name);
+        }
+    }
+
+    if(!#keepCols){
+        return null,"保留列名清单为空，已取消操作。";
+    }
+
+    //先检查配置，避免删除后才发现保留列不存在。
+    for i,name in keepCols{
+        var count = 0;
+        for j,rawName in rawCols{
+            if(rawName === name) count += 1;
+        }
+        if(count != 1){
+            return null,"保留列必须在现有列清单中出现一次：" ++ name;
+        }
+    }
+
+    //从右向左删除不需要的列。
+    for(i=#rawCols,1,-1){
+        if(!keepSet[rawCols[i]]){
+            sht.Columns(i).Delete();
+            table.remove(rawCols,i);
+        }
+    }
+
+    //按 keepCols 顺序移动列，同时更新列名清单。
+    for(i=1,#keepCols){
+        var sourceIndex = i;
+        for(j=i,#rawCols){
+            if(rawCols[j] === keepCols[i]){
+                sourceIndex = j;
+                break;
+            }
+        }
+
+        if(sourceIndex != i){
+            sht.Columns(sourceIndex).Cut();
+            sht.Columns(i).Insert(-4161/*_xlShiftToRight*/);
+
+            var name = rawCols[sourceIndex];
+            table.remove(rawCols,sourceIndex);
+            table.insert(rawCols,name,i);
+        }
+    }
+
+    excel.CutCopyMode = false;
+    return true;
+}
+formatBOM = function(sht,savechanges = true, light=false, allowDeleteColumns = false){
 	import com.excel;
 	import console;
 	var excel;
@@ -290,7 +366,9 @@ formatBOM = function(sht,savechanges = true, light=false){
 		excel = sht.parent.Application;
 	}
 
-	if !sht return ; 
+	if !sht return ;
+	if allowDeleteColumns 
+		arrangeWorkbookColumns(sht);
 	var coldef = ColDefType(sht);
 	if !coldef.DefRow return ; 
 
@@ -379,7 +457,7 @@ formatAllBOM = function(){
 	import com.excel;
 	var excel = com.excel(false);
 	for(i = excel.WorkBooks.Count; 1; -1) {// 反向
-			if !string.startsWith(excel.WorkBooks(i).Name, "BG", true) continue;
+			if !string.startsWith(excel.WorkBooks(i).Name, "5", true) continue;
 			formatBOM(excel.WorkBooks(i).WorkSheets(1))
 		 	excel.WorkBooks(i).Close(true /* _save_changes */);
 	}
@@ -395,7 +473,7 @@ getPriceList= function(){
 	import fsys.dlg;
 	var fl = fsys.dlg.openEx("cost文件|cost*_*.xlsx|.xlsx|*.xlsx",'请选择要打开的 cost 文件',config.__sapDownload)
 	var tab = {};
-	tab.fields = {"物料","物料描述","原材料","Labour","Burden","总价"};
+	tab.fields = {"物料","物料描述","原材料","L&B","总价"};
 	
 	for (i = 1; #fl) {
     	var sht = excel.Workbooks.Open(
@@ -419,10 +497,9 @@ getPriceList= function(){
 		table.push(t,
     		sht.Cells(2, "B").Value,
     		sht.Cells(2, "C").Value,
-    		sht.Cells(2, "G").Value,
-    		sht.Cells(2, "H").Value,
     		sht.Cells(2, "I").Value,
-    		sht.Cells(2, "J").Value,
+    		sht.Cells(2, "H").Value,
+    		sht.Cells(2, "G").Value,
     	)
     	sht.Parent.Close(false)
     	sht=null;
@@ -444,8 +521,7 @@ getLvlStr = function(lvlNum){
 }
 
 formatCostBom = function(sht){
-	import  console;
-	//console.open()
+
 	import tarray;
 	var  singleJob  = false;
 	import com.excel;
@@ -475,7 +551,7 @@ formatCostBom = function(sht){
 
 	for (i = 2; #etab){
     	for (j = 2; codeCol - 1){
-        	if etab[i][j]{
+        	if string.len(etab[i][j]){
         	    etab[i][1] = getLvlStr(j - 2);
             	break 1;
         	}
@@ -483,7 +559,9 @@ formatCostBom = function(sht){
 	} 
 
 	var fields = table.shift(etab);
-	fields = tarray.trimAll(fields);
+
+	//fields = tarray.trimAll(fields);
+	//console.dumpTable(fields)
 	fields[1] = "层级";
 	etab.fields = fields;
 	
@@ -494,7 +572,7 @@ formatCostBom = function(sht){
 	etab = tarray.fillEmptyRow(etab);
 
 	for (j = #etab.fields; 1; -1){
-    	if !etab.fields[j]{
+    	if !string.len(etab.fields[j]){
     		etab = tarray.spliceCol(etab, j);
     	}
 	}
@@ -508,16 +586,28 @@ formatCostBom = function(sht){
 
 	nsht.range("A1:" ++ etip.toColName(#etab.fields) ++ "1" ).value2 = etab.fields;
 	nsht.range("A2:" ++ etip.toColName(#etab[1]) ++ (#etab+1) ).value2 = etab;
-	formatBOM(nsht,false,true);
+	formatBOM(nsht,false,true,false);
 	
 	wk.Application.DisplayAlerts = false;
 	sht.delete();
-	var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
+	
+	var price = {};
+	table.push(price,
+    	nsht.Cells(2, "B").Value,
+    	nsht.Cells(2, "C").Value,
+    	nsht.Cells(2, "I").Value,
+    	nsht.Cells(2, "H").Value,
+    	nsht.Cells(2, "G").Value,
+    )
+    
+	wk.save();
+	//var nwk = string.replace(wk.FullName, "@.xls", ".xlsx");	
 
 
 /*
 	# 判断nwk是否正被Excel打开, 如果是打开状态则通过Excel弹出提示关闭
 */
+/**
 	import win;
 	while( ..io.exist(nwk) ){
 		var file = ..io.file(nwk, "r+b");
@@ -536,6 +626,7 @@ formatCostBom = function(sht){
 	}
 	
 	wk.SaveAs(nwk, 51 /* xlWorkbookDefault */);
+**/
 	
 /*
 	var customProps = wk.CustomDocumentProperties;
@@ -547,26 +638,29 @@ formatCostBom = function(sht){
 */
 	
 	wk.Application.DisplayAlerts = true;
+	wk.Application.ScreenUpdating = true;
 	if !singleJob wk.Close(false);
 	//..io.remove(wk.FullName);
+	return price; 
 }
 
-formatAllCostBom = function(fl){
-	//import console;
-	if !ftab {
+formatAllCostBom = function(winform, fl){
+	if !fl {
 		import fsys.dlg;
-		fl = fsys.dlg.openEx("cost源文件|cost*.xls",'请选择要打开的 cost 文件',config.__sapDownload,parent)
+		fl = fsys.dlg.openEx("cost源文件|cost*.xlsx",'请选择要打开的 cost 文件',config.__sapDownload,parent)
 	}
-	
+
 	import com.excel;
-	var excel = com.excel(true);
+	var excel = com.excel(false);
 	excel.alerts = false;
 	
+	var priceList = {};
+	priceList.fields = {"物料","物料描述","原材料","L&B","总价"};
 	for k, v in fl{
     	var sht = excel.Workbooks.Open(
 			v /* filename */,
 			false /* UpdateLinks */,
-			true /* ReadOnly */,
+			false /* ReadOnly */,
 			/* format */,
 			/* Password */,
 			/* WriteResPassword */,
@@ -580,11 +674,15 @@ formatAllCostBom = function(fl){
 			/* Local */,
 			/* CorruptLoad */
 		).Sheets(1);
-		//console.log(k, v, sht.name)
-		formatCostBom(sht);
-		
+
+		var price = formatCostBom(sht);
+		table.push(priceList, price);
 	}
+	import tarray;
+	priceList = tarray.mapfields(priceList);
+	table.reverse(priceList)
 	excel.alerts = true;
+	return priceList; 
 }
 pcodeOffset = function(pcode, offset = 1){
 	if !pcode return ;
@@ -649,17 +747,19 @@ QHC.getColDef() = 获取列名称数组
 QHC.formatBOM(sheet) = 格式化SAP下载的BOM;
 QHC.getRawItem(size_str) = 根据展开尺寸获取原材料项目\n!QHC_rawItem.
 QHC.formatCostBom(sht) = 格式化成本BOM
-QHC.formatAllCostBom(filelist) = 批量格式化成本BOM
+QHC.formatAllCostBom(winform, filelist) = 批量格式化成本BOM
 QHC.formatAllBOM() = 批量格式化BOM
 QHC.getPriceList() = 批量获取成本BOM价格列表
 QHC.pcodeOffset(pcode, offset = 1) = 获取下一个号
 !QHC_hitem.物料 = 物料
 !QHC_hitem.物料描述 = 物料描述
-!QHC_hitem.MTyp = 类型
+!QHC_hitem.物料类型 = 类型
 !QHC_hitem.物料组 = 物料组
-!QHC_hitem.BUn = 单位
+!QHC_hitem.基本计量单位 = 单位
+!QHC_hitem.旧物料号 = 旧物料号
 !QHC_hitem.禁用 = 禁用
 !QHC_hitem.价格 = 价格
+!QHC_hitem.生产展平尺寸 = 展平尺寸
 !QHC_rawItem.厚度 = 厚度
 !QHC_rawItem.物料 = 物料
 !QHC_rawItem.物料描述 = 物料描述

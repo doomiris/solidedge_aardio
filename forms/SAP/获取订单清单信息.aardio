@@ -3,15 +3,15 @@ import win.ui.grid;
 /*DSG{{*/
 var winform = win.form(text="订单清单浏览";right=759;bottom=469;image=$"\res\SE BG.jpg";bkBottom=0;bkLeft=0;bkRight=0;bkTop=0)
 winform.add(
-button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;dl=1;dt=1;z=7};
-button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;dl=1;dt=1;z=8};
-button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;dl=1;dt=1;z=9};
-edit={cls="edit";left=11;top=8;right=155;bottom=40;dl=1;dt=1;edge=1;hideSel=1;tabstop=1;z=6};
-editDesp={cls="edit";left=539;top=10;right=745;bottom=36;dr=1;dt=1;edge=1;z=4};
-listview={cls="listview";left=228;top=54;right=760;bottom=468;aw=1;db=1;dr=1;dt=1;edge=1;fullRow=1;vscroll=1;z=1};
-listview2={cls="listview";left=0;top=53;right=224;bottom=469;aw=1;db=1;dl=1;dt=1;edge=1;fullRow=1;vscroll=1;z=2};
-splitter={cls="splitter";left=223;top=53;right=228;bottom=464;db=1;dt=1;frame=1;z=3};
-static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;align="right";dr=1;dt=1;transparent=1;z=5}
+button={cls="button";text="下载订单清单...";left=162;top=8;right=305;bottom=40;anchors={left=1;top=1};z=7};
+button2={cls="button";text="刷新";left=312;top=8;right=352;bottom=40;anchors={left=1;top=1};z=8};
+button3={cls="button";text="删除选定文件";left=364;top=11;right=452;bottom=39;anchors={left=1;top=1};z=9};
+edit={cls="edit";left=11;top=8;right=155;bottom=40;anchors={left=1;top=1};edge=1;hideSel=1;tabstop=1;z=6};
+editDesp={cls="edit";left=539;top=10;right=745;bottom=36;anchors={top=1;right=1};edge=1;z=4};
+listview={cls="listview";left=228;top=54;right=760;bottom=468;anchors={top=1;right=1;bottom=1};aw=1;edge=1;fullRow=1;vscroll=1;z=1};
+listview2={cls="listview";left=0;top=53;right=224;bottom=469;anchors={left=1;top=1;bottom=1};aw=1;edge=1;fullRow=1;vscroll=1;z=2};
+splitter={cls="splitter";left=223;top=53;right=228;bottom=464;anchors={top=1;bottom=1};frame=1;z=3};
+static={cls="static";text="筛选[描述]";left=456;top=13;right=535;bottom=35;align="right";anchors={top=1;right=1};transparent=1;z=5}
 )
 /*}}*/
 
@@ -25,6 +25,8 @@ import SAP;
 import sqlite;
 import win.clip;
 import win.dlg.message;
+import thread.table;
+var dl = thread.table("orderDownloadInfo");
 /*
 import console
 console.open()
@@ -259,6 +261,7 @@ menu.add();
 			userinput = string.replace(userinput, v,'\r\n');
 	
     	var userinputArr = string.split(userinput, '\r\n');
+    	userinputArr = table.unique(userinputArr);
     	
     	for (i=1; #userinputArr){
     	    if !string.len(userinputArr[i]) continue;
@@ -301,35 +304,61 @@ winform.editDesp.onChange = function(){
 		winform.grid.setTable(t);
 	}
 }
+var getNewListFromXlsx = function(etab,wform){
+	import sqlite;
+	import config;
+	import domisoft;
+	import thread.table;
+	var dl = thread.table("orderDownloadInfo");
+	var order_number = dl.order_number;
+	var sdb = sqlite(io.joinpath(config.__sapDownload, "order_list.db"));	
 
-winform.button.oncommand = function(id,event){
-/*
-	# 检查SAPGUI进程是否存在了
-	# 用这样的方法来检查:  查看是否有一个窗口标题以字符串"P11(1)/220"开头的, 如果有,就认为SAPGUI存在了
-	# 如果存在就继续执行
-	# 如果不存在就调用: λ() quickTools.sap_quickLogin(1) 后再继续执行.
-
-	import winex;
-	import quickTools;
-	if(!winex.find(,"^P11\(1\)/220")){
-		quickTools.sap_quickLogin(1);
+	var cmd = sdb.prepare("REPLACE INTO `LIST` VALUES(?,?,?,?,?,?)");
+ 	cmd.step({
+	 	order_number,
+	 	etab[1][7],
+	 	etab[1][1],
+	 	etab[1][2],
+	 	null,
+		(tostring(time(),"%Y/%m/%d %H:%M:%S"))
+	})
+	cmd.finalize();
+	sleep(100);
+	var cmd = sdb.prepare("REPLACE INTO `content` VALUES (?,?,?,?,?,?,?,?)");
+	for (j=1; #etab){			
+		cmd.step({
+			order_number,
+			etab[j][3],
+			etab[j][4],
+			etab[j][5],
+			(tonumber(etab[j][6])),	//订单数量
+			null,
+			null,
+			null
+		});
 	}
-*/
-	var order_number = string.trim(winform.edit.text);
+	cmd.finalize();
+	wform.button.disabledText = null;
+	wform.publish("getFolderList",true);
+}
+winform.button.oncommand = function(id,event){
+	import thread.table;
+	var dl = thread.table("orderDownloadInfo");
+	dl.order_number = string.trim(winform.edit.text);
 	var note = #winform.listview2.selected ? winform.listview2.getItemText(winform.listview2.selIndex,5) : null;
-	if !order_number return ; 
+	if !dl.order_number return ; 
 	owner.disabledText = {"✶";"✸";"✹";"✺";"✹";"✷"};
-	var rez = thread.invokeAndWait(SAP.downloadOrderList, winform, order_number)
-	if rez 
-		owner.disabledText = null;
+	var rez = thread.invokeAndWait(SAP.downloadOrderList, winform, dl.order_number);
+	if !rez return ; 
+	owner.disabledText = null;
+	thread.invoke(getNewListFromXlsx, rez , winform);
 	if note
 		win.setTimeout(
 			function(){
-				sdb.exec("UPDATE `list` SET ? WHERE ??",{{"备注":note},{"SD 凭证":order_number}});
+				sdb.exec("UPDATE `list` SET ? WHERE ??",{{"备注":note},{"SD 凭证":dl.order_number}});
 			},1000
 		)
-	win.setTimeout(winform.getFolderList, 1500)
-	
+	win.setTimeout(winform.getFolderList, 1500)	;
 }
 
 subscribe("down_b2c_bom",function(filename){
@@ -379,54 +408,9 @@ subscribe("downloadManufactureBOM",function(filename){
 		}
 	}
 })
-subscribe("done_job_b2c", function(orderId, itemList){
 
-	
-}); 
 
-var getNewListFromXlsx = function(filename,wform){
-	import sqlite;
-	import config;
-	import domisoft;
-	var sdb = sqlite(io.joinpath(config.__sapDownload, "order_list.db"));
-	var sht = domisoft.getRunningWorkSheet(filename);	
-	var etab = sht.usedRange.value2;
-	var Text = sht.Parent.Application.WorksheetFunction.Text;
-	var fields = table.shift(etab);
-	var cmd = sdb.prepare("REPLACE INTO `LIST` VALUES(?,?,?,?,?,?)");
-	cmd.step({
-	 	etab[1][1 /* A */],
-	 	Text(etab[1][7 /* G */],"yyyy/mm/dd"),
-	 	etab[1][17 /* Q */],
-	 	etab[1][24 /* X */],
-	 	null,
-	 	(tostring(time(),"%Y/%m/%d %H:%M:%S"))
-	})
-	cmd.finalize();
-	var cmd = sdb.prepare("REPLACE INTO `content` VALUES (?,?,?,?,?,?,?,?)");
-	for (j=1; #etab){			
-		cmd.step({
-			etab[j][1 /* A */],
-			etab[j][2 /* B */],
-			etab[j][22 /* V */],
-			etab[j][5 /* E */],
-			(tonumber(etab[j][19 /* S */])),
-			null,
-			null,
-			null
-		});
-	}
-	cmd.finalize();
-	sht.Parent.Close(false);
-	wform.button.disabledText = null;
-	wform.publish("getFolderList",true);
-}
 subscribe("getFolderList", winform.getFolderList);
-subscribe("order_list_job_done",function(...){
-	var filename = ...;	
-	win.delay(3*1000);
-	thread.invoke(getNewListFromXlsx, filename , winform);
-} )	
 	
 winform.button2.oncommand = winform.getFolderList;
 winform.frmReLoad = winform.getFolderList;
